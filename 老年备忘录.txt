@@ -1,0 +1,55 @@
+﻿境淘公司
+
+
+局域网SVN地址：svn://192.168.0.107
+
+网站配置文件：/www/data/config.php
+
+
+手机后台
+    地址：localhsot/mobile/admin
+	  http://www.jingtaomart.com/mobile/admin/
+    帐号：q20080135
+    密码：q6622860
+
+电脑后台
+    地址：localhsot/admin
+	  http://www.jingtaomart.com/admin/
+    帐号：q20080135
+    密码：q6622860
+
+公司无线
+    帐号：haiyuan
+    密码：jiubugaosuni
+
+远程服务器
+    帐号：114.215.168.159(无端口号)
+    密码：WangWei!@#
+    数据库密码：371204efa5
+
+微信公众号
+    https://mp.weixin.qq.com/
+    帐号：3038527253@qq.com
+    密码：qifu_332177426
+
+短信网
+    http://sms.duanxinwang.cc/login.aspx
+    dxwzdwl09  (l为英文)
+    314622
+
+https://enterpriseportal.alipay.com/login.htm
+493133999@qq.com
+wangwei8944111
+
+公司帐户358467483716
+企业全称：宁波指动网络科技有限公司
+组织机构代码: 30904358-6
+工商执照注册号:330215000094387
+经营范围:一般经营项目: 计算机网络技术研发；软件开发、销售、技术支持、技术服务、技术咨询；计算机系统集成；网络工程安装；网站建设；网页设计；通信系统开发集成；电子商务平台的技术服务、咨询、转让。
+企业开户名称:宁波指动网络科技有限公司
+企业开户银行:中国银行宁波市江东支行
+企业银行帐号:358467483716
+
+wxddfb4278671f5add
+3df1aa5f3db9c17bff41cd227b6a5417
+https://open.alipay.com/platform/home.htm
