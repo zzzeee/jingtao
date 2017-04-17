@@ -5,7 +5,7 @@ import {
   View,
   Image,
   StatusBar,
-  ListView,
+  FlatList,
   WebView,
   ScrollView,
   Dimensions,
@@ -23,7 +23,7 @@ export default class CityItem extends Component {
         this.state = {
             cityObj: this.props.city,
             datas: null,
-            dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            //dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
     }
 
@@ -40,9 +40,13 @@ export default class CityItem extends Component {
             .then((response) => response.json())
             .then((ret) => {
                 if(ret && ret.sTatus) {
+                    let _datas = [];
+                    for(let i in ret.proAry) {
+                        _datas.push(Object.assign({key: i}, ret.proAry[i]));
+                    }
                     that.setState({
-                        datas: ret,
-                        dataSource: that.state.dataSource.cloneWithRows(ret.proAry)
+                        datas: _datas,
+                        //dataSource: that.state.dataSource.cloneWithRows(ret.proAry)
                     });
                 }
             })
@@ -69,13 +73,20 @@ export default class CityItem extends Component {
                     <Text style={styles.cityTitleText} numberOfLines={3}>{city.griInfo}</Text>
                     <Image source={{uri: city.griImg}} style={styles.cityImage} />
                 </View>
-                <ListView
+                <FlatList
                     horizontal={true}
                     enableEmptySections={true} 
                     style={styles.listViewStyle}
-                    dataSource={this.state.dataSource}
-                    renderRow={this.renderItem.bind(this)}
-                    showsHorizontalScrollIndicator={false}
+                    data={this.state.datas}
+                    renderItem={this._renderItem}
+                    ListHeaderComponent={()=>{
+                        return (
+                            <View style={styles.productBox}><Text>我是头部</Text></View>
+                        );
+                    }}
+                    getItemLayout={(data, index) => (
+                        {length: 122, offset: (122 + 10) * index, index}
+                    )}
                 />
                 <View style={styles.cityItemFootBox}>
                     <Icon.Button name="sign-in" size={16} color="#555" backgroundColor="transparent">
@@ -92,13 +103,17 @@ export default class CityItem extends Component {
         );
     }
 
-    renderItem = (obj, sectionID, rowID) => {
+    _renderItem = (item) => {
+        let obj = item.item;
+        let index = item.index;
         let gimg = obj.gThumbPic || '';
 
         return (
-            <View key={rowID} style={styles.productBox}>
+            <View key={index} style={styles.productBox}>
                 <View style={styles.gImageBox}>
-                    <Image source={{uri: gimg}} style={styles.gImageStyle} />
+                    {gimg ?
+                        <Image source={{uri: gimg}} style={styles.gImageStyle} /> : null
+                    }
                 </View>
                 <View>
                     <Text style={styles.goodNameText} numberOfLines={1}>{obj.gName}</Text>

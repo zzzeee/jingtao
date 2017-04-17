@@ -43,24 +43,7 @@ export default class APP extends Component {
 
     render() {
         return (
-            <ScrollView style={styles.scrollViewBox}>
-                <View style={{height: h}}>
-                    <WebView
-                        automaticallyAdjustContentInsets={false}
-                        source={{uri: this.url}}
-                        style={{height: h}}
-                        startInLoadingState ={true}
-                        onNavigationStateChange={(navState) => {
-                            console.log(navState);
-                        }}
-                        onMessage={(e)=>{
-                            console.log(JSON.parse(e.nativeEvent.data));
-                        }}
-                    />
-                </View>
-                <CityList pid={31} showModal={this.showModal} updateAll={this.state.updateAll} />
-                <ShareModal visible={this.state.modalVisible} showModal={this.showModal} pageY={this.state.pageY} />
-            </ScrollView>
+            <CityList pid={31} showModal={this.showModal} updateAll={this.state.updateAll} />
         );
     }
 

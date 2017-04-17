@@ -30,7 +30,6 @@ export default class HeadBox extends Component {
     }
 
     componentWillMount() {
-        
     }
 
     render() {
@@ -44,6 +43,20 @@ export default class HeadBox extends Component {
         
         return (
             <View>
+                <View style={{height: h}}>
+                    <WebView
+                        automaticallyAdjustContentInsets={false}
+                        source={{uri: this.url}}
+                        style={{height: h}}
+                        startInLoadingState ={true}
+                        onNavigationStateChange={(navState) => {
+                            console.log(navState);
+                        }}
+                        onMessage={(e)=>{
+                            console.log(JSON.parse(e.nativeEvent.data));
+                        }}
+                    />
+                </View>
                 <View style={{width: width, height: 120,}}>
                     <Image source={{uri: fimg}} style={styles.firstRowImage}>
                         <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
