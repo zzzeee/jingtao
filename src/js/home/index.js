@@ -17,7 +17,7 @@ import Urls from '../public/apiUrl';
 import { Size } from '../public/globalStyle';
 import CityList from './CityList';
 
-export default class HomeScreen extends Component {
+class MainScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -51,6 +51,15 @@ export default class HomeScreen extends Component {
     };
 }
 
+const HomeScreen = StackNavigator({
+    Main: {
+        screen: MainScreen,
+        navigationOptions: {
+            title: '境淘土特产',
+        },
+    },
+});
+
 var styles = StyleSheet.create({
     flex : {
         flex : 1,
@@ -63,3 +72,5 @@ var styles = StyleSheet.create({
         height: Size.height * 0.6,
     },
 });
+
+export default ()=><HomeScreen />;
