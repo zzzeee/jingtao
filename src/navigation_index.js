@@ -1,5 +1,5 @@
 import { AppRegistry } from 'react-native';
-import App from './js/main';
+import App from './Navigator/App';
 
 if(!__DEV__){
     global.console = {
