@@ -14,22 +14,34 @@ import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color } from '../public/globalStyle';
 
+var itemH = 46;
 export default class FloatMenu extends Component {
     // 默认参数
     static defaultProps = {
         cityName: '',
         visible: false,
+        nativeEvent: {},
     };
     // 参数类型
     static propTypes = {
         cityName: React.PropTypes.string,
         visible: React.PropTypes.bool,
+        nativeEvent: React.PropTypes.object,
+        hideMenu: React.PropTypes.func,
+        btnSize: React.PropTypes.number,
     };
+
     constructor(props) {
         super(props);
-
+        this.state = {
+        };
         this.renderObject = this.renderObject.bind(this);
-        this.buttons = [{
+    }
+
+    render() {
+        if(!this.props.nativeEvent || !this.props.cityName) return null;
+
+        let buttons = [{
             'title' : lang['cn']['shareCity'].replace(/%s/, this.props.cityName),
             'icon' : require('../../images/share.png'),
             'detail' : '',
@@ -45,20 +57,21 @@ export default class FloatMenu extends Component {
             'detail' : lang['cn']['hide_txt'].replace(/%s/, this.props.cityName),
             'press' : null,
         }];
-    }
 
-    render() {
-        let pageY = this.props.pageY || 0;
-        let menuH = this.buttons.length * 40 + 10;
-        let top = 0, arrowUp = false, arrowDown = false;
-        if(Size.height - pageY > menuH) {
-            top = pageY;
-            arrowUp = true;
-        }else if(pageY > menuH) {
-            top = pageY - menuH;
-            arrowDown = true;
+        let localY = this.props.nativeEvent.locationY || 0;
+        let pageY = this.props.nativeEvent.pageY || 0;
+        let btnSize = this.props.btnSize || 0;
+        let menuH = buttons.length * itemH;
+        let sHeight = Size.height - 80;
+        let top = 0, arrowUp = false;
+        let offsetY = btnSize - localY;
+        
+        if(sHeight - pageY - offsetY > menuH) {
+            top = pageY + offsetY;
+        }else if(pageY - localY > menuH) {
+            top = pageY - localY - menuH;
         }
-
+        //console.log('height=' + sHeight + ', pageY=' + pageY + ', menuH=' + menuH);
         return (
             <Modal
                 animationType={"none"}
@@ -66,20 +79,9 @@ export default class FloatMenu extends Component {
                 visible={this.props.visible}
                 onRequestClose={() => {}}
             >
-                <TouchableOpacity style={styles.btnBody} underlayColor='transparent' onPress={()=>{
-                }} >
+                <TouchableOpacity style={styles.btnBody} onPress={this.props.hideMenu} >
                     <View style={[styles.shareBox, {top : top}]}>
-                        {arrowUp ? 
-                        <View style={[styles.smallIconBox, {marginBottom : -5, justifyContent: 'flex-start'}]}>
-                            <Icon name="sort-up" size={14} color="#fff" />
-                        </View>
-                        : null}
-                        {this.buttons.map((tab, i) => this.renderObject(tab, i))}
-                        {arrowDown ? 
-                        <View style={[styles.smallIconBox, {marginTop : -5, justifyContent: 'flex-end'}]}>
-                            <Icon name="sort-down" size={14} color="#fff" />
-                        </View>
-                        : null}
+                        {buttons.map((tab, i) => this.renderObject(tab, i))}
                     </View>
                 </TouchableOpacity>
             </Modal>
@@ -91,7 +93,7 @@ export default class FloatMenu extends Component {
         let detail = obj.detail || '';
 
         return (
-            <TouchableOpacity key={i} underlayColor='transparent' onPress={()=>{return false;}} >
+            <TouchableOpacity key={i} onPress={()=>{return false;}} >
                 <View style={styles.shareRow}>
                     <Image source={obj.icon} style={styles.icon} />
                     <View style={styles.textBox}>
@@ -123,12 +125,13 @@ var styles = StyleSheet.create({
     },
     shareRow: {
         flex: 1,
-        height: 44,
+        height: itemH,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
         borderWidth: pixel,
         borderColor: Color.appColor13,
+        borderRadius: 5,
     },
     icon: {
         width: 26,
@@ -141,20 +144,13 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start',
     },
-    smallIconBox: {
-        height: 10,
-        alignItems: 'flex-end',
-        paddingRight : 20,
-        paddingTop: 6,
-        paddingBottom: 6,
-    },
     bigText: {
         alignItems: 'center',
-        fontSize: 16,
+        fontSize: 15,
         color: Color.appColor8,
     },
     smallText: {
-        fontSize: 13,
+        fontSize: 12,
         color: Color.appColor9,
     },
 });

@@ -29,7 +29,7 @@ export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            provinceID : 35,
+            provinceID : 31,
             heightValue: new Animated.Value(0),
         };
 

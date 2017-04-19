@@ -24,7 +24,8 @@ export default class CityItem extends Component {
             datas: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             visible: false,
-            pageY: 0,
+            nativeEvent: null,
+            cityName: null,
         };
     }
 
@@ -53,11 +54,13 @@ export default class CityItem extends Component {
             <View style={{backgroundColor: '#fff'}}>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
-                    <BtnIcon width={20} src={img_down} style={{padding: 10}} press={(e)=>{
+                    <BtnIcon width={20} src={img_down} style={{padding: 5}} press={(e)=>{
+                        console.log(e.nativeEvent);
                         this.setState({
                             visible: true,
-                            pageY: e.nativeEvent.pageY,
-                        })
+                            nativeEvent: e.nativeEvent,
+                            cityName: name,
+                        });
                     }} />
                 </View>
                 <View style={styles.cityTitleRow}>
@@ -91,7 +94,17 @@ export default class CityItem extends Component {
                         text={lang['cn']['sharePruduct']}
                     />
                 </View>
-                <FloatMenu visible={this.state.visible} pageY={this.state.pageY} cityName="杭州馆" />
+                <FloatMenu 
+                    visible={this.state.visible} 
+                    nativeEvent={this.state.nativeEvent} 
+                    cityName={this.state.cityName}
+                    btnSize={20}
+                    hideMenu={()=>this.setState({
+                        visible: false,
+                        nativeEvent: null,
+                        cityName: null,
+                    })}
+                />
             </View>
         );
     }

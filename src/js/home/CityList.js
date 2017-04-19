@@ -64,7 +64,6 @@ export default class CityList extends Component {
     };
 
     render() {
-        console.log('update citylist render');
         if(!this.state.datas) return null;
         
         return (
