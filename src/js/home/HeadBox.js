@@ -69,14 +69,16 @@ export default class HeadBox extends Component {
         let name = obj.region_name || '';
         let cimg = obj.griImg || null;
         let img_down = require("../../images/down.png");
-        let img_enter = require("../../images/home/enter.png");
-        let img_mark = require("../../images/home/market.png");
+        let img_enter = require("../../images/enter.png");
+        let img_mark = require("../../images/market.png");
         
         return (
-            <View key={rowID} style={styles.cityItem}>
+            <View key={rowID} style={[styles.cityItem, {
+                marginLeft: this.state.datas.cityProduct.length == 1 ? 25 : 10,
+            }]}>
                 <View style={styles.cityHead}>
                     <Text>{name}</Text>
-                    <BtnIcon src={img_down} />
+                    <BtnIcon width={20} src={img_down} />
                 </View>
                 <Image source={{uri: cimg}} style={styles.cityImage} />
                 <View style={styles.cityfoot}>
@@ -131,6 +133,7 @@ var styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
+        paddingTop: 4,
     },
     icon: {
         width: 22,

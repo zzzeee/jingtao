@@ -10,12 +10,18 @@ import {
     StatusBar,
     Platform,
     View,
+    Text,
     Image,
 } from 'react-native';
 
-import { TabNavigator } from 'react-navigation';
+import { 
+    TabNavigator,
+    StackNavigator,
+} from 'react-navigation';
+
+import BtnIcon from './public/BtnIcon';
 import Lang from './public/language';
-import { Color } from './public/globalStyle';
+import { Color, Size } from './public/globalStyle';
 
 import Home from './home/';
 import Find from './find/';
@@ -36,13 +42,14 @@ const ClassScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Class} />
 );
 //购物车
-const CarsScreen = ({ navigation }) => (
+const CarScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Car} />
 );
 //个人中心
 const PersonalScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Personal} />
 );
+
 //显示格式
 const MyNavScren = ({navigation, NavScreen}) => {
     return (
@@ -55,10 +62,101 @@ const MyNavScren = ({navigation, NavScreen}) => {
     );
 };
 
+// ========================== 测试内容 ==========================
+const ClearScreen = ({navigation}) => {
+    return <View><Text>成功清空</Text></View>;
+};
+
+const FindTestScreen = ({navigation}) => {
+    return <View><Text>发现 - 测试 - 内容</Text></View>;
+};
+// =============================================================
+
+// 首页集合
+const HomeTab = StackNavigator({
+    Home: {
+        screen: HomeScreen,
+        navigationOptions: {
+            header: ({ state, setParams }) => ({
+                title: (
+                    <View style={styles.headerTitle}>
+                        <BtnIcon width={100} src={require("../images/logoTitle.png")} />
+                    </View>
+                ),
+                left: (<Text></Text>),
+                right: (<BtnIcon style={styles.btnRight} width={22} src={require("../images/search.png")} />),
+            }),
+        },
+    },
+}, {
+    initialRouteName: 'Home',
+    headerMode: 'none',
+});
+
+// 发现集合
+const FindTab = StackNavigator({
+    Find: {
+        screen: FindScreen,
+        navigationOptions: {
+            title: '发现',
+        },
+    },
+    FindTest: {
+        screen: FindTestScreen,
+        navigationOptions: {
+            title: '发现 - 测试 - 标题',
+        },
+    },
+}, {
+    initialRouteName: 'Find',
+});
+
+// 分类集合
+const ClassTab = StackNavigator({
+    Calss: {
+        screen: ClassScreen,
+        navigationOptions: {
+            title: '特产分类',
+        },
+    },
+}, {
+    initialRouteName: 'Calss',
+});
+
+// 购物车集合
+const CarTab = StackNavigator({
+    Car: {
+        screen: CarScreen,
+        navigationOptions: {
+            title: '购物车',
+        },
+    },
+    Clear: {
+        screen: ClearScreen,
+        navigationOptions: {
+            title: '清空购物车',
+        },
+    },
+}, {
+    initialRouteName: 'Car',
+});
+
+// 个人中心集合
+const PersonalTab = StackNavigator({
+    Personal: {
+        screen: PersonalScreen,
+        navigationOptions: {
+            title: '个人中心',
+        },
+    },
+}, {
+    initialRouteName: 'Personal',
+});
+
 //APP下方导航栏
 const TabNavs = TabNavigator({
     Home: {
-        screen: HomeScreen,
+        screen: HomeTab,
         navigationOptions : {
             tabBar: () => ({
                 label: Lang['cn']['tab_home'],
@@ -70,7 +168,7 @@ const TabNavs = TabNavigator({
         },
     },
     Find: {
-        screen: FindScreen,
+        screen: FindTab,
         navigationOptions : {
             tabBar: () => ({
                 label: Lang['cn']['tab_find'],
@@ -82,7 +180,7 @@ const TabNavs = TabNavigator({
         },
     },
     Classify: {
-        screen: ClassScreen,
+        screen: ClassTab,
         navigationOptions : {
             tabBar: () => ({
                 label: Lang['cn']['tab_class'],
@@ -93,8 +191,8 @@ const TabNavs = TabNavigator({
             }),
         },
     },
-    Cars: {
-        screen: CarsScreen,
+    Car: {
+        screen: CarTab,
         navigationOptions : {
             tabBar: () => ({
                 label: Lang['cn']['tab_car'],
@@ -106,7 +204,7 @@ const TabNavs = TabNavigator({
         },
     },
     Personal: {
-        screen: PersonalScreen,
+        screen: PersonalTab,
         navigationOptions : {
             tabBar: () => ({
                 label: Lang['cn']['tab_personal'],
@@ -122,9 +220,9 @@ const TabNavs = TabNavigator({
     tabBarOptions: {
         showIcon: true,
         activeTintColor: Color.statusBarColor,      // 选中颜色
-        inactiveTintColor: '#999',                  // 未选中颜色
+        inactiveTintColor: Color.appColor8,         // 未选中颜色
         style: {
-            backgroundColor: '#fff',
+            backgroundColor: '#eee',
         },
         labelStyle: {
             fontSize: 14,
@@ -143,6 +241,17 @@ const styles = StyleSheet.create({
     tabIcon: {
         width: 22,
         height: 22,
+    },
+    headerTitle: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    btnRight: {
+        paddingRight: 10,
     },
 });
 

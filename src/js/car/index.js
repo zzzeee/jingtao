@@ -9,6 +9,7 @@ import {
     StyleSheet,
     View,
     Text,
+    Button,
 } from 'react-native';
 
 import { StackNavigator } from 'react-navigation';
@@ -23,9 +24,31 @@ export default class CarsScreen extends Component {
     }
 
     render() {
+        let nav = this.props.navigation || null;
         return (
             <View>
-                <Text>购物车</Text>
+                <Button title="当前页面跳转" onPress={()=>{
+                    nav.navigate('Clear', {
+                        id: 1,
+                        name: '当前页面跳转',
+                        obj: {
+                            a: 1,
+                            b: 2,
+                        }
+                    });
+                }} />
+                <Button title="跳转到发现页主页" onPress={()=>{
+                    nav.navigate('Find', {
+                        id: 2,
+                        name: '跳转到发现页主页',
+                    });
+                }} />
+                <Button title="跳转到发现页子页" onPress={()=>{
+                    nav.navigate('FindTest', {
+                        id: 3,
+                        name: '跳转到发现页主页',
+                    });
+                }} />
             </View>
         );
     }

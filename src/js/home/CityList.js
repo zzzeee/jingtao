@@ -16,10 +16,12 @@ export default class CityList extends Component {
     // 默认参数
     static defaultProps = {
         pid: 0,
+        isUpdate: true,
     };
     // 参数类型
     static propTypes = {
         pid: React.PropTypes.number.isRequired,
+        isUpdate: React.PropTypes.bool.isRequired,
     };
     //构造函数
     constructor(props) {
@@ -32,6 +34,14 @@ export default class CityList extends Component {
 
     componentDidMount() {
         this.initDatas(this.props.pid);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.isUpdate && nextState != this.state) {
+            return true;
+        }else {
+            return false;
+        }
     }
     
     // 获取数据
@@ -54,6 +64,7 @@ export default class CityList extends Component {
     };
 
     render() {
+        console.log('update citylist render');
         if(!this.state.datas) return null;
         
         return (

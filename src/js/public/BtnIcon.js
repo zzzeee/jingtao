@@ -17,14 +17,14 @@ export default class BtnIcon extends Component {
     // 默认参数
     static defaultProps = {
         size: 14,
+        color: '#4A4A4A',
     };
     // 参数类型
     static propTypes = {
-        size: React.PropTypes.number,
+        width: React.PropTypes.number,
+        height: React.PropTypes.number,
         press: React.PropTypes.func,
-        style: React.PropTypes.object,
         text: React.PropTypes.string,
-        txtStyle: React.PropTypes.object
     };
     //构造函数
     constructor(props) {
@@ -34,22 +34,21 @@ export default class BtnIcon extends Component {
     }
 
     render() {
-        if(!this.props.src) return null;
-        let width = this.props.size ? this.props.size : 14;
+        let width = this.props.width ? this.props.width : 14;
+        let height = this.props.height ? this.props.height : width;
 
         return (
-            <TouchableOpacity style={[styles.iconBox, this.props.style]} onPress={()=>{
-                if(this.props.press) {
-                    this.props.press();
+            <TouchableOpacity style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
+                {this.props.src ? 
+                    <Image source={this.props.src} resizeMode='contain' style={{
+                        width: width,
+                        height: height,
+                    }} />
+                    : null
                 }
-            }}>
-                <Image source={this.props.src} style={{
-                    width: width,
-                    height: width,
-                }} />
                 {this.props.text ? 
                     <Text style={[{
-                        paddingLeft: 10,
+                        paddingLeft: 4,
                         color: this.props.color,
                         fontSize: this.props.size,
                     }, this.props.txtStyle]}>{this.props.text}</Text>

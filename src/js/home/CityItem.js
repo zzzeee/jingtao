@@ -10,6 +10,7 @@ import {
 import { Size } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
+import FloatMenu from './FloatMenu';
 
 export default class CityItem extends Component {
     // 参数类型
@@ -22,6 +23,8 @@ export default class CityItem extends Component {
         this.state = {
             datas: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            visible: false,
+            pageY: 0,
         };
     }
 
@@ -42,15 +45,20 @@ export default class CityItem extends Component {
         let info = city.griInfo || '';
         let img = city.griImg || '';
         let img_down = require("../../images/down.png");
-        let img_enter = require("../../images/home/enter.png");
-        let img_mark = require("../../images/home/market.png");
-        let img_share = require("../../images/home/share.png");
+        let img_enter = require("../../images/enter.png");
+        let img_mark = require("../../images/market.png");
+        let img_share = require("../../images/share.png");
         
         return (
             <View style={{backgroundColor: '#fff'}}>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
-                    <BtnIcon src={img_down} style={{padding: 10}} />
+                    <BtnIcon width={20} src={img_down} style={{padding: 10}} press={(e)=>{
+                        this.setState({
+                            visible: true,
+                            pageY: e.nativeEvent.pageY,
+                        })
+                    }} />
                 </View>
                 <View style={styles.cityTitleRow}>
                     <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
@@ -65,24 +73,25 @@ export default class CityItem extends Component {
                 />
                 <View style={styles.cityItemFootBox}>
                     <BtnIcon 
-                        size={16}
+                        width={16}
                         color="#555"
                         src={img_enter}
                         text={lang['cn']['goin'] + name}
                     />
                     <BtnIcon
-                        size={16}
+                        width={16}
                         color="#555"
                         src={img_mark}
                         text={lang['cn']['allSeller']}
                     />
                     <BtnIcon
-                        size={16}
+                        width={16}
                         color="#555"
                         src={img_share}
                         text={lang['cn']['sharePruduct']}
                     />
                 </View>
+                <FloatMenu visible={this.state.visible} pageY={this.state.pageY} cityName="杭州馆" />
             </View>
         );
     }
