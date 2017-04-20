@@ -29,10 +29,11 @@ export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            provinceID : 31,
-            provinceName: '浙江',
+            provinceID : 0,
+            provinceName: null,
             updateData: true,
             heightValue: new Animated.Value(0),
+            datas: null,
         };
 
         this.showStart = false;
@@ -77,7 +78,7 @@ export default class HomeScreen extends Component {
                             onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
-                    <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} />
+                    <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} datas={this.state.datas} />
                 </ScrollView>
             </View>
         );
@@ -115,19 +116,45 @@ export default class HomeScreen extends Component {
         }
     };
 
-    _onMessage = (e) => {
+    _onMessage = async (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
         let id = data.id || 0;
         let name = data.name || '';
         console.log(data);
         if(id > 0 && id != this.state.provinceID) {
+            let ret = await this.getDatas(id);
             this.setState({
                 provinceID: id,
                 provinceName: name,
                 updateData: true,
+                datas: ret,
             });
         }
     };
+
+    // 注意这个方法前面有async关键字
+    getDatas = async (id) => {
+        try {
+            // 注意这里的await语句，其所在的函数必须有async关键字声明
+            // console.group('async');
+            // console.time('测试时间');
+            let response = await fetch(Urls.getCityAndProduct, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'pID=' + id
+            });
+            let responseJson = await response.json();
+            // console.log(responseJson);
+            // console.timeEnd('测试时间');
+            // console.groupEnd('async');
+            return responseJson.provinceAry;
+        } catch(error) {
+            console.error(error);
+        }
+    }
 }
 
 var styles = StyleSheet.create({

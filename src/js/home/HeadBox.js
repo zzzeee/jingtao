@@ -58,7 +58,7 @@ export default class HeadBox extends Component {
         
         return (
             <View>
-                <View style={{width: Size.width, height: 120,}}>
+                <View style={{width: Size.width, height: 100,}}>
                     <Image source={{uri: fimg}} style={styles.firstRowImage}>
                         <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
                         <Text style={styles.smlText} numberOfLines={3}>{text}</Text>
@@ -117,7 +117,7 @@ var styles = StyleSheet.create({
     },
     firstRowImage: {
         width: Size.width,
-        height: 120,
+        height: 100,
         padding: 10,
     },
     cityItem: {

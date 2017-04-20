@@ -33,12 +33,12 @@ export default class CityList extends Component {
     }
 
     componentDidMount() {
-        this.initDatas(this.props.pid);
+        this.initList(this.props.datas);
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.isUpdate) {
-            this.initDatas(nextProps.pid);
+            this.initList(nextProps.datas);
         }
     }
     
@@ -49,20 +49,27 @@ export default class CityList extends Component {
             return false;
         }
     }
+
+    initList = (datas) => {
+        if(datas) {
+            let list = datas.cityProduct || [];
+            this.setState({
+                datas: datas,
+                dataSource: this.state.dataSource.cloneWithRows(list),
+            });
+        }
+    };
     
     // 获取数据
     initDatas = (id) => {
-        let that = this;
         if(id > 0) {
-            // console.time('开始获取数据');
+            let that = this;
             Util.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id,
             }, function(result) {
                 if(result && result.sTatus) {
                     let ret = result.provinceAry || {};
                     let list = ret.cityProduct || [];
-                    // console.log(ret);
-                    // console.time('开始获取数据');
                     that.setState({
                         datas: ret,
                         dataSource: that.state.dataSource.cloneWithRows(list),
