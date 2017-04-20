@@ -16,7 +16,7 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 import Urls from '../public/apiUrl';
-import Lang from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel } from '../public/globalStyle';
 import CityList from './CityList';
@@ -30,14 +30,16 @@ export default class HomeScreen extends Component {
         super(props);
         this.state = {
             provinceID : 31,
+            provinceName: '浙江',
+            updateData: true,
             heightValue: new Animated.Value(0),
         };
 
         this.showStart = false;
-        this.updateData = true;
     }
 
     render() {
+        let _scrollview = null;
         return (
             <View style={styles.flex}>
                 <View style={styles.headView}>
@@ -48,22 +50,34 @@ export default class HomeScreen extends Component {
                 <Animated.View style={[styles.hideHead, {
                     height: this.state.heightValue,
                 }]}>
-                    <BtnIcon style={styles.btnLeft} width={22} src={require("../../images/logo.png")} />
-                    <Text style={styles.headTitle}>{Lang['cn']['previewing']}</Text>
+                    <BtnIcon 
+                        style={styles.btnLeft} 
+                        width={22} 
+                        src={require("../../images/logo.png")} 
+                        press={()=>{this.scrollStart(_scrollview)}}
+                    />
+                    <Text 
+                        style={styles.headTitle}
+                        onPress={()=>{this.scrollStart(_scrollview)}}
+                    >
+                        {str_replace(Lang['cn']['previewing'], this.state.provinceName)}
+                    </Text>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </Animated.View>
-                <ScrollView onScroll={this._onScroll} style={styles.scrollViewBox}>
+                <ScrollView ref={(_ref)=>_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
                     <View style={styles.webViewSize}>
                         <WebView
                             javaScriptEnabled={true}
-                            scalesPageToFit={true}
-                            source={{uri: Urls.homeMap}}
+                            scalesPageToFit={false}
+                            //source={{uri: Urls.homeMap}}
+                            source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
                             style={styles.webViewSize}
-                            onMessage={this._onMessage}
+                            onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
+                            onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
-                    <CityList isUpdate={this.updateData} pid={this.state.provinceID} />
+                    <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} />
                 </ScrollView>
             </View>
         );
@@ -75,27 +89,42 @@ export default class HomeScreen extends Component {
         if(offsetY > (mapHeight * 0.7)) {
             if(!this.showStart) {
                 this.showStart = true;
-                this.updateData = true;
+                this.setState({
+                    updateData: false,
+                });
                 Animated.spring(this.state.heightValue, {
                     toValue: (headHeight - 1),
-                    friction: 5,
+                    friction: 7,
                     tension: 30,
                 }).start();
             }
         }else if(offsetY < (mapHeight * 0.3)) {
             if(this.showStart) {
                 this.showStart = false;
-                this.updateData = true;
+                this.setState({
+                    updateData: false,
+                });
                 this.state.heightValue.setValue(0);
             }
         }
-    }
+    };
+
+    scrollStart = (scroll) => {
+        if(scroll) {
+            scroll.scrollTo({x: 0, y: 0, animated: true});
+        }
+    };
 
     _onMessage = (e) => {
-        let id = parseInt(e.nativeEvent.data) || 0;
-        if(id > 0) {
+        let data = JSON.parse(e.nativeEvent.data) || {};
+        let id = data.id || 0;
+        let name = data.name || '';
+        console.log(data);
+        if(id > 0 && id != this.state.provinceID) {
             this.setState({
                 provinceID: id,
+                provinceName: name,
+                updateData: true,
             });
         }
     };

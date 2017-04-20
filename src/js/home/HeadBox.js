@@ -30,13 +30,23 @@ export default class HeadBox extends Component {
 
     componentWillMount() {
         if(this.props.datas) {
-            let list = this.props.datas.cityProduct || [];
-            this.setState({
-                datas: this.props.datas,
-                dataSource: this.state.dataSource.cloneWithRows(list),
-            });
+            this.initDatas(this.props.datas);
         }
     }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.datas != this.props.datas) {
+            this.initDatas(nextProps.datas);
+        }
+    }
+
+    initDatas = (datas) => {
+        let list = datas.cityProduct || [];
+        this.setState({
+            datas: datas,
+            dataSource: this.state.dataSource.cloneWithRows(list),
+        });
+    };
 
     render() {
         if(!this.state.datas) return null;
@@ -56,6 +66,7 @@ export default class HeadBox extends Component {
                 </View>
                 <ListView
                     horizontal={true}
+                    initialListSize={2}
                     enableEmptySections={true}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderItem.bind(this)}

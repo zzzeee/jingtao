@@ -225,7 +225,7 @@ const TabNavs = TabNavigator({
             backgroundColor: '#eee',
         },
         labelStyle: {
-            fontSize: 14,
+            fontSize: 12,
         },
     },
 });

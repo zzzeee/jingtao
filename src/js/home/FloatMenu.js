@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import lang from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color } from '../public/globalStyle';
 
@@ -36,32 +36,35 @@ export default class FloatMenu extends Component {
         this.state = {
         };
         this.renderObject = this.renderObject.bind(this);
+        this.buttons = [{
+            'title' : '',
+            'icon' : require('../../images/share.png'),
+            'detail' : '',
+            'press' : null,
+        }, {
+            'title' : Lang['cn']['sellSpecialty'],
+            'icon' : require('../../images/partner.png'),
+            'detail' : Lang['cn']['sellSpecialty_txt'],
+            'press' : null,
+        }, {
+            'title' : '',
+            'icon' : require('../../images/hide.png'),
+            'detail' : '',
+            'press' : null,
+        }];
     }
 
     render() {
         if(!this.props.nativeEvent || !this.props.cityName) return null;
 
-        let buttons = [{
-            'title' : lang['cn']['shareCity'].replace(/%s/, this.props.cityName),
-            'icon' : require('../../images/share.png'),
-            'detail' : '',
-            'press' : null,
-        }, {
-            'title' : lang['cn']['sellSpecialty'],
-            'icon' : require('../../images/partner.png'),
-            'detail' : lang['cn']['sellSpecialty_txt'],
-            'press' : null,
-        }, {
-            'title' : lang['cn']['hide'].replace(/%s/, this.props.cityName),
-            'icon' : require('../../images/hide.png'),
-            'detail' : lang['cn']['hide_txt'].replace(/%s/, this.props.cityName),
-            'press' : null,
-        }];
+        this.buttons[0]['title'] = str_replace(Lang['cn']['shareCity'], this.props.cityName);
+        this.buttons[2]['title'] = str_replace(Lang['cn']['hide'], this.props.cityName);
+        this.buttons[2]['detail'] = str_replace(Lang['cn']['hide_txt'], this.props.cityName);
 
         let localY = this.props.nativeEvent.locationY || 0;
         let pageY = this.props.nativeEvent.pageY || 0;
         let btnSize = this.props.btnSize || 0;
-        let menuH = buttons.length * itemH;
+        let menuH = this.buttons.length * itemH;
         let sHeight = Size.height - 80;
         let top = 0, arrowUp = false;
         let offsetY = btnSize - localY;
@@ -79,9 +82,9 @@ export default class FloatMenu extends Component {
                 visible={this.props.visible}
                 onRequestClose={() => {}}
             >
-                <TouchableOpacity style={styles.btnBody} onPress={this.props.hideMenu} >
+                <TouchableOpacity style={styles.btnBody} onPress={this.props.hideMenu} onLongPress={this.props.hideMenu} >
                     <View style={[styles.shareBox, {top : top}]}>
-                        {buttons.map((tab, i) => this.renderObject(tab, i))}
+                        {this.buttons.map((tab, i) => this.renderObject(tab, i))}
                     </View>
                 </TouchableOpacity>
             </Modal>

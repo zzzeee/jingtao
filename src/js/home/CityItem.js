@@ -13,6 +13,10 @@ import BtnIcon from '../public/BtnIcon';
 import FloatMenu from './FloatMenu';
 
 export default class CityItem extends Component {
+    // 默认参数
+    static defaultProps = {
+        city: {},
+    };
     // 参数类型
     static propTypes = {
         city: React.PropTypes.object.isRequired,
@@ -31,13 +35,25 @@ export default class CityItem extends Component {
 
     componentWillMount() {
         if(this.props.city) {
-            let list = this.props.city.proAdsAry || [];
+            this.initDatas(this.props.city);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.city != this.props.city) {
+            this.initDatas(nextProps.city);
+        }
+    }
+
+    initDatas = (city) => {
+        if(typeof(city) == 'object') {
+            let list = city.proAdsAry || [];
             this.setState({
-                datas: this.props.city,
+                datas: city,
                 dataSource: this.state.dataSource.cloneWithRows(list),
             });
         }
-    }
+    };
 
     render() {
         if(!this.state.datas) return null;
@@ -69,10 +85,12 @@ export default class CityItem extends Component {
                 </View>
                 <ListView
                     horizontal={true}
+                    initialListSize={2}
                     enableEmptySections={true} 
                     style={styles.listViewStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this._renderItem}
+                    showsHorizontalScrollIndicator={false}
                 />
                 <View style={styles.cityItemFootBox}>
                     <BtnIcon 
@@ -110,7 +128,15 @@ export default class CityItem extends Component {
     }
 
     _renderItem = (obj, sessonid, rowid) => {
+        let type = obj.num || 0;
         let gimg = obj.gThumbPic || '';
+        let name = obj.gName || '';
+        let gPrice = obj.gPrices || '';
+        let dPrice = obj.gDiscountPrice || '';
+        if(type == 0) {
+            let aimg = obj.adImg || '';
+            if(aimg) gimg = aimg;
+        }
 
         return (
             <View key={rowid} style={styles.productBox}>
@@ -120,12 +146,15 @@ export default class CityItem extends Component {
                     }
                 </View>
                 <View>
-                    <Text style={styles.goodNameText} numberOfLines={1}>{obj.gName}</Text>
+                    <Text style={styles.goodNameText} numberOfLines={1}>{name}</Text>
                 </View>
                 <View style={styles.gPriceBox}>
-                    <Text style={styles.priceFH}>¥</Text>
-                    <Text style={styles.gprice1}>{obj.gDiscountPrice}</Text>
-                    <Text style={styles.gprice2}>{obj.gPrices}</Text>
+                    {dPrice ?
+                        <Text style={styles.priceFH}>¥</Text>
+                        : null
+                    }
+                    <Text style={styles.gprice1}>{dPrice}</Text>
+                    <Text style={styles.gprice2}>{gPrice}</Text>
                 </View>
             </View>
         );

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import Util from '../public/utils';
-import urls from '../public/apiUrl';
+import Urls from '../public/apiUrl';
 import HeadBox from './HeadBox';
 import CityItem from './CityItem';
 
@@ -36,6 +36,12 @@ export default class CityList extends Component {
         this.initDatas(this.props.pid);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.isUpdate) {
+            this.initDatas(nextProps.pid);
+        }
+    }
+    
     shouldComponentUpdate(nextProps, nextState) {
         if(nextProps.isUpdate && nextState != this.state) {
             return true;
@@ -48,12 +54,15 @@ export default class CityList extends Component {
     initDatas = (id) => {
         let that = this;
         if(id > 0) {
-            Util.fetch(urls.getCityAndProduct, 'post', {
+            // console.time('开始获取数据');
+            Util.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id,
             }, function(result) {
                 if(result && result.sTatus) {
                     let ret = result.provinceAry || {};
                     let list = ret.cityProduct || [];
+                    // console.log(ret);
+                    // console.time('开始获取数据');
                     that.setState({
                         datas: ret,
                         dataSource: that.state.dataSource.cloneWithRows(list),
@@ -65,9 +74,9 @@ export default class CityList extends Component {
 
     render() {
         if(!this.state.datas) return null;
-        
         return (
             <ListView
+                initialListSize={2}
                 style={styles.listViewStyle}
                 enableEmptySections={true}
                 dataSource={this.state.dataSource}
