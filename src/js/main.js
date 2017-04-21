@@ -21,7 +21,7 @@ import {
 
 import BtnIcon from './public/BtnIcon';
 import Lang from './public/language';
-import { Color, Size } from './public/globalStyle';
+import { Color, Size, PX } from './public/globalStyle';
 
 import Home from './home/';
 import Find from './find/';
@@ -80,7 +80,7 @@ const HomeTab = StackNavigator({
             header: ({ state, setParams }) => ({
                 title: (
                     <View style={styles.headerTitle}>
-                        <BtnIcon width={100} src={require("../images/logoTitle.png")} />
+                        <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
                     </View>
                 ),
                 left: (<Text></Text>),
@@ -98,7 +98,15 @@ const FindTab = StackNavigator({
     Find: {
         screen: FindScreen,
         navigationOptions: {
-            title: '发现',
+            header: ({ state, setParams }) => ({
+                title: (
+                    <View style={styles.headerTitle}>
+                        <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
+                    </View>
+                ),
+                left: (<Text></Text>),
+                right: (<BtnIcon style={styles.btnRight} width={22} src={require("../images/search.png")} />),
+            }),
         },
     },
     FindTest: {
@@ -216,11 +224,12 @@ const TabNavs = TabNavigator({
         },
     }
 }, {
+    swipeEnabled: false,
     tabBarPosition: 'bottom',
     tabBarOptions: {
         showIcon: true,
         activeTintColor: Color.statusBarColor,      // 选中颜色
-        inactiveTintColor: Color.appColor8,         // 未选中颜色
+        inactiveTintColor: Color.lightBack,         // 未选中颜色
         style: {
             backgroundColor: '#eee',
         },

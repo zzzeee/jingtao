@@ -7,9 +7,10 @@ import {
     ListView,
 } from 'react-native';
 
-import { Size } from '../public/globalStyle';
+import { Size, Color } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
+import ProductItem from '../public/ProductItem';
 import FloatMenu from './FloatMenu';
 
 export default class CityItem extends Component {
@@ -80,7 +81,7 @@ export default class CityItem extends Component {
                     }} />
                 </View>
                 <View style={styles.cityTitleRow}>
-                    <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
+                    <Text style={styles.cityTitleText} numberOfLines={4}>{info}</Text>
                     <Image source={{uri: img}} style={styles.cityImage} />
                 </View>
                 <ListView
@@ -95,19 +96,22 @@ export default class CityItem extends Component {
                 <View style={styles.cityItemFootBox}>
                     <BtnIcon 
                         width={16}
-                        color="#555"
+                        size={13}
+                        color={Color.lightBack}
                         src={img_enter}
                         text={lang['cn']['goin'] + name}
                     />
                     <BtnIcon
                         width={16}
-                        color="#555"
+                        size={13}
+                        color={Color.lightBack}
                         src={img_mark}
                         text={lang['cn']['allSeller']}
                     />
                     <BtnIcon
                         width={16}
-                        color="#555"
+                        size={13}
+                        color={Color.lightBack}
                         src={img_share}
                         text={lang['cn']['sharePruduct']}
                     />
@@ -128,36 +132,7 @@ export default class CityItem extends Component {
     }
 
     _renderItem = (obj, sessonid, rowid) => {
-        let type = obj.num || 0;
-        let gimg = obj.gThumbPic || '';
-        let name = obj.gName || '';
-        let gPrice = obj.gPrices || '';
-        let dPrice = obj.gDiscountPrice || '';
-        if(type == 0) {
-            let aimg = obj.adImg || '';
-            if(aimg) gimg = aimg;
-        }
-
-        return (
-            <View key={rowid} style={styles.productBox}>
-                <View style={styles.gImageBox}>
-                    {gimg ?
-                        <Image source={{uri: gimg}} style={styles.gImageStyle} /> : null
-                    }
-                </View>
-                <View>
-                    <Text style={styles.goodNameText} numberOfLines={1}>{name}</Text>
-                </View>
-                <View style={styles.gPriceBox}>
-                    {dPrice ?
-                        <Text style={styles.priceFH}>¥</Text>
-                        : null
-                    }
-                    <Text style={styles.gprice1}>{dPrice}</Text>
-                    <Text style={styles.gprice2}>{gPrice}</Text>
-                </View>
-            </View>
-        );
+        return <ProductItem product={obj} _key={rowid} boxStyle={{margin: 10}} />
     };
 }
 
@@ -179,7 +154,8 @@ var styles = StyleSheet.create({
         paddingRight: 10,
     },
     cityNameText: {
-        fontSize: 20,
+        fontSize: 17,
+        color: Color.lightBack,
     },
     cityTitleRow: {
         height: 60,
@@ -191,8 +167,9 @@ var styles = StyleSheet.create({
     },
     cityTitleText: {
         flex: 3,
-        fontSize: 13,
+        fontSize: 11,
         paddingRight: 10,
+        color: Color.gainsboro,
     },
     headDownIcon: {
         width: 22,
@@ -200,46 +177,7 @@ var styles = StyleSheet.create({
     },
     cityImage: {
         flex: 1,
-        height: 40,
-    },
-    productBox: {
-        width: 120,
-        height: 180,
-        margin: 10,
-        borderWidth : 1,
-        borderColor : '#ccc',
-    },
-    gImageBox: {
-        borderBottomColor : '#ccc',
-        borderBottomWidth : 1,
-    },
-    gImageStyle: {
-        width : 118,
-        height: 118,
-    },
-    goodNameText: {
-        padding: 5,
-        fontSize: 13,
-    },
-    gPriceBox: {
-        height: 27,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    priceFH: {
-        fontSize : 12,
-        color : 'red',
-        paddingLeft: 5,
-    },
-    gprice1: {
-        fontSize: 18,
-        color: 'red',
-    },
-    gprice2: {
-        fontSize: 12,
-        color: '#888',
-        paddingLeft: 5,
-        textDecorationLine: 'line-through',
+        height: 60,
     },
     cityItemFootBox: {
         width: Size.width - 30,
@@ -249,10 +187,10 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 15,
         borderTopWidth: 1,
-        borderTopColor : '#ddd',
+        borderTopColor : Color.lavender,
     },
     buttonText: {
         fontSize: 14,
-        color: '#555',
+        color: Color.lightBack,
     },
 });

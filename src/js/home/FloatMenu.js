@@ -133,7 +133,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         borderWidth: pixel,
-        borderColor: Color.appColor13,
+        borderColor: Color.lavender,
         borderRadius: 5,
     },
     icon: {
@@ -150,10 +150,10 @@ var styles = StyleSheet.create({
     bigText: {
         alignItems: 'center',
         fontSize: 15,
-        color: Color.appColor8,
+        color: Color.lightBack,
     },
     smallText: {
         fontSize: 12,
-        color: Color.appColor9,
+        color: Color.gainsboro,
     },
 });

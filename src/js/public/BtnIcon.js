@@ -18,6 +18,7 @@ export default class BtnIcon extends Component {
     static defaultProps = {
         size: 14,
         color: '#4A4A4A',
+        resizeMode: Image.resizeMode.contain,
     };
     // 参数类型
     static propTypes = {
@@ -40,10 +41,10 @@ export default class BtnIcon extends Component {
         return (
             <TouchableOpacity style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
                 {this.props.src ? 
-                    <Image source={this.props.src} resizeMode='contain' style={{
+                    <Image source={this.props.src} resizeMode={this.props.resizeMode} style={[{
                         width: width,
                         height: height,
-                    }} />
+                    }, this.props.imageStyle]} />
                     : null
                 }
                 {this.props.text ? 

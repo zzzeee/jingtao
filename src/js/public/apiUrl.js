@@ -12,6 +12,6 @@ var urls = {
     getCityAndProduct: host + '/api/IndexNController/getProvincialInformationAndCities',
 };
 
-//urls.homeMap = 'http://ceshi.ub33.cn/newmap/index.html';
+urls.homeMap = 'http://ceshi.ub33.cn/newmap/index.html';
 
 export default urls;

@@ -14,12 +14,14 @@ const language = {
         goin: '进入',
         allSeller: '所有商家',
         sharePruduct: '分享特产',
-        previewing: '正在浏览·%s馆',
+        previewing: '正在浏览·%s',
         shareCity: '分享%s特产',
         sellSpecialty: '我要卖特产',
         sellSpecialty_txt: '联系我们卖出更多特产',
         hide: '隐藏%s',
         hide_txt: '在首页隐藏%s信息',
+        discount: '%s折',
+        guan: '馆',
     },
 };
 

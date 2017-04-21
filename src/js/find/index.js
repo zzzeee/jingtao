@@ -13,7 +13,8 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 import Urls from '../public/apiUrl';
-import { Size } from '../public/globalStyle';
+import { Size, Color } from '../public/globalStyle';
+import PanicBuying from "./PanicBuying";
 
 export default class FindScreen extends Component {
     constructor(props) {
@@ -24,12 +25,17 @@ export default class FindScreen extends Component {
 
     render() {
         return (
-            <View>
-                <Text>发现</Text>
+            <View style={styles.container}>
+                <PanicBuying />
             </View>
         );
     }
 }
 
 var styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 10,
+        backgroundColor: Color.lightGrey,
+    },
 });

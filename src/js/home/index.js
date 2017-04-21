@@ -12,18 +12,20 @@ import {
     View,
     Text,
     Animated,
+    Button,
+    Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import { StackNavigator } from 'react-navigation';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
-import { Size, pixel } from '../public/globalStyle';
+import { Size, pixel, PX, Color } from '../public/globalStyle';
 import CityList from './CityList';
 
 var mapWidth = Size.width;
 var mapHeight = Size.height * 0.5;
-var headHeight = 56;
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -39,13 +41,18 @@ export default class HomeScreen extends Component {
         this.showStart = false;
     }
 
+    componentDidMount() {
+        this.getDatas(31, 'componentDidMount调用');
+    }
+
     render() {
+        //console.log('jingtao/js/home/index.js');
         let _scrollview = null;
         return (
             <View style={styles.flex}>
                 <View style={styles.headView}>
                     <Text style={{width: 40}}>{null}</Text>
-                    <BtnIcon width={100} height={headHeight} src={require("../../images/logoTitle.png")} />
+                    <BtnIcon width={100} height={PX.headHeight - 10} imageStyle={{marginTop: 10}} src={require("../../images/logoTitle.png")} />
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </View>
                 <Animated.View style={[styles.hideHead, {
@@ -53,29 +60,28 @@ export default class HomeScreen extends Component {
                 }]}>
                     <BtnIcon 
                         style={styles.btnLeft} 
-                        width={22} 
+                        width={23} 
                         src={require("../../images/logo.png")} 
                         press={()=>{this.scrollStart(_scrollview)}}
                     />
-                    <Text 
-                        style={styles.headTitle}
-                        onPress={()=>{this.scrollStart(_scrollview)}}
-                    >
-                        {str_replace(Lang['cn']['previewing'], this.state.provinceName)}
-                    </Text>
+                    <TouchableOpacity style={styles.titleTextBox} onPress={()=>{this.scrollStart(_scrollview)}}>
+                        <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
+                        <Text style={styles.headTitle2}>{Lang['cn']['guan'] + this.state.provinceName}</Text>
+                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} />
+                    </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </Animated.View>
                 <ScrollView ref={(_ref)=>_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
                     <View style={styles.webViewSize}>
                         <WebView
-                            javaScriptEnabled={true}
+                            // javaScriptEnabled={true}
                             scalesPageToFit={false}
-                            //source={{uri: Urls.homeMap}}
-                            source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
+                            source={{uri: Urls.homeMap}}
+                            // source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
-                            onNavigationStateChange={(navState) =>console.log(navState)}
+                            //onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
                     <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} datas={this.state.datas} />
@@ -94,7 +100,7 @@ export default class HomeScreen extends Component {
                     updateData: false,
                 });
                 Animated.spring(this.state.heightValue, {
-                    toValue: (headHeight - 1),
+                    toValue: (PX.headHeight - 1),
                     friction: 7,
                     tension: 30,
                 }).start();
@@ -116,41 +122,50 @@ export default class HomeScreen extends Component {
         }
     };
 
-    _onMessage = async (e) => {
+    _onMessage = (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
         let id = data.id || 0;
         let name = data.name || '';
-        console.log(data);
+        //console.log(data);
         if(id > 0 && id != this.state.provinceID) {
-            let ret = await this.getDatas(id);
-            this.setState({
-                provinceID: id,
-                provinceName: name,
-                updateData: true,
-                datas: ret,
-            });
+            this.getDatas(id, 'onMessage调用');
         }
     };
 
     // 注意这个方法前面有async关键字
-    getDatas = async (id) => {
+    getDatas = (id, txt) => {
         try {
-            // 注意这里的await语句，其所在的函数必须有async关键字声明
-            // console.group('async');
+            // console.group('获取省份数据');
             // console.time('测试时间');
-            let response = await fetch(Urls.getCityAndProduct, {
+            // console.log(txt);
+            // console.log('开始时间：' + new Date());
+            fetch(Urls.getCityAndProduct, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: 'pID=' + id
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                // console.log(responseJson);
+                // console.log('结束时间：' + new Date());
+                // console.timeEnd('测试时间');
+                // console.groupEnd('获取省份数据');
+                if(responseJson && responseJson.provinceAry) {
+                    let name = responseJson.provinceAry.region_name || '';
+                    this.setState({
+                        provinceID: id,
+                        provinceName: name,
+                        updateData: true,
+                        datas: responseJson.provinceAry,
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
             });
-            let responseJson = await response.json();
-            // console.log(responseJson);
-            // console.timeEnd('测试时间');
-            // console.groupEnd('async');
-            return responseJson.provinceAry;
         } catch(error) {
             console.error(error);
         }
@@ -173,9 +188,13 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#fff',
-        height: headHeight,
+        height: PX.headHeight,
         borderBottomWidth: pixel,
         borderBottomColor: '#ccc',
+        shadowColor: "#000",
+        shadowOpacity: 0.6,
+        shadowRadius: 0.5,
+        shadowOffset: {"height": 0.5},
     },
     hideHead: {
         flexDirection: 'row',
@@ -188,8 +207,19 @@ var styles = StyleSheet.create({
         top: 0,
         zIndex: 999,
     },
-    headTitle: {
-        color: '#ccc',
+    titleTextBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    headTitle1: {
+        color: Color.gainsboro,
+        fontSize: 12,
+        paddingRight: 2,
+    },
+    headTitle2: {
+        color: Color.lightBack,
+        fontSize: 13,
     },
     btnLeft: {
         paddingLeft: 10,

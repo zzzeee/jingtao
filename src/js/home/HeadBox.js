@@ -11,7 +11,7 @@ import {
 import Util from '../public/utils';
 import urls from '../public/apiUrl';
 import lang from '../public/language';
-import { Size } from '../public/globalStyle';
+import { Size, Color } from '../public/globalStyle';
 import BtnIcon from '../public/BtnIcon';
 
 export default class HeadBox extends Component {
@@ -88,7 +88,7 @@ export default class HeadBox extends Component {
                 marginLeft: this.state.datas.cityProduct.length == 1 ? 25 : 10,
             }]}>
                 <View style={styles.cityHead}>
-                    <Text>{name}</Text>
+                    <Text style={{color: Color.lightBack,}}>{name}</Text>
                     <BtnIcon width={20} src={img_down} />
                 </View>
                 <Image source={{uri: cimg}} style={styles.cityImage} />
@@ -108,11 +108,12 @@ var styles = StyleSheet.create({
         flex : 1,
     },
     bigText : {
-        fontSize : 22,
+        fontSize : 20,
+        paddingBottom: 5,
         color: '#fff'
     },
     smlText : {
-        fontSize : 13,
+        fontSize : 12,
         color: '#fff'
     },
     firstRowImage: {
@@ -145,12 +146,5 @@ var styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         paddingTop: 4,
-    },
-    icon: {
-        width: 22,
-        height: 22,
-    },
-    buttonText: {
-        color: '#555',
     },
 });
