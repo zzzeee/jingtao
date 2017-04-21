@@ -32,7 +32,7 @@ export const FontSize = {
 
 //APP样式颜色
 export const Color = {
-    statusBarColor : '#E55645', //主色
+    mainColor : '#E55645', //主色
     yellow: '#FFCF5B',
     orange: '#FA903C',
     orangeRed: '#E55645',

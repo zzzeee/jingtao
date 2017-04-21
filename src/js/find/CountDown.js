@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { Size, Color } from '../public/globalStyle';
+import Lang from '../public/language';
 
 export default class CountDown extends Component {
     constructor(props) {
@@ -52,17 +53,17 @@ export default class CountDown extends Component {
         let minuteItem = this.create_item(this.state.minutes);
         //秒数模块
         let secondItem = this.create_item(this.state.seconds);
-
         return (
-            <View>
+            <View style={styles.container}>
+                <Text style={styles.txtSurplus}>{Lang.cn.Surplus}</Text>
                 {dayItem}
-                {dayItem ? <Text>天</Text> : null}
+                {dayItem ? <Text style={styles.numberUnit}>{Lang.cn.day}</Text> : null}
                 {hourItem}
-                {hourItem ? <Text>时</Text> : null}
+                {hourItem ? <Text style={styles.numberUnit}>{Lang.cn.hour}</Text> : null}
                 {minuteItem}
-                {minuteItem ? <Text>分</Text> : null}
+                {minuteItem ? <Text style={styles.numberUnit}>{Lang.cn.minute}</Text> : null}
                 {secondItem}
-                {secondItem ? <Text>秒</Text> : null}
+                {secondItem ? <Text style={styles.numberUnit}>{Lang.cn.second}</Text> : null}
             </View>
         );
     }
@@ -71,13 +72,21 @@ export default class CountDown extends Component {
         if(number) {
             let list = [];
             for(let n in number) {
-                if(number[n]) list.push(number[n]);
+                if(!isNaN(Number(n))) {
+                    let num = Number(number[n]) || 0;
+                    num = isNaN(num) ? 0 : num;
+                    if(num > 0 || (num == 0 && list.length > 0) || number == this.state.seconds) {
+                        list.push(num);
+                    }
+                }
             }
-            let item = list.map((n, i)=>{
-                return <View key={i}><Text>{n}</Text></View>;
-            });
-            
-            return item;
+
+            if(list.length > 0) {
+                let item = list.map((n, i)=>{
+                    return <Text key={i} style={styles.numberBlock}>{n}</Text>;
+                });
+                return item;
+            }
         }
         return null;
     };
@@ -108,11 +117,10 @@ export default class CountDown extends Component {
                     hours: new String(hours),
                     minutes: new String(minutes),
                     seconds: new String(seconds),
-                }, () => {
-                    that.timer = setTimeout(() => { 
-                        return this.calculationTime(etime);
-                    }, 1000);
                 });
+                that.timer = setTimeout(() => { 
+                    that.calculationTime(etime);
+                }, 999);
             }
         }else {
             this.setState({animate: false});
@@ -123,7 +131,29 @@ export default class CountDown extends Component {
 var styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 10,
-        backgroundColor: Color.lightGrey,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    txtSurplus: {
+        fontSize: 16,
+        paddingRight: 5,
+        color: Color.mainColor,
+    },
+    numberBlock: {
+        color: '#fff',
+        backgroundColor: Color.red,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 1,
+        paddingBottom: 1,
+        fontSize: 12,
+        margin: 2,
+        borderRadius: 2,
+        fontWeight: 'bold'
+    },
+    numberUnit: {
+        fontSize: 12,
+        marginRight: 2,
     },
 });

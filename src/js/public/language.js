@@ -22,6 +22,11 @@ const language = {
         hide_txt: '在首页隐藏%s信息',
         discount: '%s折',
         guan: '馆',
+        day: '天',
+        hour: '时',
+        minute: '分',
+        second: '秒',
+        Surplus: '剩余',
     },
 };
 

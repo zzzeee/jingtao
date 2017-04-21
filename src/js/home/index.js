@@ -66,7 +66,7 @@ export default class HomeScreen extends Component {
                     />
                     <TouchableOpacity style={styles.titleTextBox} onPress={()=>{this.scrollStart(_scrollview)}}>
                         <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
-                        <Text style={styles.headTitle2}>{Lang['cn']['guan'] + this.state.provinceName}</Text>
+                        <Text style={styles.headTitle2}>{this.state.provinceName + Lang['cn']['guan']}</Text>
                         <BtnIcon width={16} src={require("../../images/sanjiao.png")} />
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />

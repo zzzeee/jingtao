@@ -12,11 +12,13 @@ import Lang, { str_replace } from './language';
 export default class ProductItem extends Component {
     // 默认参数
     static defaultProps = {
+        width: PX.productWidth,
         product: null,
         showDiscount: false,
     };
     // 参数类型
     static propTypes = {
+        width: React.PropTypes.number,
         product: React.PropTypes.object,
         showDiscount: React.PropTypes.bool,
     };
@@ -36,16 +38,19 @@ export default class ProductItem extends Component {
         }
 
         return (
-            <View key={this.props._key} style={[styles.productBox, this.props.boxStyle]}>
+            <View key={this.props._key} style={[styles.productBox, {width: this.props.width},this.props.boxStyle]}>
                 <View style={styles.gImageBox}>
                     {gimg ?
-                        <Image source={{uri: gimg}} style={styles.gImageStyle} /> : null
+                        <Image source={{uri: gimg}} style={{
+                            width: this.props.width - 2,
+                            height: this.props.width - 2,
+                        }} /> : null
                     }
                 </View>
                 <View>
-                    <Text style={styles.goodNameText} numberOfLines={1}>{name}</Text>
+                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={2}>{name}</Text>
                 </View>
-                <View style={styles.gPriceBox}>
+                <View style={[styles.gPriceBox, this.props.goodPriceStyle]}>
                     {dPrice ?
                         <Text style={styles.priceFH}>¥</Text>
                         : null
@@ -66,8 +71,6 @@ export default class ProductItem extends Component {
 
 var styles = StyleSheet.create({
     productBox: {
-        width: PX.productWidth,
-        height: PX.productHeight,
         borderWidth : 1,
         borderColor : Color.lavender,
     },
@@ -75,16 +78,12 @@ var styles = StyleSheet.create({
         borderBottomColor : Color.lavender,
         borderBottomWidth : 1,
     },
-    gImageStyle: {
-        width : PX.productImgWidth - 2,
-        height: PX.productImgHeight - 2,
-    },
     goodNameText: {
-        padding: 5,
-        fontSize: 12,
+        padding: 2,
+        fontSize: 11,
+        height: 30,
     },
     gPriceBox: {
-        height: 27,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -110,7 +109,7 @@ var styles = StyleSheet.create({
         paddingLeft: 5,
     },
     gprice1: {
-        fontSize: 15,
+        fontSize: 16,
         color: Color.red,
     },
     gprice2: {

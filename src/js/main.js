@@ -228,8 +228,8 @@ const TabNavs = TabNavigator({
     tabBarPosition: 'bottom',
     tabBarOptions: {
         showIcon: true,
-        activeTintColor: Color.statusBarColor,      // 选中颜色
-        inactiveTintColor: Color.lightBack,         // 未选中颜色
+        activeTintColor: Color.mainColor,      // 选中颜色
+        inactiveTintColor: Color.lightBack,    // 未选中颜色
         style: {
             backgroundColor: '#eee',
         },
