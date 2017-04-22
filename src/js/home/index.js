@@ -25,7 +25,7 @@ import { Size, pixel, PX, Color } from '../public/globalStyle';
 import CityList from './CityList';
 
 var mapWidth = Size.width;
-var mapHeight = Size.height * 0.5;
+var mapHeight = Size.width - 10;
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -67,7 +67,7 @@ export default class HomeScreen extends Component {
                     <TouchableOpacity style={styles.titleTextBox} onPress={()=>{this.scrollStart(_scrollview)}}>
                         <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
                         <Text style={styles.headTitle2}>{this.state.provinceName + Lang['cn']['guan']}</Text>
-                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} />
+                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={()=>{this.scrollStart(_scrollview)}} />
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </Animated.View>
@@ -75,7 +75,7 @@ export default class HomeScreen extends Component {
                     <View style={styles.webViewSize}>
                         <WebView
                             // javaScriptEnabled={true}
-                            scalesPageToFit={false}
+                            scalesPageToFit={true}
                             source={{uri: Urls.homeMap}}
                             // source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
                             style={styles.webViewSize}
@@ -125,8 +125,7 @@ export default class HomeScreen extends Component {
     _onMessage = (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
         let id = data.id || 0;
-        let name = data.name || '';
-        //console.log(data);
+        console.log(data);
         if(id > 0 && id != this.state.provinceID) {
             this.getDatas(id, 'onMessage调用');
         }

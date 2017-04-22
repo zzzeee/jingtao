@@ -143,11 +143,11 @@ var styles = StyleSheet.create({
     numberBlock: {
         color: '#fff',
         backgroundColor: Color.red,
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 1,
-        paddingBottom: 1,
-        fontSize: 12,
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingLeft: 3,
+        paddingRight: 3,
+        fontSize: 14,
         margin: 2,
         borderRadius: 2,
         fontWeight: 'bold'

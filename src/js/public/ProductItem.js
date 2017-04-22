@@ -12,13 +12,14 @@ import Lang, { str_replace } from './language';
 export default class ProductItem extends Component {
     // 默认参数
     static defaultProps = {
-        width: PX.productWidth,
+        width: PX.productWidth1,
         product: null,
         showDiscount: false,
     };
     // 参数类型
     static propTypes = {
         width: React.PropTypes.number,
+        bottomHeight: React.PropTypes.number,
         product: React.PropTypes.object,
         showDiscount: React.PropTypes.bool,
     };
@@ -48,7 +49,9 @@ export default class ProductItem extends Component {
                     }
                 </View>
                 <View>
-                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={2}>{name}</Text>
+                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={2}>
+                        {name}
+                    </Text>
                 </View>
                 <View style={[styles.gPriceBox, this.props.goodPriceStyle]}>
                     {dPrice ?
@@ -73,19 +76,23 @@ var styles = StyleSheet.create({
     productBox: {
         borderWidth : 1,
         borderColor : Color.lavender,
+        borderRadius: 2,
     },
     gImageBox: {
         borderBottomColor : Color.lavender,
         borderBottomWidth : 1,
     },
     goodNameText: {
-        padding: 2,
+        paddingLeft: 2,
+        paddingRight: 2,
         fontSize: 11,
-        height: 30,
+        lineHeight: 20,
+        height: 38,
     },
     gPriceBox: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 2
     },
     discountView: {
         height: 18,
@@ -106,16 +113,17 @@ var styles = StyleSheet.create({
     priceFH: {
         fontSize : 12,
         color : Color.red,
-        paddingLeft: 5,
+        paddingLeft: 2,
     },
     gprice1: {
-        fontSize: 16,
+        fontSize: 18,
         color: Color.red,
     },
     gprice2: {
-        fontSize: 11,
+        fontSize: 12,
         color: Color.gainsboro,
         paddingLeft: 5,
+        paddingTop: 5,
         textDecorationLine: 'line-through',
     },
 });

@@ -18,10 +18,7 @@ export const pixel = 1 / PixelRatio.get();
 
 //其他样式尺寸
 export const PX = {
-    productWidth: 120,
-    productHeight: 180,
-    productImgWidth: 120,
-    productImgHeight: 120,
+    productWidth1: 160,
     headHeight: 56,
 };
 

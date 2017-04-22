@@ -81,7 +81,7 @@ export default class CityItem extends Component {
                     }} />
                 </View>
                 <View style={styles.cityTitleRow}>
-                    <Text style={styles.cityTitleText} numberOfLines={4}>{info}</Text>
+                    <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
                     <Image source={{uri: img}} style={styles.cityImage} />
                 </View>
                 <ListView
@@ -168,8 +168,9 @@ var styles = StyleSheet.create({
     cityTitleText: {
         flex: 3,
         fontSize: 11,
-        paddingRight: 10,
+        paddingRight: 8,
         color: Color.gainsboro,
+        lineHeight: 20,
     },
     headDownIcon: {
         width: 22,
