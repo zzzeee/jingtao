@@ -12,6 +12,7 @@ import {
     View,
     Text,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import { 
@@ -20,8 +21,8 @@ import {
 } from 'react-navigation';
 
 import BtnIcon from './public/BtnIcon';
-import Lang from './public/language';
-import { Color, Size, PX } from './public/globalStyle';
+import Lang, {str_replace} from './public/language';
+import { Color, Size, PX, pixel } from './public/globalStyle';
 
 import Home from './home/';
 import Find from './find/';
@@ -54,7 +55,7 @@ const PersonalScreen = ({ navigation }) => (
 const MyNavScren = ({navigation, NavScreen}) => {
     return (
         <View style={styles.flex}>
-            <StatusBar backgroundColor={Color.statusBarColor} barStyle="light-content" />
+            <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
             <View style={styles.container}>
                 <NavScreen navigation={navigation} />
             </View>
@@ -77,20 +78,40 @@ const HomeTab = StackNavigator({
     Home: {
         screen: HomeScreen,
         navigationOptions: {
-            header: ({ state, setParams }) => ({
-                title: (
-                    <View style={styles.headerTitle}>
-                        <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
-                    </View>
-                ),
-                left: (<Text></Text>),
-                right: (<BtnIcon style={styles.btnRight} width={22} src={require("../images/search.png")} />),
-            }),
+            header: ({ state, setParams }) => {
+                let head = {
+                    title: (
+                        <View style={styles.headerTitle}>
+                            <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
+                        </View>
+                    ),
+                    left: (<Text></Text>),
+                    right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/search.png")} />),
+                    style: {
+                        height: PX.headHeight,
+                    },
+                };
+
+                let name = (state.params && state.params.name) ? state.params.name : null;
+                let showName = (state.params && state.params.showName) ? state.params.showName : false;
+                if(name && showName) {
+                    let gotoStart = state.params.gotoStart || null;
+                    head.title = (
+                        <TouchableOpacity style={styles.titleTextBox} onPress={gotoStart}>
+                            <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
+                            <Text style={styles.headTitle2}>{name + Lang.cn.guan}</Text>
+                            <BtnIcon width={16} src={require("../images/sanjiao.png")} press={gotoStart} />
+                        </TouchableOpacity>);
+                    head.left = <BtnIcon style={styles.btnLeft} width={PX.headIconSize} src={require("../images/logo.png")} press={gotoStart} />
+                }
+
+                return head;
+            },
         },
     },
 }, {
     initialRouteName: 'Home',
-    headerMode: 'none',
+    // headerMode: 'none',  //隐藏头部
 });
 
 // 发现集合
@@ -105,7 +126,10 @@ const FindTab = StackNavigator({
                     </View>
                 ),
                 left: (<Text></Text>),
-                right: (<BtnIcon style={styles.btnRight} width={22} src={require("../images/search.png")} />),
+                right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/search.png")} />),
+                style: {
+                    height: PX.headHeight,
+                },
             }),
         },
     },
@@ -125,6 +149,11 @@ const ClassTab = StackNavigator({
         screen: ClassScreen,
         navigationOptions: {
             title: '特产分类',
+            header: () => ({
+                style: {
+                    height: PX.headHeight,
+                },
+            }),
         },
     },
 }, {
@@ -137,12 +166,22 @@ const CarTab = StackNavigator({
         screen: CarScreen,
         navigationOptions: {
             title: '购物车',
+            header: () => ({
+                style: {
+                    height: PX.headHeight,
+                },
+            }),
         },
     },
     Clear: {
         screen: ClearScreen,
         navigationOptions: {
             title: '清空购物车',
+            header: () => ({
+                style: {
+                    height: PX.headHeight,
+                },
+            }),
         },
     },
 }, {
@@ -154,7 +193,32 @@ const PersonalTab = StackNavigator({
     Personal: {
         screen: PersonalScreen,
         navigationOptions: {
-            title: '个人中心',
+            header: ({ state, setParams }) => {
+                let head = {
+                    title: (
+                        <View style={styles.headerTitle}>
+                            <Text style={styles.whiteColor}>{Lang.cn.persional}</Text>
+                        </View>
+                    ),
+                    left: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/personal/config_white.png")} />),
+                    right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/personal/msg.png")} />),
+                    style: {
+                        height: PX.headHeight,
+                        backgroundColor: 'transparent',
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                    },
+                };
+
+                let changeBgColor = (state.params && state.params.changeBgColor) ? state.params.changeBgColor : false;
+                if(changeBgColor) {
+                    head.style.backgroundColor = Color.mainColor;
+                }
+
+                return head;
+            },
         },
     },
 }, {
@@ -167,7 +231,7 @@ const TabNavs = TabNavigator({
         screen: HomeTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang['cn']['tab_home'],
+                label: Lang.cn.tab_home,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -179,7 +243,7 @@ const TabNavs = TabNavigator({
         screen: FindTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang['cn']['tab_find'],
+                label: Lang.cn.tab_find,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -191,7 +255,7 @@ const TabNavs = TabNavigator({
         screen: ClassTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang['cn']['tab_class'],
+                label: Lang.cn.tab_car.tab_class,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -203,7 +267,7 @@ const TabNavs = TabNavigator({
         screen: CarTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang['cn']['tab_car'],
+                label: Lang.cn.tab_car,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -215,7 +279,7 @@ const TabNavs = TabNavigator({
         screen: PersonalTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang['cn']['tab_personal'],
+                label: Lang.cn.tab_personal,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -231,10 +295,16 @@ const TabNavs = TabNavigator({
         activeTintColor: Color.mainColor,      // 选中颜色
         inactiveTintColor: Color.lightBack,    // 未选中颜色
         style: {
-            backgroundColor: '#eee',
+            backgroundColor: '#fff',
+            height: PX.tabHeight,
+            borderTopWidth: pixel,
+            borderTopColor: Color.floralWhite,
         },
         labelStyle: {
-            fontSize: 12,
+            fontSize: 11,
+        },
+        indicatorStyle: {
+            height: 0,
         },
     },
 });
@@ -246,10 +316,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 20 : 0,
+        backgroundColor: Color.lightGrey,
+    },
+    whiteColor: {
+        color: '#fff',
     },
     tabIcon: {
-        width: 22,
-        height: 22,
+        width: PX.tabIconSize,
+        height: PX.tabIconSize,
     },
     headerTitle: {
         position: 'absolute',
@@ -261,6 +335,26 @@ const styles = StyleSheet.create({
     },
     btnRight: {
         paddingRight: 10,
+    },
+    titleTextBox: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    headTitle1: {
+        color: Color.gainsboro,
+        fontSize: 12,
+        paddingRight: 2,
+    },
+    headTitle2: {
+        color: Color.lightBack,
+        fontSize: 13,
+    },
+    btnLeft: {
+        paddingLeft: 10,
     },
 });
 

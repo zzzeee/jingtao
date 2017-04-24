@@ -25,7 +25,7 @@ import { Size, pixel, PX, Color } from '../public/globalStyle';
 import CityList from './CityList';
 
 var mapWidth = Size.width;
-var mapHeight = Size.width - 10;
+var mapHeight = Size.width - 15;
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -39,6 +39,7 @@ export default class HomeScreen extends Component {
         };
 
         this.showStart = false;
+        this.ref_scrollview = null;
     }
 
     componentDidMount() {
@@ -46,10 +47,10 @@ export default class HomeScreen extends Component {
     }
 
     render() {
-        //console.log('jingtao/js/home/index.js');
         let _scrollview = null;
         return (
             <View style={styles.flex}>
+                {/*
                 <View style={styles.headView}>
                     <Text style={{width: 40}}>{null}</Text>
                     <BtnIcon width={100} height={PX.headHeight - 10} imageStyle={{marginTop: 10}} src={require("../../images/logoTitle.png")} />
@@ -71,17 +72,18 @@ export default class HomeScreen extends Component {
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </Animated.View>
-                <ScrollView ref={(_ref)=>_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
+                 */}
+                <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
                     <View style={styles.webViewSize}>
                         <WebView
-                            // javaScriptEnabled={true}
+                            javaScriptEnabled={true}
                             scalesPageToFit={true}
                             source={{uri: Urls.homeMap}}
                             // source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
-                            //onNavigationStateChange={(navState) =>console.log(navState)}
+                            onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
                     <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} datas={this.state.datas} />
@@ -93,17 +95,26 @@ export default class HomeScreen extends Component {
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let showHeight = mapHeight * 0.7;
+        let { setParams } = this.props.navigation;
+
         if(offsetY > (mapHeight * 0.7)) {
             if(!this.showStart) {
                 this.showStart = true;
                 this.setState({
                     updateData: false,
                 });
-                Animated.spring(this.state.heightValue, {
-                    toValue: (PX.headHeight - 1),
-                    friction: 7,
-                    tension: 30,
-                }).start();
+                // Animated.spring(this.state.heightValue, {
+                //     toValue: (PX.headHeight - 1),
+                //     friction: 7,
+                //     tension: 30,
+                // }).start();
+                if(setParams) {
+                    setParams({
+                        name: this.state.provinceName,
+                        showName: true,
+                        gotoStart: this.scrollStart,
+                    });
+                }
             }
         }else if(offsetY < (mapHeight * 0.3)) {
             if(this.showStart) {
@@ -111,21 +122,26 @@ export default class HomeScreen extends Component {
                 this.setState({
                     updateData: false,
                 });
-                this.state.heightValue.setValue(0);
+                // this.state.heightValue.setValue(0);
+                if(setParams) {
+                    setParams({
+                        showName: false,
+                    });
+                }
             }
         }
     };
 
-    scrollStart = (scroll) => {
-        if(scroll) {
-            scroll.scrollTo({x: 0, y: 0, animated: true});
+    scrollStart = () => {
+        if(this.ref_scrollview) {
+            this.ref_scrollview.scrollTo({x: 0, y: 0, animated: true});
         }
     };
 
     _onMessage = (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
         let id = data.id || 0;
-        console.log(data);
+        console.log(e.nativeEvent.data);
         if(id > 0 && id != this.state.provinceID) {
             this.getDatas(id, 'onMessage调用');
         }

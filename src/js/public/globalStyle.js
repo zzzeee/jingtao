@@ -19,7 +19,11 @@ export const pixel = 1 / PixelRatio.get();
 //其他样式尺寸
 export const PX = {
     productWidth1: 160,
-    headHeight: 56,
+    headHeight: 50,
+    headIconSize: 22,
+    tabHeight: 62,
+    tabIconSize: 26,
+    userHeadImgSize: 66,
 };
 
 //APP字体大小

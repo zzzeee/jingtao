@@ -11,6 +11,7 @@ const language = {
         tab_class: '分类',
         tab_car: '购物车',
         tab_personal: '我的',
+        persional: '个人中心',
         goin: '进入',
         allSeller: '所有商家',
         sharePruduct: '分享特产',
@@ -27,6 +28,7 @@ const language = {
         minute: '分',
         second: '秒',
         Surplus: '剩余',
+        jingtaoIntegral: '境淘积分 %s >',
     },
 };
 
