@@ -36,6 +36,7 @@ export default class HomeScreen extends Component {
             updateData: true,
             heightValue: new Animated.Value(0),
             datas: null,
+            headElevation: 4,
         };
 
         this.showStart = false;
@@ -50,29 +51,27 @@ export default class HomeScreen extends Component {
         let _scrollview = null;
         return (
             <View style={styles.flex}>
-                {/*
-                <View style={styles.headView}>
+                <View style={[styles.headView, styles.headShadow]}>
                     <Text style={{width: 40}}>{null}</Text>
                     <BtnIcon width={100} height={PX.headHeight - 10} imageStyle={{marginTop: 10}} src={require("../../images/logoTitle.png")} />
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </View>
-                <Animated.View style={[styles.hideHead, {
+                <Animated.View style={[styles.hideHead, styles.headShadow, {
                     height: this.state.heightValue,
                 }]}>
                     <BtnIcon 
                         style={styles.btnLeft} 
                         width={23} 
                         src={require("../../images/logo.png")} 
-                        press={()=>{this.scrollStart(_scrollview)}}
+                        press={this.scrollStart}
                     />
-                    <TouchableOpacity style={styles.titleTextBox} onPress={()=>{this.scrollStart(_scrollview)}}>
-                        <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
-                        <Text style={styles.headTitle2}>{this.state.provinceName + Lang['cn']['guan']}</Text>
-                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={()=>{this.scrollStart(_scrollview)}} />
+                    <TouchableOpacity style={styles.titleTextBox} onPress={this.scrollStart}>
+                        <Text style={styles.headTitle1}>{str_replace(Lang.cn.previewing, '')}</Text>
+                        <Text style={styles.headTitle2}>{this.state.provinceName + Lang.cn.guan}</Text>
+                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={this.scrollStart} />
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
                 </Animated.View>
-                 */}
                 <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
                     <View style={styles.webViewSize}>
                         <WebView
@@ -95,39 +94,28 @@ export default class HomeScreen extends Component {
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let showHeight = mapHeight * 0.7;
-        let { setParams } = this.props.navigation;
 
         if(offsetY > (mapHeight * 0.7)) {
             if(!this.showStart) {
                 this.showStart = true;
                 this.setState({
                     updateData: false,
+                    headElevation: 0,
                 });
-                // Animated.spring(this.state.heightValue, {
-                //     toValue: (PX.headHeight - 1),
-                //     friction: 7,
-                //     tension: 30,
-                // }).start();
-                if(setParams) {
-                    setParams({
-                        name: this.state.provinceName,
-                        showName: true,
-                        gotoStart: this.scrollStart,
-                    });
-                }
+                Animated.spring(this.state.heightValue, {
+                    toValue: PX.headHeight,
+                    friction: 7,
+                    tension: 30,
+                }).start();
             }
         }else if(offsetY < (mapHeight * 0.3)) {
             if(this.showStart) {
                 this.showStart = false;
                 this.setState({
                     updateData: false,
+                    headElevation: 4,
                 });
-                // this.state.heightValue.setValue(0);
-                if(setParams) {
-                    setParams({
-                        showName: false,
-                    });
-                }
+                this.state.heightValue.setValue(0);
             }
         }
     };
@@ -198,18 +186,19 @@ var styles = StyleSheet.create({
         width: mapWidth,
         height: mapHeight,
     },
+    headShadow: {
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 0.5,
+        shadowOffset: {"height": 0.5},
+        elevation: 4,
+    },
     headView: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#fff',
         height: PX.headHeight,
-        borderBottomWidth: pixel,
-        borderBottomColor: '#ccc',
-        shadowColor: "#000",
-        shadowOpacity: 0.6,
-        shadowRadius: 0.5,
-        shadowOffset: {"height": 0.5},
     },
     hideHead: {
         flexDirection: 'row',

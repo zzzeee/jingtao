@@ -42,9 +42,9 @@ export default class FloatMenu extends Component {
             'detail' : '',
             'press' : null,
         }, {
-            'title' : Lang['cn']['sellSpecialty'],
+            'title' : Lang.cn.sellSpecialty,
             'icon' : require('../../images/partner.png'),
-            'detail' : Lang['cn']['sellSpecialty_txt'],
+            'detail' : Lang.cn.sellSpecialty_txt,
             'press' : null,
         }, {
             'title' : '',
@@ -57,9 +57,9 @@ export default class FloatMenu extends Component {
     render() {
         if(!this.props.nativeEvent || !this.props.cityName) return null;
 
-        this.buttons[0]['title'] = str_replace(Lang['cn']['shareCity'], this.props.cityName);
-        this.buttons[2]['title'] = str_replace(Lang['cn']['hide'], this.props.cityName);
-        this.buttons[2]['detail'] = str_replace(Lang['cn']['hide_txt'], this.props.cityName);
+        this.buttons[0]['title'] = str_replace(Lang.cn.shareCity, this.props.cityName);
+        this.buttons[2]['title'] = str_replace(Lang.cn.hide, this.props.cityName);
+        this.buttons[2]['detail'] = str_replace(Lang.cn.hide_txt, this.props.cityName);
 
         let localY = this.props.nativeEvent.locationY || 0;
         let pageY = this.props.nativeEvent.pageY || 0;

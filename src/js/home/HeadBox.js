@@ -93,8 +93,8 @@ export default class HeadBox extends Component {
                 </View>
                 <Image source={{uri: cimg}} style={styles.cityImage} />
                 <View style={styles.cityfoot}>
-                    <BtnIcon src={img_enter} text={lang['cn']['goin'] + name} />
-                    <BtnIcon src={img_mark} text={lang['cn']['allSeller']} />
+                    <BtnIcon src={img_enter} text={lang.cn.goin + name} />
+                    <BtnIcon src={img_mark} text={lang.cn.allSeller} />
                 </View>
             </View>
         );

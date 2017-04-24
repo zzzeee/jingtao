@@ -28,7 +28,7 @@ const language = {
         minute: '分',
         second: '秒',
         Surplus: '剩余',
-        jingtaoIntegral: '境淘积分 %s >',
+        jingtaoIntegral: '境淘积分 %s ',
     },
 };
 

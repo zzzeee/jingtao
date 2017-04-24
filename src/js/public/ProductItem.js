@@ -62,7 +62,7 @@ export default class ProductItem extends Component {
                     <Text style={styles.gprice2}>{gPrice}</Text>
                     {(this.props.showDiscount && discount && discount > 0 && discount < 1) ?
                         <View style={styles.discountView}>
-                            <Text style={styles.discountText}>{str_replace(Lang['cn']['discount'], (discount * 10).toFixed(1))}</Text>
+                            <Text style={styles.discountText}>{str_replace(Lang.cn.discount, (discount * 10).toFixed(1))}</Text>
                         </View>
                         : null
                     }

@@ -24,12 +24,13 @@ export default class PersonalScreen extends Component {
         super(props);
         this.state = {
         };
+        this.ref_scrollview = null;
     }
 
     render() {
         const {setParams} = this.props.navigation;
         return (
-            <ScrollView>
+            <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll}>
                 <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                     <View style={styles.headMainBox}>
                         <View style={styles.headBox}>
@@ -41,16 +42,41 @@ export default class PersonalScreen extends Component {
                         </Image>
                     </View>
                 </Image>
+                <View style={{height: 1000, backgroundColor: '#579'}}>
+                </View>
             </ScrollView>
         );
     }
+
+    _onScroll = (e) => {
+        let offsetY = e.nativeEvent.contentOffset.y || 0;
+        let showHeight = PX.userTopHeight - PX.headHeight;
+
+        if(offsetY > showHeight) {
+            if(!this.showBG) {
+                let { setParams } = this.props.navigation;
+                this.showBG = true;
+                if(setParams) {
+                    setParams({changeBgColor: true,});
+                }
+            }
+        }else {
+            if(this.showBG) {
+                let { setParams } = this.props.navigation;
+                this.showBG = false;
+                if(setParams) {
+                    setParams({changeBgColor: false,});
+                }
+            }
+        }
+    };
 }
 
 var styles = StyleSheet.create({
     userBgImg: {
         justifyContent: "flex-end",
         width: Size.width,
-        height: 160,
+        height: PX.userTopHeight,
     },
     headMainBox: {
         marginBottom: 30,

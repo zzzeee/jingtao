@@ -99,21 +99,21 @@ export default class CityItem extends Component {
                         size={13}
                         color={Color.lightBack}
                         src={img_enter}
-                        text={lang['cn']['goin'] + name}
+                        text={lang.cn.goin + name}
                     />
                     <BtnIcon
                         width={16}
                         size={13}
                         color={Color.lightBack}
                         src={img_mark}
-                        text={lang['cn']['allSeller']}
+                        text={lang.cn.allSeller}
                     />
                     <BtnIcon
                         width={16}
                         size={13}
                         color={Color.lightBack}
                         src={img_share}
-                        text={lang['cn']['sharePruduct']}
+                        text={lang.cn.sharePruduct}
                     />
                 </View>
                 <FloatMenu 

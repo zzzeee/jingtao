@@ -98,7 +98,7 @@ const HomeTab = StackNavigator({
                     let gotoStart = state.params.gotoStart || null;
                     head.title = (
                         <TouchableOpacity style={styles.titleTextBox} onPress={gotoStart}>
-                            <Text style={styles.headTitle1}>{str_replace(Lang['cn']['previewing'], '')}</Text>
+                            <Text style={styles.headTitle1}>{str_replace(Lang.cn.previewing, '')}</Text>
                             <Text style={styles.headTitle2}>{name + Lang.cn.guan}</Text>
                             <BtnIcon width={16} src={require("../images/sanjiao.png")} press={gotoStart} />
                         </TouchableOpacity>);
@@ -111,7 +111,7 @@ const HomeTab = StackNavigator({
     },
 }, {
     initialRouteName: 'Home',
-    // headerMode: 'none',  //隐藏头部
+    headerMode: 'none',  //隐藏头部
 });
 
 // 发现集合
@@ -204,7 +204,6 @@ const PersonalTab = StackNavigator({
                     right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/personal/msg.png")} />),
                     style: {
                         height: PX.headHeight,
-                        backgroundColor: 'transparent',
                         position: 'absolute',
                         left: 0,
                         right: 0,
@@ -214,7 +213,13 @@ const PersonalTab = StackNavigator({
 
                 let changeBgColor = (state.params && state.params.changeBgColor) ? state.params.changeBgColor : false;
                 if(changeBgColor) {
+                    head.style.elevation = 4;
+                    head.style.shadowOffset = {"height": 0.1};
                     head.style.backgroundColor = Color.mainColor;
+                }else {
+                    head.style.elevation = 0;
+                    head.style.shadowOffset = {"height": 0};
+                    head.style.backgroundColor = 'transparent';
                 }
 
                 return head;
