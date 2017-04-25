@@ -12,10 +12,11 @@ import {
     ListView,
     ScrollView,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import Urls from '../public/apiUrl';
-import { Size, pixel, Color } from '../public/globalStyle';
+import { Size, pixel, PX, Color } from '../public/globalStyle';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
 
@@ -23,6 +24,7 @@ var scrollItemHeight = 40;
 var sessionRowHeight = 40;
 var classItemHeight = 100;
 var classItemImgHeight = 60;
+var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight;
 
 export default class ClassScreen extends Component {
     constructor(props) {
@@ -35,10 +37,14 @@ export default class ClassScreen extends Component {
                 sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
             }),
         };
+
+        this.lockOffsetY = null;
+        this.lockScrollView = false;
         this.rowIdList = null;
         this.minHeightList = null;
         this.ref_scrollview = null;
         this.ref_listview = null;
+        this.renderScrollRow = this.renderScrollRow.bind(this);
     }
 
     componentDidMount() {
@@ -59,7 +65,7 @@ export default class ClassScreen extends Component {
                     let sum = index == 0 ? 0 : minHeightList[parseInt(index)];
                     minHeightList[parseInt(index) + 1] = sum + sessionRowHeight + (Math.ceil(sessionArr[name].length / 3) * classItemHeight);
                 }
-                console.log(minHeightList);
+                // console.log(minHeightList);
                 that.minHeightList = minHeightList;
                 that.rowIdList = rowID;
                 that.setState({
@@ -75,13 +81,14 @@ export default class ClassScreen extends Component {
         return (
             <View style={styles.container}>
                 <ScrollView 
+                    ref={(_ref)=>this.ref_scrollview=_ref}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.scrollStyle}
                 >
                     {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
                 </ScrollView>
                 <ListView
-                    ref={(_ref)=>this.ref_listview=_ref} 
+                    ref={(_ref)=>this.ref_listview=_ref}
                     onScroll={this.onScroll_List}
                     contentContainerStyle={styles.listViewStyle}
                     enableEmptySections={true}
@@ -97,14 +104,22 @@ export default class ClassScreen extends Component {
     renderScrollRow = (obj, i, selectId) => {
         let name = obj.cName || '';
         return (
-            <View key={i} style={[styles.scrollRowItem, {
-                borderTopWidth: (selectId == i) ? pixel : 0,
-                borderBottomWidth: (selectId == i) ? pixel : 0,
-                borderLeftWidth: (selectId == i) ? 4 : 0,
-                backgroundColor: (selectId == i) ? '#fff' : 'rgba(243, 244, 247, 1)',
-            }]}>
-                <Text style={styles.leftClassifyText}>{name}</Text>
-            </View>
+            <TouchableOpacity key={i} onPress={()=>{
+                let offsetY = this.minHeightList[i];
+                this.ref_listview.scrollTo({x: 0, y: offsetY, animated: true});
+                this.lockScrollView = true;
+                this.lockOffsetY = offsetY;
+                this.setState({selectListID: i,});
+            }}>
+                <View style={[styles.scrollRowItem, {
+                    borderTopWidth: (selectId == i) ? pixel : 0,
+                    borderBottomWidth: (selectId == i) ? pixel : 0,
+                    borderLeftColor: (selectId == i) ? Color.mainColor : 'transparent',
+                    backgroundColor: (selectId == i) ? '#fff' : 'rgba(243, 244, 247, 1)',
+                }]}>
+                    <Text style={styles.leftClassifyText}>{name}</Text>
+                </View>
+            </TouchableOpacity>
         );
     };
 
@@ -141,19 +156,31 @@ export default class ClassScreen extends Component {
     onScroll_List = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
-        console.log(hList);
-        for(let i in hList) {
-            console.log('minHeightList  i' + i + ' = ' + hList[i]);
-            if(hList[i] > offsetY) {
-                console.log('i = ' + i);
-                let sid = i - 1;
-                if(sid >= 0) {
-                    console.log(sid);
-                    this.setState({
-                        selectListID: sid,
-                    });
+        let rIdList = this.rowIdList;
+        // console.log(offsetY);
 
-                    return false;
+        if(this.lockScrollView) {
+            if(offsetY == this.lockOffsetY) this.lockScrollView = false;
+        }else {
+            if(offsetY > (hList[hList.length - 1] - bodyHeight - sessionRowHeight)) {
+                let session_count = this.state.dataSource.getSectionLengths().length;
+                this.ref_scrollview.scrollToEnd({animated: true});
+                this.setState({selectListID: session_count - 1,});
+            }else {
+                for(let i in hList) {
+                    if(hList[i] > offsetY) {
+                        let sid = i - 1;
+                        if(sid >= 0 && sid < (hList.length - 1)) {
+                            let offset = (sid + 1) * scrollItemHeight;
+                            if(sid == 0) {
+                                this.ref_scrollview.scrollTo({x: 0, y: 0, animated: true});
+                            }else if(offset > bodyHeight) {
+                                this.ref_scrollview.scrollTo({x: 0, y: (offset - bodyHeight), animated: true});
+                            }
+                            this.setState({selectListID: sid,});
+                            return false;
+                        }
+                    }
                 }
             }
         }
@@ -183,7 +210,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomColor: Color.lavender,
         borderTopColor : Color.lavender,
-        borderLeftColor: Color.mainColor,
+        borderLeftWidth: 4,
     },
     leftClassifyText: {
         color: Color.lightBack,
