@@ -17,13 +17,11 @@ var Util = {
 
         //data参数格式化
         for (let key in data) {
-            var val = data[key] ? data[key] : '';
-
-            if (val) {
-                str_data += key + '=' + val + '&';
+            if (typeof(data[key]) !== 'undefined' && data[key] !== null) {
+                str_data += key + '=' + data[key] + '&';
             }
         }
-
+        
         if (str_data.length > 0) {
             str_data = str_data.substring(0, str_data.length - 1);
             str_data = str_data.replace(/\+/g,"%2B");
@@ -39,12 +37,11 @@ var Util = {
                 },
                 body: str_data
             };
-        }
-        else {
+        }else {
             url += '?' + str_data;
             url = encodeURI(url);
         }
-
+        
         fetch(url, fetchOptions)
             .then((response) => response.json())
             .then((responseText) => {

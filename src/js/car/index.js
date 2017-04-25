@@ -12,7 +12,6 @@ import {
     Button,
 } from 'react-native';
 
-import { StackNavigator } from 'react-navigation';
 import Urls from '../public/apiUrl';
 import { Size } from '../public/globalStyle';
 

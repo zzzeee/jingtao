@@ -17,7 +17,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { StackNavigator } from 'react-navigation';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
@@ -82,7 +81,7 @@ export default class HomeScreen extends Component {
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
-                            onNavigationStateChange={(navState) =>console.log(navState)}
+                            // onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
                     <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} datas={this.state.datas} />

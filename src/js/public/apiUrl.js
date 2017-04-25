@@ -10,6 +10,7 @@ host = 'http://api.ub33.cn';
 var urls = {
     homeMap: host + '/chinamap/index.html',
     getCityAndProduct: host + '/api/IndexNController/getProvincialInformationAndCities',
+    getProductClassify: host + '/api/ClassificationNController/getClassificationByClassType',
 };
 
 urls.homeMap = 'http://ceshi.ub33.cn/newmap/index.html';
