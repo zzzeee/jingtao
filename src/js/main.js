@@ -81,7 +81,7 @@ const FindTestScreen = ({navigation}) => {
 // 首页集合
 const HomeTab = StackNavigator({
     Home: {
-        screen: HomeScreen,
+        screen: ({ navigation }) => (<MyNavScren navigation={navigation} NavScreen={Home} />),
         navigationOptions: {
             header: ({ state, setParams }) => {
                 let head = {

@@ -101,8 +101,6 @@ export default class ClassScreen extends Component {
                 renderRow={this._renderItem}
                 renderSectionHeader={this._renderSectionHeader}
                 showsVerticalScrollIndicator={false}
-                onEndReachedThreshold={0}
-                onEndReached={() => this.lockScrollView=false}
             />
         );
         
@@ -213,14 +211,19 @@ export default class ClassScreen extends Component {
     onScroll_List = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
+        let canScrollHeight = hList[hList.length - 1] - bodyHeight;
+        console.log('offsetY=' + offsetY);
+        console.log('bodyHeight=' + bodyHeight);
         if(this.lockScrollView) {
-            if(offsetY == this.lockOffsetY) {
+            console.log('lockScrollView is true');
+            if(offsetY == this.lockOffsetY || offsetY > canScrollHeight) {
                 this.lockScrollView = false;
                 return false;
             }
-        }else {
+        }else if(offsetY < canScrollHeight) {
+            console.log('lockScrollView is false');
             for(let i in hList) {
-                if(hList[i] >= (offsetY + bodyHeight)) {
+                if(hList[i] > offsetY + 5) {
                     let sid = i - 1;
                     if(sid >= 0 && sid < (hList.length - 1)) {
                         let offset = (sid + 1) * scrollItemHeight;
