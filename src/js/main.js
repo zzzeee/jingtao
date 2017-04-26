@@ -29,6 +29,7 @@ import Find from './find/';
 import Class from './class/';
 import Car from './car/';
 import Personal from './personal/';
+import MyIntegral from './personal/MyIntegral';
 
 //首页
 const HomeScreen = ({ navigation }) => (
@@ -49,6 +50,10 @@ const CarScreen = ({ navigation }) => (
 //个人中心
 const PersonalScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Personal} />
+);
+//个人中心 - 我的积分
+const MyIntegralScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={MyIntegral} />
 );
 
 //显示格式
@@ -198,8 +203,9 @@ const CarTab = StackNavigator({
 const PersonalTab = StackNavigator({
     Personal: {
         screen: PersonalScreen,
-        navigationOptions: {
-        },
+    },
+    MyIntegral: {
+        screen: MyIntegralScreen,
     },
 }, {
     initialRouteName: 'Personal',
@@ -236,7 +242,7 @@ const TabNavs = TabNavigator({
         screen: ClassTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_car.tab_class,
+                label: Lang.cn.tab_class,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                     return <Image source={img} style={styles.tabIcon} />;

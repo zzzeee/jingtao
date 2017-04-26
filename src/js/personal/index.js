@@ -21,6 +21,7 @@ import BtnIcon from '../public/BtnIcon';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import PersonalHead from './PersonalHead';
+import { StackNavigator } from 'react-navigation';
 
 export default class PersonalScreen extends Component {
     constructor(props) {
@@ -106,14 +107,14 @@ export default class PersonalScreen extends Component {
                     </View>
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang.cn.myIntegral)}
-                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang.cn.myWallet)}
-                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang.cn.myCollection)}
-                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang.cn.myAddress)}
+                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang.cn.myIntegral, 'MyIntegral')}
+                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang.cn.myWallet, null)}
+                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang.cn.myCollection, null)}
+                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang.cn.myAddress, null)}
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang.cn.contactUs)}
-                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang.cn.helpNote)}
+                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang.cn.contactUs, null)}
+                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang.cn.helpNote, null)}
                 </View>
             </ScrollView>
         </View>);
@@ -136,9 +137,13 @@ export default class PersonalScreen extends Component {
     };
 
     //按钮栏
-    btnRow = (img, txt) => {
+    btnRow = (img, txt, name) => {
         return (
-            <TouchableOpacity onPress={()=>alert(txt)}>
+            <TouchableOpacity onPress={()=>{
+                if(name) {
+                    this.props.navigation.navigate(name);
+                }
+            }}>
                 <View style={styles.btnRowStyle}>
                     <View style={styles.lightTextBox}>
                         <Image style={styles.bigIcon} source={img} style={styles.bigIcon} />

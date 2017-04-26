@@ -13,6 +13,7 @@ import {
     ScrollView,
     Image,
     TouchableOpacity,
+    Button,
 } from 'react-native';
 
 import Urls from '../public/apiUrl';
@@ -65,7 +66,7 @@ export default class ClassScreen extends Component {
                     let sum = index == 0 ? 0 : minHeightList[parseInt(index)];
                     minHeightList[parseInt(index) + 1] = sum + sessionRowHeight + (Math.ceil(sessionArr[name].length / 3) * classItemHeight);
                 }
-                // console.log(minHeightList);
+                console.log(minHeightList);
                 that.minHeightList = minHeightList;
                 that.rowIdList = rowID;
                 that.setState({
@@ -78,6 +79,33 @@ export default class ClassScreen extends Component {
 
     render() {
         if(!this.state.datas) return null;
+        // let rightList1 = (
+        //     <ScrollView 
+        //         ref={(_ref)=>this.ref_listview=_ref}
+        //         showsVerticalScrollIndicator={false}
+        //         contentContainerStyle={styles.scrollStyle2}
+        //         onScroll={this.onScroll_List}
+        //     >
+        //         {this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
+        //     </ScrollView>
+        // );
+
+        let rightList2 = (
+            <ListView
+                initialListSize={50}
+                ref={(_ref)=>this.ref_listview=_ref}
+                onScroll={this.onScroll_List}
+                contentContainerStyle={styles.listViewStyle}
+                enableEmptySections={true}
+                dataSource={this.state.dataSource}
+                renderRow={this._renderItem}
+                renderSectionHeader={this._renderSectionHeader}
+                showsVerticalScrollIndicator={false}
+                onEndReachedThreshold={0}
+                onEndReached={() => this.lockScrollView=false}
+            />
+        );
+        
         return (
             <View style={styles.container}>
                 <ScrollView 
@@ -87,16 +115,7 @@ export default class ClassScreen extends Component {
                 >
                     {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
                 </ScrollView>
-                <ListView
-                    ref={(_ref)=>this.ref_listview=_ref}
-                    onScroll={this.onScroll_List}
-                    contentContainerStyle={styles.listViewStyle}
-                    enableEmptySections={true}
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderItem}
-                    renderSectionHeader={this._renderSectionHeader}
-                    showsVerticalScrollIndicator={false}
-                />
+                {rightList2}
             </View>
         );
     }
@@ -105,11 +124,13 @@ export default class ClassScreen extends Component {
         let name = obj.cName || '';
         return (
             <TouchableOpacity key={i} onPress={()=>{
-                let offsetY = this.minHeightList[i];
-                this.ref_listview.scrollTo({x: 0, y: offsetY, animated: true});
-                this.lockScrollView = true;
-                this.lockOffsetY = offsetY;
-                this.setState({selectListID: i,});
+                if(this.ref_listview) {
+                    let offsetY = this.minHeightList[i];
+                    this.lockScrollView = true;
+                    this.lockOffsetY = offsetY;
+                    this.setState({selectListID: i,});
+                    this.ref_listview.scrollTo({x: 0, y: offsetY, animated: true});
+                }
             }}>
                 <View style={[styles.scrollRowItem, {
                     borderTopWidth: (selectId == i) ? pixel : 0,
@@ -120,6 +141,42 @@ export default class ClassScreen extends Component {
                     <Text style={styles.leftClassifyText}>{name}</Text>
                 </View>
             </TouchableOpacity>
+        );
+    };
+
+    renderScrollRight = (obj, i, selectId) => {
+        let cID = obj.cID || 0;
+        let title = obj.cName || '';
+        let child = obj.child || [];
+
+        return (
+            <View key={i}>
+                <View style={styles.listSessionRow}>
+                    <Text style={[styles.sessionName, {
+                        borderLeftColor: selectId == i ? Color.mainColor : Color.floralWhite,
+                    }]}>{title}</Text>
+                    <View style={styles.rowRightBox}>
+                        <Text style={styles.smallText}>{Lang.cn.viewAll}</Text>
+                        <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
+                    </View>
+                </View>
+                <View style={styles.sessionItemBox}>
+                {child.map((item, index) => {
+                    let id = item.cID || 0;
+                    let name = item.cName || '';
+                    let imgurl = item.cdImg || null;
+                    let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
+                    return (
+                        <View key={i + '-' + index} style={styles.classifyItem}>
+                            <Image source={img} style={styles.classifyImg} />
+                            <View style={styles.classifyNameView}>
+                                <Text style={styles.classifyNameText}>{name}</Text>
+                            </View>
+                        </View>
+                    );
+                })}
+                </View>
+            </View>
         );
     };
 
@@ -143,7 +200,7 @@ export default class ClassScreen extends Component {
         return (
             <View style={styles.listSessionRow}>
                 <Text style={[styles.sessionName, {
-                    borderLeftWidth: isSelect ? 2 : 0,
+                    borderLeftColor: isSelect ? Color.mainColor : Color.floralWhite,
                 }]}>{sessonID}</Text>
                 <View style={styles.rowRightBox}>
                     <Text style={styles.smallText}>{Lang.cn.viewAll}</Text>
@@ -156,30 +213,25 @@ export default class ClassScreen extends Component {
     onScroll_List = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
-        let rIdList = this.rowIdList;
-        // console.log(offsetY);
-
         if(this.lockScrollView) {
-            if(offsetY == this.lockOffsetY) this.lockScrollView = false;
+            if(offsetY == this.lockOffsetY) {
+                this.lockScrollView = false;
+                return false;
+            }
         }else {
-            if(offsetY > (hList[hList.length - 1] - bodyHeight - sessionRowHeight)) {
-                let session_count = this.state.dataSource.getSectionLengths().length;
-                this.ref_scrollview.scrollToEnd({animated: true});
-                this.setState({selectListID: session_count - 1,});
-            }else {
-                for(let i in hList) {
-                    if(hList[i] > offsetY) {
-                        let sid = i - 1;
-                        if(sid >= 0 && sid < (hList.length - 1)) {
-                            let offset = (sid + 1) * scrollItemHeight;
-                            if(sid == 0) {
-                                this.ref_scrollview.scrollTo({x: 0, y: 0, animated: true});
-                            }else if(offset > bodyHeight) {
-                                this.ref_scrollview.scrollTo({x: 0, y: (offset - bodyHeight), animated: true});
-                            }
-                            this.setState({selectListID: sid,});
-                            return false;
+            for(let i in hList) {
+                if(hList[i] >= (offsetY + bodyHeight)) {
+                    let sid = i - 1;
+                    if(sid >= 0 && sid < (hList.length - 1)) {
+                        let offset = (sid + 1) * scrollItemHeight;
+                        if(sid == 0) {
+                            this.ref_scrollview.scrollTo({x: 0, y: 0, animated: true});
+                        }else if(offset > bodyHeight) {
+                            this.ref_scrollview.scrollTo({x: 0, y: (offset - bodyHeight), animated: true});
                         }
+                        this.state.dataSource.sectionHeaderShouldUpdate(sid);
+                        this.setState({selectListID: sid,});
+                        return false;
                     }
                 }
             }
@@ -198,6 +250,9 @@ var styles = StyleSheet.create({
     },
     scrollStyle: {
         width: classItemHeight,
+    },
+    scrollStyle2: {
+        width: Size.width - classItemHeight,
     },
     listViewStyle: {
         width: Size.width - classItemHeight,
@@ -231,7 +286,7 @@ var styles = StyleSheet.create({
         color: Color.lightBack,
         fontSize: 12,
         paddingLeft: 8,
-        borderLeftColor: Color.mainColor,
+        borderLeftWidth: 2,
     },
     rowRightBox: {
         flexDirection: 'row',
@@ -244,6 +299,10 @@ var styles = StyleSheet.create({
     smallIcon: {
         width: 16,
         height: 16,
+    },
+    sessionItemBox: {
+        flexDirection : 'row',
+		flexWrap: 'wrap',
     },
     classifyItem: {
         width: (Size.width - classItemHeight) / 3,
