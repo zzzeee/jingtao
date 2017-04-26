@@ -21,7 +21,7 @@ export const PX = {
     statusHeight: 20,
     productWidth1: 160,
     headHeight: 50,
-    headIconSize: 22,
+    headIconSize: 26,
     tabHeight: 62,
     tabIconSize: 26,
     userTopHeight: 160,
@@ -31,6 +31,8 @@ export const PX = {
 //APP字体大小
 export const FontSize = {
     defaultFontSize: 14,
+    headFontSize: 16,
+    headFontWeight: '600',
 };
 
 //APP样式颜色

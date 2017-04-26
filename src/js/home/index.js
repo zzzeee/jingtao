@@ -53,14 +53,14 @@ export default class HomeScreen extends Component {
                 <View style={[styles.headView, styles.headShadow]}>
                     <Text style={{width: 40}}>{null}</Text>
                     <BtnIcon width={100} height={PX.headHeight - 10} imageStyle={{marginTop: 10}} src={require("../../images/logoTitle.png")} />
-                    <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
+                    <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </View>
                 <Animated.View style={[styles.hideHead, styles.headShadow, {
                     height: this.state.heightValue,
                 }]}>
                     <BtnIcon 
                         style={styles.btnLeft} 
-                        width={23} 
+                        width={PX.headIconSize} 
                         src={require("../../images/logo.png")} 
                         press={this.scrollStart}
                     />
@@ -69,7 +69,7 @@ export default class HomeScreen extends Component {
                         <Text style={styles.headTitle2}>{this.state.provinceName + Lang.cn.guan}</Text>
                         <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={this.scrollStart} />
                     </TouchableOpacity>
-                    <BtnIcon style={styles.btnRight} width={22} src={require("../../images/search.png")} />
+                    <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </Animated.View>
                 <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
                     <View style={styles.webViewSize}>

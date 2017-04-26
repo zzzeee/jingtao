@@ -12,6 +12,7 @@ import {
     Image,
     ScrollView,
     Button,
+    Animated,
     TouchableOpacity,
 } from 'react-native';
 
@@ -19,12 +20,14 @@ import Urls from '../public/apiUrl';
 import BtnIcon from '../public/BtnIcon';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
+import PersonalHead from './PersonalHead';
 
 export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            islogo: false,
+            islogo: true,
+            showHeadBgColor: false,
         };
 
         this.ref_scrollview = null;
@@ -32,7 +35,19 @@ export default class PersonalScreen extends Component {
 
     render() {
         return (
-            <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll}>
+        <View style={styles.flex}>
+            <PersonalHead 
+                float={true}
+                style={{
+                    elevation: this.state.showHeadBgColor ? 4 : 0,
+                    backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',
+                }}
+                textStyle={{color: '#fff'}}
+                title={Lang.cn.persional} 
+                left={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
+                right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
+            />
+            <ScrollView ref={(_ref)=>this.ref_scrollview=_ref}  onScroll={this._onScroll}>
                 <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                     {this.state.islogo ?
                         <View style={styles.headMainBox}>
@@ -101,28 +116,21 @@ export default class PersonalScreen extends Component {
                     {this.btnRow(require('../../images/personal/helpNote.png'), Lang.cn.helpNote)}
                 </View>
             </ScrollView>
-        );
+        </View>);
     }
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
-        let showHeight = PX.userTopHeight - PX.headHeight;
+        let showHeight = PX.headHeight + 10;
+        let hideHeight = PX.headHeight;
 
         if(offsetY > showHeight) {
-            if(!this.showBG) {
-                let { setParams } = this.props.navigation;
-                this.showBG = true;
-                if(setParams) {
-                    setParams({changeBgColor: true,});
-                }
+            if(!this.state.showHeadBgColor) {
+                this.setState({showHeadBgColor: true})
             }
-        }else {
-            if(this.showBG) {
-                let { setParams } = this.props.navigation;
-                this.showBG = false;
-                if(setParams) {
-                    setParams({changeBgColor: false,});
-                }
+        }else if(offsetY < hideHeight) {
+            if(this.state.showHeadBgColor) {
+                this.setState({showHeadBgColor: false})
             }
         }
     };
@@ -144,6 +152,9 @@ export default class PersonalScreen extends Component {
 }
 
 var styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
     userBgImg: {
         justifyContent: "flex-end",
         width: Size.width,

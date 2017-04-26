@@ -22,7 +22,7 @@ import {
 
 import BtnIcon from './public/BtnIcon';
 import Lang, {str_replace} from './public/language';
-import { Color, Size, PX, pixel } from './public/globalStyle';
+import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
 
 import Home from './home/';
 import Find from './find/';
@@ -111,7 +111,7 @@ const HomeTab = StackNavigator({
     },
 }, {
     initialRouteName: 'Home',
-    headerMode: 'none',  //隐藏头部
+    headerMode: 'none',  //不显示头部
 });
 
 // 发现集合
@@ -148,8 +148,14 @@ const ClassTab = StackNavigator({
     Calss: {
         screen: ClassScreen,
         navigationOptions: {
-            title: '特产分类',
-            header: () => ({
+            header: ({ state, setParams }) => ({
+                title: (
+                    <View style={styles.headerTitle}>
+                        <Text style={styles.headTextStyle}>{Lang.cn.tab_class}</Text>
+                    </View>
+                ),
+                left: (<Text></Text>),
+                right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/search.png")} />),
                 style: {
                     height: PX.headHeight,
                 },
@@ -193,41 +199,11 @@ const PersonalTab = StackNavigator({
     Personal: {
         screen: PersonalScreen,
         navigationOptions: {
-            header: ({ state, setParams }) => {
-                let head = {
-                    title: (
-                        <View style={styles.headerTitle}>
-                            <Text style={styles.whiteColor}>{Lang.cn.persional}</Text>
-                        </View>
-                    ),
-                    left: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/personal/config_white.png")} />),
-                    right: (<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../images/personal/msg.png")} />),
-                    style: {
-                        height: PX.headHeight,
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                    },
-                };
-
-                let changeBgColor = (state.params && state.params.changeBgColor) ? state.params.changeBgColor : false;
-                if(changeBgColor) {
-                    head.style.elevation = 4;
-                    head.style.shadowOffset = {"height": 0.1};
-                    head.style.backgroundColor = Color.mainColor;
-                }else {
-                    head.style.elevation = 0;
-                    head.style.shadowOffset = {"height": 0};
-                    head.style.backgroundColor = 'transparent';
-                }
-
-                return head;
-            },
         },
     },
 }, {
     initialRouteName: 'Personal',
+    headerMode: 'none',  //不显示头部
 });
 
 //APP下方导航栏
@@ -306,7 +282,7 @@ const TabNavs = TabNavigator({
             borderTopColor: Color.floralWhite,
         },
         labelStyle: {
-            fontSize: 11,
+            fontSize: 10,
         },
         indicatorStyle: {
             height: 0,
@@ -323,8 +299,10 @@ const styles = StyleSheet.create({
         marginTop: Platform.OS === 'ios' ? PX.statusHeight : 0,
         backgroundColor: Color.lightGrey,
     },
-    whiteColor: {
-        color: '#fff',
+    headTextStyle: {
+        color: Color.mainColor,
+        fontSize: FontSize.headFontSize,
+        fontWeight: FontSize.headFontWeight,
     },
     tabIcon: {
         width: PX.tabIconSize,

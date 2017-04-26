@@ -224,6 +224,8 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         paddingLeft: 18,
         paddingRight: 10,
+        borderTopWidth: pixel,
+        borderTopColor: Color.lavender
     },
     sessionName: {
         color: Color.lightBack,
