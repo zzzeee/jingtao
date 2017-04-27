@@ -7,7 +7,7 @@ import {
     ListView,
 } from 'react-native';
 
-import { Size, Color } from '../public/globalStyle';
+import { Size, Color, pixel } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../public/ProductItem';
@@ -71,7 +71,7 @@ export default class CityItem extends Component {
             <View style={{backgroundColor: '#fff'}}>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
-                    <BtnIcon width={20} src={img_down} style={{padding: 5}} press={(e)=>{
+                    <BtnIcon width={26} src={img_down} style={{padding: 5}} press={(e)=>{
                         console.log(e.nativeEvent);
                         this.setState({
                             visible: true,
@@ -154,7 +154,7 @@ var styles = StyleSheet.create({
         paddingRight: 10,
     },
     cityNameText: {
-        fontSize: 17,
+        fontSize: 20,
         color: Color.lightBack,
     },
     cityTitleRow: {
@@ -182,12 +182,12 @@ var styles = StyleSheet.create({
     },
     cityItemFootBox: {
         width: Size.width - 30,
-        height: 36,
+        height: 45,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         marginLeft: 15,
-        borderTopWidth: 1,
+        borderTopWidth: pixel,
         borderTopColor : Color.lavender,
     },
     buttonText: {

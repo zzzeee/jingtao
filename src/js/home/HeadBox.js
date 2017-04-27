@@ -58,14 +58,12 @@ export default class HeadBox extends Component {
         
         return (
             <View>
-                <View style={{width: Size.width, height: 100,}}>
-                    <Image source={{uri: fimg}} style={styles.firstRowImage}>
-                        <View style={styles.firstRowImageView}>
-                            <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
-                            <Text style={styles.smlText} numberOfLines={3}>{text}</Text>
-                        </View>
-                    </Image>
-                </View>
+                <Image source={{uri: fimg}} style={styles.firstRowImage}>
+                    <View style={styles.firstRowImageView}>
+                        <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
+                        <Text style={styles.smlText} numberOfLines={3}>{text}</Text>
+                    </View>
+                </Image>
                 <ListView
                     horizontal={true}
                     initialListSize={2}
@@ -87,7 +85,8 @@ export default class HeadBox extends Component {
         
         return (
             <View key={rowID} style={[styles.cityItem, {
-                marginLeft: this.state.datas.cityProduct.length == 1 ? 25 : 10,
+                marginLeft: this.state.datas.cityProduct.length == 1 ? 35 : 25,
+                marginRight: this.state.datas.cityProduct.length - 1 == rowID ? 25 : 0,
             }]}>
                 <View style={styles.cityHead}>
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
@@ -95,62 +94,66 @@ export default class HeadBox extends Component {
                 </View>
                 <Image source={{uri: cimg}} style={styles.cityImage} />
                 <View style={styles.cityfoot}>
-                    <BtnIcon src={img_enter} text={lang.cn.goin + name} />
-                    <BtnIcon src={img_mark} text={lang.cn.allSeller} />
+                    <BtnIcon src={img_enter} size={12} text={lang.cn.goin + name} />
+                    <BtnIcon src={img_mark} size={12} text={lang.cn.allSeller} />
                 </View>
             </View>
         );
     };
 }
 
-var itemW = Size.width - 50;
-var itenH = 200;
+var itemWidth = Size.width - 70;
+var itemImgHeight = (Size.width - 70) * 0.64 + 90;
+itemImgHeight = 160;
+var itemHeight = itemImgHeight + 90;
+
 var styles = StyleSheet.create({
     flex : {
         flex : 1,
     },
     bigText : {
-        fontSize : 20,
+        fontSize : 24,
         paddingBottom: 5,
         color: '#fff'
     },
     smlText : {
-        fontSize : 12,
-        color: '#fff'
+        fontSize : 11,
+        color: '#fff',
+        lineHeight: 18,
     },
     firstRowImage: {
         width: Size.width,
-        height: 100,
+        height: Size.width * 0.344,
     },
     firstRowImageView: {
         flex: 1,
-        padding: 10,
+        padding: 15,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     cityItem: {
-        width: itemW,
-        height: itenH,
-        margin: 10,
+        width: itemWidth,
+        marginTop: 25,
+        marginBottom: 25,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 2,
     },
     cityHead: {
-        height: 30,
+        height: 39,
         flexDirection : 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 15,
+        paddingRight: 5,
     },
     cityImage : {
-        width: itemW - 2,
-        height: itenH - 70,
+        width: itemWidth - 2,
+        height: itemImgHeight,
     },
     cityfoot: {
         flexDirection : 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        paddingTop: 4,
+        height: 49,
     },
 });

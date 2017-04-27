@@ -23,9 +23,6 @@ import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
 import CityList from './CityList';
 
-var mapWidth = Size.width;
-var mapHeight = Size.width - 15;
-
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
@@ -92,9 +89,9 @@ export default class HomeScreen extends Component {
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
-        let showHeight = mapHeight * 0.7;
+        let showHeight = PX.mapHeight * 0.7;
 
-        if(offsetY > (mapHeight * 0.7)) {
+        if(offsetY > (PX.mapHeight * 0.7)) {
             if(!this.showStart) {
                 this.showStart = true;
                 this.setState({
@@ -107,7 +104,7 @@ export default class HomeScreen extends Component {
                     tension: 30,
                 }).start();
             }
-        }else if(offsetY < (mapHeight * 0.3)) {
+        }else if(offsetY < (PX.mapHeight * 0.3)) {
             if(this.showStart) {
                 this.showStart = false;
                 this.setState({
@@ -182,8 +179,8 @@ var styles = StyleSheet.create({
         backgroundColor: '#ccc',
     },
     webViewSize: {
-        width: mapWidth,
-        height: mapHeight,
+        width: Size.width,
+        height: PX.mapHeight,
     },
     headShadow: {
         shadowColor: "#000",

@@ -27,7 +27,7 @@ var scrollItemHeight = 40;
 var sessionRowHeight = 40;
 var classItemHeight = 100;
 var classItemImgHeight = 60;
-var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight;
+var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight - 3;
 
 export default class ClassScreen extends Component {
     constructor(props) {
@@ -222,8 +222,6 @@ export default class ClassScreen extends Component {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
         let canScrollHeight = hList[hList.length - 1] - bodyHeight;
-        console.log('offsetY=' + offsetY);
-        console.log('bodyHeight=' + bodyHeight);
         if(this.lockScrollView) {
             console.log('lockScrollView is true');
             if(offsetY == this.lockOffsetY || offsetY > canScrollHeight) {

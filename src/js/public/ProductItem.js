@@ -6,7 +6,7 @@ import {
     Image,
 } from 'react-native';
 
-import { PX, Color } from './globalStyle';
+import { PX, Color, pixel } from './globalStyle';
 import Lang, { str_replace } from './language';
 
 export default class ProductItem extends Component {
@@ -43,13 +43,13 @@ export default class ProductItem extends Component {
                 <View style={styles.gImageBox}>
                     {gimg ?
                         <Image source={{uri: gimg}} style={{
-                            width: this.props.width - 2,
-                            height: this.props.width - 2,
+                            width: this.props.width - (pixel * 2),
+                            height: this.props.width - (pixel * 2),
                         }} /> : null
                     }
                 </View>
-                <View>
-                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={2}>
+                <View style={styles.goodNameView}>
+                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={1}>
                         {name}
                     </Text>
                 </View>
@@ -74,25 +74,28 @@ export default class ProductItem extends Component {
 
 var styles = StyleSheet.create({
     productBox: {
-        borderWidth : 1,
+        borderWidth : pixel,
         borderColor : Color.lavender,
         borderRadius: 2,
     },
     gImageBox: {
         borderBottomColor : Color.lavender,
-        borderBottomWidth : 1,
+        borderBottomWidth : pixel,
+    },
+    goodNameView: {
+        height: 30,
+        justifyContent: 'center',
     },
     goodNameText: {
-        paddingLeft: 2,
+        paddingLeft: 10,
         paddingRight: 2,
         fontSize: 11,
-        lineHeight: 20,
-        height: 38,
     },
     gPriceBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 2
+        paddingLeft: 10,
+        height: 35,
     },
     discountView: {
         height: 18,
@@ -116,14 +119,14 @@ var styles = StyleSheet.create({
         paddingLeft: 2,
     },
     gprice1: {
-        fontSize: 18,
+        fontSize: 15,
         color: Color.red,
     },
     gprice2: {
         fontSize: 12,
         color: Color.gainsboro,
-        paddingLeft: 5,
-        paddingTop: 5,
+        paddingLeft: 6,
+        paddingTop: 3,
         textDecorationLine: 'line-through',
     },
 });

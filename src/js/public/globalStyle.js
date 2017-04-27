@@ -19,7 +19,8 @@ export const pixel = 1 / PixelRatio.get();
 //其他样式尺寸
 export const PX = {
     statusHeight: 20,
-    productWidth1: 160,
+    mapHeight: (Size.width - 30) * 0.791 + 85,
+    productWidth1: 174,
     headHeight: 50,
     headIconSize: 26,
     tabHeight: 62,

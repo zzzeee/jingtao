@@ -13,6 +13,8 @@ import {
     Image,
 } from 'react-native';
 
+import { Size, Color } from './globalStyle';
+
 export default class BtnIcon extends Component {
     // 默认参数
     static defaultProps = {
@@ -50,7 +52,7 @@ export default class BtnIcon extends Component {
                 {this.props.text ? 
                     <Text style={[{
                         paddingLeft: 4,
-                        color: this.props.color,
+                        color: this.props.color ? this.props.color : Color.lightBack,
                         fontSize: this.props.size,
                     }, this.props.txtStyle]}>{this.props.text}</Text>
                     : null
