@@ -27,13 +27,14 @@ var scrollItemHeight = 40;
 var sessionRowHeight = 40;
 var classItemHeight = 100;
 var classItemImgHeight = 60;
-var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight - 3;
+var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight - 1;
 
 export default class ClassScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             datas: null,
+            _dataSource: null,
             selectListID: 0,
             dataSource: new ListView.DataSource({ 
                 rowHasChanged: (row1, row2) => row1 !== row2,
@@ -68,11 +69,13 @@ export default class ClassScreen extends Component {
                     let sum = index == 0 ? 0 : minHeightList[parseInt(index)];
                     minHeightList[parseInt(index) + 1] = sum + sessionRowHeight + (Math.ceil(sessionArr[name].length / 3) * classItemHeight);
                 }
-                console.log(minHeightList);
+                // console.log(ret);
+                // console.log(minHeightList);
                 that.minHeightList = minHeightList;
                 that.rowIdList = rowID;
                 that.setState({
                     datas: ret,
+                    _dataSource: sessionArr,
                     dataSource: that.state.dataSource.cloneWithRowsAndSections(sessionArr),
                 });
             }
@@ -81,30 +84,30 @@ export default class ClassScreen extends Component {
 
     render() {
         if(!this.state.datas) return null;
-        // let rightList1 = (
-        //     <ScrollView 
-        //         ref={(_ref)=>this.ref_listview=_ref}
-        //         showsVerticalScrollIndicator={false}
-        //         contentContainerStyle={styles.scrollStyle2}
-        //         onScroll={this.onScroll_List}
-        //     >
-        //         {this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
-        //     </ScrollView>
-        // );
-
-        let rightList2 = (
-            <ListView
-                initialListSize={50}
+        let rightList = (
+            <ScrollView 
                 ref={(_ref)=>this.ref_listview=_ref}
-                onScroll={this.onScroll_List}
-                contentContainerStyle={styles.listViewStyle}
-                enableEmptySections={true}
-                dataSource={this.state.dataSource}
-                renderRow={this._renderItem}
-                renderSectionHeader={this._renderSectionHeader}
                 showsVerticalScrollIndicator={false}
-            />
+                contentContainerStyle={styles.scrollStyle2}
+                onScroll={this.onScroll_List}
+            >
+                {this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
+            </ScrollView>
         );
+
+        // let rightList = (
+        //     <ListView
+        //         initialListSize={50}
+        //         ref={(_ref)=>this.ref_listview=_ref}
+        //         onScroll={this.onScroll_List}
+        //         contentContainerStyle={styles.listViewStyle}
+        //         enableEmptySections={true}
+        //         dataSource={this.state.dataSource}
+        //         renderRow={this._renderItem}
+        //         renderSectionHeader={this._renderSectionHeader}
+        //         showsVerticalScrollIndicator={false}
+        //     />
+        // );
         
         return (
             <View style={styles.flex}>
@@ -122,7 +125,7 @@ export default class ClassScreen extends Component {
                     >
                         {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
                     </ScrollView>
-                    {rightList2}
+                    {rightList}
                 </View>
             </View>
         );
@@ -136,8 +139,8 @@ export default class ClassScreen extends Component {
                     let offsetY = this.minHeightList[i];
                     this.lockScrollView = true;
                     this.lockOffsetY = offsetY;
-                    this.setState({selectListID: i,});
                     this.ref_listview.scrollTo({x: 0, y: offsetY, animated: true});
+                    this.setState({selectListID: i,});
                 }
             }}>
                 <View style={[styles.scrollRowItem, {
@@ -223,15 +226,13 @@ export default class ClassScreen extends Component {
         let hList = this.minHeightList;
         let canScrollHeight = hList[hList.length - 1] - bodyHeight;
         if(this.lockScrollView) {
-            console.log('lockScrollView is true');
             if(offsetY == this.lockOffsetY || offsetY > canScrollHeight) {
                 this.lockScrollView = false;
                 return false;
             }
         }else if(offsetY < canScrollHeight) {
-            console.log('lockScrollView is false');
             for(let i in hList) {
-                if(hList[i] > offsetY + 5) {
+                if(hList[i] > offsetY) {
                     let sid = i - 1;
                     if(sid >= 0 && sid < (hList.length - 1)) {
                         let offset = (sid + 1) * scrollItemHeight;

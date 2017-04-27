@@ -82,11 +82,13 @@ export default class HeadBox extends Component {
         let img_down = require("../../images/down.png");
         let img_enter = require("../../images/enter.png");
         let img_mark = require("../../images/market.png");
-        
+        let margin_left = this.state.datas.cityProduct.length == 1 ? 35 : 25;
+        let margin_right = this.state.datas.cityProduct.length - 1 == rowID ? margin_left : 0;
+
         return (
             <View key={rowID} style={[styles.cityItem, {
-                marginLeft: this.state.datas.cityProduct.length == 1 ? 35 : 25,
-                marginRight: this.state.datas.cityProduct.length - 1 == rowID ? 25 : 0,
+                marginLeft: margin_left,
+                marginRight: margin_right,
             }]}>
                 <View style={styles.cityHead}>
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
