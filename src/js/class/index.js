@@ -16,6 +16,8 @@ import {
     Button,
 } from 'react-native';
 
+import AppHead from '../public/AppHead';
+import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
 import Utils from '../public/utils';
@@ -105,15 +107,23 @@ export default class ClassScreen extends Component {
         );
         
         return (
-            <View style={styles.container}>
-                <ScrollView 
-                    ref={(_ref)=>this.ref_scrollview=_ref}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollStyle}
-                >
-                    {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
-                </ScrollView>
-                {rightList2}
+            <View style={styles.flex}>
+                <AppHead 
+                    float={true}
+                    occupy={true}
+                    title={Lang.cn.tab_class}
+                    right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
+                />
+                <View style={styles.container}>
+                    <ScrollView 
+                        ref={(_ref)=>this.ref_scrollview=_ref}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={styles.scrollStyle}
+                    >
+                        {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
+                    </ScrollView>
+                    {rightList2}
+                </View>
             </View>
         );
     }

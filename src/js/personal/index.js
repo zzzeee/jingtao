@@ -20,7 +20,7 @@ import Urls from '../public/apiUrl';
 import BtnIcon from '../public/BtnIcon';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
-import PersonalHead from './PersonalHead';
+import AppHead from '../public/AppHead';
 import { StackNavigator } from 'react-navigation';
 
 export default class PersonalScreen extends Component {
@@ -37,8 +37,9 @@ export default class PersonalScreen extends Component {
     render() {
         return (
         <View style={styles.flex}>
-            <PersonalHead 
+            <AppHead 
                 float={true}
+                occupy={false}
                 style={{
                     elevation: this.state.showHeadBgColor ? 4 : 0,
                     backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',

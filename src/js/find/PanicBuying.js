@@ -25,7 +25,7 @@ export default class PanicBuying extends Component {
 
     render() {
         return (
-            <CountDown ExpireTime="2017/04/25 11:57:20" />
+            <CountDown ExpireTime="2017/05/25 11:57:20" />
         );
     }
 }

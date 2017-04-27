@@ -6,6 +6,8 @@
 
 import React , { Component } from 'react';
 import {
+    Platform,
+    StatusBar,
     StyleSheet,
     View,
     Text,
@@ -20,11 +22,44 @@ import {
 import Lang, {str_replace} from './public/language';
 import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
 
-import HomeScreen from './home/';
-import FindScreen from './find/';
-import ClassScreen from './class/';
-import CarScreen from './car/';
-import PersonalScreen from './personal/';
+import Home from './home/';
+import Find from './find/';
+import Class from './class/';
+import Car from './car/';
+import Personal from './personal/';
+
+//显示格式
+const MyNavScren = ({navigation, NavScreen}) => {
+    return (
+        <View style={styles.flex}>
+            <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
+            <View style={styles.container}>
+                <NavScreen navigation={navigation} />
+            </View>
+        </View>
+    );
+};
+
+// 导味
+const HomeScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Home} />
+);
+// 发现
+const FindScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Find} />
+);
+// 分类
+const ClassScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Class} />
+);
+// 购物车
+const CarScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Car} />
+);
+// 个人中心
+const PersonalScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Personal} />
+);
 
 //APP下方导航栏
 const TabNavs = TabNavigator({
@@ -111,6 +146,14 @@ const TabNavs = TabNavigator({
 });
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        marginTop: Platform.OS === 'ios' ? PX.statusHeight : 0,
+        backgroundColor: Color.lightGrey,
+    },
     tabIcon: {
         width: PX.tabIconSize,
         height: PX.tabIconSize,

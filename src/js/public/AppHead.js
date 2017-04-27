@@ -7,7 +7,7 @@ import {
 
 import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 
-export default class PersonalHead extends Component {
+export default class AppHead extends Component {
 	//构造
   	constructor(props)
   	{
@@ -16,19 +16,21 @@ export default class PersonalHead extends Component {
   	}
 
 	render() {
-		let {title, float, style, textStyle, left, right} = this.props;
+		let {title, float, occupy, style, textStyle, left, right} = this.props;
 		
 	    return (
-	    	<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
-	    		<View style={styles.sideBox}>
-					{left ? left : null}
-	    		</View>
-	    		<View style={styles.middleBox}>
-	    			<Text style={[styles.title, textStyle]}>{title}</Text>
-	    		</View>
-	    		<View style={styles.sideBox}>
-					{right ? right : null}
-	    		</View>
+			<View style={{height: occupy ? PX.headHeight : 0}}>
+				<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
+					<View style={styles.sideBox}>
+						{left ? left : null}
+					</View>
+					<View style={styles.middleBox}>
+						<Text style={[styles.title, textStyle]}>{title}</Text>
+					</View>
+					<View style={styles.sideBox}>
+						{right ? right : null}
+					</View>
+				</View>
 			</View>
 	    );
 	}
@@ -46,7 +48,7 @@ var styles = StyleSheet.create({
         shadowRadius: 0.5,
         shadowOffset: {"height": 0.5},
         elevation: 4,
-		zIndex: 99,
+		zIndex: 999,
 	},
 	sideBox : {
 		flex : 1,
