@@ -26,6 +26,7 @@ export const PX = {
     tabIconSize: 26,
     userTopHeight: 160,
     userHeadImgSize: 66,
+    integralDiskSize: 130,
 };
 
 //APP字体大小
@@ -33,6 +34,7 @@ export const FontSize = {
     defaultFontSize: 14,
     headFontSize: 16,
     headFontWeight: '600',
+    integralNumber: 22,
 };
 
 //APP样式颜色

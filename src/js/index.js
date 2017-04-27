@@ -15,6 +15,7 @@ import {
 import { StackNavigator } from 'react-navigation';
 import TabNavScreen from './tabNav';
 import MyIntegral from './personal/MyIntegral';
+import IntegralRule from './personal/IntegralRule';
 
 import { Color, PX } from './public/globalStyle';
 
@@ -35,12 +36,20 @@ const MyIntegralScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={MyIntegral} />
 );
 
+//个人中心 - 我的积分 - 积分规则
+const IntegralRuleScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={IntegralRule} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
     },
     MyIntegral: {
         screen: MyIntegralScreen,
+    },
+    IntegralRule: {
+        screen: IntegralRuleScreen,
     },
 }, {
     initialRouteName: 'TabNav',

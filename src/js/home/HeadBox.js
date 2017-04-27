@@ -60,8 +60,10 @@ export default class HeadBox extends Component {
             <View>
                 <View style={{width: Size.width, height: 100,}}>
                     <Image source={{uri: fimg}} style={styles.firstRowImage}>
-                        <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
-                        <Text style={styles.smlText} numberOfLines={3}>{text}</Text>
+                        <View style={styles.firstRowImageView}>
+                            <Text style={styles.bigText} numberOfLines={1}>{name}</Text>
+                            <Text style={styles.smlText} numberOfLines={3}>{text}</Text>
+                        </View>
                     </Image>
                 </View>
                 <ListView
@@ -119,7 +121,11 @@ var styles = StyleSheet.create({
     firstRowImage: {
         width: Size.width,
         height: 100,
+    },
+    firstRowImageView: {
+        flex: 1,
         padding: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     cityItem: {
         width: itemW,
