@@ -6,6 +6,7 @@
 
 import React , { Component } from 'react';
 import {
+    AppRegistry,
     StyleSheet,
     ScrollView,
     WebView,
@@ -15,13 +16,16 @@ import {
     Button,
     Image,
     TouchableOpacity,
+    PanResponder,
 } from 'react-native';
 
+import CityList from './CityList';
+import FloatMenu from './FloatMenu';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
-import CityList from './CityList';
+var WeChat=require('react-native-wechat');
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -30,17 +34,35 @@ export default class HomeScreen extends Component {
             provinceID : 0,
             provinceName: null,
             updateData: true,
+            visible: false,
+            nativeEvent: null,
+            showCityName: null,
             heightValue: new Animated.Value(0),
             datas: null,
             headElevation: 4,
         };
 
+        this.shareObj = {};
         this.showStart = false;
         this.ref_scrollview = null;
+        this.webViewPanResponder = PanResponder.create({
+            // 要求成为响应者：
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onShouldBlockNativeResponder: (evt, gestureState) => {
+                // 返回一个布尔值，决定当前组件是否应该阻止原生组件成为JS响应者
+                // 默认返回true。目前暂时只支持android。
+                return true;
+            },
+        });
     }
 
     componentDidMount() {
         this.getDatas(31, 'componentDidMount调用');
+        //微信应用注册
+        WeChat.registerApp('wx220dd5779654cdf7');
     }
 
     render() {
@@ -69,7 +91,7 @@ export default class HomeScreen extends Component {
                     <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </Animated.View>
                 <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
-                    <View style={styles.webViewSize}>
+                    <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}
@@ -78,11 +100,29 @@ export default class HomeScreen extends Component {
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
-                            // onNavigationStateChange={(navState) =>console.log(navState)}
+                            onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
-                    <CityList isUpdate={this.state.updateData} pid={this.state.provinceID} datas={this.state.datas} />
+                    <CityList 
+                        isUpdate={this.state.updateData} 
+                        showFloatMenu={this.showFloatMenu} 
+                        pid={this.state.provinceID} 
+                        datas={this.state.datas} 
+                    />
                 </ScrollView>
+                <FloatMenu 
+                    visible={this.state.visible} 
+                    nativeEvent={this.state.nativeEvent} 
+                    cityName={this.state.showCityName}
+                    shareObj={this.shareObj}
+                    btnSize={20}
+                    WeChat={WeChat}
+                    hideMenu={()=>this.setState({
+                        visible: false,
+                        nativeEvent: null,
+                        showCityName: null,
+                    })}
+                />
             </View>
         );
     }
@@ -116,6 +156,18 @@ export default class HomeScreen extends Component {
         }
     };
 
+    // 显示遮罩层
+    showFloatMenu = (event, name, obj) => {
+        this.shareObj = obj;
+        if(event && name) {
+            this.setState({
+                visible: true,
+                nativeEvent: event,
+                showCityName: name,
+            });
+        }
+    };
+
     scrollStart = () => {
         if(this.ref_scrollview) {
             this.ref_scrollview.scrollTo({x: 0, y: 0, animated: true});
@@ -124,7 +176,7 @@ export default class HomeScreen extends Component {
 
     _onMessage = (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
-        let id = data.id || 0;
+        let id = parseInt(data.id) || 0;
         console.log(e.nativeEvent.data);
         if(id > 0 && id != this.state.provinceID) {
             this.getDatas(id, 'onMessage调用');

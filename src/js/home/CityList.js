@@ -98,7 +98,7 @@ export default class CityList extends Component {
         if(!obj || !obj.proAdsAry || obj.proAdsAry.length == 0) return null;
         return (
             <View style={styles.itemBox}>
-                <CityItem city={obj} />
+                <CityItem city={obj} showFloatMenu={this.props.showFloatMenu} />
             </View>
         );
     };

@@ -27,7 +27,7 @@ var scrollItemHeight = 40;
 var sessionRowHeight = 40;
 var classItemHeight = 100;
 var classItemImgHeight = 60;
-var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight - 1;
+var bodyHeight = Size.height - PX.statusHeight - PX.headHeight - PX.tabHeight - 5;
 
 export default class ClassScreen extends Component {
     constructor(props) {
@@ -42,6 +42,7 @@ export default class ClassScreen extends Component {
             }),
         };
 
+        this.isScrollEnd = false;
         this.lockOffsetY = null;
         this.lockScrollView = false;
         this.rowIdList = null;
@@ -137,7 +138,9 @@ export default class ClassScreen extends Component {
             <TouchableOpacity key={i} onPress={()=>{
                 if(this.ref_listview) {
                     let offsetY = this.minHeightList[i];
-                    this.lockScrollView = true;
+                    if(!this.isScrollEnd || offsetY < this.minHeightList[this.minHeightList.length - 1] - bodyHeight) {
+                        this.lockScrollView = true;
+                    }
                     this.lockOffsetY = offsetY;
                     this.ref_listview.scrollTo({x: 0, y: offsetY, animated: true});
                     this.setState({selectListID: i,});
@@ -225,14 +228,21 @@ export default class ClassScreen extends Component {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
         let canScrollHeight = hList[hList.length - 1] - bodyHeight;
+
+        if(offsetY >= canScrollHeight) {
+            this.isScrollEnd = true;
+        }else {
+            this.isScrollEnd = false;
+        }
+
         if(this.lockScrollView) {
-            if(offsetY == this.lockOffsetY || offsetY > canScrollHeight) {
+            if(offsetY == this.lockOffsetY || offsetY >= canScrollHeight) {
                 this.lockScrollView = false;
                 return false;
             }
-        }else if(offsetY < canScrollHeight) {
+        }else if(offsetY <= canScrollHeight) {
             for(let i in hList) {
-                if(hList[i] > offsetY) {
+                if(hList[i] >= offsetY) {
                     let sid = i - 1;
                     if(sid >= 0 && sid < (hList.length - 1)) {
                         let offset = (sid + 1) * scrollItemHeight;

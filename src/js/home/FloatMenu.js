@@ -40,7 +40,7 @@ export default class FloatMenu extends Component {
             'title' : '',
             'icon' : require('../../images/share.png'),
             'detail' : '',
-            'press' : null,
+            'press' : this.shareCity,
         }, {
             'title' : Lang.cn.sellSpecialty,
             'icon' : require('../../images/partner.png'),
@@ -53,6 +53,33 @@ export default class FloatMenu extends Component {
             'press' : null,
         }];
     }
+
+    shareCity = () => {
+        let WeChat = this.props.WeChat;
+        let name = this.props.cityName || '';
+        let img = this.props.shareObj.img || '';
+
+        if(WeChat && name) {
+            WeChat.isWXAppInstalled()
+            .then((isInstalled) => {
+                if (isInstalled) {
+                    WeChat.shareToSession({
+                        type: 'news',
+                        title: name,
+                        description: str_replace(Lang.cn.shareText, name),
+                        thumbImage: img,
+                        webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html',
+                    })
+                    .catch((error) => {
+                        console.log(error.message);
+                    });
+                } else {
+                    console.log(Lang.cn.shareErrorAlert);
+                    alert(Lang.cn.shareErrorAlert);
+                }
+            });
+        }
+    };
 
     render() {
         if(!this.props.nativeEvent || !this.props.cityName) return null;
@@ -96,7 +123,12 @@ export default class FloatMenu extends Component {
         let detail = obj.detail || '';
 
         return (
-            <TouchableOpacity key={i} onPress={()=>{return false;}} >
+            <TouchableOpacity key={i} onPress={()=>{
+                this.props.hideMenu();
+                if(obj.press){
+                    obj.press();
+                }}} 
+            >
                 <View style={styles.shareRow}>
                     <Image source={obj.icon} style={styles.icon} />
                     <View style={styles.textBox}>

@@ -11,7 +11,6 @@ import { Size, Color, pixel } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../public/ProductItem';
-import FloatMenu from './FloatMenu';
 
 export default class CityItem extends Component {
     // 默认参数
@@ -28,9 +27,6 @@ export default class CityItem extends Component {
         this.state = {
             datas: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-            visible: false,
-            nativeEvent: null,
-            cityName: null,
         };
     }
 
@@ -72,12 +68,11 @@ export default class CityItem extends Component {
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
                     <BtnIcon width={26} src={img_down} style={{padding: 5}} press={(e)=>{
-                        console.log(e.nativeEvent);
-                        this.setState({
-                            visible: true,
-                            nativeEvent: e.nativeEvent,
-                            cityName: name,
-                        });
+                        if(this.props.showFloatMenu && e && e.nativeEvent && name) {
+                            this.props.showFloatMenu(e.nativeEvent, name, {
+                                img: img,
+                            });
+                        }
                     }} />
                 </View>
                 <View style={styles.cityTitleRow}>
@@ -116,17 +111,6 @@ export default class CityItem extends Component {
                         text={lang.cn.sharePruduct}
                     />
                 </View>
-                <FloatMenu 
-                    visible={this.state.visible} 
-                    nativeEvent={this.state.nativeEvent} 
-                    cityName={this.state.cityName}
-                    btnSize={20}
-                    hideMenu={()=>this.setState({
-                        visible: false,
-                        nativeEvent: null,
-                        cityName: null,
-                    })}
-                />
             </View>
         );
     }

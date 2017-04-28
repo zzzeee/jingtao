@@ -51,6 +51,8 @@ const language = {
         saveYou: '已为您节省了',
         integralDetailed: '积分明细',
         integralRule: '积分规则',
+        shareText: '等老子有了钱，买光这个城市的土特产给你看。',
+        shareErrorAlert: '没有安装微信软件，请您安装微信之后再试',
     },
 };
 
