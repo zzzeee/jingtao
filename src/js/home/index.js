@@ -62,7 +62,7 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        this.getProvinceDatas(31);
+        // this.getProvinceDatas(31);
     }
 
     render() {
@@ -107,7 +107,8 @@ export default class HomeScreen extends Component {
                             <WebView
                                 javaScriptEnabled={true}
                                 scalesPageToFit={true}
-                                source={{uri: Urls.homeMap}}
+                                // source={{uri: Urls.homeMap}}
+                                source={require('../../newmap/index.html')}
                                 style={styles.webViewSize}
                                 onMessage={(e)=>this._onMessage(e)}
                                 startInLoadingState ={true}
@@ -211,9 +212,7 @@ export default class HomeScreen extends Component {
                         load_or_error: null,
                     });
                 }
-            }, (view)=>{
-                that.setState({load_or_error: view});
-            }, {});
+            });
         }
     };
 
