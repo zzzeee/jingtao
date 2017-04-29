@@ -22,10 +22,10 @@ import {
 import CityList from './CityList';
 import FloatMenu from './FloatMenu';
 import Urls from '../public/apiUrl';
-import Lang, {str_replace} from '../public/language';
+import Utils from '../public/utils';
 import BtnIcon from '../public/BtnIcon';
+import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
-var WeChat=require('react-native-wechat');
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -39,6 +39,8 @@ export default class HomeScreen extends Component {
             showCityName: null,
             heightValue: new Animated.Value(0),
             datas: null,
+            load_or_error: null,
+            webView_error: false,
             headElevation: 4,
         };
 
@@ -60,18 +62,22 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        this.getDatas(31, 'componentDidMount调用');
-        //微信应用注册
-        WeChat.registerApp('wx220dd5779654cdf7');
+        this.getProvinceDatas(31);
     }
 
     render() {
         let _scrollview = null;
+
         return (
             <View style={styles.flex}>
                 <View style={[styles.headView, styles.headShadow]}>
                     <Text style={{width: 40}}>{null}</Text>
-                    <BtnIcon width={100} height={PX.headHeight - 10} imageStyle={{marginTop: 10}} src={require("../../images/logoTitle.png")} />
+                    <BtnIcon 
+                        width={100} 
+                        height={PX.headHeight - 10} 
+                        imageStyle={{marginTop: 10}} 
+                        src={require("../../images/logoTitle.png")} 
+                    />
                     <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </View>
                 <Animated.View style={[styles.hideHead, styles.headShadow, {
@@ -90,33 +96,38 @@ export default class HomeScreen extends Component {
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </Animated.View>
-                <ScrollView ref={(_ref)=>this.ref_scrollview=_ref} onScroll={this._onScroll} style={styles.scrollViewBox}>
-                    <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
-                        <WebView
-                            javaScriptEnabled={true}
-                            scalesPageToFit={true}
-                            source={{uri: Urls.homeMap}}
-                            // source={{uri: 'http://vpn.jingtaomart.com/chinamap/index.html'}}
-                            style={styles.webViewSize}
-                            onMessage={(e)=>this._onMessage(e)}
-                            startInLoadingState ={true}
-                            onNavigationStateChange={(navState) =>console.log(navState)}
+                {this.state.load_or_error ?
+                    this.state.load_or_error : 
+                    <ScrollView 
+                        ref={(_ref)=>this.ref_scrollview=_ref} 
+                        onScroll={this._onScroll} 
+                        contentContainerStyle={styles.scrollViewBox}
+                    >
+                        <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
+                            <WebView
+                                javaScriptEnabled={true}
+                                scalesPageToFit={true}
+                                source={{uri: Urls.homeMap}}
+                                style={styles.webViewSize}
+                                onMessage={(e)=>this._onMessage(e)}
+                                startInLoadingState ={true}
+                                // onNavigationStateChange={(navState) =>console.log(navState)}
+                            />
+                        </View>
+                        <CityList 
+                            isUpdate={this.state.updateData} 
+                            showFloatMenu={this.showFloatMenu} 
+                            pid={this.state.provinceID} 
+                            datas={this.state.datas} 
                         />
-                    </View>
-                    <CityList 
-                        isUpdate={this.state.updateData} 
-                        showFloatMenu={this.showFloatMenu} 
-                        pid={this.state.provinceID} 
-                        datas={this.state.datas} 
-                    />
-                </ScrollView>
+                    </ScrollView>
+                }
                 <FloatMenu 
                     visible={this.state.visible} 
                     nativeEvent={this.state.nativeEvent} 
                     cityName={this.state.showCityName}
                     shareObj={this.shareObj}
                     btnSize={20}
-                    WeChat={WeChat}
                     hideMenu={()=>this.setState({
                         visible: false,
                         nativeEvent: null,
@@ -179,48 +190,70 @@ export default class HomeScreen extends Component {
         let id = parseInt(data.id) || 0;
         console.log(e.nativeEvent.data);
         if(id > 0 && id != this.state.provinceID) {
-            this.getDatas(id, 'onMessage调用');
+            // this.getDatas(id, 'onMessage调用');
+            this.getProvinceDatas(id);
         }
     };
 
-    // 注意这个方法前面有async关键字
-    getDatas = (id, txt) => {
-        try {
-            // console.group('获取省份数据');
-            // console.time('测试时间');
-            // console.log(txt);
-            // console.log('开始时间：' + new Date());
-            fetch(Urls.getCityAndProduct, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'pID=' + id
-            })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                // console.log(responseJson);
-                // console.log('结束时间：' + new Date());
-                // console.timeEnd('测试时间');
-                // console.groupEnd('获取省份数据');
-                if(responseJson && responseJson.provinceAry) {
-                    let name = responseJson.provinceAry.region_name || '';
-                    this.setState({
+    getProvinceDatas = (id) => {
+        if(id > 0) {
+            let that = this;
+            Utils.fetch(Urls.getCityAndProduct, 'post', {
+                pID: id
+            }, function(result) {
+                if(result && result.provinceAry) {
+                    let name = result.provinceAry.region_name || '';
+                    that.setState({
                         provinceID: id,
                         provinceName: name,
                         updateData: true,
-                        datas: responseJson.provinceAry,
+                        datas: result.provinceAry,
+                        load_or_error: null,
                     });
                 }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-        } catch(error) {
-            console.error(error);
+            }, (view)=>{
+                that.setState({load_or_error: view});
+            }, {});
         }
-    }
+    };
+
+    // getDatas = (id, txt) => {
+    //     try {
+    //         // console.group('获取省份数据');
+    //         // console.time('测试时间');
+    //         // console.log(txt);
+    //         // console.log('开始时间：' + new Date());
+    //         fetch(Urls.getCityAndProduct, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/x-www-form-urlencoded',
+    //             },
+    //             body: 'pID=' + id
+    //         })
+    //         .then((response) => response.json())
+    //         .then((responseJson) => {
+    //             // console.log(responseJson);
+    //             // console.log('结束时间：' + new Date());
+    //             // console.timeEnd('测试时间');
+    //             // console.groupEnd('获取省份数据');
+    //             if(responseJson && responseJson.provinceAry) {
+    //                 let name = responseJson.provinceAry.region_name || '';
+    //                 this.setState({
+    //                     provinceID: id,
+    //                     provinceName: name,
+    //                     updateData: true,
+    //                     datas: responseJson.provinceAry,
+    //                 });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //         });
+    //     } catch(error) {
+    //         console.error(error);
+    //     }
+    // };
 }
 
 var styles = StyleSheet.create({

@@ -39,7 +39,6 @@ export default class PersonalScreen extends Component {
         <View style={styles.flex}>
             <AppHead 
                 float={true}
-                occupy={false}
                 style={{
                     elevation: this.state.showHeadBgColor ? 4 : 0,
                     backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',

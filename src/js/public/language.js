@@ -6,6 +6,10 @@
 
 const language = {
     cn : {
+        loading: '正在加载',
+        reconnect: '点击重新连接',
+        fetchError: '网络请求超时，请检查网络设置。',
+        programError: '程序异常',
         logo: '登录',
         register: '注册',
         tab_home: '寻味',

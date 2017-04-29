@@ -35,9 +35,7 @@ export default class FindScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <AppHead 
-                    float={true}
-                    occupy={true}
+                <AppHead
                     title={Lang.cn.tab_find}
                     right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
                 />

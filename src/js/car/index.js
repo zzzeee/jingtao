@@ -6,14 +6,19 @@
 
 import React , { Component } from 'react';
 import {
+    AppRegistry,
     StyleSheet,
     View,
     Text,
     Button,
 } from 'react-native';
 
+import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import { Size } from '../public/globalStyle';
+import Lang, {str_replace} from '../public/language';
+// var WeChat=require('react-native-wechat');
+// import fs from 'react-native-fs';
 
 export default class CarsScreen extends Component {
     constructor(props) {
@@ -22,32 +27,16 @@ export default class CarsScreen extends Component {
         };
     }
 
+    componentDidMount() {
+        //注册微信应用
+        // WeChat.registerApp('wx220dd5779654cdf7');
+    }
+
     render() {
         let nav = this.props.navigation || null;
         return (
             <View>
-                <Button title="当前页面跳转" onPress={()=>{
-                    nav.navigate('Clear', {
-                        id: 1,
-                        name: '当前页面跳转',
-                        obj: {
-                            a: 1,
-                            b: 2,
-                        }
-                    });
-                }} />
-                <Button title="跳转到发现页主页" onPress={()=>{
-                    nav.navigate('Find', {
-                        id: 2,
-                        name: '跳转到发现页主页',
-                    });
-                }} />
-                <Button title="跳转到发现页子页" onPress={()=>{
-                    nav.navigate('FindTest', {
-                        id: 3,
-                        name: '跳转到发现页主页',
-                    });
-                }} />
+                <AppHead title='购物车' />
             </View>
         );
     }

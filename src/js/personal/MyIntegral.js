@@ -48,7 +48,6 @@ export default class MyIntegral extends Component {
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <AppHead
-                    occupy={true}
                     title={Lang.cn.personalIntegral}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);

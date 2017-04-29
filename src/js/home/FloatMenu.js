@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+var WeChat=require('react-native-wechat');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
@@ -53,12 +54,15 @@ export default class FloatMenu extends Component {
             'press' : null,
         }];
     }
+    
+    componentDidMount() {
+        //注册微信应用
+        //WeChat.registerApp('wx220dd5779654cdf7');
+    }
 
     shareCity = () => {
-        let WeChat = this.props.WeChat;
         let name = this.props.cityName || '';
         let img = this.props.shareObj.img || '';
-
         if(WeChat && name) {
             WeChat.isWXAppInstalled()
             .then((isInstalled) => {
@@ -71,7 +75,7 @@ export default class FloatMenu extends Component {
                         webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html',
                     })
                     .catch((error) => {
-                        console.log(error.message);
+                        console.log(error);
                     });
                 } else {
                     console.log(Lang.cn.shareErrorAlert);

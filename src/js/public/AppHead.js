@@ -16,20 +16,18 @@ export default class AppHead extends Component {
   	}
 
 	render() {
-		let {title, float, occupy, style, textStyle, left, right} = this.props;
+		let {title, float, style, textStyle, left, right} = this.props;
 		
 	    return (
-			<View style={{height: occupy ? PX.headHeight : 0}}>
-				<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
-					<View style={styles.sideBox}>
-						{left ? left : null}
-					</View>
-					<View style={styles.middleBox}>
-						<Text style={[styles.title, textStyle]}>{title}</Text>
-					</View>
-					<View style={styles.sideBox}>
-						{right ? right : null}
-					</View>
+			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
+				<View style={styles.sideBox}>
+					{left ? left : null}
+				</View>
+				<View style={styles.middleBox}>
+					<Text style={[styles.title, textStyle]}>{title}</Text>
+				</View>
+				<View style={styles.sideBox}>
+					{right ? right : null}
 				</View>
 			</View>
 	    );

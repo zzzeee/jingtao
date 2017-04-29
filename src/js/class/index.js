@@ -112,9 +112,7 @@ export default class ClassScreen extends Component {
         
         return (
             <View style={styles.flex}>
-                <AppHead 
-                    float={true}
-                    occupy={true}
+                <AppHead
                     title={Lang.cn.tab_class}
                     right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
                 />

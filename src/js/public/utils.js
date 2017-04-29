@@ -4,17 +4,66 @@
  * @date   2017.04.18
  */
 
+import React , { Component } from 'react';
+import {
+    StyleSheet,
+    ActivityIndicator,
+    TouchableOpacity,
+    View,
+    Text,
+} from 'react-native';
+
+import Lang, {str_replace} from './language';
+import { Size, pixel, PX, Color } from './globalStyle';
+
+//加载中
+const Loading = ({load_backgroundColor, loadText, loadColor, loadStyle, load_textStyle}) => {
+    let bgColor = load_backgroundColor || Color.floralWhite;
+    let txt = loadText || Lang.cn.loading;
+    let color = loadColor || '#fff';
+    return (
+        <View style={styles.bodyView}>
+            <View style={[styles.modalBody, loadStyle]}>
+                <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
+                <ActivityIndicator animating={true} color={color} size="small" />
+            </View>
+        </View>
+    );
+};
+
+//获取失败
+const ErrorView = (obj, func) => {
+    const {err_backgroundColor, errText1, errText2, errColor, errStyle, err_textStyle1, err_textStyle2, fetchFunc} = obj;
+    let bgColor = err_backgroundColor || Color.floralWhite;
+    let txt1 = errText1 || Lang.cn.reconnect;
+    let txt2 = errText2 || Lang.cn.fetchError;
+    let color = errColor || Lang.cn.lightBack;
+    return (
+        <View style={styles.bodyView}>
+            <Text 
+                style={[styles.refaceBtn, {color: color}, err_textStyle1]}
+                onPress={fetchFunc}
+            >
+                {txt1}
+            </Text>
+            <Text style={[styles.errRemind, {color: color}, err_textStyle2]}>{txt2}</Text>
+        </View>
+    );
+};
+
 var Util = {
     /* fetch 网络请求数据
      * @param String url  请求地址
      * @param String type 请求方式： get / post
      * @param Object data 请求参数
-     * @param Funtion callback 回调函数
+     * @param function callback 回调函数
+     * @param function load_error 返回加载状态或错误状态 
+     * @param Object load_error_config 返回加载状态或错误状态的配置
      */
-    fetch: function (url, type, data, callback) {
+    fetch: function (url, type, data, callback, load_error = null, load_error_config = {}) {
         var fetchOptions = {};
         var str_data = '';
-
+        load_error && load_error(Loading({...load_error_config}));
         //data参数格式化
         for (let key in data) {
             if (typeof(data[key]) !== 'undefined' && data[key] !== null) {
@@ -42,14 +91,23 @@ var Util = {
             url = encodeURI(url);
         }
         
-        fetch(url, fetchOptions)
+        let fetchFunc = () => this.fetch(url, type, data, callback, load_error, load_error_config);
+
+        load_error_config.fetchFunc = fetchFunc;
+        try {
+            fetch(url, fetchOptions)
             .then((response) => response.json())
             .then((responseText) => {
                 callback(responseText);
             })
             .catch((error) => {
-                console.warn(error);
+                load_error && load_error(ErrorView(load_error_config, fetchFunc));
             });
+        } catch(error) {
+            console.error(error);
+            load_error_config.errText2 = Lang.cn.programError;
+            load_error && load_error(ErrorView(load_error_config, fetchFunc));
+        }
     },
 
     //网络请求出错
@@ -107,5 +165,42 @@ var Util = {
         return currentdate;
     },
 };
+
+var styles = StyleSheet.create({
+    bodyView : {
+        flex : 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalBody : {
+        width : Size.width * 0.5,
+        flexDirection : 'row',
+		alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth : pixel,
+        borderColor : '#aaa',
+		backgroundColor : 'rgba(0, 0, 0, 0.8)',
+        padding : 30,
+		borderRadius : 10,
+	},
+	modalText : {
+		color : '#fff',
+        fontSize : 15,
+        paddingRight: 20,
+	},
+    refaceBtn : {
+		backgroundColor : '#ccc',
+		borderWidth : 1,
+		borderColor : '#888',
+		minWidth : 80,
+		marginBottom : 20,
+		borderRadius : 8,
+		padding : 10,
+        fontSize: 14,
+	},
+    errRemind: {
+        fontSize: 12,
+    },
+});
 
 export default Util;
