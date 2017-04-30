@@ -42,7 +42,17 @@
             #map_ctrl .icon{width:26px;height:26px;}
             #map_ctrl div {display: inline-block;line-height: 0;}
             #map_controller {margin: 13px 0;float: right;}
-            #select_map{border: 0;font-size: 14px;margin-top: 17px;padding: 0;color: #9097A0;background-color: #fff;-moz-appearance: none; -webkit-appearance: none; appearance: none;}
+            #select_map{
+                border: 0;
+                font-size: 15px;
+                margin-top: 17px;
+                padding: 0;
+                color: #9097A0;
+                background-color: #fff;
+                -moz-appearance: none; 
+                -webkit-appearance: none; 
+                appearance: none;
+            }
             #fitting .hidden{display: none}
             #zoom_bar,#zoom_bar svg{
                 width: 127px;
@@ -58,7 +68,7 @@
         <script src="./js/chinaMapConfig.js"></script>
     </head>
     <body>
-        <div id="btnGetData_box"></div>
+        <div id="showTestDatas"></div>
         <div id="map_module">
             <div id="map">
                 <svg id="svg"></svg>
@@ -108,22 +118,17 @@
                         }
                     }
                 };
-                var map_height = Math.round(($('body').width() - 30) * 0.792) || 280;
+                var map_height = Math.round(($('body').width() - 30) * 0.792);
+                map_height = map_height > 0 ? map_height : 280;
                 // $('#map').height(map_height);
                 document.getElementById('map').style.height = map_height + 'px';
-                // document.getElementById('btnGetData_box').innerHTML = 'body=' + map_height + 'px';
-                // document.getElementById('map').style.height = map_height + 'px';
-
+                // document.getElementById('showTestDatas').innerHTML = 'body=' + map_height + 'px ， map_height=' + map_height;
+                
                 //填充select option
                 $.each(chinaMapConfig.names, function (k, v) {
-                    var pid = chinaMapConfig.pids[k] || 0;
-                    var text = '<option value="' + pid + '">' + v[2] + '</option>';
+                    // var pid = chinaMapConfig.pids[k] || 0;
+                    var text = '<option value="' + k + '">' + v[2] + '</option>';
                     $('#select_map').append(text);
-                    
-                    //===================== 添加地区获取数据按钮 start ===================
-                    // var btn = "<button class='btn_get_data' onclick='appMessage(" + pid + ")'>" + v[2] + "</button>";
-                    // $("#btnGetData_box").append(btn);
-                    //===================== 添加地区获取数据按钮 end =====================
                 });
 
                 var is_fit = true   //地图状态是否满屏
@@ -201,10 +206,8 @@
                 //选择框里选择省区
                 $('#select_map').on('change', function () {
                     var val = $(this).val();
-                    
                     if (val == '') {  //取消选择
                         setFitStatusToTrue();
-                        console.log('select_none');
                         $(this).css({'color': '#9097A0'});
                         autoFit();
                     } else {
@@ -214,6 +217,7 @@
                         setFitStatusToFalse();
 
                         var pid = parseInt(val) > 0 ? parseInt(val) : 0;
+                        pid = pid > 0 ? pid : chinaMapConfig.pids[val];
                         if(pid > 0) {
                             appMessage(pid);
                         }
