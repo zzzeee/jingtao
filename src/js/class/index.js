@@ -36,6 +36,7 @@ export default class ClassScreen extends Component {
             datas: null,
             _dataSource: null,
             selectListID: 0,
+            load_or_error: null,
             dataSource: new ListView.DataSource({ 
                 rowHasChanged: (row1, row2) => row1 !== row2,
                 sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
@@ -80,11 +81,12 @@ export default class ClassScreen extends Component {
                     dataSource: that.state.dataSource.cloneWithRowsAndSections(sessionArr),
                 });
             }
+        }, function(view) {
+            that.setState({load_or_error: view});
         });
     }
 
     render() {
-        if(!this.state.datas) return null;
         let rightList = (
             <ScrollView 
                 ref={(_ref)=>this.ref_listview=_ref}
@@ -92,7 +94,7 @@ export default class ClassScreen extends Component {
                 contentContainerStyle={styles.scrollStyle2}
                 onScroll={this.onScroll_List}
             >
-                {this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
+                {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
             </ScrollView>
         );
 
@@ -116,16 +118,19 @@ export default class ClassScreen extends Component {
                     title={Lang.cn.tab_class}
                     right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
                 />
-                <View style={styles.container}>
-                    <ScrollView 
-                        ref={(_ref)=>this.ref_scrollview=_ref}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={styles.scrollStyle}
-                    >
-                        {this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
-                    </ScrollView>
-                    {rightList}
-                </View>
+                {this.state.load_or_error ? 
+                    this.state.load_or_error : 
+                    <View style={styles.container}>
+                        <ScrollView 
+                            ref={(_ref)=>this.ref_scrollview=_ref}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={styles.scrollStyle}
+                        >
+                            {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
+                        </ScrollView>
+                        {rightList}
+                    </View>
+                }
             </View>
         );
     }

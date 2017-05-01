@@ -96,33 +96,33 @@ export default class HomeScreen extends Component {
                     </TouchableOpacity>
                     <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
                 </Animated.View>
-                {this.state.load_or_error ?
-                    this.state.load_or_error : 
-                    <ScrollView 
-                        ref={(_ref)=>this.ref_scrollview=_ref} 
-                        onScroll={this._onScroll} 
-                        contentContainerStyle={styles.scrollViewBox}
-                    >
-                        <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
-                            <WebView
-                                javaScriptEnabled={true}
-                                scalesPageToFit={true}
-                                // source={{uri: Urls.homeMap}}
-                                source={require('../../newmap/index.html')}
-                                style={styles.webViewSize}
-                                onMessage={(e)=>this._onMessage(e)}
-                                startInLoadingState ={true}
-                                // onNavigationStateChange={(navState) =>console.log(navState)}
-                            />
-                        </View>
+                <ScrollView 
+                    ref={(_ref)=>this.ref_scrollview=_ref} 
+                    onScroll={this._onScroll} 
+                    contentContainerStyle={styles.scrollViewBox}
+                >
+                    <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
+                        <WebView
+                            javaScriptEnabled={true}
+                            scalesPageToFit={true}
+                            // source={{uri: Urls.homeMap}}
+                            source={require('../../newmap/index.html')}
+                            style={styles.webViewSize}
+                            onMessage={(e)=>this._onMessage(e)}
+                            startInLoadingState ={true}
+                            // onNavigationStateChange={(navState) =>console.log(navState)}
+                        />
+                    </View>
+                    {this.state.load_or_error ?
+                        this.state.load_or_error :
                         <CityList 
                             isUpdate={this.state.updateData} 
                             showFloatMenu={this.showFloatMenu} 
                             pid={this.state.provinceID} 
                             datas={this.state.datas} 
                         />
+                    }
                     </ScrollView>
-                }
                 <FloatMenu 
                     visible={this.state.visible} 
                     nativeEvent={this.state.nativeEvent} 
@@ -212,6 +212,8 @@ export default class HomeScreen extends Component {
                         load_or_error: null,
                     });
                 }
+            }, (view)=>that.setState({load_or_error: view}), {
+                bgStyle: {padding: 20,}
             });
         }
     };

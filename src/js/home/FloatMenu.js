@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-var WeChat=require('react-native-wechat');
+// var WeChat=require('react-native-wechat');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';

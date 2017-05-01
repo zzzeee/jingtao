@@ -17,12 +17,11 @@ import Lang, {str_replace} from './language';
 import { Size, pixel, PX, Color } from './globalStyle';
 
 //加载中
-const Loading = ({load_backgroundColor, loadText, loadColor, loadStyle, load_textStyle}) => {
-    let bgColor = load_backgroundColor || Color.floralWhite;
+const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
     let txt = loadText || Lang.cn.loading;
     let color = loadColor || '#fff';
     return (
-        <View style={styles.bodyView}>
+        <View style={[styles.bodyView, bgStyle]}>
             <View style={[styles.modalBody, loadStyle]}>
                 <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
                 <ActivityIndicator animating={true} color={color} size="small" />
@@ -33,13 +32,12 @@ const Loading = ({load_backgroundColor, loadText, loadColor, loadStyle, load_tex
 
 //获取失败
 const ErrorView = (obj, func) => {
-    const {err_backgroundColor, errText1, errText2, errColor, errStyle, err_textStyle1, err_textStyle2, fetchFunc} = obj;
-    let bgColor = err_backgroundColor || Color.floralWhite;
+    const {bgStyle, errText1, errText2, errColor, errStyle, err_textStyle1, err_textStyle2, fetchFunc} = obj;
     let txt1 = errText1 || Lang.cn.reconnect;
     let txt2 = errText2 || Lang.cn.fetchError;
     let color = errColor || Lang.cn.lightBack;
     return (
-        <View style={styles.bodyView}>
+        <View style={[styles.bodyView, bgStyle]}>
             <Text 
                 style={[styles.refaceBtn, {color: color}, err_textStyle1]}
                 onPress={fetchFunc}
@@ -171,6 +169,7 @@ var styles = StyleSheet.create({
         flex : 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Color.lightGrey,
     },
     modalBody : {
         width : Size.width * 0.5,
