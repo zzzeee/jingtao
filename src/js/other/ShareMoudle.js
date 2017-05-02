@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color } from '../public/globalStyle';
 
-var itemMargin = 20;
+var itemMargin = 30;
 var rowItemNumber = 4;
 var itemWidth = (Size.width - ((rowItemNumber + 1) * itemMargin)) / rowItemNumber;
 
@@ -61,6 +61,7 @@ export default class ShareMoudle extends Component {
     };
 
     render() {
+        let that = this;
         return (
             <Modal
                 animationType={"slide"}
@@ -68,7 +69,8 @@ export default class ShareMoudle extends Component {
                 visible={this.state.visible}
                 onRequestClose={() => {}}
             >
-                <TouchableOpacity style={styles.btnBody} onPress={this.hideModal} onLongPress={this.hideModal} >
+                <View style={styles.bodyStyle}>
+                    <TouchableOpacity style={styles.flex} onPress={this.hideModal} onLongPress={this.hideModal} />
                     <View style={styles.shareBox}>
                         <ScrollView contentContainerStyle={styles.scrollviewStyle} horizontal={true}>
                             {this.createShareList(this.props.shares).map(function(item, index) {
@@ -77,6 +79,7 @@ export default class ShareMoudle extends Component {
                                 return (
                                     <View key={index} style={styles.shareItemStyle}>
                                         <TouchableOpacity style={styles.shareImageBox} activeOpacity={1} onPress={()=>{
+                                            that.hideModal();
                                             if(typeof(item.obj) == 'object' && item.to && item.obj.type && item.obj.webpageUrl) {
                                                 WeChat.isWXAppInstalled()
                                                 .then((isInstalled) => {
@@ -86,16 +89,24 @@ export default class ShareMoudle extends Component {
                                                             console.log(error);
                                                         });
                                                     } else {
-                                                        console.log(Lang.cn.shareErrorAlert);
-                                                        alert(Lang.cn.shareErrorAlert);
+                                                        Toast.show(Lang.cn.shareErrorAlert, {
+                                                            duration: Toast.durations.LONG,
+                                                            position: Toast.positions.CENTER,
+                                                            hideOnPress: true,
+                                                        });
                                                     }
                                                 });
+                                            }else {
+                                                Toast.show('参数不足', {
+                                                    duration: Toast.durations.LONG,
+                                                    position: Toast.positions.CENTER,
+                                                    hideOnPress: true,
+                                                });
                                             }
-                                            this.hideModal();
                                         }}>
                                             <Image source={icon} style={styles.shareImageStyle} />
                                         </TouchableOpacity>
-                                        <Text style={styles.shareItemTextStyle}>{name}</Text>
+                                        <Text style={styles.shareItemTextStyle} numberOfLines={1}>{name}</Text>
                                     </View>
                                 );
                             })}
@@ -104,7 +115,7 @@ export default class ShareMoudle extends Component {
                             <Text style={styles.btnCancel} onPress={this.hideModal}>{Lang.cn.cancel}</Text>
                         </View>
                     </View>
-                </TouchableOpacity>
+                </View>
             </Modal>
         );
     }
@@ -114,9 +125,8 @@ var styles = StyleSheet.create({
     flex : {
         flex : 1,
     },
-    btnBody: {
-        width: Size.width,
-        height: Size.height,
+    bodyStyle: {
+        flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         justifyContent: 'flex-end',
     },
@@ -130,7 +140,7 @@ var styles = StyleSheet.create({
     },
     shareItemStyle: {
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         width: itemWidth,
         margin: itemMargin / 2,
@@ -147,12 +157,12 @@ var styles = StyleSheet.create({
         borderColor: Color.lavender,
     },
     shareItemTextStyle: {
-        marginTop: 5,
-        fontSize: 14,
+        fontSize: 12,
         color: Color.lightBack,
+        paddingTop: 6,
     },
     btnCancelBox: {
-        height: 40,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderTopWidth: pixel,
@@ -160,7 +170,7 @@ var styles = StyleSheet.create({
     },
     btnCancel: {
         fontSize: 14,
-        color: Color.lightBack,
+        color: Color.steelBlue,
         paddingTop: 8,
         paddingBottom: 8,
     },

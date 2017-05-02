@@ -196,6 +196,8 @@ var styles = StyleSheet.create({
         width: PX.userHeadImgSize,
         height: PX.userHeadImgSize,
         borderRadius: PX.userHeadImgSize / 2,
+        borderWidth: pixel,
+        borderColor: Color.lavender,
     },
     userNameText: {
         paddingLeft: 10,

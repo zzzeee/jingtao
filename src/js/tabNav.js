@@ -66,18 +66,18 @@ const TabNavs = TabNavigator({
     Home: {
         screen: HomeScreen,
         navigationOptions : {
-            // tabBar: ({state}) => ({
-            //     label: Lang.cn.tab_home,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
             tabBarLabel: Lang.cn.tab_home,
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
+            tabBar: ({state}) => ({
+                label: Lang.cn.tab_home,
+                icon: ({ focused }) => {
+                    let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
+                    return <Image source={img} style={styles.tabIcon} />;
+                },
+            }),
         },
     },
     Find: {
@@ -88,6 +88,13 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
+            tabBar: ({state}) => ({
+                label: Lang.cn.tab_find,
+                icon: ({ focused }) => {
+                    let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
+                    return <Image source={img} style={styles.tabIcon} />;
+                },
+            }),
         },
     },
     Classify: {
@@ -98,6 +105,13 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
+            tabBar: ({state}) => ({
+                label: Lang.cn.tab_class,
+                icon: ({ focused }) => {
+                    let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
+                    return <Image source={img} style={styles.tabIcon} />;
+                },
+            }),
         },
     },
     Car: {
@@ -108,6 +122,13 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
+            tabBar: ({state}) => ({
+                label: Lang.cn.tab_car,
+                icon: ({ focused }) => {
+                    let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
+                    return <Image source={img} style={styles.tabIcon} />;
+                },
+            }),
         },
     },
     Personal: {
@@ -118,6 +139,13 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
+            tabBar: ({state}) => ({
+                label: Lang.cn.tab_personal,
+                icon: ({ focused }) => {
+                    let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
+                    return <Image source={img} style={styles.tabIcon} />;
+                },
+            }),
         },
     }
 }, {
