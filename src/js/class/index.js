@@ -78,6 +78,7 @@ export default class ClassScreen extends Component {
                 that.setState({
                     datas: ret,
                     _dataSource: sessionArr,
+                    load_or_error: null,
                     dataSource: that.state.dataSource.cloneWithRowsAndSections(sessionArr),
                 });
             }

@@ -5,14 +5,12 @@ import {
     View,
     Modal,
     Image,
-    Dimensions,
     TouchableOpacity,
 } from 'react-native';
 
-// var WeChat=require('react-native-wechat');
-import Icon from 'react-native-vector-icons/FontAwesome';
+var WeChat=require('react-native-wechat');
+import ShareMoudle from '../other/ShareMoudle';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color } from '../public/globalStyle';
 
 var itemH = 46;
@@ -35,13 +33,14 @@ export default class FloatMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            startShare: false,
         };
         this.renderObject = this.renderObject.bind(this);
         this.buttons = [{
             'title' : '',
             'icon' : require('../../images/share.png'),
             'detail' : '',
-            'press' : this.shareCity,
+            'press' : this.showStartShare,
         }, {
             'title' : Lang.cn.sellSpecialty,
             'icon' : require('../../images/partner.png'),
@@ -51,15 +50,22 @@ export default class FloatMenu extends Component {
             'title' : '',
             'icon' : require('../../images/hide.png'),
             'detail' : '',
-            'press' : null,
+            'press' : this.hideCity,
         }];
     }
-    
-    componentDidMount() {
-        //注册微信应用
-        //WeChat.registerApp('wx220dd5779654cdf7');
-    }
 
+    //显示分享选项
+    showStartShare = () => this.setStartShare(true);
+
+    //设置是否显示分享选项
+    setStartShare = (isShow) => {
+        if(!isShow) {
+            this.props.hideMenu();
+        }
+        this.setState({startShare: isShow});
+    };
+
+    //分享城市
     shareCity = () => {
         let name = this.props.cityName || '';
         let img = this.props.shareObj.img || '';
@@ -85,8 +91,38 @@ export default class FloatMenu extends Component {
         }
     };
 
+    //隐藏城市
+    hideCity = () => {
+        let id = this.props.shareObj.cityId || null;
+        if(this.props.addHideCity && id) {
+            this.props.addHideCity(id);
+        }
+        this.props.hideMenu();
+    };
+
     render() {
-        if(!this.props.nativeEvent || !this.props.cityName) return null;
+        if(!this.props.nativeEvent || !this.props.cityName) {
+            return null;
+        }else if(this.state.startShare) {
+            let name = this.props.cityName || '';
+            let img = this.props.shareObj.img || '';
+            let shareInfo = [{
+                to: 'shareToTimeline',
+                name: '朋友圈',
+                icon: require('../../images/empty.png'),
+                obj: {
+                    type: 'news',
+                    title: name,
+                    thumbImage: img,
+                    webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html'
+                },
+            }, {
+                to: 'shareToSession',
+                name: '微信好友',
+                icon: require('../../images/empty.png'),
+            }];
+            return <ShareMoudle shares={shareInfo} visible={true} setStartShare={this.setStartShare} />;
+        }
 
         this.buttons[0]['title'] = str_replace(Lang.cn.shareCity, this.props.cityName);
         this.buttons[2]['title'] = str_replace(Lang.cn.hide, this.props.cityName);
@@ -113,7 +149,7 @@ export default class FloatMenu extends Component {
                 visible={this.props.visible}
                 onRequestClose={() => {}}
             >
-                <TouchableOpacity style={styles.btnBody} onPress={this.props.hideMenu} onLongPress={this.props.hideMenu} >
+                <TouchableOpacity style={styles.btnBody} activeOpacity={1} onPress={this.props.hideMenu} onLongPress={this.props.hideMenu} >
                     <View style={[styles.shareBox, {top : top}]}>
                         {this.buttons.map((tab, i) => this.renderObject(tab, i))}
                     </View>
@@ -128,7 +164,6 @@ export default class FloatMenu extends Component {
 
         return (
             <TouchableOpacity key={i} onPress={()=>{
-                this.props.hideMenu();
                 if(obj.press){
                     obj.press();
                 }}} 
@@ -152,7 +187,7 @@ var styles = StyleSheet.create({
     btnBody: {
         width: Size.width,
         height: Size.height,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     shareBox: {
         position: 'absolute',

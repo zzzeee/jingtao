@@ -39,6 +39,7 @@ export default class HomeScreen extends Component {
             showCityName: null,
             heightValue: new Animated.Value(0),
             datas: null,
+            hideCitys: [],
             load_or_error: null,
             webView_error: false,
             headElevation: 4,
@@ -129,6 +130,7 @@ export default class HomeScreen extends Component {
                     cityName={this.state.showCityName}
                     shareObj={this.shareObj}
                     btnSize={20}
+                    addHideCity={this.addHideCity}
                     hideMenu={()=>this.setState({
                         visible: false,
                         nativeEvent: null,
@@ -191,7 +193,6 @@ export default class HomeScreen extends Component {
         let id = parseInt(data.id) || 0;
         console.log(e.nativeEvent.data);
         if(id > 0 && id != this.state.provinceID) {
-            // this.getDatas(id, 'onMessage调用');
             this.getProvinceDatas(id);
         }
     };
@@ -202,13 +203,15 @@ export default class HomeScreen extends Component {
             Utils.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id
             }, function(result) {
+                console.log(result);
                 if(result && result.provinceAry) {
-                    let name = result.provinceAry.region_name || '';
+                    let ret = that.removeHideCitys(result.provinceAry);
+                    let name = ret.region_name || '';
                     that.setState({
                         provinceID: id,
                         provinceName: name,
                         updateData: true,
-                        datas: result.provinceAry,
+                        datas: ret,
                         load_or_error: null,
                     });
                 }
@@ -218,43 +221,46 @@ export default class HomeScreen extends Component {
         }
     };
 
-    // getDatas = (id, txt) => {
-    //     try {
-    //         // console.group('获取省份数据');
-    //         // console.time('测试时间');
-    //         // console.log(txt);
-    //         // console.log('开始时间：' + new Date());
-    //         fetch(Urls.getCityAndProduct, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/x-www-form-urlencoded',
-    //             },
-    //             body: 'pID=' + id
-    //         })
-    //         .then((response) => response.json())
-    //         .then((responseJson) => {
-    //             // console.log(responseJson);
-    //             // console.log('结束时间：' + new Date());
-    //             // console.timeEnd('测试时间');
-    //             // console.groupEnd('获取省份数据');
-    //             if(responseJson && responseJson.provinceAry) {
-    //                 let name = responseJson.provinceAry.region_name || '';
-    //                 this.setState({
-    //                     provinceID: id,
-    //                     provinceName: name,
-    //                     updateData: true,
-    //                     datas: responseJson.provinceAry,
-    //                 });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error(error);
-    //         });
-    //     } catch(error) {
-    //         console.error(error);
-    //     }
-    // };
+    // 去除隐藏的城市数据
+    removeHideCitys = (datas) => {
+        let hides = this.state.hideCitys;
+        let citys = datas.cityProduct || [];
+        if(citys && citys.length && hides.length > 0) {
+            let newCitysList = [];
+            for(let index in citys) {
+                let canAdd = true;
+                for(let i in hides) {
+                    if(citys[index].region_id && citys[index].region_id == hides[i]) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+                canAdd && newCitysList.push(citys[index]);
+            }
+            datas.cityProduct = newCitysList;
+            console.log(datas);
+        }
+        return datas;
+    };
+
+    // 添加隐藏城市的数据
+    addHideCity = (id) => {
+        if(id && id > 0) {
+            let hides = this.state.hideCitys;
+            let isHave = false;
+            for(let i in hides) {
+                if(hides[i] == id) isHave = true;
+            }
+            if(!isHave) {
+                hides.push(id);
+                this.setState({
+                    hideCitys: hides,
+                    updateData: true,
+                    datas: this.removeHideCitys(this.state.datas),
+                });
+            }
+        }
+    };
 }
 
 var styles = StyleSheet.create({

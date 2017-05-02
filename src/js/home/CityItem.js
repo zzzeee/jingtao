@@ -55,6 +55,7 @@ export default class CityItem extends Component {
     render() {
         if(!this.state.datas) return null;
         let city = this.state.datas || {};
+        let id = city.region_id || 0;
         let name = city.region_name || '';
         let info = city.griInfo || '';
         let img = city.griImg || '';
@@ -71,6 +72,7 @@ export default class CityItem extends Component {
                         if(this.props.showFloatMenu && e && e.nativeEvent && name) {
                             this.props.showFloatMenu(e.nativeEvent, name, {
                                 img: img,
+                                cityId: id,
                             });
                         }
                     }} />

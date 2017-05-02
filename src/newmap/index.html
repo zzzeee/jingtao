@@ -50,8 +50,7 @@
                 color: #9097A0;
                 background-color: #fff;
                 -moz-appearance: none; 
-                -webkit-appearance: none; 
-                appearance: none;
+                -webkit-appearance: none;
             }
             #fitting .hidden{display: none}
             #zoom_bar,#zoom_bar svg{
@@ -97,9 +96,8 @@
                 </div>
             </div>
         </div>
-        
-        <script src="js/jquery.svg_autofit.1.0.3.js"></script>
         <script src="js/jquery.svg-drag.0.0.1.min.js"></script>
+        <script src="js/jquery.svg_autofit.1.0.3.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 // 给APP传值
@@ -118,10 +116,10 @@
                         }
                     }
                 };
-                var map_height = Math.round(($('body').width() - 30) * 0.792);
+                var map_height = Math.round(($('body').width() - 30) * 0.792) || 0;
                 map_height = map_height > 0 ? map_height : 280;
-                // $('#map').height(map_height);
-                document.getElementById('map').style.height = map_height + 'px';
+                $('#map').height(map_height);
+                // document.getElementById('map').style.height = map_height + 'px';
                 // document.getElementById('showTestDatas').innerHTML = 'body=' + map_height + 'px ， map_height=' + map_height;
                 
                 //填充select option
