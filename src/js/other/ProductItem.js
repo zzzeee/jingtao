@@ -6,8 +6,8 @@ import {
     Image,
 } from 'react-native';
 
-import { PX, Color, pixel } from './globalStyle';
-import Lang, { str_replace } from './language';
+import { PX, Color, pixel } from '../public/globalStyle';
+import Lang, { str_replace } from '../public/language';
 
 export default class ProductItem extends Component {
     // 默认参数
@@ -43,8 +43,8 @@ export default class ProductItem extends Component {
                 <View style={styles.gImageBox}>
                     {gimg ?
                         <Image source={{uri: gimg}} style={{
-                            width: this.props.width - (pixel * 2),
-                            height: this.props.width - (pixel * 2),
+                            width: this.props.width,
+                            height: this.props.width,
                         }} /> : null
                     }
                 </View>
@@ -55,7 +55,7 @@ export default class ProductItem extends Component {
                 </View>
                 <View style={[styles.gPriceBox, this.props.goodPriceStyle]}>
                     {dPrice ?
-                        <Text style={styles.priceFH}>¥</Text>
+                        <Text style={styles.priceFH}>{Lang.cn.RMB}</Text>
                         : null
                     }
                     <Text style={styles.gprice1}>{dPrice}</Text>
@@ -74,13 +74,18 @@ export default class ProductItem extends Component {
 
 var styles = StyleSheet.create({
     productBox: {
-        borderWidth : pixel,
-        borderColor : Color.lavender,
+        // borderWidth : pixel,
+        // borderColor : Color.lavender,
+        backgroundColor: '#fff',
         borderRadius: 2,
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: {'height': 0.5,},
+        elevation: 3,
     },
     gImageBox: {
-        borderBottomColor : Color.lavender,
-        borderBottomWidth : pixel,
+        // borderBottomColor : Color.lavender,
+        // borderBottomWidth : pixel,
     },
     goodNameView: {
         height: 30,

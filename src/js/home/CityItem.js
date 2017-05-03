@@ -10,7 +10,7 @@ import {
 import { Size, Color, pixel } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
-import ProductItem from '../public/ProductItem';
+import ProductItem from '../other/ProductItem';
 
 export default class CityItem extends Component {
     // 默认参数

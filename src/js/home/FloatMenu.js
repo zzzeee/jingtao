@@ -1,3 +1,9 @@
+/**
+ * 首页城市隐藏菜单
+ * @auther linzeyong
+ * @date   2017.04.18
+ */
+
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -107,8 +113,8 @@ export default class FloatMenu extends Component {
             let name = this.props.cityName || '';
             let img = this.props.shareObj.img || '';
             let shareInfo = [{
-                to: 'shareToTimeline',
-                name: '朋友圈',
+                to: 'shareToSession',
+                name: Lang.cn.wxFriends,
                 icon: require('../../images/empty.png'),
                 obj: {
                     type: 'news',
@@ -117,10 +123,16 @@ export default class FloatMenu extends Component {
                     webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html'
                 },
             }, {
-                to: 'shareToSession',
-                name: '微信好友',
+                to: 'shareToTimeline',
+                name: Lang.cn.circleOfFriends,
                 icon: require('../../images/empty.png'),
-            }];
+                obj: {
+                    type: 'news',
+                    title: name,
+                    thumbImage: img,
+                    webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html'
+                },
+            },];
             return <ShareMoudle shares={shareInfo} visible={true} setStartShare={this.setStartShare} />;
         }
 

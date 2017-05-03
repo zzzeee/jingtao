@@ -106,8 +106,8 @@ export default class HomeScreen extends Component {
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}
-                            // source={{uri: Urls.homeMap}}
-                            source={require('../../newmap/index.html')}
+                            source={{uri: Urls.homeMap}}
+                            // source={require('../../newmap/index.html')}
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}

@@ -13,6 +13,6 @@ var urls = {
     getProductClassify: host + '/api/ClassificationNController/getClassificationByClassType',
 };
 
-urls.homeMap = 'http://ceshi.ub33.cn/newmap/index.html';
+urls.homeMap = 'http://ceshi.ub33.cn/newmap2/index.html';
 
 export default urls;

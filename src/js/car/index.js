@@ -17,8 +17,6 @@ import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import { Size } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
-// var WeChat=require('react-native-wechat');
-// import fs from 'react-native-fs';
 
 export default class CarsScreen extends Component {
     constructor(props) {
@@ -27,16 +25,12 @@ export default class CarsScreen extends Component {
         };
     }
 
-    componentDidMount() {
-        //注册微信应用
-        // WeChat.registerApp('wx220dd5779654cdf7');
-    }
-
     render() {
-        let nav = this.props.navigation || null;
+        let { navigation } = this.props;
         return (
             <View>
                 <AppHead title='购物车' />
+                <Button title='提交订单' onPress={()=>navigation.navigate('AddOrder')} />
             </View>
         );
     }

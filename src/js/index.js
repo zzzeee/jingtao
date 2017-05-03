@@ -16,6 +16,7 @@ import { StackNavigator } from 'react-navigation';
 import TabNavScreen from './tabNav';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
+import AddOrder from './car/AddOrder';
 
 import { Color, PX } from './public/globalStyle';
 
@@ -41,6 +42,11 @@ const IntegralRuleScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={IntegralRule} />
 );
 
+//购物车 - 提交订单
+const AddOrderScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={AddOrder} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
@@ -50,6 +56,9 @@ const AppNavigator = StackNavigator({
     },
     IntegralRule: {
         screen: IntegralRuleScreen,
+    },
+    AddOrder: {
+        screen: AddOrderScreen,
     },
 }, {
     initialRouteName: 'TabNav',

@@ -1,3 +1,9 @@
+/**
+ * 分享选项菜单
+ * @auther linzeyong
+ * @date   2017.05.02
+ */
+
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -97,7 +103,7 @@ export default class ShareMoudle extends Component {
                                                     }
                                                 });
                                             }else {
-                                                Toast.show('参数不足', {
+                                                Toast.show(Lang.cn.missParam, {
                                                     duration: Toast.durations.LONG,
                                                     position: Toast.positions.CENTER,
                                                     hideOnPress: true,

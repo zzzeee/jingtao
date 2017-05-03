@@ -23,8 +23,8 @@ const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
     return (
         <View style={[styles.bodyView, bgStyle]}>
             <View style={[styles.modalBody, loadStyle]}>
-                <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
                 <ActivityIndicator animating={true} color={color} size="small" />
+                <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
             </View>
         </View>
     );

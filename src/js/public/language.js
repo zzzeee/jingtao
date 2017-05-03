@@ -6,6 +6,7 @@
 
 const language = {
     cn : {
+        RMB: '¥',
         loading: '正在加载',
         reconnect: '点击重新连接',
         fetchError: '网络请求超时，请检查网络设置。',
@@ -58,6 +59,23 @@ const language = {
         shareText: '等老子有了钱，买光这个城市的土特产给你看。',
         shareErrorAlert: '没有安装微信软件，请您安装微信之后再试',
         cancel: '取消',
+        circleOfFriends: '朋友圈',
+        wxFriends: '微信好友',
+        missParam: '缺少参数',
+        consignee: '收货人',
+        distributionType: '配送方式',
+        express: '快递',
+        buyerMessage: '买家留言',
+        buyerMessagePlaceholder: '选填，可填写与商品有关的其他要求。',
+        totalProductNumberL: '共计 %s 件商品',
+        total: '共计',
+        coupon: '优惠券',
+        haveCoupon: '有可用的优惠券',
+        integralSwap: '积分抵现',
+        canUseIntegral: '可用积分',
+        fullSwap: "全额抵现",
+        noUseSwap: '不使用抵现',
+        diySwapIntegral: '自定义抵现积分',
     },
 };
 
