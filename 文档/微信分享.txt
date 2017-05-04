@@ -7,7 +7,7 @@
 4. react-native link
 5. 新建 wxapi目录 (项目目录/android/app/src/main/java/com/jingtao/wxapi)
 6. 在wxapi目录下新建 WXEntryActivity.java文件, 内容如下：
-package com.jingtao.wxapi;
+package com.jingtao;
  
 import android.app.Activity;
 import android.os.Bundle;

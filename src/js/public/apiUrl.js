@@ -16,6 +16,6 @@ var urls = {
 };
 
 urls.homeMap = 'http://ceshi.ub33.cn/newmap2/index.html';
-urls.homeMap = 'file://android_asset/newmap/index.html';
+urls.homeMap = 'file:///android_asset/newmap/index.html';
 
 export default urls;

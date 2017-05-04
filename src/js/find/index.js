@@ -14,7 +14,7 @@ import {
     ListView,
 } from 'react-native';
 
-import Swiper from 'react-native-swiper';
+// import Swiper from 'react-native-swiper';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
@@ -50,11 +50,11 @@ export default class FindScreen extends Component {
         let end = xsqg.pbEndTime || null;
         let proList = xsqg.activityAry || [];
 
-        that.setState({
+        this.setState({
             startTime: new Date(start).getTime(),
             endTime: new Date(end).getTime(),
             datas: xsqg,
-            dataSource: that.state.dataSource.cloneWithRows(proList),
+            dataSource: this.state.dataSource.cloneWithRows(proList),
         });
     };
 
