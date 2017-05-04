@@ -66,7 +66,8 @@ const TabNavs = TabNavigator({
     Home: {
         screen: HomeScreen,
         navigationOptions : {
-            tabBarLabel: Lang.cn.tab_home,
+            // tabBarLabel: Lang.cn.tab_home,
+            tabBarLabel: ()=>(<Text style={styles.labelTextStyle}>{Lang.cn.tab_home}</Text>),
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
                 return <Image source={img} style={styles.tabIcon} />;
@@ -83,7 +84,8 @@ const TabNavs = TabNavigator({
     Find: {
         screen: FindScreen,
         navigationOptions : {
-            tabBarLabel: Lang.cn.tab_find,
+            // tabBarLabel: Lang.cn.tab_find,
+            tabBarLabel: ()=>(<Text style={styles.labelTextStyle}>{Lang.cn.tab_find}</Text>),
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
                 return <Image source={img} style={styles.tabIcon} />;
@@ -100,7 +102,8 @@ const TabNavs = TabNavigator({
     Classify: {
         screen: ClassScreen,
         navigationOptions : {
-            tabBarLabel: Lang.cn.tab_class,
+            // tabBarLabel: Lang.cn.tab_class,
+            tabBarLabel: ()=>(<Text style={styles.labelTextStyle}>{Lang.cn.tab_class}</Text>),
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                 return <Image source={img} style={styles.tabIcon} />;
@@ -117,7 +120,7 @@ const TabNavs = TabNavigator({
     Car: {
         screen: CarScreen,
         navigationOptions : {
-            tabBarLabel: Lang.cn.tab_car,
+            tabBarLabel: ()=>(<Text style={styles.labelTextStyle}>{Lang.cn.tab_car}</Text>),
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
                 return <Image source={img} style={styles.tabIcon} />;
@@ -134,7 +137,8 @@ const TabNavs = TabNavigator({
     Personal: {
         screen: PersonalScreen,
         navigationOptions : {
-            tabBarLabel: Lang.cn.tab_personal,
+            // tabBarLabel: Lang.cn.tab_personal,
+            tabBarLabel: ()=>(<Text style={styles.labelTextStyle}>{Lang.cn.tab_personal}</Text>),
             tabBarIcon: ({ focused }) => {
                 let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
                 return <Image source={img} style={styles.tabIcon} />;
@@ -183,6 +187,10 @@ const styles = StyleSheet.create({
     tabIcon: {
         width: PX.tabIconSize,
         height: PX.tabIconSize,
+    },
+    labelTextStyle: {
+        margin: 2,
+        fontSize: 10,
     },
 });
 

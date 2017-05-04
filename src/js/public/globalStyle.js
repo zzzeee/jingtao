@@ -23,7 +23,7 @@ export const PX = {
     productWidth1: 174,
     headHeight: 50,
     headIconSize: 26,
-    tabHeight: 62,
+    tabHeight: 50,
     tabIconSize: 26,
     userTopHeight: 160,
     userHeadImgSize: 66,

@@ -45,13 +45,14 @@ export default class AddOrder extends Component {
         let integralList = [list1, list2, list3];
 
         return (
-            <View>
+            <View style={styles.flex}>
                 <AppHead 
                     title='提交订单'
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
                 />
+                <View style={styles.flex}>
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
                     <View style={styles.addressSession}>
                         <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
@@ -107,6 +108,18 @@ export default class AddOrder extends Component {
                         </View>
                     </View>
                 </ScrollView>
+                </View>
+                <View style={styles.footRowBox}>
+                    <View style={styles.footRowLeft}>
+                        <Text style={styles.footRowLeftText}>
+                            {Lang.cn.actualMoney + ': '}
+                            <Text style={styles.redColor}>{Lang.cn.RMB + '98.00'}</Text>
+                        </Text>
+                    </View>
+                    <View style={styles.footRowRight}>
+                        <Text style={styles.footRowRightText}>{Lang.cn.updateOrder}</Text>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -196,8 +209,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     scrollviewStyle: {
-        width: Size.width, 
-        paddingBottom: 50,
+        width: Size.width,
     },
     rowViewStyle: {
         flexDirection: 'row',
@@ -393,5 +405,31 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         borderTopWidth: pixel,
         borderTopColor: Color.lavender,
+    },
+    footRowBox: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+    },
+    footRowLeft: {
+        flex: 1,
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        paddingRight: 18,
+    },
+    footRowRight: {
+        width: 106,
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: Color.mainColor,
+    },
+    footRowLeftText: {
+        fontSize: 16,
+        color: Color.lightBack,
+    },
+    footRowRightText: {
+        fontSize: 14,
+        color: '#fff',
     },
 });

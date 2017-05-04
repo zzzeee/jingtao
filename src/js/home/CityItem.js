@@ -118,7 +118,7 @@ export default class CityItem extends Component {
     }
 
     _renderItem = (obj, sessonid, rowid) => {
-        return <ProductItem product={obj} _key={rowid} boxStyle={{margin: 10}} />
+        return <ProductItem product={obj} _key={rowid} boxStyle={{margin: 10}} />;
     };
 }
 

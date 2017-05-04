@@ -16,7 +16,7 @@ export default class AppHead extends Component {
   	}
 
 	render() {
-		let {title, float, style, textStyle, left, right} = this.props;
+		let {title, center, float, style, textStyle, left, right} = this.props;
 		
 	    return (
 			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
@@ -24,7 +24,10 @@ export default class AppHead extends Component {
 					{left ? left : null}
 				</View>
 				<View style={styles.middleBox}>
-					<Text style={[styles.title, textStyle]}>{title}</Text>
+					{center ?
+						center :
+						<Text style={[styles.title, textStyle]}>{title}</Text>
+					}
 				</View>
 				<View style={styles.sideBox}>
 					{right ? right : null}
@@ -49,12 +52,11 @@ var styles = StyleSheet.create({
 		zIndex: 999,
 	},
 	sideBox : {
-		flex : 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	middleBox : {
-		flex : 8,
+		flex : 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

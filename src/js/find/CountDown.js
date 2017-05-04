@@ -15,6 +15,15 @@ import { Size, Color } from '../public/globalStyle';
 import Lang from '../public/language';
 
 export default class CountDown extends Component {
+    // 默认参数
+    static defaultProps = {
+        startTime: new Date().getTime(),
+    };
+    // 参数类型
+    static propTypes = {
+        startTime: React.PropTypes.number.isRequired,
+        endTime: React.PropTypes.number.isRequired,
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -29,11 +38,10 @@ export default class CountDown extends Component {
     }
 
     componentDidMount() {
-        if(this.props.ExpireTime) {
-            let time = new Date(this.props.ExpireTime).getTime();
-            if(time > new Date().getTime()) {
-                this.calculationTime(time);
-            }
+        let timer = new Date().getTime();
+        let {startTime, endTime} = this.props;
+        if(timer >= startTime && timer <= endTime) {
+            this.calculationTime(endTime);
         }
     }
 
@@ -55,15 +63,15 @@ export default class CountDown extends Component {
         let secondItem = this.create_item(this.state.seconds);
         return (
             <View style={styles.container}>
-                <Text style={styles.txtSurplus}>{Lang.cn.Surplus}</Text>
+                <Text style={styles.defaultFont}>{Lang.cn.Surplus}</Text>
                 {dayItem}
-                {dayItem ? <Text style={styles.numberUnit}>{Lang.cn.day}</Text> : null}
+                {dayItem ? <Text style={styles.defaultFont}>{Lang.cn.day}</Text> : null}
                 {hourItem}
-                {hourItem ? <Text style={styles.numberUnit}>{Lang.cn.hour}</Text> : null}
+                {hourItem ? <Text style={styles.defaultFont}>{Lang.cn.hour}</Text> : null}
                 {minuteItem}
-                {minuteItem ? <Text style={styles.numberUnit}>{Lang.cn.minute}</Text> : null}
+                {minuteItem ? <Text style={styles.defaultFont}>{Lang.cn.minute}</Text> : null}
                 {secondItem}
-                {secondItem ? <Text style={styles.numberUnit}>{Lang.cn.second}</Text> : null}
+                {secondItem ? <Text style={styles.defaultFont}>{Lang.cn.second}</Text> : null}
             </View>
         );
     }
@@ -83,7 +91,11 @@ export default class CountDown extends Component {
 
             if(list.length > 0) {
                 let item = list.map((n, i)=>{
-                    return <Text key={i} style={styles.numberBlock}>{n}</Text>;
+                    return (
+                        <View key={i} style={styles.numberBlockView}>
+                            <Text style={styles.numberBlock}>{n}</Text>
+                        </View>
+                    );
                 });
                 return item;
             }
@@ -120,7 +132,7 @@ export default class CountDown extends Component {
                 });
                 that.timer = setTimeout(() => { 
                     that.calculationTime(etime);
-                }, 999);
+                }, 900);
             }
         }else {
             this.setState({animate: false});
@@ -140,17 +152,22 @@ var styles = StyleSheet.create({
         paddingRight: 5,
         color: Color.mainColor,
     },
+    numberBlockView: {
+        width: 12,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 2,
+        backgroundColor: Color.mainColor,
+        margin: 2,
+    },
     numberBlock: {
         color: '#fff',
-        backgroundColor: Color.red,
-        paddingTop: 2,
-        paddingBottom: 2,
-        paddingLeft: 3,
-        paddingRight: 3,
+        fontSize: 11,
+    },
+    defaultFont: {
         fontSize: 14,
-        margin: 2,
-        borderRadius: 2,
-        fontWeight: 'bold'
+        color: Color.lightBack
     },
     numberUnit: {
         fontSize: 12,

@@ -11,8 +11,11 @@ var urls = {
     homeMap: host + '/chinamap/index.html',
     getCityAndProduct: host + '/api/IndexNController/getProvincialInformationAndCities',
     getProductClassify: host + '/api/ClassificationNController/getClassificationByClassType',
+    getPanicBuyingProductList: host + '/api/FindNController/getPanicBuyingActivityProductList',
+    getFindShopList: host + '/api/FindNController/getFindShopAndProductsList',
 };
 
 urls.homeMap = 'http://ceshi.ub33.cn/newmap2/index.html';
+urls.homeMap = 'file://android_asset/newmap/index.html';
 
 export default urls;

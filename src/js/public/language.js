@@ -34,7 +34,7 @@ const language = {
         hour: '时',
         minute: '分',
         second: '秒',
-        Surplus: '剩余',
+        Surplus: '还剩',
         jingtaoIntegral: '境淘积分 %s ',
         myOrder: '我的订单',
         viewAllOrder: '查看所有订单',
@@ -76,6 +76,8 @@ const language = {
         fullSwap: "全额抵现",
         noUseSwap: '不使用抵现',
         diySwapIntegral: '自定义抵现积分',
+        updateOrder: '提交订单',
+        actualMoney: '实付金额',
     },
 };
 

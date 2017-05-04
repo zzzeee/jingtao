@@ -274,6 +274,9 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#fff',
     },
+    btnRight: {
+        paddingRight: 12,
+    },
     scrollStyle: {
         width: classItemHeight,
     },

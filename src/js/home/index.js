@@ -79,7 +79,14 @@ export default class HomeScreen extends Component {
                         imageStyle={{marginTop: 10}} 
                         src={require("../../images/logoTitle.png")} 
                     />
-                    <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
+                    <BtnIcon 
+                        style={styles.btnRight} 
+                        width={PX.headIconSize} 
+                        src={require("../../images/search.png")} 
+                        press={()=>{
+                            this.props.navigation.navigate('LocationInfo');
+                        }}
+                    />
                 </View>
                 <Animated.View style={[styles.hideHead, styles.headShadow, {
                     height: this.state.heightValue,
@@ -106,8 +113,8 @@ export default class HomeScreen extends Component {
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}
-                            source={{uri: Urls.homeMap}}
-                            // source={require('../../newmap/index.html')}
+                            // source={{uri: Urls.homeMap}}
+                            source={require('../../newmap/index.html')}
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
@@ -123,7 +130,7 @@ export default class HomeScreen extends Component {
                             datas={this.state.datas} 
                         />
                     }
-                    </ScrollView>
+                </ScrollView>
                 <FloatMenu 
                     visible={this.state.visible} 
                     nativeEvent={this.state.nativeEvent} 
@@ -297,7 +304,6 @@ var styles = StyleSheet.create({
         left: 0,
         right: 0,
         top: 0,
-        zIndex: 999,
     },
     titleTextBox: {
         flexDirection: 'row',
@@ -314,9 +320,9 @@ var styles = StyleSheet.create({
         fontSize: 13,
     },
     btnLeft: {
-        paddingLeft: 10,
+        paddingLeft: 12,
     },
     btnRight: {
-        paddingRight: 10,
+        paddingRight: 12,
     },
 });

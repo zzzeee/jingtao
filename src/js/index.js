@@ -13,12 +13,13 @@ import {
 } from 'react-native';
 
 import { StackNavigator } from 'react-navigation';
+import { Color, PX } from './public/globalStyle';
+
 import TabNavScreen from './tabNav';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
-
-import { Color, PX } from './public/globalStyle';
+import LocationInfo from './home/LocationInfo';
 
 //显示格式
 const MyNavScren = ({navigation, NavScreen}) => {
@@ -47,6 +48,11 @@ const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
 );
 
+//首页 - 获取定位 - 测试
+const LocationInfoScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={LocationInfo} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
@@ -59,6 +65,9 @@ const AppNavigator = StackNavigator({
     },
     AddOrder: {
         screen: AddOrderScreen,
+    },
+    LocationInfo: {
+        screen: LocationInfoScreen,
     },
 }, {
     initialRouteName: 'TabNav',

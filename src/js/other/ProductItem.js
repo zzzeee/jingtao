@@ -31,7 +31,7 @@ export default class ProductItem extends Component {
         let gimg = obj.gThumbPic || '';
         let name = obj.gName || '';
         let gPrice = parseFloat(obj.gPrices) || '';
-        let dPrice = parseFloat(obj.gDiscountPrice) || '';
+        let dPrice = this.props.panicBuying ? parseFloat(obj.pbgPrice) : parseFloat(obj.gDiscountPrice);
         let discount = (gPrice && dPrice && gPrice > 0 && dPrice > 0) ? (dPrice / gPrice).toFixed(2) : null;
         if(type == 0) {
             let aimg = obj.adImg || '';
@@ -105,7 +105,7 @@ var styles = StyleSheet.create({
     discountView: {
         height: 18,
         position: 'absolute',
-        right: 2,
+        right: 5,
         top: 5,
     },
     discountText: {
