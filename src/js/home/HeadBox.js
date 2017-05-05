@@ -57,7 +57,7 @@ export default class HeadBox extends Component {
         let text = pinfo.griInfo || null;
         
         return (
-            <View>
+            <View style={{backgroundColor: '#fff'}}>
                 <Image source={{uri: fimg}} style={styles.firstRowImage}>
                     <View style={styles.firstRowImageView}>
                         <Text style={styles.bigText} numberOfLines={1}>{name}</Text>

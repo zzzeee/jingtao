@@ -63,15 +63,14 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        // this.getProvinceDatas(31);
+        this.getProvinceDatas(31);
     }
 
     render() {
         let _scrollview = null;
-
         return (
             <View style={styles.flex}>
-                <View style={[styles.headView, styles.headShadow]}>
+                <View style={styles.headView}>
                     <Text style={{width: 40}}>{null}</Text>
                     <BtnIcon 
                         width={100} 
@@ -88,7 +87,7 @@ export default class HomeScreen extends Component {
                         }}
                     />
                 </View>
-                <Animated.View style={[styles.hideHead, styles.headShadow, {
+                <Animated.View style={[styles.hideHead, {
                     height: this.state.heightValue,
                 }]}>
                     <BtnIcon 
@@ -109,7 +108,7 @@ export default class HomeScreen extends Component {
                     onScroll={this._onScroll} 
                     contentContainerStyle={styles.scrollViewBox}
                 >
-                    <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
+                    <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}
@@ -210,7 +209,7 @@ export default class HomeScreen extends Component {
             Utils.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id
             }, function(result) {
-                console.log(result);
+                // console.log(result);
                 if(result && result.provinceAry) {
                     let ret = that.removeHideCitys(result.provinceAry);
                     let name = ret.region_name || '';
@@ -274,12 +273,12 @@ var styles = StyleSheet.create({
     flex : {
         flex : 1,
     },
-    scrollViewBox : {
-        backgroundColor: '#ccc',
-    },
     webViewSize: {
         width: Size.width,
         height: PX.mapHeight,
+    },
+    scrollViewBox: {
+        paddingBottom: 10,
     },
     headShadow: {
         shadowColor: "#000",
@@ -294,8 +293,12 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         height: PX.headHeight,
+        borderBottomColor: Color.lavender,
+        borderBottomWidth: 1,
     },
     hideHead: {
+        borderBottomColor: Color.lavender,
+        borderBottomWidth: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

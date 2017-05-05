@@ -109,11 +109,9 @@ var styles = StyleSheet.create({
         flex : 1,
     },
     listViewStyle : {
-        backgroundColor: '#fff',
     },
     itemBox: {
-        paddingTop : 5,
-        paddingBottom: 5,
-        backgroundColor : '#ccc',
+        marginTop: 10,
+        backgroundColor: '#fff',
     },
 });

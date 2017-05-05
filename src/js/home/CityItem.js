@@ -7,7 +7,7 @@ import {
     ListView,
 } from 'react-native';
 
-import { Size, Color, pixel } from '../public/globalStyle';
+import { Size, Color, pixel, PX } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
@@ -26,6 +26,7 @@ export default class CityItem extends Component {
         super(props);
         this.state = {
             datas: null,
+            productNumber: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
     }
@@ -47,6 +48,7 @@ export default class CityItem extends Component {
             let list = city.proAdsAry || [];
             this.setState({
                 datas: city,
+                productNumber: list.length,
                 dataSource: this.state.dataSource.cloneWithRows(list),
             });
         }
@@ -63,9 +65,8 @@ export default class CityItem extends Component {
         let img_enter = require("../../images/enter.png");
         let img_mark = require("../../images/market.png");
         let img_share = require("../../images/share.png");
-        
         return (
-            <View style={{backgroundColor: '#fff'}}>
+            <View>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
                     <BtnIcon width={26} src={img_down} style={{padding: 5}} press={(e)=>{
@@ -85,40 +86,58 @@ export default class CityItem extends Component {
                     horizontal={true}
                     initialListSize={2}
                     enableEmptySections={true} 
-                    style={styles.listViewStyle}
+                    contentContainerStyle={styles.listViewStyle}
                     dataSource={this.state.dataSource}
-                    renderRow={this._renderItem}
+                    renderRow={this._renderItem.bind(this)}
                     showsHorizontalScrollIndicator={false}
                 />
                 <View style={styles.cityItemFootBox}>
-                    <BtnIcon 
-                        width={16}
-                        size={13}
-                        color={Color.lightBack}
-                        src={img_enter}
-                        text={lang.cn.goin + name}
-                    />
-                    <BtnIcon
-                        width={16}
-                        size={13}
-                        color={Color.lightBack}
-                        src={img_mark}
-                        text={lang.cn.allSeller}
-                    />
-                    <BtnIcon
-                        width={16}
-                        size={13}
-                        color={Color.lightBack}
-                        src={img_share}
-                        text={lang.cn.sharePruduct}
-                    />
+                    <View style={styles.noLeftBorder}>
+                        <BtnIcon 
+                            width={16}
+                            size={13}
+                            color={Color.lightBack}
+                            src={img_enter}
+                            text={lang.cn.goin + name}
+                        />
+                    </View>
+                    <View style={styles.leftBorder}>
+                        <BtnIcon
+                            width={16}
+                            size={13}
+                            color={Color.lightBack}
+                            src={img_mark}
+                            text={lang.cn.allSeller}
+                        />
+                    </View>
+                    <View style={styles.leftBorder}>
+                        <BtnIcon
+                            width={16}
+                            size={13}
+                            color={Color.lightBack}
+                            src={img_share}
+                            text={lang.cn.sharePruduct}
+                        />
+                    </View>
                 </View>
             </View>
         );
     }
 
-    _renderItem = (obj, sessonid, rowid) => {
-        return <ProductItem product={obj} _key={rowid} boxStyle={{margin: 10}} />;
+    _renderItem = (obj, sessonid, rowid, num) => {
+        let margin_left = this.state.productNumber > 1 ? 15 : ((Size.width - PX.productWidth1) / 2);
+        return (
+            <ProductItem 
+                product={obj} 
+                _key={rowid} 
+                boxStyle={{
+                    marginLeft: margin_left, 
+                    marginTop: 15,
+                    marginBottom: 15,
+                    marginRight: 0
+                }} 
+            />
+        );
     };
 }
 
@@ -127,9 +146,9 @@ var styles = StyleSheet.create({
         flex : 1,
     },
     listViewStyle : {
-        backgroundColor: '#fff',
         marginTop : 10,
         marginBottom: 10,
+        paddingRight: 15,
     },
     cityNameRow: {
         height: 40,
@@ -142,6 +161,7 @@ var styles = StyleSheet.create({
     cityNameText: {
         fontSize: 20,
         color: Color.lightBack,
+        paddingTop: 12,
     },
     cityTitleRow: {
         height: 60,
@@ -163,8 +183,8 @@ var styles = StyleSheet.create({
         height: 22,
     },
     cityImage: {
-        flex: 1,
         height: 60,
+        width: 100,
     },
     cityItemFootBox: {
         width: Size.width - 30,
@@ -179,5 +199,19 @@ var styles = StyleSheet.create({
     buttonText: {
         fontSize: 14,
         color: Color.lightBack,
+    },
+    noLeftBorder: {
+        flex: 1,
+        height: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    leftBorder: {
+        flex: 1,
+        height: 16,
+        borderLeftWidth: pixel,
+        borderLeftColor: Color.lavender,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

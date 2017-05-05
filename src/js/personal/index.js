@@ -145,11 +145,12 @@ export default class PersonalScreen extends Component {
                 }
             }}>
                 <View style={styles.btnRowStyle}>
-                    <View style={styles.lightTextBox}>
-                        <Image style={styles.bigIcon} source={img} style={styles.bigIcon} />
-                        <Text style={[styles.normalText, {paddingLeft: 15}]}>{txt}</Text>
+                    <Image style={styles.bigIcon} source={img} style={styles.bigIcon} />
+                    <View style={styles.btnRowRightBox}>
+                        <Text style={styles.defalueFont}>{txt}</Text>
+                        <Image source={require('../../images/list_more.png')} style={styles.bigIcon} />
                     </View>
-                    <Image source={require('../../images/list_more.png')} style={styles.bigIcon} />
+                    
                 </View>
             </TouchableOpacity>
         );
@@ -159,6 +160,10 @@ export default class PersonalScreen extends Component {
 var styles = StyleSheet.create({
     flex: {
         flex: 1,
+    },
+    defalueFont: {
+        color: Color.lightBack,
+        fontSize: 14,
     },
     userBgImg: {
         justifyContent: "flex-end",
@@ -187,7 +192,7 @@ var styles = StyleSheet.create({
     },
     headBox: {
         height: PX.userHeadImgSize,
-        marginLeft: 15,
+        marginLeft: PX.marginLR,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -226,7 +231,7 @@ var styles = StyleSheet.create({
     },
     btnsListBox: {
         backgroundColor: '#fff',
-        marginBottom: 10,
+        marginBottom: PX.marginTB,
     },
     orderRow: {
         height: 49,
@@ -235,7 +240,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         borderColor: Color.lavender,
         borderWidth: pixel,
-        paddingRight: 15,
+        paddingRight: PX.marginLR,
     },
     ctrlBtnBox: {
         flexDirection: 'row',
@@ -250,7 +255,8 @@ var styles = StyleSheet.create({
     darkText: {
         color: Color.lightBack,
         fontSize: 14,
-        paddingLeft: 15,
+        paddingLeft: PX.marginLR,
+        fontWeight: 'bold',
     },
     lightTextBox: {
         flexDirection: 'row',
@@ -265,17 +271,24 @@ var styles = StyleSheet.create({
     },
     normalText: {
         color: Color.lightBack,
-        fontSize: 12,
+        fontSize: 13,
     },
     btnRowStyle: {
-        width: Size.width - 15,
+        width: Size.width - PX.marginLR,
         height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+    },
+    btnRowRightBox: {
+        flex: 1,
+        height: 50,
+        borderBottomColor: Color.lavender,
+        borderBottomWidth: pixel,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginLeft: 15,
-        paddingRight: 15,
-        borderBottomColor: Color.lavender,
-        borderBottomWidth: pixel,
+        marginLeft: PX.marginLR,
     },
 });

@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import Lang, {str_replace} from './language';
-import { Size, pixel, PX, Color } from './globalStyle';
+import { Size, pixel, PX, Color, errorStyles } from './globalStyle';
 
 //加载中
 const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
@@ -37,14 +37,14 @@ const ErrorView = (obj, func) => {
     let txt2 = errText2 || Lang.cn.fetchError;
     let color = errColor || Lang.cn.lightBack;
     return (
-        <View style={[styles.bodyView, bgStyle]}>
+        <View style={[errorStyles.bodyView, bgStyle]}>
             <Text 
-                style={[styles.refaceBtn, {color: color}, err_textStyle1]}
+                style={[errorStyles.refaceBtn, {color: color}, err_textStyle1]}
                 onPress={fetchFunc}
             >
                 {txt1}
             </Text>
-            <Text style={[styles.errRemind, {color: color}, err_textStyle2]}>{txt2}</Text>
+            <Text style={[errorStyles.errRemind, {color: color}, err_textStyle2]}>{txt2}</Text>
         </View>
     );
 };
@@ -187,19 +187,6 @@ var styles = StyleSheet.create({
         fontSize : 15,
         paddingRight: 20,
 	},
-    refaceBtn : {
-		backgroundColor : '#ccc',
-		borderWidth : 1,
-		borderColor : '#888',
-		minWidth : 80,
-		marginBottom : 20,
-		borderRadius : 8,
-		padding : 10,
-        fontSize: 14,
-	},
-    errRemind: {
-        fontSize: 12,
-    },
 });
 
 export default Util;

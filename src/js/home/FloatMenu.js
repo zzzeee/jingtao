@@ -156,7 +156,7 @@ export default class FloatMenu extends Component {
         //console.log('height=' + sHeight + ', pageY=' + pageY + ', menuH=' + menuH);
         return (
             <Modal
-                animationType={"none"}
+                animationType={"fade"}
                 transparent={true}
                 visible={this.props.visible}
                 onRequestClose={() => {}}
@@ -171,8 +171,8 @@ export default class FloatMenu extends Component {
     }
 
     renderObject = (obj, i) => {
-        let title = obj.title || '';
-        let detail = obj.detail || '';
+        let title = obj.title || null;
+        let detail = obj.detail || null;
 
         return (
             <TouchableOpacity key={i} onPress={()=>{
@@ -183,8 +183,14 @@ export default class FloatMenu extends Component {
                 <View style={styles.shareRow}>
                     <Image source={obj.icon} style={styles.icon} />
                     <View style={styles.textBox}>
-                        <Text numberOfLines={1} style={styles.bigText}>{title}</Text>
-                        <Text numberOfLines={1} style={styles.smallText}>{detail}</Text>
+                        {title ?
+                            <Text numberOfLines={1} style={styles.bigText}>{title}</Text>
+                            : null
+                        }
+                        {detail ?
+                            <Text numberOfLines={1} style={styles.smallText}>{detail}</Text>
+                            : null
+                        }
                     </View>
                 </View>
             </TouchableOpacity>

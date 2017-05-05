@@ -78,6 +78,7 @@ const language = {
         diySwapIntegral: '自定义抵现积分',
         updateOrder: '提交订单',
         actualMoney: '实付金额',
+        gotoShop: '进入店铺',
     },
 };
 
