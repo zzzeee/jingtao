@@ -1,5 +1,6 @@
+// 添加设备
 adb devices
-
+// 设备连接服务
 adb reverse tcp:8081 tcp:8081
-
+// 打包命令
 gradlew assembleRelease

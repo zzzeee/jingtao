@@ -42,7 +42,6 @@ export default class HomeScreen extends Component {
             hideCitys: [],
             load_or_error: null,
             webView_error: false,
-            headElevation: 4,
         };
 
         this.shareObj = {};
@@ -75,7 +74,7 @@ export default class HomeScreen extends Component {
                     <BtnIcon 
                         width={100} 
                         height={PX.headHeight - 10} 
-                        imageStyle={{marginTop: 10}} 
+                        imageStyle={{marginTop: 8}} 
                         src={require("../../images/logoTitle.png")} 
                     />
                     <BtnIcon 
@@ -156,7 +155,6 @@ export default class HomeScreen extends Component {
                 this.showStart = true;
                 this.setState({
                     updateData: false,
-                    headElevation: 0,
                 });
                 Animated.spring(this.state.heightValue, {
                     toValue: PX.headHeight,
@@ -169,7 +167,6 @@ export default class HomeScreen extends Component {
                 this.showStart = false;
                 this.setState({
                     updateData: false,
-                    headElevation: 4,
                 });
                 this.state.heightValue.setValue(0);
             }
@@ -222,7 +219,7 @@ export default class HomeScreen extends Component {
                     });
                 }
             }, (view)=>that.setState({load_or_error: view}), {
-                bgStyle: {padding: 20,}
+                bgStyle: {padding: 20,},
             });
         }
     };
@@ -244,7 +241,7 @@ export default class HomeScreen extends Component {
                 canAdd && newCitysList.push(citys[index]);
             }
             datas.cityProduct = newCitysList;
-            console.log(datas);
+            // console.log(datas);
         }
         return datas;
     };

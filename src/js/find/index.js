@@ -15,7 +15,7 @@ import {
     FlatList,
 } from 'react-native';
 
-// import Swiper from 'react-native-swiper';
+import Swiper from 'react-native-swiper';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
@@ -39,6 +39,7 @@ export default class FindScreen extends Component {
 
         this.pageOffest = 1;
         this.pageNumber = 10;
+        this.ref_flatList = null;
     }
 
     componentDidMount() {
@@ -50,7 +51,7 @@ export default class FindScreen extends Component {
         let ret1 = await this.getXSQGDatas();
         let ret2 = await this.getMDYPDatas();
         // console.log(ret1);
-        console.log(ret2);
+        // console.log(ret2);
         if(!ret1 && !ret2) {
             this.setState({fetchError: true});
         }else {
@@ -84,12 +85,9 @@ export default class FindScreen extends Component {
 
     // 加载更多
     loadMore = async () => {
-        console.log('load more  start!!!')
         let ret2 = await this.getMDYPDatas();
-        console.log(ret2);
         if(ret2 && ret2.sTatus && ret2.shopAry.length) {
             let MDYP = this.state.MDYP.concat(ret2.shopAry);
-            console.log(MDYP);
             this.pageOffest++;
             this.setState({ MDYP });
         }
@@ -97,38 +95,24 @@ export default class FindScreen extends Component {
 
     // 获取限时抢购商品
     getXSQGDatas = () => {
-        // let that = this;
-        // return Utils.fetch(Urls.getPanicBuyingProductList, 'post', {
-        // }, function(result) {
-        //     if(result && result.sTatus && result.proAry) {
-        //         return result;
-        //     }
-        // });
-        return fetch(Urls.getPanicBuyingProductList, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        })
-        .then((response) => response.json())
-        .then((responseText) => {
-            return responseText;
-        })
-        .catch((error) => {
-            return null;
-        });
+        return this.async_fetch(Urls.getPanicBuyingProductList, null);
     };
 
     // 获取名店列表
     getMDYPDatas = () => {
-        return fetch(Urls.getFindShopList, {
+        let json = 'sPage=' + this.pageOffest + '&sPerNum' + this.pageNumber;
+        return this.async_fetch(Urls.getFindShopList, json);
+    };
+
+    // fetch有返回数据型
+    async_fetch = (url, json) => {
+        return fetch(url, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'sPage=' + this.pageOffest + '&sPerNum' + this.pageNumber
+            body: json,
         })
         .then((response) => response.json())
         .then((responseText) => {
@@ -191,6 +175,24 @@ export default class FindScreen extends Component {
                         />
                     </View>
                     <View style={styles.couponBox}>
+                        <Swiper 
+                            height={200}
+                            style={styles.wrapper} 
+                            horizontal={true}
+                            showsPagination={true}
+                            autoplay={true}
+                            autoplayTimeout={2}
+                            showsButtons={false}>
+                            <View style={styles.slideView}>
+                                <Text style={styles.slideText}>优惠券 1</Text>
+                            </View>
+                            <View style={styles.slideView}>
+                                <Text style={styles.slideText}>优惠券 2</Text>
+                            </View>
+                            <View style={styles.slideView}>
+                                <Text style={styles.slideText}>优惠券 3</Text>
+                            </View>
+                        </Swiper>
                     </View>
                     <View style={styles.mdypImgBox}>
                         <Image source={require('../../images/find/mdyp.png')} resizeMode="stretch" style={styles.mdypImgStyle} />
@@ -208,17 +210,19 @@ export default class FindScreen extends Component {
                         title={Lang.cn.tab_find}
                         center={<BtnIcon 
                             width={100} 
-                            height={PX.headHeight - 10} 
-                            imageStyle={{marginTop: 10}} 
-                            src={require("../../images/logoTitle.png")} 
+                            height={PX.headHeight - 10}
+                            src={require("../../images/logoTitle.png")}
+                            press={()=>this.ref_flatList.scrollToOffset({x: 0, y: 0, animated: true})}
                         />}
                         right={<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />}
                     />
                 </View>
                 <View style={styles.flex}>
                     <FlatList
+                        ref={(_ref)=>this.ref_flatList=_ref} 
+                        removeClippedSubviews={false}
                         data={this.state.MDYP}
-                        keyExtractor={(item, index) => item.sId}
+                        keyExtractor={(item, index) => (index + '_' + item.sId)}
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
                         onEndReached={this.loadMore}
@@ -379,6 +383,15 @@ var styles = StyleSheet.create({
         marginTop: PX.marginTB,
         backgroundColor: '#fff',
         marginBottom: PX.marginTB,
+    },
+    slideView: {
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#684',
+    },
+    slideText: {
+        color: '#fff',
     },
     mdypImgBox: {
         height: 60,

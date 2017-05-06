@@ -61,7 +61,9 @@ var Util = {
     fetch: function (url, type, data, callback, load_error = null, load_error_config = {}) {
         var fetchOptions = {};
         var str_data = '';
-        load_error && load_error(Loading({...load_error_config}));
+        if(load_error && !load_error_config.hideLoad) {
+            load_error && load_error(Loading({...load_error_config}));
+        }
         //data参数格式化
         for (let key in data) {
             if (typeof(data[key]) !== 'undefined' && data[key] !== null) {
@@ -185,7 +187,7 @@ var styles = StyleSheet.create({
 	modalText : {
 		color : '#fff',
         fontSize : 15,
-        paddingRight: 20,
+        paddingLeft: 20,
 	},
 });
 

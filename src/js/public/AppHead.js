@@ -52,11 +52,12 @@ var styles = StyleSheet.create({
 		zIndex: 999,
 	},
 	sideBox : {
+		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	middleBox : {
-		flex : 1,
+		flex : 8,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

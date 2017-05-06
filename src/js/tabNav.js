@@ -170,6 +170,7 @@ const TabNavs = TabNavigator({
 }, {
     initialRouteName: 'Home',
     swipeEnabled: false,
+    animationEnabled: false,
     tabBarPosition: 'bottom',
     tabBarOptions: {
         showIcon: true,

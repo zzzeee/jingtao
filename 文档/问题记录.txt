@@ -1,0 +1,4 @@
+本项目中遇到的问题记录
+
+1. listView/FlatList 中添加 react-native-swiper
+    需在 listView/FlatList 加入属性 removeClippedSubviews={false}
