@@ -35,6 +35,7 @@ export default class FindScreen extends Component {
             datas: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             MDYP: null,
+            isRefreshing: false,
         };
 
         this.pageOffest = 1;
@@ -48,37 +49,47 @@ export default class FindScreen extends Component {
 
     //初始化页面
     initPage = async () => {
-        let ret1 = await this.getXSQGDatas();
-        let ret2 = await this.getMDYPDatas();
-        // console.log(ret1);
-        // console.log(ret2);
-        if(!ret1 && !ret2) {
+        this.pageOffest = 1;
+        this.pageNumber = 10;
+        let xsqg = await this.getXSQGDatas();
+        let mdyp = await this.getMDYPDatas();
+        // console.log(xsqg);
+        // console.log(mdyp);
+        if(!xsqg && !mdyp) {
             this.setState({fetchError: true});
         }else {
-            if(ret1 && ret1.sTatus && ret1.proAry) {
-                let xsqg = ret1.proAry || {};
-                let start = xsqg.pbStartTime || null;
-                let end = xsqg.pbEndTime || null;
-                let proList = xsqg.activityAry || [];
-
+            this.setXSQGlist(xsqg);
+            this.setMDYPlist(mdyp);
+        }
+    };
+    //设置限时抢购列表
+    setXSQGlist = (datas) => {
+        if(datas && datas.sTatus && datas.proAry) {
+            let xsqg = datas.proAry || {};
+            let start = xsqg.pbStartTime || null;
+            let end = xsqg.pbEndTime || null;
+            let proList = xsqg.activityAry || [];
+            this.setState({
+                fetchError: false,
+                isRefreshing: false,
+                startTime: new Date(start).getTime(),
+                endTime: new Date(end).getTime(),
+                datas: xsqg,
+                dataSource: this.state.dataSource.cloneWithRows(proList),
+            });
+        }
+    };
+    //设置名店优品列表
+    setMDYPlist = (datas) => {
+        if(datas && datas.sTatus && datas.shopAry) {
+            let mdyp = datas.shopAry || [];
+            if(mdyp.length > 0) {
+                this.pageOffest++;
                 this.setState({
                     fetchError: false,
-                    startTime: new Date(start).getTime(),
-                    endTime: new Date(end).getTime(),
-                    datas: xsqg,
-                    dataSource: this.state.dataSource.cloneWithRows(proList),
+                    isRefreshing: false,
+                    MDYP: mdyp,
                 });
-            }
-
-            if(ret2 && ret2.sTatus && ret2.shopAry) {
-                let mdyp = ret2.shopAry || [];
-                if(mdyp.length > 0) {
-                    this.pageOffest++;
-                    this.setState({
-                        fetchError: false,
-                        MDYP: mdyp,
-                    });
-                }
             }
         }
     };
@@ -88,6 +99,7 @@ export default class FindScreen extends Component {
         let ret2 = await this.getMDYPDatas();
         if(ret2 && ret2.sTatus && ret2.shopAry.length) {
             let MDYP = this.state.MDYP.concat(ret2.shopAry);
+            console.log(MDYP);
             this.pageOffest++;
             this.setState({ MDYP });
         }
@@ -226,7 +238,13 @@ export default class FindScreen extends Component {
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
                         onEndReached={this.loadMore}
+                        onEndReachedThreshold={100}
                         getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
+                        refreshing={this.state.isRefreshing}
+                        onRefresh={()=>{
+                            this.setState({isRefreshing: true});
+                            this.initPage();
+                        }}
                     />
                 </View>
             </View>

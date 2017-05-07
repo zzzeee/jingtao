@@ -117,10 +117,9 @@
                     }
                 };
                 var map_height = Math.round(($('body').width() - 30) * 0.792) || 0;
+                var map_isok = map_height < 10 ? false : true; 
                 map_height = map_height > 0 ? map_height : 280;
                 $('#map').height(map_height);
-                // document.getElementById('map').style.height = map_height + 'px';
-                // document.getElementById('showTestDatas').innerHTML = 'body=' + map_height + 'px ， map_height=' + map_height;
                 
                 //填充select option
                 $.each(chinaMapConfig.names, function (k, v) {
@@ -252,6 +251,14 @@
                 }
                 function getPercentFromScale(scale) {
                     return Math.round((scale - minScale) / (maxScale - minScale) * 10000) / 100;
+                }
+
+                //如果地图显示不正常，将手动触发对焦事件
+                if(!map_isok) {
+                    $('#btn_fit_out').click();
+                    setTimeout(function(){
+                        $('#btn_fit_in').click();
+                    }, 500);
                 }
             });
         </script>
