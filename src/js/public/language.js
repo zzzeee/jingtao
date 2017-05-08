@@ -71,6 +71,9 @@ const language = {
         total: '共计',
         coupon: '优惠券',
         haveCoupon: '有可用的优惠券',
+        integral: '积分',
+        swap: '抵现',
+        used: '使用了',
         integralSwap: '积分抵现',
         canUseIntegral: '可用积分',
         fullSwap: "全额抵现",
@@ -79,6 +82,11 @@ const language = {
         updateOrder: '提交订单',
         actualMoney: '实付金额',
         gotoShop: '进入店铺',
+        productTotalPrice: '商品总价格',
+        freightTotal: '运费总额',
+        couponReduction: '优惠券减免',
+        totalPayment: '总计支付',
+        selectPayMethod: '请选择支付方式',
     },
 };
 

@@ -49,7 +49,6 @@ var styles = StyleSheet.create({
         shadowRadius: 0.5,
         shadowOffset: {"height": 0.5},
         elevation: 4,
-		zIndex: 999,
 	},
 	sideBox : {
 		flex: 1,

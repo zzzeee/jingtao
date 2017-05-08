@@ -21,12 +21,14 @@ import Lang, {Rule, str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import Order from '../datas/order.json';
+import PayOrder from './PayOrder';
 
 export default class AddOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selectSwapIntegral: 0,
+            showPayModal: false,
         };
 
         this.ref_scroll = null;
@@ -100,12 +102,18 @@ export default class AddOrder extends Component {
                         </View>
                         <View style={styles.integralBoxFoot}>
                             <Text>
-                                使用了
+                                {Lang.cn.used}
                                 <Text style={styles.redColor}>300</Text>
-                                积分, 抵现
+                                {Lang.cn.integral + ', ' + Lang.cn.swap}
                                 <Text style={styles.redColor}>{Lang.cn.RMB + 30}</Text>
                             </Text>
                         </View>
+                    </View>
+                    <View style={styles.priceListBox}>
+                        {this.priceRow(Lang.cn.productTotalPrice, Lang.cn.RMB + '128.00', false)}
+                        {this.priceRow(Lang.cn.freightTotal, Lang.cn.RMB + '15.00', false)}
+                        {this.priceRow(Lang.cn.couponReduction, '-' + Lang.cn.RMB + '15.00', true)}
+                        {this.priceRow(Lang.cn.integralSwap, '-' + Lang.cn.RMB + '128.00', true)}
                     </View>
                 </ScrollView>
                 </View>
@@ -116,13 +124,27 @@ export default class AddOrder extends Component {
                             <Text style={styles.redColor}>{Lang.cn.RMB + '98.00'}</Text>
                         </Text>
                     </View>
-                    <View style={styles.footRowRight}>
+                    <TouchableOpacity style={styles.footRowRight} onPress={()=>this.setState({showPayModal: true})}>
                         <Text style={styles.footRowRightText}>{Lang.cn.updateOrder}</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
+                <PayOrder visible={this.state.showPayModal} />
             </View>
         );
     }
+
+    //价格明细
+    priceRow = (title, price, isRed) => {
+        return (
+            <View style={styles.priceRowBox}>
+                <Text style={styles.defaultFont}>{title}</Text>
+                {isRed ?
+                    <Text style={[styles.defaultFont, styles.redColor]}>{price}</Text>
+                    : <Text style={styles.defaultFont}>{price}</Text>
+                }
+            </View>
+        );
+    };
 
     //订单内的商家
     storeSession = (item, index) => {
@@ -348,9 +370,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 50,
         backgroundColor: '#fff',
-        paddingLeft: 15,
-        paddingRight: 15,
-        marginBottom: 10,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        marginBottom: PX.marginTB,
     },
     couponExplainStyle: {
         fontSize: 14,
@@ -363,9 +385,9 @@ const styles = StyleSheet.create({
     },
     integralBox: {
         backgroundColor: '#fff',
-        marginBottom: 10,
-        paddingLeft: 15,
-        paddingRight: 15,
+        marginBottom: PX.marginTB,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
     },
     integralBoxHead: {
         height: 50,
@@ -405,6 +427,20 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         borderTopWidth: pixel,
         borderTopColor: Color.lavender,
+    },
+    priceListBox: {
+        backgroundColor: '#fff',
+        marginBottom: PX.marginTB,
+    },
+    priceRowBox: {
+        height: 50,
+        marginLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        borderBottomColor: Color.lavender,
+        borderBottomWidth: pixel,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     footRowBox: {
         flexDirection: 'row',

@@ -2,3 +2,5 @@
 
 1. listView/FlatList 中添加 react-native-swiper
     需在 listView/FlatList 加入属性 removeClippedSubviews={false}
+
+2. Modal组件隐藏时，当前页面有zIndex属性的元素/组件，也会随之消失
