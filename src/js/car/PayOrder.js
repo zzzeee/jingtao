@@ -13,8 +13,12 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
+    Button,
 } from 'react-native';
 
+var WeChat=require('react-native-wechat');
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color, PX } from '../public/globalStyle';
@@ -60,6 +64,27 @@ export default class PayOrder extends Component {
                             <Text style={styles.defalutFont}>{Lang.cn.totalPayment}</Text>
                             <Text style={styles.redColor1}>{Lang.cn.RMB + '120.00'}</Text>
                         </View>
+                        <Button title="支付" onPress={async ()=>{
+                            Utils.fetch('http://vpn.jingtaomart.com/api/WeixinController/weixinpay', 'post', {}, function(result){
+                                console.log('result :');
+                                console.log(result);
+                                let pay_data = {};
+                                pay_data.partnerId = result.partnerId;
+                                pay_data.prepayId = result.prepay_id;
+                                pay_data.nonceStr = result.nonceStr;
+                                pay_data.timeStamp = result.timeStamp;
+                                pay_data.package = "Sign=WXpay";
+                                pay_data.sign = result.paySign;
+
+                                console.log('start  pay ............');
+                                console.log(pay_data);
+                                WeChat.pay(pay_data)
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                                console.log('end pay ...............');
+                            });
+                        }} />
                     </View>
                 </View>
             </Modal>
