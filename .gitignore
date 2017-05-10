@@ -62,3 +62,6 @@ __tests__
 yarn.lock
 .watchmanconfig
 .gitattributes
+src/Lib/
+src/Sdk/
+src/Services/

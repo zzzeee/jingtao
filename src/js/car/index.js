@@ -31,6 +31,7 @@ export default class CarsScreen extends Component {
             <View>
                 <AppHead title='购物车' />
                 <Button title='提交订单' onPress={()=>navigation.navigate('AddOrder')} />
+                <Button title='空购物车' onPress={()=>navigation.navigate('EmptyCar', {key_car: navigation.state.key})} />
             </View>
         );
     }

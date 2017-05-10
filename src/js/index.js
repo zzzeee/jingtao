@@ -20,14 +20,16 @@ import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
 import LocationInfo from './home/LocationInfo';
+import EmptyCar from './car/EmptyCar';
 
 //显示格式
 const MyNavScren = ({navigation, NavScreen}) => {
+    let { router } = TabNavScreen;
     return (
         <View style={styles.flex}>
             <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
             <View style={styles.container}>
-                <NavScreen navigation={navigation} />
+                <NavScreen navigation={navigation} router={router} />
             </View>
         </View>
     );
@@ -46,6 +48,11 @@ const IntegralRuleScreen = ({ navigation }) => (
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
+);
+
+//购物车 - 空购物车 - 测试
+const EmptyCarScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={EmptyCar} />
 );
 
 //首页 - 获取定位 - 测试
@@ -68,6 +75,9 @@ const AppNavigator = StackNavigator({
     },
     LocationInfo: {
         screen: LocationInfoScreen,
+    },
+    EmptyCar: {
+        screen: EmptyCarScreen,
     },
 }, {
     initialRouteName: 'TabNav',

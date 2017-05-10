@@ -65,6 +65,7 @@ const PersonalScreen = ({ navigation }) => (
 const TabNavs = TabNavigator({
     Home: {
         screen: HomeScreen,
+        path: 'home',
         navigationOptions : {
             // tabBarLabel: Lang.cn.tab_home,
             tabBarLabel: ({ focused })=>{
@@ -86,6 +87,7 @@ const TabNavs = TabNavigator({
     },
     Find: {
         screen: FindScreen,
+        path: 'find',
         navigationOptions : {
             // tabBarLabel: Lang.cn.tab_find,
             tabBarLabel: ({ focused })=>{
@@ -107,6 +109,7 @@ const TabNavs = TabNavigator({
     },
     Classify: {
         screen: ClassScreen,
+        path: 'classify',
         navigationOptions : {
             // tabBarLabel: Lang.cn.tab_class,
             tabBarLabel: ({ focused })=>{
@@ -128,6 +131,7 @@ const TabNavs = TabNavigator({
     },
     Car: {
         screen: CarScreen,
+        path: 'car',
         navigationOptions : {
             tabBarLabel: ({ focused })=>{
                 let selectStyle = focused ? {color: Color.mainColor} : {};
@@ -148,6 +152,7 @@ const TabNavs = TabNavigator({
     },
     Personal: {
         screen: PersonalScreen,
+        path: 'personal',
         navigationOptions : {
             // tabBarLabel: Lang.cn.tab_personal,
             tabBarLabel: ({ focused })=>{
