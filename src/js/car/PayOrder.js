@@ -18,7 +18,7 @@ import {
 
 var WeChat=require('react-native-wechat');
 // import {pay} from 'react-native-alipay';
-import Alipay from 'react-native-alipay';
+import Alipay from 'react-native-yunpeng-alipay'
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
@@ -115,6 +115,7 @@ export default class PayOrder extends Component {
     };
     
     ali_pay = async () => {
+        console.log(Alipay);
         let privateKey = 'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR/h2n5MHMN9Ln2QlErF2mqeVI1+LFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0+ZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6+bTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0+KrQcsTd2rO+3jWbYjqWlE0m4XV9xhpdzZ2r4Y5+hMZY4uPia34L2BCEbhnlaV2CpNW1pUG/aeeZZlSe3JP8ymiDdK0PEstoId/hNOdpm0Nu+YrZ5eiuEyJMbKZDorxQd3L984ECQQD73F+bqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N/TEXLEuXW5gJifnqOd2ba1RgOXBn0rW/eFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b/zvlN26OBza2P/ZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP+xlxxwdIekUnHSzGYEzUocRgWiXbS/s07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8+UvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe+99PjLf+nVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p+0tOtI6/Ab9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ+9xBEEe';
         let order = {
             app_id: '2016122004454914',
@@ -152,7 +153,8 @@ export default class PayOrder extends Component {
         }
         order_str = order_str.substring(0, order_str.length - 1);
 
-        order_str='app_id=2016122004454914&method=alipay.trade.app.pay&charset=utf-8&format=json&sign_type=RSA&sign=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR%2Fh2n5MHMN9Ln2QlErF2mqeVI1%2BLFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0%2BZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6%2BbTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0%2BKrQcsTd2rO%2B3jWbYjqWlE0m4XV9xhpdzZ2r4Y5%2BhMZY4uPia34L2BCEbhnlaV2CpNW1pUG%2FaeeZZlSe3JP8ymiDdK0PEstoId%2FhNOdpm0Nu%2BYrZ5eiuEyJMbKZDorxQd3L984ECQQD73F%2BbqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N%2FTEXLEuXW5gJifnqOd2ba1RgOXBn0rW%2FeFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b%2FzvlN26OBza2P%2FZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP%2BxlxxwdIekUnHSzGYEzUocRgWiXbS%2Fs07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8%2BUvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe%2B99PjLf%2BnVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p%2B0tOtI6%2FAb9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ%2B9xBEEe&timestamp=2017-05-10%2017%3A56%3A01&version=1.0&notify_url=http%3A%2F%2Fjingtaomart.com&biz_content=%257B%2522body%2522%253A%2522%255Cu6d4b%255Cu8bd5_body%255Cu5185%255Cu5bb9%2522%252C%2522subject%2522%253A%2522%255Cu6d4b%255Cu8bd5_subject%255Cu5185%255Cu5bb9%2522%252C%2522out_trade_no%2522%253A1494409579%252C%2522total_amount%2522%253A0.1%252C%2522timeout_express%2522%253A%252230m%2522%257D';
+        let order_str2 = 'app_id=2016122004454914&method=alipay.trade.app.pay&charset=utf-8&format=json&sign_type=RSA&sign=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR%2Fh2n5MHMN9Ln2QlErF2mqeVI1%2BLFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0%2BZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6%2BbTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0%2BKrQcsTd2rO%2B3jWbYjqWlE0m4XV9xhpdzZ2r4Y5%2BhMZY4uPia34L2BCEbhnlaV2CpNW1pUG%2FaeeZZlSe3JP8ymiDdK0PEstoId%2FhNOdpm0Nu%2BYrZ5eiuEyJMbKZDorxQd3L984ECQQD73F%2BbqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N%2FTEXLEuXW5gJifnqOd2ba1RgOXBn0rW%2FeFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b%2FzvlN26OBza2P%2FZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP%2BxlxxwdIekUnHSzGYEzUocRgWiXbS%2Fs07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8%2BUvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe%2B99PjLf%2BnVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p%2B0tOtI6%2FAb9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ%2B9xBEEe&timestamp=2017-05-10%2019%3A24%3A01&version=1.0&notify_url=http%3A%2F%2Fjingtaomart.com&biz_content=%7B%22timeout_express%22%3A%2230m%22%2C%22seller_id%22%3A%22%22%2C%22total_amount%22%3A%220.02%22%2C%22subject%22%3A%221%22%2C%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22out_trade_no%22%3A%22314VYG00IAGG7ZOYY%22%7D';
+        console.log
         const result = await Alipay.pay(order_str, true);
         console.log(result);
         if (result.resultStatus === '9000') {
