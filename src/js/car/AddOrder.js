@@ -209,7 +209,7 @@ export default class AddOrder extends Component {
                 <View style={styles.buyerMessageBox}>
                     <Text style={styles.buyerMessageText}>{Lang.cn.buyerMessage}</Text>
                     <InputText
-                        style={{flex: 1, borderWidht: 0}} 
+                        style={{flex: 1, borderWidth: 0}} 
                         pText={Lang.cn.buyerMessagePlaceholder} 
                         onChange={(txt)=>this.message = txt} 
                     />

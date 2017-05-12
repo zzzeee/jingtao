@@ -6,7 +6,7 @@
 
 //微信开放者平台信息
 export const WeiXin = {
-     appid: 'wx220dd5779654cdf7',
+     appid: 'wxe2c2a29213e78cf7',
  };
 
  //支付宝公私钥信息

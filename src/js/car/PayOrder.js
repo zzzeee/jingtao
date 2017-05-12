@@ -16,6 +16,7 @@ import {
 
 var WeChat=require('react-native-wechat');
 // import {pay} from 'react-native-alipay';
+import Toast from 'react-native-root-toast';
 import Alipay from 'react-native-yunpeng-alipay'
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -125,17 +126,41 @@ export default class PayOrder extends Component {
 
         let datas = {
             'partnerId': '1381423402',
-            'prepayId': 'wx2017051017184199889258cc0779167514',
-            'nonceStr': 'iduDQmySFxI0rUyV',
-            'timeStamp': '1494407954',
+            'prepayId': 'wx20170512204338c7a054c0d70657394947',
+            'nonceStr': 'Mz27NuDixlQJ5cmd',
+            'timeStamp': '1494593052',
             'package': 'Sign=WXPay',
-            'sign': 'E9F190BA173EE106E562844AB3E84E3F'
+            'sign': '394B72EA2CAA2602FD6CDB29BF492A6B'
         };
-        console.log('start weixin_pay pay ............');
-        console.log(datas);
-        let result = await WeChat.pay(datas);
-        console.log(result);
-        console.log('end weixin_pay pay ...............');
+
+        WeChat.isWXAppInstalled()
+        .then((isInstalled) => {
+            if (isInstalled) {
+                WeChat.pay(datas)
+                .then((result) => {
+                    console.log(result);
+                    Toast.show('支付成功', {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Toast.show('支付失败', {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+                });
+            } else {
+                Toast.show(Lang.cn.shareErrorAlert, {
+                    duration: Toast.durations.LONG,
+                    position: Toast.positions.CENTER,
+                    hideOnPress: true,
+                });
+            }
+        });
     };
     
     ali_pay = async () => {

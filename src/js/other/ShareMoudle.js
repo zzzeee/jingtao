@@ -91,6 +91,9 @@ export default class ShareMoudle extends Component {
                                                 .then((isInstalled) => {
                                                     if (isInstalled) {
                                                         WeChat[item.to](item.obj)
+                                                        .then((result) => {
+                                                            console.log(result);
+                                                        })
                                                         .catch((error) => {
                                                             console.log(error);
                                                         });

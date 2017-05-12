@@ -92,7 +92,7 @@ export default class HeadBox extends Component {
             }]}>
                 <View style={styles.cityHead}>
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
-                    <BtnIcon width={20} src={img_down} />
+                    {/*<BtnIcon width={20} src={img_down} />*/}
                 </View>
                 <Image source={{uri: cimg}} style={styles.cityImage} />
                 <View style={styles.cityfoot}>

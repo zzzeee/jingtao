@@ -33,6 +33,7 @@ export default class FindScreen extends Component {
             endTime: null,
             fetchError: null,
             datas: null,
+            coupons: [],
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             MDYP: null,
             isRefreshing: false,
@@ -41,6 +42,7 @@ export default class FindScreen extends Component {
         this.pageOffest = 1;
         this.pageNumber = 10;
         this.ref_flatList = null;
+        this.loadMoreLock = false;
     }
 
     componentDidMount() {
@@ -64,17 +66,20 @@ export default class FindScreen extends Component {
     };
     //设置限时抢购列表
     setXSQGlist = (datas) => {
-        if(datas && datas.sTatus && datas.proAry) {
+        if(datas && datas.sTatus) {
             let xsqg = datas.proAry || {};
             let start = xsqg.pbStartTime || null;
             let end = xsqg.pbEndTime || null;
             let proList = xsqg.activityAry || [];
+            let coupons = datas.couponAry || [];
+
             this.setState({
                 fetchError: false,
                 isRefreshing: false,
                 startTime: new Date(start).getTime(),
                 endTime: new Date(end).getTime(),
                 datas: xsqg,
+                coupons: coupons,
                 dataSource: this.state.dataSource.cloneWithRows(proList),
             });
         }
@@ -96,12 +101,17 @@ export default class FindScreen extends Component {
 
     // 加载更多
     loadMore = async () => {
-        let ret2 = await this.getMDYPDatas();
-        if(ret2 && ret2.sTatus && ret2.shopAry.length) {
-            let MDYP = this.state.MDYP.concat(ret2.shopAry);
-            console.log(MDYP);
-            this.pageOffest++;
-            this.setState({ MDYP });
+        if(!this.loadMoreLock) {
+            this.loadMoreLock = true;
+            let ret2 = await this.getMDYPDatas();
+            if(ret2 && ret2.sTatus && ret2.shopAry.length) {
+                let MDYP = this.state.MDYP.concat(ret2.shopAry);
+                console.log(MDYP);
+                this.pageOffest++;
+                this.setState({ MDYP }, ()=>{
+                    this.loadMoreLock = false;
+                });
+            }
         }
     };
 
@@ -161,6 +171,58 @@ export default class FindScreen extends Component {
         }
     };
 
+    // 优惠券
+    couponView = () => {
+        if(this.state.coupons.length > 0) {
+            return (
+                <Image source={require('../../images/find/coupon_bg.png')} resizeMode="stretch" style={styles.couponBox}>
+                    <Swiper
+                        width={Size.width * 0.8}
+                        height={160}
+                        style={styles.wrapper} 
+                        horizontal={true}
+                        showsPagination={true}
+                        paginationStyle={styles.paginationStyle}
+                        dot={(<View 
+                            style={{
+                                backgroundColor:'rgba(255, 255, 255, .3)',
+                                width: 8,
+                                height: 8,
+                                borderRadius: 2,
+                                margin: 5,
+                            }}
+                        />)}
+                        activeDot={(<View 
+                            style={{
+                                backgroundColor:'rgba(255, 255, 255, .8)',
+                                width: 8,
+                                height: 8,
+                                borderRadius: 2,
+                                margin: 5,
+                            }}
+                        />)}
+                        autoplay={true}
+                        autoplayTimeout={3}
+                        showsButtons={false}>
+                        {this.state.coupons.map(function(item, index) {
+                            let id = item.hID || 0;
+                            if(id > 0) {
+                                return (
+                                    <View key={index} style={{height: 120}}>
+                                        <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} />
+                                    </View>
+                                );
+                            }else {
+                                return null;
+                            }
+                        })}
+                    </Swiper>
+                </Image>
+            );
+        }
+        return null;
+    };
+
     // 名店优品之上的上方部分
     topPage = () => {
         if(this.state.fetchError === null) {
@@ -186,26 +248,7 @@ export default class FindScreen extends Component {
                             showsHorizontalScrollIndicator={false}
                         />
                     </View>
-                    <View style={styles.couponBox}>
-                        <Swiper 
-                            height={200}
-                            style={styles.wrapper} 
-                            horizontal={true}
-                            showsPagination={true}
-                            autoplay={true}
-                            autoplayTimeout={2}
-                            showsButtons={false}>
-                            <View style={styles.slideView}>
-                                <Text style={styles.slideText}>优惠券 1</Text>
-                            </View>
-                            <View style={styles.slideView}>
-                                <Text style={styles.slideText}>优惠券 2</Text>
-                            </View>
-                            <View style={styles.slideView}>
-                                <Text style={styles.slideText}>优惠券 3</Text>
-                            </View>
-                        </Swiper>
-                    </View>
+                    {this.couponView()}
                     <View style={styles.mdypImgBox}>
                         <Image source={require('../../images/find/mdyp.png')} resizeMode="stretch" style={styles.mdypImgStyle} />
                     </View>
@@ -237,7 +280,14 @@ export default class FindScreen extends Component {
                         keyExtractor={(item, index) => (index + '_' + item.sId)}
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
-                        onEndReached={this.loadMore}
+                        onEndReached={()=>{
+                            if(!this.loadMoreLock) {
+                                console.log('正在加载更多 ..');
+                                this.loadMore();
+                            }else {
+                                console.log('加载更多已被锁住。');
+                            }
+                        }}
                         // onEndReachedThreshold={50}
                         getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
                         refreshing={this.state.isRefreshing}
@@ -397,18 +447,23 @@ var styles = StyleSheet.create({
         bottom: 0,
     },
     couponBox: {
+        width: Size.width,
         height: 200,
         marginTop: PX.marginTB,
-        backgroundColor: '#fff',
-    },
-    slideView: {
-        height: 200,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#684',
+        justifyContent: 'flex-end',
     },
-    slideText: {
-        color: '#fff',
+    wrapper: {
+    },
+    paginationStyle: {
+        position: 'absolute',
+        left: 0,
+        right: 0, 
+        bottom: 0,
+        height: 40,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingRight: 10,
     },
     mdypImgBox: {
         height: 60,

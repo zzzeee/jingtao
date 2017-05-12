@@ -13,6 +13,7 @@ var urls = {
     getProductClassify: host + '/api/ClassificationNController/getClassificationByClassType',
     getPanicBuyingProductList: host + '/api/FindNController/getPanicBuyingActivityProductList',
     getFindShopList: host + '/api/FindNController/getFindShopAndProductsList',
+    getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
 };
 
 urls.homeMap = 'http://ceshi.ub33.cn/newmap2/index.html';
