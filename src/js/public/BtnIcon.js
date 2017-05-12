@@ -50,11 +50,13 @@ export default class BtnIcon extends Component {
                     : null
                 }
                 {this.props.text ? 
-                    <Text style={[{
-                        paddingLeft: 4,
-                        color: this.props.color ? this.props.color : Color.lightBack,
-                        fontSize: this.props.size,
-                    }, this.props.txtStyle]}>{this.props.text}</Text>
+                    <View style={[styles.textView, this.props.txtViewStyle]}>
+                        <Text style={[{
+                            paddingLeft: 4,
+                            color: this.props.color ? this.props.color : Color.lightBack,
+                            fontSize: this.props.size,
+                        }, this.props.txtStyle]}>{this.props.text}</Text>
+                    </View>
                     : null
                 }
             </TouchableOpacity>
@@ -66,6 +68,11 @@ var styles = StyleSheet.create({
     iconBox: {
         padding : 5,
         flexDirection: 'row',
+        alignItems: 'center',
+    },
+    textView: {
+        minHeight: 26,
+        justifyContent: 'center',
         alignItems: 'center',
     },
 });

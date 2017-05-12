@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>MapModule</title>
+        <style>
+            body{
+                background: #CED0D4;
+                margin:0;
+                padding:0;
+            }
+            #map_module{
+                width: 100%;
+                height: auto;
+                margin: 0 auto;
+                border-bottom: 1px solid #E7E7E7;
+                padding:15px 15px 0 15px;
+                background-color: #fff;
+                box-sizing: border-box;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            #map{
+                border: 1px solid #E7E7E7;
+                background: #F3F4F7;
+                width: 100%;
+                height: 320px;
+                overflow: hidden;
+                box-sizing: border-box
+            }
+            #map_ctrl{
+                width:100%;
+                height:53px;
+                border-top: 1px solid #E7E7E7;
+                margin-top:15px;
+            }
+            #svg{width: 100%;height: 100%;}
+            #map_ctrl .icon{width:26px;height:26px;}
+            #map_ctrl div {display: inline-block;line-height: 0;}
+            #map_controller {margin: 13px 0;float: right;}
+            #select_map{
+                border: 0;
+                font-size: 15px;
+                margin-top: 17px;
+                padding: 0;
+                color: #9097A0;
+                background-color: #fff;
+                -moz-appearance: none; 
+                -webkit-appearance: none;
+            }
+            #fitting .hidden{display: none}
+            #zoom_bar,#zoom_bar svg{
+                width: 127px;
+                height:26px;
+            }
+            .btn_get_data {
+                margin: 5px;
+            }
+        </style>
+
+        <script src="js/jquery-2.1.1.min.js"></script>
+        <script src="js/snap.svg-min.js"></script>
+        <script src="./js/chinaMapConfig.js"></script>
+    </head>
+    <body>
+        <div id="showTestDatas"></div>
+        <div id="map_module">
+            <div id="map">
+                <svg id="svg"></svg>
+            </div>
+            <div id="map_ctrl">
+                <div id="area_selecter">
+                    <!-- <span id="select_text">选择地图</span> -->
+                    <select id="select_map" name="" >
+                        <option value="">选择地图</option>
+                    </select>
+                </div>
+                <div id="map_controller">
+                    <div id="zoom_out">
+                        <img class="icon" src="./images/zoom_out.png" alt="">
+                    </div>
+                    <div id="zoom_bar">
+                        <svg id="svg_bar"></svg>
+                    </div>
+                    <div id="zoom_in">
+                        <img class="icon" src="./images/zoom_in.png" alt="">
+                    </div>
+                    <div id="fitting">
+                        <img id="btn_fit_in" class="icon hidden" src="./images/fit_in.png" alt="">
+                        <img id="btn_fit_out" class="icon " src="./images/fit_out.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/jquery.svg-drag.0.0.1.min.js"></script>
+        <script src="js/jquery.svg_autofit.1.0.3.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                // 给APP传值
+                var appMessage = function(id){
+                    var u = navigator.userAgent, app = navigator.appVersion;
+                    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+                    var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+                    
+                    if (isIOS) {
+                        window.location.href = "iOS:receiveFromWeb:" + id;
+                    } else if (isAndroid) {
+                        //android终端或者uc浏览器
+                        //android.toastMessage(id);
+                        if(window.postMessage) {
+                            window.postMessage(JSON.stringify({id: id}));
+                        }
+                    }
+                };
+                var map_height = Math.round(($('body').width() - 30) * 0.792) || 0;
+                var map_isok = map_height < 10 ? false : true; 
+                map_height = map_height > 0 ? map_height : 280;
+                $('#map').height(map_height);
+                
+                //填充select option
+                $.each(chinaMapConfig.names, function (k, v) {
+                    // var pid = chinaMapConfig.pids[k] || 0;
+                    var text = '<option value="' + k + '">' + v[2] + '</option>';
+                    $('#select_map').append(text);
+                });
+
+                var is_fit = true   //地图状态是否满屏
+                        , select_map = ''
+                        , minScale = 0.5
+                        , maxScale = 2.5;
+
+                //设置minScale
+                var e_width = $('#svg').width();
+                if (e_width > 288) {
+                    minScale = minScale + (e_width - 288) * 0.0019;
+                }
+
+                var option = {
+                    mapData: chinaMapConfig
+                    , minScale: minScale
+                    , maxScale: maxScale
+                    , scaleDuration: 500
+                            // ,debugMode:true
+                    , onLoad: function (e) {
+                        e.autoFit();
+                    }
+                }
+                , status = {//turn on debug mode then get numbers
+                    'mapScale': 1
+                    , 'centerX': 287
+                    , 'centerY': 258
+                    , 'moveX': -96
+                    , 'moveY': -106
+                };
+
+                var mapCtrl = $('#svg').QNickSvgAutoFit(option, status) || {};
+                var drag_bar = $('#svg_bar').dargBar();
+
+                drag_bar.on('dragEnd', function (e, v) {
+                    mapCtrl.scaleMap(getScaleFromPercent(v), {scaleDuration: 0});
+                });
+                drag_bar.on('onDrag', function (e, v) {
+                    mapCtrl.scaleMap(getScaleFromPercent(v), {scaleDuration: 0});
+                });
+                mapCtrl.on('onClick', function (e, status) {
+
+                    select_map = $(status.target).attr('name');
+                    pid = $(status.target).attr("id");
+                    appMessage(pid);
+
+                    $('#select_map').val(select_map);
+                    setFitStatusToFalse();
+                    $('#select_map').css({'color': '#4a4a4a'});
+
+                    var p = getPercentFromScale(status.mapScale);
+                    drag_bar.setPosition(p);
+                });
+
+
+                //自动放大缩小
+                $("#fitting").on('click', function () {
+                    var p = 1;
+                    if (!is_fit) {
+                        autoFit();
+                        setFitStatusToTrue();
+                    } else {
+                        if (select_map == '') {   //选择框里什么都没选的时候放大
+                            mapCtrl.scaleMap(1.5);
+                            p = getPercentFromScale(1.5);
+                            drag_bar.setPosition(p);
+                        } else {  //对焦选择省区
+                            autoScaleSheng(select_map);
+                        }
+                        setFitStatusToFalse();
+                    }
+                });
+
+
+                //选择框里选择省区
+                $('#select_map').on('change', function () {
+                    var val = $(this).val();
+                    if (val == '') {  //取消选择
+                        setFitStatusToTrue();
+                        $(this).css({'color': '#9097A0'});
+                        autoFit();
+                    } else {
+                        $(this).css({'color': '#4a4a4a'});
+                        select_map = val;
+                        autoScaleSheng(val);
+                        setFitStatusToFalse();
+
+                        var pid = parseInt(val) > 0 ? parseInt(val) : 0;
+                        pid = pid > 0 ? pid : chinaMapConfig.pids[val];
+                        if(pid > 0) {
+                            appMessage(pid);
+                        }
+                    }
+                    $(this).blur();
+                });
+
+                function autoScaleSheng(name) {
+                    var status = mapCtrl.autoScale(name);
+                    p = getPercentFromScale(status.mapScale);
+                    drag_bar.setPosition(p);
+                }
+                function autoFit() {
+                    var status = mapCtrl.autoFit();
+                    p = getPercentFromScale(status.mapScale);
+                    drag_bar.setPosition(p);
+                }
+
+                //设置图标状态
+                function setFitStatusToFalse() {
+                    $('#btn_fit_out').addClass('hidden');
+                    $('#btn_fit_in').removeClass('hidden');
+                    is_fit = false;
+                }
+                function setFitStatusToTrue() {
+                    $('#btn_fit_in').addClass('hidden');
+                    $('#btn_fit_out').removeClass('hidden');
+                    is_fit = true;
+                }
+
+                function getScaleFromPercent(p) {
+                    var scaleArea = maxScale - minScale;
+                    return scaleArea * p / 100 + minScale;
+                }
+                function getPercentFromScale(scale) {
+                    return Math.round((scale - minScale) / (maxScale - minScale) * 10000) / 100;
+                }
+
+                //如果地图显示不正常，将手动触发对焦事件
+                if(!map_isok) {
+                    $('#btn_fit_out').click();
+                    setTimeout(function(){
+                        $('#btn_fit_in').click();
+                    }, 500);
+                }
+            });
+        </script>
+    </body>
+</html>

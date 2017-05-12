@@ -27,7 +27,7 @@ export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            islogo: true,
+            islogo: false,
             showHeadBgColor: false,
         };
 
@@ -54,15 +54,15 @@ export default class PersonalScreen extends Component {
                         <View style={styles.headMainBox}>
                             <View style={styles.headBox}>
                                 <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
-                                <Text style={styles.userNameText}>{'请先登录'}</Text>
+                                <Text style={styles.userNameText}>{'这里是名字'}</Text>
                             </View>
                             <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
                                 <Text style={styles.integralText}>{str_replace(Lang.cn.jingtaoIntegral, 5000)}</Text>
                                 <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
                             </Image>
                         </View> :
-                        <View style={[styles.headMainBox, {justifyContent: 'space-around',}]}>
-                            <Text style={styles.bigBotton} onPress={()=>{}}>{Lang.cn.logo}</Text>
+                        <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
+                            <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang.cn.logo}</Text>
                             <Text style={styles.bigBotton} onPress={()=>{}}>{Lang.cn.register}</Text>
                         </View>
                     }
@@ -177,12 +177,12 @@ var styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     bigBotton: {
-        paddingLeft: 40,
-        paddingRight: 40,
-        paddingTop: 6,
-        paddingBottom: 6,
+        paddingLeft: 46,
+        paddingRight: 46,
+        paddingTop: 8,
+        paddingBottom: 7,
         color: '#fff',
-        borderRadius: 16,
+        borderRadius: 20,
         borderWidth: 1,
         borderColor: '#fff',
         fontSize: 14,
@@ -201,8 +201,6 @@ var styles = StyleSheet.create({
         width: PX.userHeadImgSize,
         height: PX.userHeadImgSize,
         borderRadius: PX.userHeadImgSize / 2,
-        borderWidth: pixel,
-        borderColor: Color.lavender,
     },
     userNameText: {
         paddingLeft: 10,

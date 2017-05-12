@@ -11,9 +11,7 @@ import {
     View,
     Modal,
     Image,
-    ScrollView,
     TouchableOpacity,
-    Button,
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
@@ -66,12 +64,38 @@ export default class PayOrder extends Component {
                             <Text style={styles.defalutFont}>{Lang.cn.totalPayment}</Text>
                             <Text style={styles.redColor1}>{Lang.cn.RMB + '120.00'}</Text>
                         </View>
-                        <Button title="微信支付" onPress={()=>{
-                            this.weixin_pay();
-                        }} />
-                        <Button title="支付宝支付" onPress={()=>{
-                            this.ali_pay();
-                        }} />
+                        <View style={styles.rowBox3}>
+                            <BtnIcon 
+                                src={require('../../images/car/alipay.png')} 
+                                width={PX.iconSize26}
+                                text={Lang.cn.alipay} 
+                                press={this.ali_pay}
+                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
+                            />
+                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                        </View>
+                        <View style={styles.rowBox3}>
+                            <BtnIcon 
+                                src={require('../../images/car/weixin.png')} 
+                                width={PX.iconSize26}
+                                text={Lang.cn.weixinpay} 
+                                press={this.weixin_pay}
+                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
+                            />
+                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                        </View>
+                        <View style={styles.rowBox3}>
+                            <BtnIcon 
+                                src={require('../../images/car/pufa.png')} 
+                                width={PX.iconSize26}
+                                text={Lang.cn.pufapay} 
+                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
+                            />
+                            <View style={styles.rowBox}>
+                                <Text style={styles.redColor2}>{Lang.cn.pufapay_send}</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                            </View>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -175,6 +199,10 @@ var styles = StyleSheet.create({
         fontSize: 14,
         color: Color.lightBack,
     },
+    iconStyle: {
+        width: PX.iconSize26,
+        height: PX.iconSize26,
+    },
     redColor1: {
         fontSize: 14,
         color: Color.red,
@@ -195,6 +223,11 @@ var styles = StyleSheet.create({
     titleText: {
         fontSize: 16,
         color: Color.lightBack,
+    },
+    rowBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     rowBox1: {
         height: 50,
@@ -224,5 +257,16 @@ var styles = StyleSheet.create({
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         backgroundColor: '#fff',
+    },
+    rowBox3: {
+        height: 60,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        backgroundColor: '#fff',
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
     },
 });

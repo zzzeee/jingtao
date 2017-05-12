@@ -238,7 +238,7 @@ export default class FindScreen extends Component {
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
                         onEndReached={this.loadMore}
-                        onEndReachedThreshold={100}
+                        // onEndReachedThreshold={50}
                         getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
                         refreshing={this.state.isRefreshing}
                         onRefresh={()=>{
@@ -400,7 +400,6 @@ var styles = StyleSheet.create({
         height: 200,
         marginTop: PX.marginTB,
         backgroundColor: '#fff',
-        marginBottom: PX.marginTB,
     },
     slideView: {
         height: 200,
@@ -426,7 +425,7 @@ var styles = StyleSheet.create({
     shopItemBox: {
         height: PX.shopItemHeight,
         backgroundColor: '#fff',
-        marginBottom: PX.marginTB,
+        marginTop: PX.marginTB,
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
     },

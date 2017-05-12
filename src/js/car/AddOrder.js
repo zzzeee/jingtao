@@ -42,7 +42,7 @@ export default class AddOrder extends Component {
         let list3 = 
             (<View style={styles.rowViewStyle}>
                 <Text style={styles.defaultFont}>{Lang.cn.diySwapIntegral + ': '}</Text>
-                <InputText style={styles.integralInput} keyboardType="numeric" onChange={(txt)=>this.useIntegral = txt} />
+                <InputText style={styles.integralInput} keyType="numeric" onChange={(txt)=>this.useIntegral = txt} />
             </View>);
         let integralList = [list1, list2, list3];
 
@@ -87,7 +87,7 @@ export default class AddOrder extends Component {
                                 <Text style={styles.redColor}>1500</Text>
                             </Text>
                         </View>
-                        <View style={styles.integralSelectStyle}>
+                        <View>
                             {integralList.map(function(item, index) {
                                 let img = that.state.selectSwapIntegral == index ? require('../../images/car/select.png') : require('../../images/car/no_select.png');
                                 return (
@@ -99,6 +99,10 @@ export default class AddOrder extends Component {
                                     </TouchableOpacity>
                                 );
                             })}
+                        </View>
+                        <View style={styles.integralSelectItem}>
+                            <Image source={require('../../images/car/careful.png')} style={styles.carefulImage} />
+                            <Text style={styles.goodAttrStyle}>{'注意: 现金支付满148元, 可获得30积分哟!'}</Text>
                         </View>
                         <View style={styles.integralBoxFoot}>
                             <Text>
@@ -137,10 +141,10 @@ export default class AddOrder extends Component {
     priceRow = (title, price, isRed) => {
         return (
             <View style={styles.priceRowBox}>
-                <Text style={styles.defaultFont}>{title}</Text>
+                <Text style={styles.defaultFont2}>{title}</Text>
                 {isRed ?
-                    <Text style={[styles.defaultFont, styles.redColor]}>{price}</Text>
-                    : <Text style={styles.defaultFont}>{price}</Text>
+                    <Text style={[styles.defaultFont2, styles.redColor]}>{price}</Text>
+                    : <Text style={styles.defaultFont2}>{price}</Text>
                 }
             </View>
         );
@@ -169,6 +173,8 @@ export default class AddOrder extends Component {
                         let goodName = good.name || null;
                         let goodAttr = good.attr || null;
                         let goodPrice = good.price || null;
+                        let martPrice = good.martPrice || null;
+                        let goodNumber = good.number || '';
                         totalNum++;
                         totalMoney += parseFloat(goodPrice);
 
@@ -176,12 +182,14 @@ export default class AddOrder extends Component {
                             <View key={i} style={styles.goodItemBox}>
                                 <Image source={goodImg} style={styles.goodImageStyle} />
                                 <View style={styles.goodRightBox}>
-                                    <View>
-                                        <Text style={styles.goodNameStyle}>{goodName}</Text>
-                                        <Text style={styles.goodAttrStyle}>{goodAttr}</Text>
-                                    </View>
-                                    <View>
-                                        <Text style={styles.goodPriceStyle}>{Lang.cn.RMB + goodPrice}</Text>
+                                    <Text style={styles.goodNameStyle}>{goodName}</Text>
+                                    <Text style={styles.goodAttrStyle}>{goodAttr}</Text>
+                                    <View style={[styles.rowViewStyle, {justifyContent: 'space-between'}]}>
+                                        <View style={styles.rowViewStyle}>
+                                            <Text style={styles.goodPriceStyle}>{Lang.cn.RMB + goodPrice}</Text>
+                                            <Text style={[styles.goodAttrStyle, {paddingLeft: 10}]}>{martPrice}</Text>
+                                        </View>
+                                        <Text style={styles.goodNameStyle}>{'× ' + goodNumber}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -191,7 +199,7 @@ export default class AddOrder extends Component {
                 <View style={styles.expressBox}>
                     <View style={styles.rowViewStyle}>
                         <Text style={styles.defaultFont}>{Lang.cn.distributionType}</Text>
-                        <Text style={styles.expressTypeText}>{expressType}</Text>
+                        {/*<Text style={styles.expressTypeText}>{expressType}</Text>*/}
                     </View>
                     <Text style={styles.expressText}>
                         {Lang.cn.express + ': '}
@@ -201,7 +209,7 @@ export default class AddOrder extends Component {
                 <View style={styles.buyerMessageBox}>
                     <Text style={styles.buyerMessageText}>{Lang.cn.buyerMessage}</Text>
                     <InputText
-                        style={styles.flex} 
+                        style={{flex: 1, borderWidht: 0}} 
                         pText={Lang.cn.buyerMessagePlaceholder} 
                         onChange={(txt)=>this.message = txt} 
                     />
@@ -229,6 +237,10 @@ const styles = StyleSheet.create({
     defaultFont: {
         color: Color.lightBack,
         fontSize: 14,
+    },
+    defaultFont2: {
+        color: Color.lightBack,
+        fontSize: 13,
     },
     scrollviewStyle: {
         width: Size.width,
@@ -269,8 +281,13 @@ const styles = StyleSheet.create({
         width: 22,
         height: 22,
     },
+    carefulImage: {
+        width: 14,
+        height: 14,
+        marginRight: 5,
+    },
     addressTextStyle: {
-        fontSize: 12,
+        fontSize: 13,
         color: Color.lightBack,
         lineHeight: 20,
     },
@@ -285,6 +302,7 @@ const styles = StyleSheet.create({
     },
     storeSessionStyle: {
         padding: 15,
+        paddingBottom: 0,
         marginBottom: 10,
         backgroundColor: '#fff',
     },
@@ -308,6 +326,7 @@ const styles = StyleSheet.create({
         height: 90,
     },
     goodRightBox: {
+        flex: 1,
         height: 90,
         marginLeft: 10,
         flexDirection: 'column',
@@ -390,27 +409,24 @@ const styles = StyleSheet.create({
         paddingRight: PX.marginLR,
     },
     integralBoxHead: {
-        height: 50,
+        height: 44,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottomWidth: pixel,
         borderBottomColor: Color.lavender,
     },
-    integralSelectStyle: {
-        padding: 8,
-    },
     integralSelectItem: {
         flex: 1,
-        height: 40,
+        height: 44,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        paddingRight: 18,
     },
     selectBeforeImage: {
         width: 18,
         height: 18,
-        marginRight: 18,
     },
     integralInput: {
         width: 64,
@@ -448,20 +464,20 @@ const styles = StyleSheet.create({
     },
     footRowLeft: {
         flex: 1,
-        height: 44,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'flex-end',
         paddingRight: 18,
     },
     footRowRight: {
         width: 106,
-        height: 44,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: Color.mainColor,
     },
     footRowLeftText: {
-        fontSize: 16,
+        fontSize: 13,
         color: Color.lightBack,
     },
     footRowRightText: {

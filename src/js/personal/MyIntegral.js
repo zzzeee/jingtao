@@ -55,33 +55,33 @@ export default class MyIntegral extends Component {
                 />
                 <View style={styles.topBox}>
                     <Image
-                        style={styles.integral_top_bg}
-                        source={require('../../images/personal/integral_top_bg.png')}
+                        style={styles.integral_top_bg1}
+                        source={require('../../images/personal/integral_top_bg1.png')}
                     >
-                        <View style={styles.integral_bg_box}>
+                        <Image source={require('../../images/personal/integral_top_bg3.png')} style={styles.integral_top_bg3}>
                             <Animated.Image 
-                                style={[styles.integral_bg1, {
+                                style={[styles.integral_top_bg3, {
                                     transform: [{
                                         rotate: this.state.rotation.interpolate({
                                             inputRange: [0, 1],
-                                            outputRange: ['0deg', '150deg']
+                                            outputRange: ['0deg', '116deg']
                                         })
                                     }]
                                 }]} 
-                                source={require('../../images/personal/integral_bg1.png')}
+                                source={require('../../images/personal/integral_top_bg4.png')}
                                 resizeMode={Image.resizeMode.contain}
                             />
                             <View style={styles.integralNumberView1}>
                                 <Text style={styles.integralNumberText1}>{this.state.point}</Text>
                             </View>
-                            <Image style={styles.integral_bg2} source={require('../../images/personal/integral_bg2.png')} />
-                        </View>
+                        </Image>
                         <View style={styles.topRightView}>
                             <Text style={styles.topRightText1}>{Lang.cn.untilToday}</Text>
                             <Text style={styles.topRightText2}>{Lang.cn.saveYou}</Text>
                             <Text style={styles.topRightText3}>8000元</Text>
                         </View>
                     </Image>
+                    <Image source={require('../../images/personal/integral_top_bg2.png')} style={styles.integral_top_bg2} />
                     <View style={styles.integralNumberView2}>
                         <Text style={styles.topTxt}>{Lang.cn.youHave}</Text>
                         <Text style={styles.integralNumberText2}>{this.state.point}</Text>
@@ -110,17 +110,20 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
         marginBottom: 10,
     },
-    integral_top_bg: {
-        width: Size.width,
-        height: 225,
+    integral_top_bg1: {
+        width: Size.width - (PX.marginLR * 2),
+        height: 158,
+        marginLeft: PX.marginLR,
+        marginTop: 25,
         alignItems: 'center',
+        justifyContent: 'center',
     },
-    integral_bg_box: {
-        marginTop: 40,
-        width: PX.integralDiskSize,
-        height: PX.integralDiskSize,
+    integral_top_bg2: {
+        height: 42,
+        width: Size.width - (PX.marginLR * 2),
+        marginLeft: PX.marginLR,
     },
-    integral_bg1: {
+    integral_top_bg3: {
         width: PX.integralDiskSize,
         height: PX.integralDiskSize,
     },
@@ -166,8 +169,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         position: 'absolute',
         width: Size.width / 2 - PX.integralDiskSize / 2,
-        right: 0,
-        top: 70,
+        right: -10,
+        top: 40,
     },
     topRightText1: {
         color: Color.gainsboro,

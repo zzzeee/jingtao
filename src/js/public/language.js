@@ -87,6 +87,10 @@ const language = {
         couponReduction: '优惠券减免',
         totalPayment: '总计支付',
         selectPayMethod: '请选择支付方式',
+        alipay: '支付宝支付',
+        weixinpay: '微信支付',
+        pufapay: '浦发支付',
+        pufapay_send: '首次支付赠送80积分',
     },
 };
 
