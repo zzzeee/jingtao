@@ -57,7 +57,7 @@ export default class PayOrder extends Component {
                             <Text style={styles.titleText}>{Lang.cn.selectPayMethod}</Text>
                             <View style={styles.cancelView}>
                                 <TouchableOpacity onPress={this.hideModal}>
-                                <Image style={styles.cancelImage} source={require('../../images/close.png')} />
+                                <Image style={styles.iconStyle} source={require('../../images/close.png')} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -65,104 +65,96 @@ export default class PayOrder extends Component {
                             <Text style={styles.defalutFont}>{Lang.cn.totalPayment}</Text>
                             <Text style={styles.redColor1}>{Lang.cn.RMB + '120.00'}</Text>
                         </View>
-                        <View style={styles.rowBox3}>
-                            <BtnIcon 
-                                src={require('../../images/car/alipay.png')} 
-                                width={PX.iconSize26}
-                                text={Lang.cn.alipay} 
-                                press={this.ali_pay}
-                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
-                            />
-                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
-                        </View>
-                        <View style={styles.rowBox3}>
-                            <BtnIcon 
-                                src={require('../../images/car/weixin.png')} 
-                                width={PX.iconSize26}
-                                text={Lang.cn.weixinpay} 
-                                press={this.weixin_pay}
-                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
-                            />
-                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
-                        </View>
-                        <View style={styles.rowBox3}>
-                            <BtnIcon 
-                                src={require('../../images/car/pufa.png')} 
-                                width={PX.iconSize26}
-                                text={Lang.cn.pufapay} 
-                                txtStyle={[styles.defalutFont, {paddingLeft: 8}]}
-                            />
+                        <TouchableOpacity style={styles.rowBox3} onPress={this.ali_pay}>
                             <View style={styles.rowBox}>
-                                <Text style={styles.redColor2}>{Lang.cn.pufapay_send}</Text>
-                                <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                                <Image style={styles.iconStyle} source={require('../../images/car/alipay.png')} />
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.alipay}</Text>
                             </View>
-                        </View>
+                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.rowBox3} onPress={this.get_weixin_payinfo}>
+                            <View style={styles.rowBox}>
+                                <Image style={styles.iconStyle} source={require('../../images/car/weixin.png')} />
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.weixinpay}</Text>
+                            </View>
+                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.rowBox3}>
+                            <View style={styles.rowBox}>
+                                <Image style={styles.iconStyle} source={require('../../images/car/pufa.png')} />
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.pufapay}</Text>
+                            </View>
+                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
         );
     }
 
-    weixin_pay = async () => {
-        // Utils.fetch('http://vpn.jingtaomart.com/api/WeixinController/weixinpay', 'post', {}, function(result){
-        //     console.log('result :');
-        //     console.log(result);
-        //     let pay_data = {};
-        //     pay_data.partnerId = result.partnerId;
-        //     pay_data.prepayId = result.prepay_id;
-        //     pay_data.nonceStr = result.nonceStr;
-        //     pay_data.timeStamp = result.timeStamp;
-        //     pay_data.package = "Sign=WXpay";
-        //     pay_data.sign = result.paySign;
-
-        //     console.log('start  pay ............');
-        //     console.log(pay_data);
-        //     WeChat.pay(pay_data)
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
-        //     console.log('end pay ...............');
-        // });
-
-        let datas = {
-            'partnerId': '1381423402',
-            'prepayId': 'wx20170512204338c7a054c0d70657394947',
-            'nonceStr': 'Mz27NuDixlQJ5cmd',
-            'timeStamp': '1494593052',
-            'package': 'Sign=WXPay',
-            'sign': '394B72EA2CAA2602FD6CDB29BF492A6B'
-        };
-
-        WeChat.isWXAppInstalled()
-        .then((isInstalled) => {
-            if (isInstalled) {
-                WeChat.pay(datas)
-                .then((result) => {
-                    console.log(result);
-                    Toast.show('支付成功', {
-                        duration: Toast.durations.LONG,
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    });
-                })
-                .catch((error) => {
-                    console.log(error);
-                    Toast.show('支付失败', {
-                        duration: Toast.durations.LONG,
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    });
-                });
-            } else {
-                Toast.show(Lang.cn.shareErrorAlert, {
-                    duration: Toast.durations.LONG,
-                    position: Toast.positions.CENTER,
-                    hideOnPress: true,
-                });
-            }
+    _toast = (str) => {
+        Toast.show(str, {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.CENTER,
+            hideOnPress: true,
         });
     };
+
+    //获取微信支付信息
+    get_weixin_payinfo = () => {
+        let that = this;
+        this.hideModal();
+        Utils.fetch('http://api.ub33.cn/api/PayTest/getWeiXinPayInfo', 'post', {}, function(result){
+            // console.log('weixin_payinfo :');
+            // console.log(JSON.parse(result));
+            that.weixin_pay(JSON.parse(result));
+        });
+    };
+
+    //微信支付
+    weixin_pay = (datas) => {
+        let partnerId = datas.partnerid || null;
+        let prepayId = datas.prepayid || null;
+        let nonceStr = datas.noncestr || null;
+        let timeStamp = datas.timestamp || null;
+        let sign = datas.sign || null;
+
+        if(partnerId && prepayId && nonceStr && timeStamp && sign) {
+            WeChat.isWXAppInstalled()
+            .then((isInstalled) => {
+                if (isInstalled) {
+                    WeChat.pay({
+                        'partnerId': partnerId,
+                        'prepayId': prepayId,
+                        'nonceStr': nonceStr,
+                        'timeStamp': timeStamp + '',
+                        'package': 'Sign=WXpay',
+                        'sign': sign
+                    })
+                    .then((result) => {
+                        console.log(result);
+                        if(result && result.errCode === 0) {
+                            this._toast('支付成功');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if(error === -2) {
+                            this._toast('取消支付');
+                        }else {
+                            this._toast('支付失败');
+                        }
+                    });
+                } else {
+                    this._toast(Lang.cn.shareErrorAlert);
+                }
+            });
+        }else {
+            this._toast('参数不正确');
+        }
+    };
     
+    //支付宝支付
     ali_pay = async () => {
         console.log(Alipay);
         let privateKey = 'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR/h2n5MHMN9Ln2QlErF2mqeVI1+LFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0+ZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6+bTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0+KrQcsTd2rO+3jWbYjqWlE0m4XV9xhpdzZ2r4Y5+hMZY4uPia34L2BCEbhnlaV2CpNW1pUG/aeeZZlSe3JP8ymiDdK0PEstoId/hNOdpm0Nu+YrZ5eiuEyJMbKZDorxQd3L984ECQQD73F+bqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N/TEXLEuXW5gJifnqOd2ba1RgOXBn0rW/eFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b/zvlN26OBza2P/ZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP+xlxxwdIekUnHSzGYEzUocRgWiXbS/s07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8+UvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe+99PjLf+nVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p+0tOtI6/Ab9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ+9xBEEe';
@@ -268,10 +260,6 @@ var styles = StyleSheet.create({
         height: PX.iconSize26,
         right: PX.marginLR,
         top: 12,
-    },
-    cancelImage: {
-        width: PX.iconSize26,
-        height: PX.iconSize26,
     },
     rowBox2: {
         height: 50,
