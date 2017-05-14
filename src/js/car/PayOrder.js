@@ -156,8 +156,6 @@ export default class PayOrder extends Component {
     
     //支付宝支付
     ali_pay = async () => {
-        console.log(Alipay);
-        let privateKey = 'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR/h2n5MHMN9Ln2QlErF2mqeVI1+LFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0+ZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6+bTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0+KrQcsTd2rO+3jWbYjqWlE0m4XV9xhpdzZ2r4Y5+hMZY4uPia34L2BCEbhnlaV2CpNW1pUG/aeeZZlSe3JP8ymiDdK0PEstoId/hNOdpm0Nu+YrZ5eiuEyJMbKZDorxQd3L984ECQQD73F+bqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N/TEXLEuXW5gJifnqOd2ba1RgOXBn0rW/eFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b/zvlN26OBza2P/ZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP+xlxxwdIekUnHSzGYEzUocRgWiXbS/s07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8+UvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe+99PjLf+nVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p+0tOtI6/Ab9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ+9xBEEe';
         let order = {
             app_id: '2016122004454914',
             method: 'alipay.trade.app.pay',
@@ -175,28 +173,9 @@ export default class PayOrder extends Component {
                 'timeout_express': '30m'
             },
         };
-        // console.log(order);
-        let order_str = '';
-        for(let i in order) {
-            if(i == 'biz_content') {
-                let temp_str = '';
-                for(let j in order[i]) {
-                    temp_str += (j + '=' + order[i][j] + '&');
-                }
-                temp_str = temp_str.substring(0, temp_str.length - 1);
-                // console.log(temp_str);
-                // console.log('--------------------------------');
-                // console.log(encodeURI(temp_str));
-                order_str += (i + '=' + encodeURI(temp_str) + '&');
-            }else {
-                order_str += (i + '=' + order[i] + '&');
-            }
-        }
-        order_str = order_str.substring(0, order_str.length - 1);
 
-        let order_str2 = 'app_id=2016122004454914&method=alipay.trade.app.pay&charset=utf-8&format=json&sign_type=RSA&sign=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANgpMkQEGr8NcuFWlYtozRAoR%2Fh2n5MHMN9Ln2QlErF2mqeVI1%2BLFYtgF7y0kEaVdDg831X4gyOOEcObt0rrYFBFsG0%2BZZQBjnDoAS92Qzuwfh8AHKEOQIms5g0NjfZ6%2BbTG4G4zzt0dDOEji8e5FUQtiP5AsUrPYW9qAUJqRR5NAgMBAAECgYEA16qKnzflI5ccdlz3yWbfqe42mFxqK7xx82e0%2BKrQcsTd2rO%2B3jWbYjqWlE0m4XV9xhpdzZ2r4Y5%2BhMZY4uPia34L2BCEbhnlaV2CpNW1pUG%2FaeeZZlSe3JP8ymiDdK0PEstoId%2FhNOdpm0Nu%2BYrZ5eiuEyJMbKZDorxQd3L984ECQQD73F%2BbqjyZ6UIj7VexiaBnnMMylNxZa2zNHZUBnya6N%2FTEXLEuXW5gJifnqOd2ba1RgOXBn0rW%2FeFN833sHPnhAkEA27agZcpgiaJz6mcj5695a8b%2FzvlN26OBza2P%2FZCVuHcswFNJijehT7eqKxPayqVMxFRRC5w9e4CVAR3jHITp7QJAeXh3xCP%2BxlxxwdIekUnHSzGYEzUocRgWiXbS%2Fs07aGTEcFAkRDBbo5PDez9DIyMSjFSWeyPQfJBFscrV2KLBAQJBAILrOHpO8%2BUvStjSqn9kfPpusoEW5oDI1hDDqfgSjlRDlwPm3PwiF9nTe%2B99PjLf%2BnVGNKCxcaVEwgTPVUPqIyUCQQDsz9Wd18p%2B0tOtI6%2FAb9pXI55NKdBfg53n3uTeWJwhcP4Omw2nxwtiY8m51CrJNW2xh07wAPdufo5YQ%2B9xBEEe&timestamp=2017-05-11%2009%3A16%3A01&version=1.0&notify_url=http%3A%2F%2Fjingtaomart.com&biz_content=%7B%22timeout_express%22%3A%2230m%22%2C%22seller_id%22%3A%22%22%2C%22total_amount%22%3A%220.02%22%2C%22subject%22%3A%221%22%2C%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22out_trade_no%22%3A%22314VYG1099IAGG7ZOYY%22%7D';
+        let order_str2 = 'alipay_sdk=alipay-sdk-php-20161101&amp;app_id=2016122004454914&amp;biz_content=%7B%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22subject%22%3A+%22App%E6%94%AF%E4%BB%98%E6%B5%8B%E8%AF%95%22%2C%22out_trade_no%22%3A+%2220170125test01%22%2C%22timeout_express%22%3A+%2230m%22%2C%22total_amount%22%3A+%220.01%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%7D&amp;charset=UTF-8&amp;format=json&amp;method=alipay.trade.app.pay&amp;notify_url=http%3A%2F%2Fapi.ub33.cn%2Fapi%2FPayTest%2Fali_respond&amp;sign_type=RSA&amp;timestamp=2017-05-14+21%3A15%3A40&amp;version=1.0&amp;sign=CmbNuY0EnIMlNqZp%2B0cE%2F55U%2B%2Bxai8zL8Gpb4769AqVivnaS7meoYXyG1dsxooXfwi1yIxD9uttqRVtuJsR%2BWOz1nUS4oFYrRU7sWMSrPjjKjSU0W0zsreMYL3Qq9D55IjVAKiQ%2FEdRDYCsPhEiZ34178QRLxQEy33WXlOJrC3w%3D';
 
-        order_str2 = 'app_id=2016122004454914&biz_content=%257B%2522body%2522%253A%2522%255Cu6d4b%255Cu8bd5_body%255Cu5185%255Cu5bb9%2522%252C%2522subject%2522%253A%2522%255Cu6d4b%255Cu8bd5_subject%255Cu5185%255Cu5bb9%2522%252C%2522out_trade_no%2522%253A1494474465%252C%2522total_amount%2522%253A0.1%252C%2522timeout_express%2522%253A%252230m%2522%257D&charset=utf-8&method=alipay.trade.app.pay&notify_url=http%3A%2F%2Fjingtaomart.com&sign_type=RSA&timestamp=2017-05-11%2011%3A47%3A45&version=1.0sign=wLztUOT36LPhb1xxl4VR6tRs8WeV0hIjq7mPKXGXUwsDqTJm40fDfCjwq9VWJt8ZaNhEXO35Yl4jFfgSltpZENde9MKfHuMwP4k6hiqnL4y6kwPvP8qXXHliforXY9k6nTB5kWDvte+dpJRVqa6HanpSwnecQP3VOEhPlVdnao0=';
         console.log(order_str2);
         Alipay.pay(order_str2).then(function(data){
             console.log('alipay success');
