@@ -44,7 +44,7 @@ export default class PersonalScreen extends Component {
                     backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',
                 }}
                 textStyle={{color: '#fff'}}
-                title={Lang.cn.persional} 
+                title={Lang[Lang.default].persional} 
                 left={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
                 right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
             />
@@ -57,21 +57,21 @@ export default class PersonalScreen extends Component {
                                 <Text style={styles.userNameText}>{'这里是名字'}</Text>
                             </View>
                             <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
-                                <Text style={styles.integralText}>{str_replace(Lang.cn.jingtaoIntegral, 5000)}</Text>
+                                <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, 5000)}</Text>
                                 <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
                             </Image>
                         </View> :
                         <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
-                            <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang.cn.logo}</Text>
-                            <Text style={styles.bigBotton} onPress={()=>{}}>{Lang.cn.register}</Text>
+                            <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang[Lang.default].logo}</Text>
+                            <Text style={styles.bigBotton} onPress={()=>{}}>{Lang[Lang.default].register}</Text>
                         </View>
                     }
                 </Image>
                 <View style={styles.btnsListBox}>
                     <View style={styles.orderRow}>
-                        <Text style={styles.darkText}>{Lang.cn.myOrder}</Text>
+                        <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
                         <TouchableOpacity style={styles.lightTextBox}>
-                            <Text style={styles.lightText}>{Lang.cn.viewAllOrder}</Text>
+                            <Text style={styles.lightText}>{Lang[Lang.default].viewAllOrder}</Text>
                             <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
                         </TouchableOpacity>
                     </View>
@@ -80,41 +80,41 @@ export default class PersonalScreen extends Component {
                             src={require('../../images/personal/daifukuan.png')} 
                             width={26} 
                             style={styles.btnCtrlOrder} 
-                            text={Lang.cn.daifukuan} 
+                            text={Lang[Lang.default].daifukuan} 
                             txtStyle={[styles.normalText, {paddingTop: 5}]}
                         />
                         <BtnIcon 
                             src={require('../../images/personal/daifahuo.png')} 
                             width={26} 
                             style={styles.btnCtrlOrder} 
-                            text={Lang.cn.daifahuo} 
+                            text={Lang[Lang.default].daifahuo} 
                             txtStyle={[styles.normalText, {paddingTop: 5}]}
                         />
                         <BtnIcon 
                             src={require('../../images/personal/daishouhuo.png')} 
                             width={26} 
                             style={styles.btnCtrlOrder} 
-                            text={Lang.cn.daishouhuo} 
+                            text={Lang[Lang.default].daishouhuo} 
                             txtStyle={[styles.normalText, {paddingTop: 5}]}
                         />
                         <BtnIcon 
                             src={require('../../images/personal/shouhou.png')} 
                             width={26} 
                             style={styles.btnCtrlOrder} 
-                            text={Lang.cn.shouhou}
+                            text={Lang[Lang.default].shouhou}
                             txtStyle={[styles.normalText, {paddingTop: 5}]}
                         />
                     </View>
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang.cn.myIntegral, 'MyIntegral')}
-                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang.cn.myWallet, null)}
-                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang.cn.myCollection, null)}
-                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang.cn.myAddress, null)}
+                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang[Lang.default].myIntegral, 'MyIntegral')}
+                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null)}
+                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null)}
+                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null)}
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang.cn.contactUs, null)}
-                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang.cn.helpNote, null)}
+                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null)}
+                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null)}
                 </View>
             </ScrollView>
         </View>);

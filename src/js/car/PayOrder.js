@@ -54,7 +54,7 @@ export default class PayOrder extends Component {
                 <View style={styles.bodyStyle}>
                     <View style={styles.payBox}>
                         <View style={styles.rowBox1}>
-                            <Text style={styles.titleText}>{Lang.cn.selectPayMethod}</Text>
+                            <Text style={styles.titleText}>{Lang[Lang.default].selectPayMethod}</Text>
                             <View style={styles.cancelView}>
                                 <TouchableOpacity onPress={this.hideModal}>
                                 <Image style={styles.iconStyle} source={require('../../images/close.png')} />
@@ -62,27 +62,27 @@ export default class PayOrder extends Component {
                             </View>
                         </View>
                         <View style={styles.rowBox2}>
-                            <Text style={styles.defalutFont}>{Lang.cn.totalPayment}</Text>
-                            <Text style={styles.redColor1}>{Lang.cn.RMB + '120.00'}</Text>
+                            <Text style={styles.defalutFont}>{Lang[Lang.default].totalPayment}</Text>
+                            <Text style={styles.redColor1}>{Lang[Lang.default].RMB + '120.00'}</Text>
                         </View>
                         <TouchableOpacity style={styles.rowBox3} onPress={this.ali_pay}>
                             <View style={styles.rowBox}>
                                 <Image style={styles.iconStyle} source={require('../../images/car/alipay.png')} />
-                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.alipay}</Text>
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang[Lang.default].alipay}</Text>
                             </View>
                             <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.rowBox3} onPress={this.get_weixin_payinfo}>
                             <View style={styles.rowBox}>
                                 <Image style={styles.iconStyle} source={require('../../images/car/weixin.png')} />
-                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.weixinpay}</Text>
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang[Lang.default].weixinpay}</Text>
                             </View>
                             <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.rowBox3}>
                             <View style={styles.rowBox}>
                                 <Image style={styles.iconStyle} source={require('../../images/car/pufa.png')} />
-                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang.cn.pufapay}</Text>
+                                <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang[Lang.default].pufapay}</Text>
                             </View>
                             <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
                         </TouchableOpacity>
@@ -103,7 +103,6 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let that = this;
-        this.hideModal();
         Utils.fetch('http://api.ub33.cn/api/PayTest/getWeiXinPayInfo', 'post', {}, function(result){
             // console.log('weixin_payinfo :');
             // console.log(JSON.parse(result));
@@ -118,6 +117,7 @@ export default class PayOrder extends Component {
         let nonceStr = datas.noncestr || null;
         let timeStamp = datas.timestamp || null;
         let sign = datas.sign || null;
+        let that = this;
 
         if(partnerId && prepayId && nonceStr && timeStamp && sign) {
             WeChat.isWXAppInstalled()
@@ -134,57 +134,76 @@ export default class PayOrder extends Component {
                     .then((result) => {
                         console.log(result);
                         if(result && result.errCode === 0) {
-                            this._toast('支付成功');
+                            this._toast(Lang[Lang.default].paySuccess);
                         }
+                        that.hideModal();
                     })
                     .catch((error) => {
                         console.log(error);
                         if(error === -2) {
-                            this._toast('取消支付');
+                            this._toast(Lang[Lang.default].payCancel);
                         }else {
-                            this._toast('支付失败');
+                            this._toast(Lang[Lang.default].payFail);
                         }
+                        that.hideModal();
                     });
                 } else {
-                    this._toast(Lang.cn.shareErrorAlert);
+                    this._toast(Lang[Lang.default].shareErrorAlert);
                 }
             });
         }else {
-            this._toast('参数不正确');
+            this._toast(Lang[Lang.default].paramError);
+            that.hideModal();
         }
     };
     
     //支付宝支付
-    ali_pay = async () => {
-        let order = {
-            app_id: '2016122004454914',
-            method: 'alipay.trade.app.pay',
-            charset: 'utf-8',
-            sign_type: 'RSA',
-            sign: privateKey,
-            timestamp: Utils.getFormatDate(null, 1),
-            version: '1.0',
-            notify_url: 'http://jingtaomart.com',
-            biz_content: {
-                'body': '测试_body内容',
-                'subject': '测试_subject内容',
-                'out_trade_no': new Date().getTime(),
-                'total_amount': 0.1,
-                'timeout_express': '30m'
-            },
-        };
-
-        let order_str2 = 'alipay_sdk=alipay-sdk-php-20161101&amp;app_id=2016122004454914&amp;biz_content=%7B%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22subject%22%3A+%22App%E6%94%AF%E4%BB%98%E6%B5%8B%E8%AF%95%22%2C%22out_trade_no%22%3A+%2220170125test01%22%2C%22timeout_express%22%3A+%2230m%22%2C%22total_amount%22%3A+%220.01%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%7D&amp;charset=UTF-8&amp;format=json&amp;method=alipay.trade.app.pay&amp;notify_url=http%3A%2F%2Fapi.ub33.cn%2Fapi%2FPayTest%2Fali_respond&amp;sign_type=RSA&amp;timestamp=2017-05-14+21%3A15%3A40&amp;version=1.0&amp;sign=CmbNuY0EnIMlNqZp%2B0cE%2F55U%2B%2Bxai8zL8Gpb4769AqVivnaS7meoYXyG1dsxooXfwi1yIxD9uttqRVtuJsR%2BWOz1nUS4oFYrRU7sWMSrPjjKjSU0W0zsreMYL3Qq9D55IjVAKiQ%2FEdRDYCsPhEiZ34178QRLxQEy33WXlOJrC3w%3D';
-
-        console.log(order_str2);
-        Alipay.pay(order_str2).then(function(data){
-            console.log('alipay success');
-            console.log(data);
-        }, function (err) {
-            console.log('alipay fliad');
-            console.log(err);
+    ali_pay = () => {
+        let that = this;
+        fetch('http://api.ub33.cn/api/PayTest/getAlipayInfo')
+        .then((response) => response.text())
+        .then((responseText) => {
+            if(responseText) {
+                //把HTML实体转换成字符串
+                responseText = responseText.replace(/&lt;/g, "<");
+                responseText = responseText.replace(/&gt;/g, ">");
+                responseText = responseText.replace(/&amp;/g, "&");
+                responseText = responseText.replace(/&quot;/g, "\"");
+                responseText = responseText.replace(/&apos;/g, "'");
+                // console.log(responseText);
+                //开始支付
+                Alipay.pay(responseText).then(function(data){
+                    console.log(data);
+                    if(data.indexOf('"msg":"Success"') >= 0) {
+                        //支付成功
+                        alert(Lang[Lang.default].paySuccess);
+                    }
+                    that.hideModal();
+                }, function (err) {
+                    //支付失败，包括取消的
+                    console.log(err);
+                    that.hideModal();
+                });
+            }
+        })
+        .catch((error) => {
+            console.error(error);
         });
     }
+
+    //处理支付宝中时间格式中的空格
+    handleAlipayTimeStamp = (str) => {
+        let timestamp = str.match(/timestamp=(\S*)&/) || null;
+        if(str && timestamp && timestamp[1]) {
+            let start = str.indexOf(timestamp[1]);
+            let length = timestamp[1].length;
+            let _str2 = timestamp[1].replace(/\+/, "%20");
+            let _str1 = str.substr(0, start);
+            let _str3 = str.substr(start + length);
+            return _str1 + _str2 + _str3;
+        }
+        return str;
+    };
 }
 
 var styles = StyleSheet.create({

@@ -230,8 +230,8 @@ export default class FindScreen extends Component {
         }else if(this.state.fetchError) {
             return (
                 <View style={errorStyles.bodyView}>
-                    <Text style={errorStyles.refaceBtn} onPress={this.initPage}>{Lang.cn.reconnect}</Text>
-                    <Text style={errorStyles.errRemind}>{Lang.cn.fetchError}</Text>
+                    <Text style={errorStyles.refaceBtn} onPress={this.initPage}>{Lang[Lang.default].reconnect}</Text>
+                    <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
                 </View>
             );
         }else {
@@ -262,7 +262,7 @@ export default class FindScreen extends Component {
             <View style={styles.flex}>
                 <View>
                     <AppHead
-                        title={Lang.cn.tab_find}
+                        title={Lang[Lang.default].tab_find}
                         center={<BtnIcon 
                             width={100} 
                             height={PX.headHeight - 10}
@@ -370,7 +370,7 @@ export default class FindScreen extends Component {
                             <Text style={styles.defalutFont}>{name}</Text>
                         </View>
                         <View style={styles.gotoShopView}>
-                            <Text style={styles.btnGoToShop}>{Lang.cn.gotoShop}</Text>
+                            <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
                         </View>
                     </View>
                     <View style={styles.shopProductBox}>

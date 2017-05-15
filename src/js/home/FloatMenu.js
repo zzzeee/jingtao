@@ -48,9 +48,9 @@ export default class FloatMenu extends Component {
             'detail' : '',
             'press' : this.showStartShare,
         }, {
-            'title' : Lang.cn.sellSpecialty,
+            'title' : Lang[Lang.default].sellSpecialty,
             'icon' : require('../../images/partner.png'),
-            'detail' : Lang.cn.sellSpecialty_txt,
+            'detail' : Lang[Lang.default].sellSpecialty_txt,
             'press' : null,
         }, {
             'title' : '',
@@ -82,7 +82,7 @@ export default class FloatMenu extends Component {
                     WeChat.shareToSession({
                         type: 'news',
                         title: name,
-                        description: str_replace(Lang.cn.shareText, name),
+                        description: str_replace(Lang[Lang.default].shareText, name),
                         thumbImage: img,
                         webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html',
                     })
@@ -90,8 +90,8 @@ export default class FloatMenu extends Component {
                         console.log(error);
                     });
                 } else {
-                    console.log(Lang.cn.shareErrorAlert);
-                    alert(Lang.cn.shareErrorAlert);
+                    console.log(Lang[Lang.default].shareErrorAlert);
+                    alert(Lang[Lang.default].shareErrorAlert);
                 }
             });
         }
@@ -114,7 +114,7 @@ export default class FloatMenu extends Component {
             let img = this.props.shareObj.img || '';
             let shareInfo = [{
                 to: 'shareToSession',
-                name: Lang.cn.wxFriends,
+                name: Lang[Lang.default].wxFriends,
                 icon: require('../../images/empty.png'),
                 obj: {
                     type: 'news',
@@ -124,7 +124,7 @@ export default class FloatMenu extends Component {
                 },
             }, {
                 to: 'shareToTimeline',
-                name: Lang.cn.circleOfFriends,
+                name: Lang[Lang.default].circleOfFriends,
                 icon: require('../../images/empty.png'),
                 obj: {
                     type: 'news',
@@ -136,9 +136,9 @@ export default class FloatMenu extends Component {
             return <ShareMoudle shares={shareInfo} visible={true} setStartShare={this.setStartShare} />;
         }
 
-        this.buttons[0]['title'] = str_replace(Lang.cn.shareCity, this.props.cityName);
-        this.buttons[2]['title'] = str_replace(Lang.cn.hide, this.props.cityName);
-        this.buttons[2]['detail'] = str_replace(Lang.cn.hide_txt, this.props.cityName);
+        this.buttons[0]['title'] = str_replace(Lang[Lang.default].shareCity, this.props.cityName);
+        this.buttons[2]['title'] = str_replace(Lang[Lang.default].hide, this.props.cityName);
+        this.buttons[2]['detail'] = str_replace(Lang[Lang.default].hide_txt, this.props.cityName);
 
         let localY = this.props.nativeEvent.locationY || 0;
         let pageY = this.props.nativeEvent.pageY || 0;

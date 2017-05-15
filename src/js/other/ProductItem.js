@@ -55,14 +55,14 @@ export default class ProductItem extends Component {
                 </View>
                 <View style={[styles.gPriceBox, this.props.goodPriceStyle]}>
                     {dPrice ?
-                        <Text style={styles.priceFH}>{Lang.cn.RMB}</Text>
+                        <Text style={styles.priceFH}>{Lang[Lang.default].RMB}</Text>
                         : null
                     }
                     <Text style={styles.gprice1}>{dPrice}</Text>
                     <Text style={styles.gprice2}>{gPrice}</Text>
                     {(this.props.showDiscount && discount && discount > 0 && discount < 1) ?
                         <View style={styles.discountView}>
-                            <Text style={styles.discountText}>{str_replace(Lang.cn.discount, (discount * 10).toFixed(1))}</Text>
+                            <Text style={styles.discountText}>{str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}</Text>
                         </View>
                         : null
                     }

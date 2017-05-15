@@ -33,7 +33,7 @@ export default class MyIntegral extends Component {
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <AppHead
-                    title={Lang.cn.integralRule}
+                    title={Lang[Lang.default].integralRule}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}

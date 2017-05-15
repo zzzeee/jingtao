@@ -37,11 +37,11 @@ export default class AddOrder extends Component {
     render() {
         let that = this;
         let { navigation } = this.props;
-        let list1 = <Text style={styles.defaultFont}>{Lang.cn.fullSwap}</Text>;
-        let list2 = <Text style={styles.defaultFont}>{Lang.cn.noUseSwap}</Text>;
+        let list1 = <Text style={styles.defaultFont}>{Lang[Lang.default].fullSwap}</Text>;
+        let list2 = <Text style={styles.defaultFont}>{Lang[Lang.default].noUseSwap}</Text>;
         let list3 = 
             (<View style={styles.rowViewStyle}>
-                <Text style={styles.defaultFont}>{Lang.cn.diySwapIntegral + ': '}</Text>
+                <Text style={styles.defaultFont}>{Lang[Lang.default].diySwapIntegral + ': '}</Text>
                 <InputText style={styles.integralInput} keyType="numeric" onChange={(txt)=>this.useIntegral = txt} />
             </View>);
         let integralList = [list1, list2, list3];
@@ -62,7 +62,7 @@ export default class AddOrder extends Component {
                                 <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
                                 <View style={styles.centerTextBox}>
                                     <View style={styles.rowViewStyle}>
-                                        <Text style={styles.addressTextStyle}>{Lang.cn.consignee + ': ' + Order.addressInfo.name}</Text>
+                                        <Text style={styles.addressTextStyle}>{Lang[Lang.default].consignee + ': ' + Order.addressInfo.name}</Text>
                                         <Text style={[styles.addressTextStyle, styles.mobileStyle]}>{Order.addressInfo.mobile}</Text>
                                     </View>
                                     <Text style={[styles.addressTextStyle, styles.addressStyle]}>{Order.addressInfo.adress}</Text>
@@ -73,17 +73,17 @@ export default class AddOrder extends Component {
                     </View>
                     {Order.orderInfo.map((item, index) => this.storeSession(item, index))}
                     <View style={styles.couponBox}>
-                        <Text style={styles.defaultFont}>{Lang.cn.coupon}</Text>
+                        <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
                         <View style={styles.rowViewStyle}>
-                            <Text style={styles.couponExplainStyle}>{Lang.cn.haveCoupon}</Text>
+                            <Text style={styles.couponExplainStyle}>{Lang[Lang.default].haveCoupon}</Text>
                             <Image source={require('../../images/list_more.png')} style={styles.couponMoreImage} />
                         </View>
                     </View>
                     <View style={styles.integralBox}>
                         <View style={styles.integralBoxHead}>
-                            <Text style={styles.defaultFont}>{Lang.cn.integralSwap}</Text>
+                            <Text style={styles.defaultFont}>{Lang[Lang.default].integralSwap}</Text>
                             <Text style={styles.defaultFont}>
-                                {Lang.cn.canUseIntegral + ' '}
+                                {Lang[Lang.default].canUseIntegral + ' '}
                                 <Text style={styles.redColor}>1500</Text>
                             </Text>
                         </View>
@@ -106,30 +106,30 @@ export default class AddOrder extends Component {
                         </View>
                         <View style={styles.integralBoxFoot}>
                             <Text>
-                                {Lang.cn.used}
+                                {Lang[Lang.default].used}
                                 <Text style={styles.redColor}>300</Text>
-                                {Lang.cn.integral + ', ' + Lang.cn.swap}
-                                <Text style={styles.redColor}>{Lang.cn.RMB + 30}</Text>
+                                {Lang[Lang.default].integral + ', ' + Lang[Lang.default].swap}
+                                <Text style={styles.redColor}>{Lang[Lang.default].RMB + 30}</Text>
                             </Text>
                         </View>
                     </View>
                     <View style={styles.priceListBox}>
-                        {this.priceRow(Lang.cn.productTotalPrice, Lang.cn.RMB + '128.00', false)}
-                        {this.priceRow(Lang.cn.freightTotal, Lang.cn.RMB + '15.00', false)}
-                        {this.priceRow(Lang.cn.couponReduction, '-' + Lang.cn.RMB + '15.00', true)}
-                        {this.priceRow(Lang.cn.integralSwap, '-' + Lang.cn.RMB + '128.00', true)}
+                        {this.priceRow(Lang[Lang.default].productTotalPrice, Lang[Lang.default].RMB + '128.00', false)}
+                        {this.priceRow(Lang[Lang.default].freightTotal, Lang[Lang.default].RMB + '15.00', false)}
+                        {this.priceRow(Lang[Lang.default].couponReduction, '-' + Lang[Lang.default].RMB + '15.00', true)}
+                        {this.priceRow(Lang[Lang.default].integralSwap, '-' + Lang[Lang.default].RMB + '128.00', true)}
                     </View>
                 </ScrollView>
                 </View>
                 <View style={styles.footRowBox}>
                     <View style={styles.footRowLeft}>
                         <Text style={styles.footRowLeftText}>
-                            {Lang.cn.actualMoney + ': '}
-                            <Text style={styles.redColor}>{Lang.cn.RMB + '98.00'}</Text>
+                            {Lang[Lang.default].actualMoney + ': '}
+                            <Text style={styles.redColor}>{Lang[Lang.default].RMB + '98.00'}</Text>
                         </Text>
                     </View>
                     <TouchableOpacity style={styles.footRowRight} onPress={()=>this.setState({showPayModal: true})}>
-                        <Text style={styles.footRowRightText}>{Lang.cn.updateOrder}</Text>
+                        <Text style={styles.footRowRightText}>{Lang[Lang.default].updateOrder}</Text>
                     </TouchableOpacity>
                 </View>
                 <PayOrder visible={this.state.showPayModal} />
@@ -186,7 +186,7 @@ export default class AddOrder extends Component {
                                     <Text style={styles.goodAttrStyle}>{goodAttr}</Text>
                                     <View style={[styles.rowViewStyle, {justifyContent: 'space-between'}]}>
                                         <View style={styles.rowViewStyle}>
-                                            <Text style={styles.goodPriceStyle}>{Lang.cn.RMB + goodPrice}</Text>
+                                            <Text style={styles.goodPriceStyle}>{Lang[Lang.default].RMB + goodPrice}</Text>
                                             <Text style={[styles.goodAttrStyle, {paddingLeft: 10}]}>{martPrice}</Text>
                                         </View>
                                         <Text style={styles.goodNameStyle}>{'× ' + goodNumber}</Text>
@@ -198,27 +198,27 @@ export default class AddOrder extends Component {
                 </View>
                 <View style={styles.expressBox}>
                     <View style={styles.rowViewStyle}>
-                        <Text style={styles.defaultFont}>{Lang.cn.distributionType}</Text>
+                        <Text style={styles.defaultFont}>{Lang[Lang.default].distributionType}</Text>
                         {/*<Text style={styles.expressTypeText}>{expressType}</Text>*/}
                     </View>
                     <Text style={styles.expressText}>
-                        {Lang.cn.express + ': '}
-                        <Text style={styles.redColor}>{Lang.cn.RMB + expressMoney}</Text>
+                        {Lang[Lang.default].express + ': '}
+                        <Text style={styles.redColor}>{Lang[Lang.default].RMB + expressMoney}</Text>
                     </Text>
                 </View>
                 <View style={styles.buyerMessageBox}>
-                    <Text style={styles.buyerMessageText}>{Lang.cn.buyerMessage}</Text>
+                    <Text style={styles.buyerMessageText}>{Lang[Lang.default].buyerMessage}</Text>
                     <InputText
                         style={{flex: 1, borderWidth: 0}} 
-                        pText={Lang.cn.buyerMessagePlaceholder} 
+                        pText={Lang[Lang.default].buyerMessagePlaceholder} 
                         onChange={(txt)=>this.message = txt} 
                     />
                 </View>
                 <View style={styles.totalBox}>
-                    <Text style={styles.totalNumber}>{str_replace(Lang.cn.totalProductNumberL, totalNum)}</Text>
+                    <Text style={styles.totalNumber}>{str_replace(Lang[Lang.default].totalProductNumberL, totalNum)}</Text>
                     <Text style={styles.defaultFont}>
-                        <Text>{Lang.cn.total + ' '}</Text>
-                        <Text style={styles.redColor}>{Lang.cn.RMB + totalMoney}</Text>
+                        <Text>{Lang[Lang.default].total + ' '}</Text>
+                        <Text style={styles.redColor}>{Lang[Lang.default].RMB + totalMoney}</Text>
                     </Text>
                 </View>
             </View>

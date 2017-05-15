@@ -14,8 +14,9 @@ import {
 } from 'react-native';
 
 import AppHead from '../public/AppHead';
+import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
-import { Size } from '../public/globalStyle';
+import { Size, PX } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
 export default class CarsScreen extends Component {
@@ -27,11 +28,18 @@ export default class CarsScreen extends Component {
 
     render() {
         let { navigation } = this.props;
+        let left = (navigation.state.params && navigation.state.params.goGoodDetails) ? 
+            <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />
+            : null;
         return (
             <View>
-                <AppHead title='购物车' />
-                <Button title='提交订单' onPress={()=>navigation.navigate('AddOrder')} />
+                <AppHead 
+                    title={Lang[Lang.default].tab_car}
+                    left={left}
+                />
+                {/* <Button title='提交订单' onPress={()=>navigation.navigate('AddOrder')} /> */}
                 {/* <Button title='空购物车' onPress={()=>navigation.navigate('EmptyCar')} /> */}
+                
             </View>
         );
     }

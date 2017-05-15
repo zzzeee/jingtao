@@ -63,15 +63,15 @@ export default class CountDown extends Component {
         let secondItem = this.create_item(this.state.seconds);
         return (
             <View style={styles.container}>
-                <Text style={styles.defaultFont}>{Lang.cn.Surplus}</Text>
+                <Text style={styles.defaultFont}>{Lang[Lang.default].Surplus}</Text>
                 {dayItem}
-                {dayItem ? <Text style={styles.defaultFont}>{Lang.cn.day}</Text> : null}
+                {dayItem ? <Text style={styles.defaultFont}>{Lang[Lang.default].day}</Text> : null}
                 {hourItem}
-                {hourItem ? <Text style={styles.defaultFont}>{Lang.cn.hour}</Text> : null}
+                {hourItem ? <Text style={styles.defaultFont}>{Lang[Lang.default].hour}</Text> : null}
                 {minuteItem}
-                {minuteItem ? <Text style={styles.defaultFont}>{Lang.cn.minute}</Text> : null}
+                {minuteItem ? <Text style={styles.defaultFont}>{Lang[Lang.default].minute}</Text> : null}
                 {secondItem}
-                {secondItem ? <Text style={styles.defaultFont}>{Lang.cn.second}</Text> : null}
+                {secondItem ? <Text style={styles.defaultFont}>{Lang[Lang.default].second}</Text> : null}
             </View>
         );
     }

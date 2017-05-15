@@ -116,7 +116,7 @@ export default class ClassScreen extends Component {
         return (
             <View style={styles.flex}>
                 <AppHead
-                    title={Lang.cn.tab_class}
+                    title={Lang[Lang.default].tab_class}
                     right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
                 />
                 {this.state.load_or_error ? 
@@ -174,7 +174,7 @@ export default class ClassScreen extends Component {
                         borderLeftColor: selectId == i ? Color.mainColor : Color.floralWhite,
                     }]}>{title}</Text>
                     <View style={styles.rowRightBox}>
-                        <Text style={styles.smallText}>{Lang.cn.viewAll}</Text>
+                        <Text style={styles.smallText}>{Lang[Lang.default].viewAll}</Text>
                         <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
                     </View>
                 </View>
@@ -221,7 +221,7 @@ export default class ClassScreen extends Component {
                     borderLeftColor: isSelect ? Color.mainColor : Color.floralWhite,
                 }]}>{sessonID}</Text>
                 <View style={styles.rowRightBox}>
-                    <Text style={styles.smallText}>{Lang.cn.viewAll}</Text>
+                    <Text style={styles.smallText}>{Lang[Lang.default].viewAll}</Text>
                     <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
                 </View>
             </View>

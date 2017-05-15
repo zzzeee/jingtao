@@ -98,7 +98,7 @@ export default class ShareMoudle extends Component {
                                                             console.log(error);
                                                         });
                                                     } else {
-                                                        Toast.show(Lang.cn.shareErrorAlert, {
+                                                        Toast.show(Lang[Lang.default].shareErrorAlert, {
                                                             duration: Toast.durations.LONG,
                                                             position: Toast.positions.CENTER,
                                                             hideOnPress: true,
@@ -106,7 +106,7 @@ export default class ShareMoudle extends Component {
                                                     }
                                                 });
                                             }else {
-                                                Toast.show(Lang.cn.missParam, {
+                                                Toast.show(Lang[Lang.default].missParam, {
                                                     duration: Toast.durations.LONG,
                                                     position: Toast.positions.CENTER,
                                                     hideOnPress: true,
@@ -121,7 +121,7 @@ export default class ShareMoudle extends Component {
                             })}
                         </ScrollView>
                         <View style={styles.btnCancelBox}>
-                            <Text style={styles.btnCancel} onPress={this.hideModal}>{Lang.cn.cancel}</Text>
+                            <Text style={styles.btnCancel} onPress={this.hideModal}>{Lang[Lang.default].cancel}</Text>
                         </View>
                     </View>
                 </View>

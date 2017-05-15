@@ -48,7 +48,7 @@ export default class MyIntegral extends Component {
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <AppHead
-                    title={Lang.cn.personalIntegral}
+                    title={Lang[Lang.default].personalIntegral}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
@@ -76,24 +76,24 @@ export default class MyIntegral extends Component {
                             </View>
                         </Image>
                         <View style={styles.topRightView}>
-                            <Text style={styles.topRightText1}>{Lang.cn.untilToday}</Text>
-                            <Text style={styles.topRightText2}>{Lang.cn.saveYou}</Text>
+                            <Text style={styles.topRightText1}>{Lang[Lang.default].untilToday}</Text>
+                            <Text style={styles.topRightText2}>{Lang[Lang.default].saveYou}</Text>
                             <Text style={styles.topRightText3}>8000元</Text>
                         </View>
                     </Image>
                     <Image source={require('../../images/personal/integral_top_bg2.png')} style={styles.integral_top_bg2} />
                     <View style={styles.integralNumberView2}>
-                        <Text style={styles.topTxt}>{Lang.cn.youHave}</Text>
+                        <Text style={styles.topTxt}>{Lang[Lang.default].youHave}</Text>
                         <Text style={styles.integralNumberText2}>{this.state.point}</Text>
-                        <Text style={styles.topTxt}>{Lang.cn.point}</Text>
+                        <Text style={styles.topTxt}>{Lang[Lang.default].point}</Text>
                     </View>
                     <View style={styles.footGroupView}>
                         <Image style={styles.footGroup} source={require('../../images/personal/group.png')} />
                     </View>
                 </View>
                 <View style={styles.ruleBox}>
-                    <Text style={styles.ruleTextLeft}>{Lang.cn.integralDetailed}</Text>
-                    <Text style={styles.ruleTextRight} onPress={()=>navigation.navigate('IntegralRule')}>{Lang.cn.integralRule}</Text>
+                    <Text style={styles.ruleTextLeft}>{Lang[Lang.default].integralDetailed}</Text>
+                    <Text style={styles.ruleTextRight} onPress={()=>navigation.navigate('IntegralRule')}>{Lang[Lang.default].integralRule}</Text>
                 </View>
             </ScrollView>
         );

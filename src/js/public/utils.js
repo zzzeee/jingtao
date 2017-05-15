@@ -18,7 +18,7 @@ import { Size, pixel, PX, Color, errorStyles } from './globalStyle';
 
 //加载中
 const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
-    let txt = loadText || Lang.cn.loading;
+    let txt = loadText || Lang[Lang.default].loading;
     let color = loadColor || '#fff';
     return (
         <View style={[styles.bodyView, bgStyle]}>
@@ -33,9 +33,9 @@ const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
 //获取失败
 const ErrorView = (obj, func) => {
     const {bgStyle, errText1, errText2, errColor, errStyle, err_textStyle1, err_textStyle2, fetchFunc} = obj;
-    let txt1 = errText1 || Lang.cn.reconnect;
-    let txt2 = errText2 || Lang.cn.fetchError;
-    let color = errColor || Lang.cn.lightBack;
+    let txt1 = errText1 || Lang[Lang.default].reconnect;
+    let txt2 = errText2 || Lang[Lang.default].fetchError;
+    let color = errColor || Lang[Lang.default].lightBack;
     return (
         <View style={[errorStyles.bodyView, bgStyle]}>
             <Text 
@@ -105,7 +105,7 @@ var Util = {
             });
         } catch(error) {
             console.error(error);
-            load_error_config.errText2 = Lang.cn.programError;
+            load_error_config.errText2 = Lang[Lang.default].programError;
             load_error && load_error(ErrorView(load_error_config, fetchFunc));
         }
     },

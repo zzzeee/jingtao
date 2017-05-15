@@ -5,6 +5,7 @@
  */
 
 const language = {
+    default: 'cn',
     cn : {
         RMB: '¥',
         loading: '正在加载',
@@ -91,6 +92,10 @@ const language = {
         weixinpay: '微信支付',
         pufapay: '浦发支付',
         pufapay_send: '首次支付赠送80积分',
+        paySuccess: '支付成功',
+        payFail: '支付失败',
+        payCancel: '取消支付',
+        paramError: '参数错误',
     },
 };
 

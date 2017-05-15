@@ -103,8 +103,8 @@ const HomeTab = StackNavigator({
                     let gotoStart = state.params.gotoStart || null;
                     head.title = (
                         <TouchableOpacity style={styles.titleTextBox} onPress={gotoStart}>
-                            <Text style={styles.headTitle1}>{str_replace(Lang.cn.previewing, '')}</Text>
-                            <Text style={styles.headTitle2}>{name + Lang.cn.guan}</Text>
+                            <Text style={styles.headTitle1}>{str_replace(Lang[Lang.default].previewing, '')}</Text>
+                            <Text style={styles.headTitle2}>{name + Lang[Lang.default].guan}</Text>
                             <BtnIcon width={16} src={require("../images/sanjiao.png")} press={gotoStart} />
                         </TouchableOpacity>);
                     head.left = <BtnIcon style={styles.btnLeft} width={PX.headIconSize} src={require("../images/logo.png")} press={gotoStart} />
@@ -156,7 +156,7 @@ const ClassTab = StackNavigator({
             header: ({ state, setParams }) => ({
                 title: (
                     <View style={styles.headerTitle}>
-                        <Text style={styles.headTextStyle}>{Lang.cn.tab_class}</Text>
+                        <Text style={styles.headTextStyle}>{Lang[Lang.default].tab_class}</Text>
                     </View>
                 ),
                 left: (<Text></Text>),
@@ -218,7 +218,7 @@ const TabNavs = TabNavigator({
         screen: HomeTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_home,
+                label: Lang[Lang.default].tab_home,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -230,7 +230,7 @@ const TabNavs = TabNavigator({
         screen: FindTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_find,
+                label: Lang[Lang.default].tab_find,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -242,7 +242,7 @@ const TabNavs = TabNavigator({
         screen: ClassTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_class,
+                label: Lang[Lang.default].tab_class,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -254,7 +254,7 @@ const TabNavs = TabNavigator({
         screen: CarTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_car,
+                label: Lang[Lang.default].tab_car,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
                     return <Image source={img} style={styles.tabIcon} />;
@@ -266,7 +266,7 @@ const TabNavs = TabNavigator({
         screen: PersonalTab,
         navigationOptions : {
             tabBar: () => ({
-                label: Lang.cn.tab_personal,
+                label: Lang[Lang.default].tab_personal,
                 icon: ({ focused }) => {
                     let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
                     return <Image source={img} style={styles.tabIcon} />;
