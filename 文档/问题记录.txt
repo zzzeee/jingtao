@@ -1,6 +1,15 @@
 本项目中遇到的问题记录
 
 1. listView/FlatList 中添加 react-native-swiper
-    需在 listView/FlatList 加入属性 removeClippedSubviews={false}
+   需在 listView/FlatList 加入属性 removeClippedSubviews={false}
 
 2. Modal组件隐藏时，当前页面有zIndex属性的元素/组件，也会随之消失
+
+3. 更换测试手机、项目目录或打包后react-native-wechat的微信功能不可用
+   因为应用签名发发生的改变,需(用签名工具)重新生成与包名关联的应用签名
+   注：多注意当前apk的应用签名是否与微信开放平台上的填写一致
+
+4. 支付宝支付提示ALI38173错误
+   请求支付的字符串格式或内容不对，
+   注：timestmap时间格式中的空格需转换成 %20
+      字符连接符 & 最好先转换成HTML实体(&amp;)再发给客户端, 客户端再把 &amp; 还原成 &

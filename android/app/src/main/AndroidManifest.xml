@@ -33,7 +33,7 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-        <!-- 微信Activity -->
+        <!-- 微信Activity start -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:label="@string/app_name"
@@ -44,7 +44,8 @@
             android:label="@string/app_name"
             android:exported="true"
         />
-        <!-- 支付宝Activity -->
+        <!-- 微信Activity end -->
+        <!-- 支付宝Activity start -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
@@ -57,6 +58,7 @@
             android:exported="false"
             android:screenOrientation="behind" >
         </activity>
+        <!-- 支付宝Activity end -->
     </application>
 
 </manifest>
