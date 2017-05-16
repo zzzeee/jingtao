@@ -32,6 +32,8 @@ export const PX = {
     integralDiskSize: 130,  //个人中心 - 我的积分 内的圆盘大小
     shopItemHeight: 320,    //发现 - 单个商家的大小
     iconSize26: 26,         //图标大小 26
+    rowHeight1: 50,         //50的行高 适用于正文行
+    rowHeight2: 44,         //44的行高 适用于列表行
 };
 
 //APP字体大小

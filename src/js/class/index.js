@@ -122,14 +122,18 @@ export default class ClassScreen extends Component {
                 {this.state.load_or_error ? 
                     this.state.load_or_error : 
                     <View style={styles.container}>
-                        <ScrollView 
-                            ref={(_ref)=>this.ref_scrollview=_ref}
-                            showsVerticalScrollIndicator={false}
-                            contentContainerStyle={styles.scrollStyle}
-                        >
-                            {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
-                        </ScrollView>
-                        {rightList}
+                        <View style={{backgroundColor: Color.floralWhite}}>
+                            <ScrollView 
+                                ref={(_ref)=>this.ref_scrollview=_ref}
+                                showsVerticalScrollIndicator={false}
+                                contentContainerStyle={styles.scrollStyle}
+                            >
+                                {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
+                            </ScrollView>
+                        </View>
+                        <View style={styles.flex}>
+                            {rightList}
+                        </View>
                     </View>
                 }
             </View>
@@ -154,7 +158,7 @@ export default class ClassScreen extends Component {
                     borderTopWidth: (selectId == i) ? pixel : 0,
                     borderBottomWidth: (selectId == i) ? pixel : 0,
                     borderLeftColor: (selectId == i) ? Color.mainColor : 'transparent',
-                    backgroundColor: (selectId == i) ? '#fff' : 'rgba(243, 244, 247, 1)',
+                    backgroundColor: (selectId == i) ? '#fff' : 'transparent',
                 }]}>
                     <Text style={styles.leftClassifyText}>{name}</Text>
                 </View>

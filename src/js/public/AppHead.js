@@ -56,7 +56,7 @@ var styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	middleBox : {
-		flex : 8,
+		flex : 5,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

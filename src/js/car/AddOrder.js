@@ -49,7 +49,7 @@ export default class AddOrder extends Component {
         return (
             <View style={styles.flex}>
                 <AppHead 
-                    title='提交订单'
+                    title={Lang[Lang.default].updateOrder}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
@@ -89,7 +89,9 @@ export default class AddOrder extends Component {
                         </View>
                         <View>
                             {integralList.map(function(item, index) {
-                                let img = that.state.selectSwapIntegral == index ? require('../../images/car/select.png') : require('../../images/car/no_select.png');
+                                let img = that.state.selectSwapIntegral == index ? 
+                                            require('../../images/car/select.png') : 
+                                            require('../../images/car/no_select.png');
                                 return (
                                     <TouchableOpacity key={index} style={styles.integralSelectItem} onPress={()=>{
                                         that.setState({selectSwapIntegral: index});
@@ -158,7 +160,8 @@ export default class AddOrder extends Component {
         let productList = item.productList || [];
         let expressType = item.expressType || '';
         let expressMoney = item.expressMoney || '';
-        let totalNum = 0, totalMoney = parseFloat(expressMoney) || 0;
+        let totalNum = 0;
+        let totalMoney = parseFloat(expressMoney) || 0;
 
         return (
             <View key={index} style={styles.storeSessionStyle}>
@@ -175,6 +178,7 @@ export default class AddOrder extends Component {
                         let goodPrice = good.price || null;
                         let martPrice = good.martPrice || null;
                         let goodNumber = good.number || '';
+                        let goodType = good.type || 0;
                         totalNum++;
                         totalMoney += parseFloat(goodPrice);
 
@@ -183,11 +187,15 @@ export default class AddOrder extends Component {
                                 <Image source={goodImg} style={styles.goodImageStyle} />
                                 <View style={styles.goodRightBox}>
                                     <Text style={styles.goodNameStyle}>{goodName}</Text>
-                                    <Text style={styles.goodAttrStyle}>{goodAttr}</Text>
+                                    <Text style={styles.goodAttrStyle}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
                                     <View style={[styles.rowViewStyle, {justifyContent: 'space-between'}]}>
                                         <View style={styles.rowViewStyle}>
                                             <Text style={styles.goodPriceStyle}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                                            <Text style={[styles.goodAttrStyle, {paddingLeft: 10}]}>{martPrice}</Text>
+                                            <Text style={[styles.goodAttrStyle, {paddingRight: 10}]}>{martPrice}</Text>
+                                            {goodType == 1 ?
+                                                <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
+                                                : null
+                                            }
                                         </View>
                                         <Text style={styles.goodNameStyle}>{'× ' + goodNumber}</Text>
                                     </View>
@@ -301,14 +309,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     storeSessionStyle: {
-        padding: 15,
-        paddingBottom: 0,
-        marginBottom: 10,
+        marginBottom: PX.marginTB,
         backgroundColor: '#fff',
     },
     storeNameBox: {
         flexDirection: 'row',
-        // height: 50,
+        height: PX.rowHeight2,
+        alignItems: 'center',
+        paddingLeft: PX.marginLR,
+        borderBottomWidth: 1,
+        borderBottomColor: Color.lavender,
     },
     headImgStyle: {
         width: 20,
@@ -318,8 +328,9 @@ const styles = StyleSheet.create({
     goodItemBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingTop: 16,
-        paddingBottom: 16,
+        padding: PX.marginLR,
+        marginBottom: 3,
+        backgroundColor: Color.floralWhite,
     },
     goodImageStyle: {
         width: 90,
@@ -345,6 +356,17 @@ const styles = StyleSheet.create({
     goodPriceStyle: {
         fontSize: 16,
         color: Color.red,
+        paddingRight: 10,
+    },
+    timeLimit: {
+        paddingLeft: 7,
+        paddingRight: 7,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2,
+        color: '#fff',
+        fontSize: 12,
+        backgroundColor: Color.red,
     },
     expressBox: {
         height: 50,
@@ -353,6 +375,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderBottomColor: Color.lavender,
         borderBottomWidth: pixel,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
     },
     expressTypeText: {
         paddingLeft: 10,
@@ -366,6 +390,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomColor: Color.lavender,
         borderBottomWidth: pixel,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
     },
     buyerMessageText: {
         color: Color.lightBack,
@@ -377,6 +403,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
     },
     totalNumber: {
         color: Color.lightBack,
@@ -461,6 +489,8 @@ const styles = StyleSheet.create({
     footRowBox: {
         flexDirection: 'row',
         backgroundColor: '#fff',
+        borderTopColor: Color.lavender,
+        borderTopWidth: pixel,
     },
     footRowLeft: {
         flex: 1,

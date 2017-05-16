@@ -13,6 +13,7 @@
         "name": "吖吖零售店",
         "headImg": "",
         "productList": [{
+            "id": 1,
             "type": 0,
             "name": "比利时进口福佳啤酒",
             "imgurl": "",
@@ -21,6 +22,7 @@
             "attr": "6 * 330ml",
             "number": 6
         }, {
+            "id": 3,
             "type": 1,
             "name": "哈尔滨啤酒",
             "imgurl": "",
@@ -37,6 +39,7 @@
         "name": "吴迪啤酒店",
         "headImg": "",
         "productList": [{
+            "id": 9,
             "type": 1,
             "name": "比利时进口福佳啤酒",
             "imgurl": "",
@@ -45,6 +48,7 @@
             "attr": "6 * 330ml",
             "number": 1
         }, {
+            "id": 10,
             "type": 0,
             "name": "哈尔滨啤酒",
             "imgurl": "",
