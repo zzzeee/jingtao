@@ -100,9 +100,13 @@ const language = {
         payCancel: '取消支付',
         paramError: '参数错误',
         edit: '编辑',
+        done: '完成',
+        delete: '删除',
+        collection: '收藏',
         settlement: '结算',
         excludingFreight: '不含运费',
         selectAll: '全选',
+        youNotSelectProduct: '您还未选择商品!',
     },
 };
 

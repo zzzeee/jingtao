@@ -161,7 +161,12 @@ export default class FloatMenu extends Component {
                 visible={this.props.visible}
                 onRequestClose={() => {}}
             >
-                <TouchableOpacity style={styles.btnBody} activeOpacity={1} onPress={this.props.hideMenu} onLongPress={this.props.hideMenu} >
+                <TouchableOpacity 
+                    style={styles.btnBody} 
+                    activeOpacity={1} 
+                    onPress={this.props.hideMenu} 
+                    onLongPress={this.props.hideMenu} 
+                >
                     <View style={[styles.shareBox, {top : top}]}>
                         {this.buttons.map((tab, i) => this.renderObject(tab, i))}
                     </View>

@@ -55,7 +55,7 @@ export default class GoodItem extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             isSelect: nextProps.ctrlSelect,
-        });
+        }, this.updateCar);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
