@@ -23,11 +23,16 @@ export default class GoodItem extends Component {
     // 默认参数
     static defaultProps = {
         ctrlSelect: false,
+        key1: null,
+        key2: null,
+        keyword: null,
     };
     // 参数类型
     static propTypes = {
+        updateCarDatas: React.PropTypes.func,
         good: React.PropTypes.object.isRequired,
         ctrlSelect: React.PropTypes.bool.isRequired,
+        carDatas: React.PropTypes.array.isRequired,
     };
     // 构造函数
     constructor(props) {
@@ -43,7 +48,7 @@ export default class GoodItem extends Component {
             this.setState({
                 number: parseInt(this.props.good.number),
                 isSelect: this.props.ctrlSelect,
-            });
+            }, this.updateCar);
         }
     }
 
@@ -54,7 +59,10 @@ export default class GoodItem extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.ctrlSelect != this.state.isSelect || nextState.isSelect != this.state.isSelect) {
+        if(nextProps.ctrlSelect != this.state.isSelect || 
+            nextState.isSelect != this.state.isSelect || 
+            nextState.number != this.state.number
+        ) {
             return true;
         }else {
             return false;
@@ -65,7 +73,7 @@ export default class GoodItem extends Component {
         if(!this.props.good) return null;
         let good = this.props.good;
         let gid = good.id || 0;
-        let number = parseInt(good.number) || 0;
+        let number = parseInt(this.state.number) || 0;
         if(gid > 0 && number > 0) {
             let selectIcon = this.state.isSelect ? 
                 require('../../images/car/select.png') : 
@@ -80,9 +88,7 @@ export default class GoodItem extends Component {
             return (
                 <View style={styles.goodBox}>
                     <View style={styles.selectIconView}>
-                        <BtnIcon src={selectIcon} width={20} press={()=>{
-                            this.setState({isSelect: !this.state.isSelect})
-                        }} />
+                        <BtnIcon src={selectIcon} width={20} press={this.changeSelectState} />
                     </View>
                     <Image source={goodImg} style={styles.goodImg} />
                     <View style={styles.gItemRight}>
@@ -99,14 +105,14 @@ export default class GoodItem extends Component {
                             <View style={styles.ctrlNumberBox}>
                                 <TouchableOpacity 
                                     style={[styles.btnCtrlNumber, {borderRightWidth: 1}]}
-                                    onPress={()=>this.changeNumber(-1)}
+                                    onPress={()=>{this.changeNumber(-1)}}
                                 >
                                     <Text style={styles.btnCtrlNumberText}>-</Text>
                                 </TouchableOpacity>
-                                <Text style={styles.btnCtrlNumberText}>{this.state.number}</Text>
+                                <Text style={styles.btnCtrlNumberText}>{number}</Text>
                                 <TouchableOpacity 
                                     style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}
-                                    onPress={()=>this.changeNumber(1)}
+                                    onPress={()=>{this.changeNumber(1)}}
                                 >
                                     <Text style={styles.btnCtrlNumberText}>+</Text>
                                 </TouchableOpacity>
@@ -120,12 +126,28 @@ export default class GoodItem extends Component {
         }
     }
 
+    // 更新购物车数据
+    updateCar = () => {
+        let newSelectState = this.state.isSelect;
+        let { key1, key2, keyword, carDatas, updateCarDatas } = this.props;
+        if(key1 !== null && key2 !== null && keyword !== null && carDatas && carDatas[key1] && updateCarDatas) {
+            carDatas[key1][keyword][key2].select = newSelectState;
+            carDatas[key1][keyword][key2].number = this.state.number;
+            updateCarDatas(carDatas);
+        }
+    };
+
+    // 改变商品选中状态
+    changeSelectState = () => {
+        this.setState({isSelect: !this.state.isSelect}, this.updateCar);
+    };
+
     // 改变商品数量
     changeNumber = (x) => {
         if(x === 1 || x === -1) {
             let number = this.state.number + x;
             if(number > 0) {
-                this.setState({ number });
+                this.setState({number: number }, this.updateCar);
             }
         }
     }

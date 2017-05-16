@@ -102,6 +102,7 @@ const language = {
         edit: '编辑',
         settlement: '结算',
         excludingFreight: '不含运费',
+        selectAll: '全选',
     },
 };
 

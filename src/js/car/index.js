@@ -31,6 +31,7 @@ export default class CarsScreen extends Component {
             carDatas: null,
             isSelect: true,
         };
+        this.cars = [];
     }
 
     componentDidMount() {
@@ -38,9 +39,12 @@ export default class CarsScreen extends Component {
     }
 
     initDatas = () => {
-        this.setState({
-            carDatas: Order.orderInfo,
-        });
+        if(Order.orderInfo) {
+            this.carGoods = Order.orderInfo;
+            this.setState({
+                carDatas: Order.orderInfo,
+            });
+        }
     };
 
     render() {
@@ -63,11 +67,11 @@ export default class CarsScreen extends Component {
                 />
                 <View style={styles.flex}>
                     <View style={styles.flex}>
-                        {this.bodyContent(this.state.isSelect)}
+                        {this.bodyContent()}
                     </View>
                     <View style={styles.carFooter}>
                         <View style={styles.rowStyle}>
-                            <BtnIcon width={20} src={selectIcon} press={()=>{
+                            <BtnIcon width={20} text={Lang[Lang.default].selectAll} src={selectIcon} press={()=>{
                                 this.setState({isSelect: !this.state.isSelect});
                             }} />
                         </View>
@@ -77,7 +81,7 @@ export default class CarsScreen extends Component {
                                 <Text style={styles.textStyle2}>{100}</Text>
                                 <Text style={styles.textStyle3}>{Lang[Lang.default].excludingFreight}</Text>
                             </View>
-                            <TouchableOpacity style={styles.settlementBox} onPress={()=>navigation.navigate('AddOrder')}>
+                            <TouchableOpacity style={styles.settlementBox} onPress={this.goSettlement}>
                                 <Text style={styles.settlementText}>{Lang[Lang.default].settlement}</Text>
                             </TouchableOpacity>
                         </View>
@@ -88,11 +92,21 @@ export default class CarsScreen extends Component {
     }
 
     //正文内容 (购物车商品和猜你喜欢商品)
-    bodyContent = (select) => {
+    bodyContent = () => {
+        let that = this;
         let car = this.state.carDatas ? 
             <View style={styles.flex}>
                 {this.state.carDatas.map(function(item, index) {
-                    return <ShopItem key={index} shop={item} ctrlSelect={select} />;
+                    return (
+                        <ShopItem 
+                            key={index} 
+                            key1={index}
+                            shop={item} 
+                            carDatas={that.state.carDatas}
+                            ctrlSelect={that.state.isSelect} 
+                            updateCarDatas={that.updateCarDatas} 
+                        />
+                    );
                 })}
             </View>
             : null;
@@ -107,6 +121,19 @@ export default class CarsScreen extends Component {
             </ScrollView>
         );
     }
+
+    //更新购物车数据
+    updateCarDatas = (datas) => {
+        console.log(datas);
+        this.cars = datas;
+    };
+
+    //点击结算
+    goSettlement = () => {
+        let { navigation } = this.props;
+        // console.log(this.cars);
+        navigation.navigate('AddOrder');
+    };
 }
 
 // 购物车内不同的商家
@@ -115,6 +142,8 @@ class ShopItem extends Component {
     static propTypes = {
         shop: React.PropTypes.object.isRequired,
         ctrlSelect: React.PropTypes.bool.isRequired,
+        carDatas: React.PropTypes.array.isRequired,
+        updateCarDatas: React.PropTypes.func,
     };
     // 构造函数
     constructor(props) {
@@ -137,11 +166,11 @@ class ShopItem extends Component {
     }
 
     render() {
-        let _shop = this.props.shop || null;
-        if(!_shop) return null;
+        let { shop, updateCarDatas, key1, carDatas } = this.props;
+        if(!shop) return null;
         let that = this;
-        let name = _shop.name || '';
-        let img = _shop.headImg || null;
+        let name = shop.name || '';
+        let img = shop.headImg || null;
         let headImg = img ? {uri: headImgUrl} : require('../../images/empty.png');
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
@@ -172,8 +201,19 @@ class ShopItem extends Component {
                         <Image source={require('../../images/list_more_red.png')} style={styles.rightIconStyle} />
                     </View>
                 </View>
-                {_shop.productList.map(function(good, i) {
-                    return <GoodItem good={good} ctrlSelect={that.state.isSelect} key={i} />;
+                {shop.productList.map(function(good, i) {
+                    return (
+                        <GoodItem 
+                            good={good} 
+                            ctrlSelect={that.state.isSelect} 
+                            key={i} 
+                            key1={key1}
+                            key2={i}
+                            keyword={'productList'}
+                            carDatas={carDatas}
+                            updateCarDatas={updateCarDatas} 
+                        />
+                    );
                 })}
             </View>
         );
