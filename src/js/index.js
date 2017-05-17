@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? PX.statusHeight : 0,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: '#FFF',
     },
 });
 

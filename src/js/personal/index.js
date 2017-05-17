@@ -37,18 +37,11 @@ export default class PersonalScreen extends Component {
     render() {
         return (
         <View style={styles.flex}>
-            <AppHead 
-                float={true}
-                style={{
-                    elevation: this.state.showHeadBgColor ? 4 : 0,
-                    backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',
-                }}
-                textStyle={{color: '#fff'}}
-                title={Lang[Lang.default].persional} 
-                left={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
-                right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
-            />
-            <ScrollView ref={(_ref)=>this.ref_scrollview=_ref}  onScroll={this._onScroll}>
+            <ScrollView 
+                contentContainerStyle={styles.scrollStyle}
+                ref={(_ref)=>this.ref_scrollview=_ref}  
+                onScroll={this._onScroll}
+            >
                 <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                     {this.state.islogo ?
                         <View style={styles.headMainBox}>
@@ -117,6 +110,17 @@ export default class PersonalScreen extends Component {
                     {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null)}
                 </View>
             </ScrollView>
+            <AppHead 
+                float={true}
+                style={{
+                    elevation: this.state.showHeadBgColor ? 4 : 0,
+                    backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',
+                }}
+                textStyle={{color: '#fff'}}
+                title={Lang[Lang.default].persional} 
+                left={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
+                right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
+            />
         </View>);
     }
 
@@ -164,6 +168,9 @@ var styles = StyleSheet.create({
     defalueFont: {
         color: Color.lightBack,
         fontSize: 14,
+    },
+    scrollStyle: {
+        backgroundColor: Color.lightGrey,
     },
     userBgImg: {
         justifyContent: "flex-end",

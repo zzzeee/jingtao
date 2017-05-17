@@ -272,7 +272,7 @@ export default class FindScreen extends Component {
                         right={<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />}
                     />
                 </View>
-                <View style={styles.flex}>
+                <View style={styles.bodyStyle}>
                     <FlatList
                         ref={(_ref)=>this.ref_flatList=_ref} 
                         removeClippedSubviews={false}
@@ -403,6 +403,10 @@ var styles = StyleSheet.create({
     },
     flex: {
         flex: 1,
+    },
+    bodyStyle: {
+        flex: 1,
+        backgroundColor: Color.lightGrey,
     },
     defalutFont: {
         fontSize: 14,

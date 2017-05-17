@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     FlatList,
     Modal,
+    Animated,
 } from 'react-native';
 
 import AppHead from '../public/AppHead';
@@ -40,6 +41,8 @@ export default class CarsScreen extends Component {
             editing: false,
             showAlert: false,
             deleteAlert: false,
+            operateMsg: null,
+            msgPositon: new Animated.Value(0),
         };
 
         this.cars = [];
@@ -50,6 +53,12 @@ export default class CarsScreen extends Component {
 
     componentDidMount() {
         this.initDatas();
+    }
+
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     //初始化数据
@@ -116,6 +125,9 @@ export default class CarsScreen extends Component {
                     <View style={styles.flex}>
                         {this.bodyContent()}
                     </View>
+                    <Animated.View style={[styles.ctrlResultView, {bottom: this.state.msgPositon}]}>
+                        <Text style={styles.ctrlResultText}>{this.state.operateMsg}</Text>
+                    </Animated.View>
                     <View style={styles.carFooter}>
                         <View style={styles.rowStyle}>
                             <BtnIcon width={20} text={Lang[Lang.default].selectAll} src={selectIcon} press={()=>{
@@ -181,7 +193,15 @@ export default class CarsScreen extends Component {
                         {this.state.invalidList.map(this.invalidProduct)}
                         {this.state.editing ? 
                             <View style={styles.invalidClearBox}>
-                                <Text style={styles.invalidClearText}>{Lang[Lang.default].clearInvalidProduct}</Text>
+                                <Text style={styles.invalidClearText} onPress={()=>{
+                                    this.showAlertMoudle(
+                                        '确定要删除失效的商品吗？',
+                                        '确定', 
+                                        '取消',
+                                        () => this.setState({deleteAlert: false,}),
+                                        () => this.setState({deleteAlert: false,}),
+                                    );
+                                }}>{Lang[Lang.default].clearInvalidProduct}</Text>
                             </View>
                             : null
                         }
@@ -331,6 +351,33 @@ export default class CarsScreen extends Component {
         this.setState({ showAlert: false });
     };
 
+    //显示删除提示框
+    showAlertMoudle = (msg, left, right, lclick, rclick) => {
+        this.alertObject = {
+            text: msg,
+            leftText: left, 
+            rightText: right,
+            leftClick: lclick,
+            rightClick: rclick,
+        };
+        this.setState({deleteAlert: true,});
+    };
+
+    //删除、收藏等操作结果通知
+    resultMsgAnimated = () => {
+        let that = this;
+        Animated.timing(this.state.msgPositon, {
+            toValue: PX.rowHeight1,
+            duration: 450,
+        }).start();
+        this.timer = setTimeout(()=>{
+            Animated.timing(that.state.msgPositon, {
+                toValue: 0,
+                duration: 300,
+            }).start();
+        }, 3000);
+    };
+
     //点击结算
     goSettlement = () => {
         let products = this.selectProducts();
@@ -345,20 +392,13 @@ export default class CarsScreen extends Component {
     clickCollection = () => {
         let products = this.selectProducts();
         if(products) {
-            this.alertObject = {
-                text: '确定要收藏选中商品吗？',
-                leftText: '确定', 
-                rightText: '取消',
-                leftClick: ()=>{
-                    this.setState({deleteAlert: false,});
-                },
-                rightClick: ()=>{
-                    this.setState({deleteAlert: false,});
-                },
-            };
-            this.setState({
-                deleteAlert: true,
-            });
+            this.showAlertMoudle(
+                '确定要收藏选中商品吗？',
+                '确定', 
+                '取消',
+                () => this.setState({deleteAlert: false,}),
+                () => this.setState({deleteAlert: false,}),
+            );
         }
     };
 
@@ -366,20 +406,18 @@ export default class CarsScreen extends Component {
     clickDelete = () => {
         let products = this.selectProducts();
         if(products) {
-            this.alertObject = {
-                text: '确定要删除选中商品吗？',
-                leftText: '确定', 
-                rightText: '取消',
-                leftClick: ()=>{
-                    this.setState({deleteAlert: false,});
+            this.showAlertMoudle(
+                '确定要删除选中商品吗？',
+                '确定', 
+                '取消',
+                () => {
+                    this.setState({
+                        deleteAlert: false,
+                        operateMsg: '删除成功!',
+                    }, this.resultMsgAnimated);
                 },
-                rightClick: ()=>{
-                    this.setState({deleteAlert: false,});
-                },
-            };
-            this.setState({
-                deleteAlert: true,
-            });
+                () => this.setState({deleteAlert: false,}),
+            );
         }
     };
 }
@@ -482,6 +520,19 @@ var styles = StyleSheet.create({
     textStyle3: {
         color: Color.gainsboro,
         fontSize: 11,
+    },
+    ctrlResultView: {
+        position: 'absolute',
+        width: Size.width,
+        height: PX.rowHeight1,
+        backgroundColor: 'rgba(0, 0, 0, .5)',
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    ctrlResultText: {
+        fontSize: 16,
+        color: '#fff',
     },
     btnSettlement: {
         width: 100,
