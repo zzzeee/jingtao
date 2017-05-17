@@ -22,16 +22,13 @@ import Lang, {str_replace} from '../public/language';
 export default class GoodItem extends Component {
     // 默认参数
     static defaultProps = {
-        ctrlSelect: false,
         key1: null,
         key2: null,
-        keyword: null,
     };
     // 参数类型
     static propTypes = {
         updateCarDatas: React.PropTypes.func,
         good: React.PropTypes.object.isRequired,
-        ctrlSelect: React.PropTypes.bool.isRequired,
         carDatas: React.PropTypes.array.isRequired,
     };
     // 构造函数
@@ -48,18 +45,25 @@ export default class GoodItem extends Component {
             this.setState({
                 number: parseInt(this.props.good.number),
                 isSelect: this.props.ctrlSelect,
-            }, this.updateCar);
+            }, ()=>this.updateCar(null, null));
         }
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            isSelect: nextProps.ctrlSelect,
-        }, this.updateCar);
+        if(nextProps.ctrlSelect !== null) {
+            this.setState({
+                isSelect: nextProps.ctrlSelect,
+            }, ()=>this.updateCar(nextProps.key1, null));
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.ctrlSelect != this.state.isSelect || 
+        if(nextProps.ctrlSelect !== null ||
+            (nextProps.ctrlSelect === null && 
+                nextProps.changeKEY1 === nextProps.key1 &&
+                nextProps.changeKEY2 === nextProps.key2 &&
+                nextState.isSelect != this.state.isSelect
+            ) ||
             nextState.isSelect != this.state.isSelect || 
             nextState.number != this.state.number
         ) {
@@ -88,7 +92,7 @@ export default class GoodItem extends Component {
             return (
                 <View style={styles.goodBox}>
                     <View style={styles.selectIconView}>
-                        <BtnIcon src={selectIcon} width={20} press={this.changeSelectState} />
+                        <BtnIcon src={selectIcon} width={20} press={this.changeSelectState} style={{padding: 0}} />
                     </View>
                     <Image source={goodImg} style={styles.goodImg} />
                     <View style={styles.gItemRight}>
@@ -127,19 +131,21 @@ export default class GoodItem extends Component {
     }
 
     // 更新购物车数据
-    updateCar = () => {
+    updateCar = (index1, index2) => {
         let newSelectState = this.state.isSelect;
         let { key1, key2, keyword, carDatas, updateCarDatas } = this.props;
         if(key1 !== null && key2 !== null && keyword !== null && carDatas && carDatas[key1] && updateCarDatas) {
             carDatas[key1][keyword][key2].select = newSelectState;
             carDatas[key1][keyword][key2].number = this.state.number;
-            updateCarDatas(carDatas);
+            updateCarDatas(carDatas, index1, index2);
         }
     };
 
     // 改变商品选中状态
     changeSelectState = () => {
-        this.setState({isSelect: !this.state.isSelect}, this.updateCar);
+        this.setState({isSelect: !this.state.isSelect}, ()=>{
+            this.updateCar(this.props.key1, this.props.key2);
+        });
     };
 
     // 改变商品数量
@@ -147,7 +153,9 @@ export default class GoodItem extends Component {
         if(x === 1 || x === -1) {
             let number = this.state.number + x;
             if(number > 0) {
-                this.setState({number: number }, this.updateCar);
+                this.setState({number: number }, ()=>{
+                    this.updateCar(this.props.key1, this.props.key2);
+                });
             }
         }
     }

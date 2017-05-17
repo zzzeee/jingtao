@@ -155,8 +155,6 @@ export default class AddOrder extends Component {
     //订单内的商家
     storeSession = (item, index) => {
         let name = item.name || '';
-        let headImgUrl = item.headImg || null;
-        let headImg = headImgUrl ? {uri: headImgUrl} : require('../../images/empty.png');
         let productList = item.productList || [];
         let expressType = item.expressType || '';
         let expressMoney = item.expressMoney || '';
@@ -166,7 +164,7 @@ export default class AddOrder extends Component {
         return (
             <View key={index} style={styles.storeSessionStyle}>
                 <View style={styles.storeNameBox}>
-                    <Image source={headImg} style={styles.headImgStyle} />
+                    <Image source={require('../../images/car/shophead.png')} style={styles.headImgStyle} />
                     <Text style={styles.goodNameStyle}>{name}</Text>
                 </View>
                 <View>

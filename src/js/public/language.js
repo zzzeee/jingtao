@@ -107,6 +107,9 @@ const language = {
         excludingFreight: '不含运费',
         selectAll: '全选',
         youNotSelectProduct: '您还未选择商品!',
+        invalid: '失效',
+        clearInvalidProduct: '清除失效商品',
+        recommendGoods: '推荐商品',
     },
 };
 

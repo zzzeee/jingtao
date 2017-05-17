@@ -56,6 +56,7 @@ export const Color = {
     blue: '#3453DB',
     lightBack: '#4A4A4A',   //默认/正常 字体
     gainsboro: '#9097A0',   //浅色字体
+    gainsboro2: '#9B9B9B',
     gray:'#B3B7BE',         //取消、隐藏
     lightGrey:'#CED0D4',    //主背景色
     floralWhite:'#EFEFEF',  //浅背景色

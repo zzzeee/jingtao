@@ -23,7 +23,6 @@ export default class ShopItem extends Component {
     // 参数类型
     static propTypes = {
         shop: React.PropTypes.object.isRequired,
-        ctrlSelect: React.PropTypes.bool.isRequired,
         carDatas: React.PropTypes.array.isRequired,
         updateCarDatas: React.PropTypes.func,
     };
@@ -38,22 +37,50 @@ export default class ShopItem extends Component {
     componentWillMount() {
         this.setState({
             isSelect: this.props.ctrlSelect,
+            ctrlSelect: this.props.ctrlSelect,
         });
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            isSelect: nextProps.ctrlSelect,
-        });
+        if(nextProps.ctrlSelect !== null) {
+            this.setState({
+                isSelect: nextProps.ctrlSelect,
+                ctrlSelect: nextProps.ctrlSelect,
+            });
+        }else if(nextProps.ctrlSelect === null &&
+            nextProps.changeKEY1 === nextProps.key1 && 
+            nextProps.carDatas && 
+            nextProps.carDatas[nextProps.key1] &&
+            nextProps.keyword &&
+            nextProps.carDatas[nextProps.key1][nextProps.keyword]
+        ) {
+            let selectAll = true;
+            let productList = nextProps.carDatas[nextProps.key1][nextProps.keyword];
+            for(let i in productList) {
+                if(productList[i].select === false) selectAll = false;
+            }
+            this.setState({
+                isSelect: selectAll,
+                ctrlSelect: null,
+            });
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.changeKEY1 === nextProps.key1 ||
+            nextState.isSelect != this.state.isSelect
+        ) {
+            return true;
+        }else {
+            return false;
+        }
     }
 
     render() {
-        let { shop, updateCarDatas, key1, carDatas } = this.props;
+        let { shop, updateCarDatas, key1, carDatas, keyword, changeKEY1, changeKEY2 } = this.props;
         if(!shop) return null;
         let that = this;
         let name = shop.name || '';
-        let img = shop.headImg || null;
-        let headImg = img ? {uri: headImgUrl} : require('../../images/empty.png');
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
@@ -65,35 +92,40 @@ export default class ShopItem extends Component {
                             width={20} 
                             src={selectIcon} 
                             press={()=>{
+                                let newState = !this.state.isSelect;
                                 this.setState({
-                                    isSelect: !this.state.isSelect,
+                                    isSelect: newState,
+                                    ctrlSelect: newState,
                                 });
                             }}
-                            />
-                            <BtnIcon 
-                                width={20} 
-                                src={headImg} 
-                                text={name} 
-                                style={{marginLeft: 20}} 
-                                txtStyle={{marginLeft: 6}}
-                            />
+                            style={{padding: 0}}
+                        />
+                        <BtnIcon 
+                            width={20} 
+                            src={require('../../images/car/shophead.png')} 
+                            text={name} 
+                            style={{marginLeft: 20, padding: 0}} 
+                            txtStyle={{marginLeft: 6}}
+                        />
                     </View>
                     <View style={[styles.rowStyle, {justifyContent: 'flex-end'}]}>
                         <Text style={styles.shopCouponText}>{Lang[Lang.default].coupon}</Text>
                         <Image source={require('../../images/list_more_red.png')} style={styles.rightIconStyle} />
                     </View>
                 </View>
-                {shop.productList.map(function(good, i) {
+                {shop[keyword].map(function(good, i) {
                     return (
                         <GoodItem 
                             good={good} 
-                            ctrlSelect={that.state.isSelect} 
+                            ctrlSelect={that.state.ctrlSelect} 
                             key={i} 
                             key1={key1}
                             key2={i}
-                            keyword={'productList'}
+                            keyword={keyword}
                             carDatas={carDatas}
-                            updateCarDatas={updateCarDatas} 
+                            updateCarDatas={updateCarDatas}
+                            changeKEY1={changeKEY1}
+                            changeKEY2={changeKEY2}
                         />
                     );
                 })}

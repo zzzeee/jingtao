@@ -25,44 +25,57 @@ export default class ProductItem extends Component {
     };
 
     render() {
-        if(!this.props.product) return null;
-        let obj = this.props.product;
-        let type = obj.num || 0;
-        let gimg = obj.gThumbPic || '';
-        let name = obj.gName || '';
-        let gPrice = parseFloat(obj.gPrices) || '';
-        let dPrice = this.props.panicBuying ? parseFloat(obj.pbgPrice) : parseFloat(obj.gDiscountPrice);
+        let {
+            product, 
+            panicBuying, 
+            width, 
+            height, 
+            boxStyle, 
+            goodNameViewStyle, 
+            goodNameStyle, 
+            goodPriceStyle, 
+            showDiscount 
+        } = this.props;
+        if(!product) return null;
+        let type = product.num || 0;
+        let gimg = product.gThumbPic || '';
+        let name = product.gName || '';
+        let gPrice = parseFloat(product.gPrices) || '';
+        let dPrice = panicBuying ? parseFloat(product.pbgPrice) : parseFloat(product.gDiscountPrice);
         let discount = (gPrice && dPrice && gPrice > 0 && dPrice > 0) ? (dPrice / gPrice).toFixed(2) : null;
+        height = height ? height : width;
+        
         if(type == 0) {
-            let aimg = obj.adImg || '';
+            let aimg = product.adImg || '';
             if(aimg) gimg = aimg;
         }
+        let img = gimg ? {uri: gimg} : require('../../images/empty.png');
 
         return (
-            <View key={this.props._key} style={[styles.productBox, {width: this.props.width},this.props.boxStyle]}>
+            <View style={[styles.productBox, {width: width}, boxStyle]}>
                 <View style={styles.gImageBox}>
-                    {gimg ?
-                        <Image source={{uri: gimg}} style={{
-                            width: this.props.width,
-                            height: this.props.width,
-                        }} /> : null
-                    }
+                    <Image source={img} style={{
+                        width: width,
+                        height: height,
+                    }} />
                 </View>
-                <View style={styles.goodNameView}>
-                    <Text style={[styles.goodNameText, this.props.goodNameStyle]} numberOfLines={1}>
+                <View style={[styles.goodNameView, goodNameViewStyle]}>
+                    <Text style={[styles.goodNameText, goodNameStyle]} numberOfLines={1}>
                         {name}
                     </Text>
                 </View>
-                <View style={[styles.gPriceBox, this.props.goodPriceStyle]}>
+                <View style={[styles.gPriceBox, goodPriceStyle]}>
                     {dPrice ?
                         <Text style={styles.priceFH}>{Lang[Lang.default].RMB}</Text>
                         : null
                     }
                     <Text style={styles.gprice1}>{dPrice}</Text>
                     <Text style={styles.gprice2}>{gPrice}</Text>
-                    {(this.props.showDiscount && discount && discount > 0 && discount < 1) ?
+                    {(showDiscount && discount && discount > 0 && discount < 1) ?
                         <View style={styles.discountView}>
-                            <Text style={styles.discountText}>{str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}</Text>
+                            <Text style={styles.discountText}>
+                                {str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}
+                            </Text>
                         </View>
                         : null
                     }
@@ -103,16 +116,16 @@ var styles = StyleSheet.create({
         height: 35,
     },
     discountView: {
-        height: 18,
+        height: 17,
         position: 'absolute',
         right: 5,
-        top: 5,
+        top: 8,
     },
     discountText: {
-        paddingTop: 1,
-        paddingBottom: 1,
-        paddingLeft: 4,
-        paddingRight: 4,
+        paddingTop: 1.5,
+        paddingBottom: 1.5,
+        paddingLeft: 6,
+        paddingRight: 6,
         backgroundColor: Color.red,
         color: '#fff',
         borderRadius: 3,

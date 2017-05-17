@@ -18,42 +18,73 @@ import {
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
-import { Size, PX, Color } from '../public/globalStyle';
+import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import Order from '../datas/order.json';
+import Goods from '../datas/goods.json';
 import ShopItem from './ShopItem';
+import ProductItem from '../other/ProductItem';
+import AlertMoudle from '../other/AlertMoudle';
 
 export default class CarsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            carDatas: null,
-            isSelect: true,
+            carDatas: null,     //购物车商品
+            invalidList: null,  //购物车失效商品
+            goodList: null,     //猜你喜欢的商品列表
+            isSelect: true,     //当前全选状态
+            ctrlSelect: true,   //改变子选择状态
+            changeKEY1: null,   //将要改变的子选项
+            changeKEY2: null,   //将要改变的子子选项
             editing: false,
             showAlert: false,
+            deleteAlert: false,
         };
 
-        this.timer = null;
         this.cars = [];
         this.alertMsg = '';
         this.ref_flatList = null;
+        this.alertObject = {};
     }
 
     componentDidMount() {
         this.initDatas();
     }
 
-    componentWillUnmount() {
-        // 如果存在this.timer，则使用clearTimeout清空。
-        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
-    }
-
+    //初始化数据
     initDatas = () => {
         if(Order.orderInfo) {
-            this.carGoods = Order.orderInfo;
+            let orders = Order.orderInfo;
+            let orders_ok = [], invalidList = [];
+            for(let i in orders) {
+                let shop = {}, plist = [];
+                for(let j in orders[i]) {
+                    if(j == 'productList') {
+                        for(let k in orders[i][j]) {
+                            let p = orders[i][j][k] || null;
+                            if(p && p.id > 0 && p.number > 0 && !p.isDelete) {
+                                plist.push(p);
+                            }else {
+                                invalidList.push(p);
+                            }
+                        }
+                    }else {
+                        shop[j] = orders[i][j];
+                    }
+                }
+                if(plist.length > 0) {
+                    shop['productList'] = plist;
+                    orders_ok.push(shop);
+                }
+            }
+            // console.log(orders_ok);
+            // console.log(invalidList);
+            this.cars = orders_ok;
             this.setState({
-                carDatas: Order.orderInfo,
+                carDatas: orders_ok,
+                invalidList: invalidList,
+                goodList: Goods,
             });
         }
     };
@@ -88,7 +119,13 @@ export default class CarsScreen extends Component {
                     <View style={styles.carFooter}>
                         <View style={styles.rowStyle}>
                             <BtnIcon width={20} text={Lang[Lang.default].selectAll} src={selectIcon} press={()=>{
-                                this.setState({isSelect: !this.state.isSelect});
+                                let newState = !this.state.isSelect;
+                                this.setState({
+                                    isSelect: newState,
+                                    ctrlSelect: newState,
+                                    changeKEY1: null,
+                                    changeKEY2: null,
+                                });
                             }} />
                         </View>
                         {this.state.editing ?
@@ -112,7 +149,8 @@ export default class CarsScreen extends Component {
                             </View>
                         }
                     </View>
-                    <ModalAlert visiable={this.state.showAlert} message={this.alertMsg} />
+                    <ModalAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                 </View>
             </View>
         );
@@ -122,50 +160,143 @@ export default class CarsScreen extends Component {
     carsBox = () => {
         let that = this;
         let cars = this.state.carDatas ? 
-            <View style={styles.flex}>
+            <View style={{backgroundColor: Color.lightGrey}}>
                 {this.state.carDatas.map(function(item, index) {
                     return (
                         <ShopItem 
                             key={index} 
                             key1={index}
                             shop={item} 
+                            keyword={'productList'}
                             carDatas={that.state.carDatas}
-                            ctrlSelect={that.state.isSelect} 
-                            updateCarDatas={that.updateCarDatas} 
+                            ctrlSelect={that.state.ctrlSelect} 
+                            updateCarDatas={that.updateCarDatas}
+                            changeKEY1={that.state.changeKEY1}
+                            changeKEY2={that.state.changeKEY2}
                         />
                     );
                 })}
+                {this.state.invalidList ?
+                    <View style={styles.invalidListBox}>
+                        {this.state.invalidList.map(this.invalidProduct)}
+                        {this.state.editing ? 
+                            <View style={styles.invalidClearBox}>
+                                <Text style={styles.invalidClearText}>{Lang[Lang.default].clearInvalidProduct}</Text>
+                            </View>
+                            : null
+                        }
+                    </View>
+                    : null
+                }
             </View>
             : null;
-        return cars;
+        
+        return (
+            <View>
+                {cars}
+                <View style={styles.goodlistTop}>
+                    <View style={styles.goodTopLine}></View>
+                    <View>
+                        <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                    </View>
+                    <View style={styles.goodTopLine}></View>
+                </View>
+            </View>
+        );
     };
+
+    //失效商品
+    invalidProduct = (item, index) => {
+        let img = item.goodImgUrl || null;
+        let goodImg = img ? {uri: img} : require('../../images/empty.png');
+        let goodName = item.name || '';
+        let goodAttr = item.attr || '';
+        let goodPrice = item.price || null;
+        let goodMartPrice = item.martPrice || null;
+        let goodType = item.type || 0;
+        return (
+            <View key={index} style={styles.invalidGoodBox}>
+                <View style={styles.invalidView}>
+                    <Text style={styles.invalidText1}>{Lang[Lang.default].invalid}</Text>
+                </View>
+                <Image source={goodImg} style={styles.invalidGoodImg} />
+                <View style={styles.invalidItemRight}>
+                    <Text style={styles.invalidText2}>{goodName}</Text>
+                    <Text style={styles.invalidText1}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
+                    <View style={styles.invalidItemRightFoot}>
+                        <Text style={styles.invalidText3}>{Lang[Lang.default].RMB + goodPrice}</Text>
+                        {/*goodType == 1 ?
+                            <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
+                            : null
+                        */}
+                    </View>
+                </View>
+            </View>
+        );
+    };
+
     //正文内容 (购物车商品和猜你喜欢商品)
     bodyContent = () => {
         return (
             <FlatList
                 ref={(_ref)=>this.ref_flatList=_ref} 
-                data={[]}
+                data={this.state.goodList}
+                numColumns={2}
+                contentContainerStyle={{backgroundColor: '#fff'}}
+                keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
                 ListHeaderComponent={this.carsBox}
                 onEndReached={()=>{
                     // this.loadMore();
                 }}
-                // onEndReachedThreshold={50}
-                getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
             />
         );
     }
 
     //猜你喜欢商品
     _renderItem = ({item, index}) => {
-
+        return (
+            <ProductItem 
+                product={item} 
+                key={index}
+                showDiscount={true}
+                width={(Size.width - 5) / 2}
+                boxStyle={{
+                    marginRight: 5,
+                    marginBottom: 5,
+                }} 
+            />
+        );
     };
 
-    //更新购物车数据
-    updateCarDatas = (datas) => {
+    /**
+     * 更新购物车数据
+     * 子选项与全选按钮关联起来
+     * @param object datas 最新购物车数据
+     * @param int/string key1 更改状态的子选项
+     * @param int/string key2 更改状态的子子选项
+     */
+    updateCarDatas = (datas, key1, key2) => {
         // console.log(datas);
         this.cars = datas;
+        if(key1 !== null) {
+            //如果全部被选中激活全选
+            let isSelectAll = true;
+            for(let i in datas) {
+                for(let j in datas[i]['productList']) {
+                    if(datas[i]['productList'][j].select === false) {
+                        isSelectAll = false;
+                    }
+                }
+            }
+            this.setState({
+                isSelect: isSelectAll,
+                ctrlSelect: null,
+                changeKEY1: key1,
+                changeKEY2: key2,
+            });
+        }
     };
 
     //过滤出选中的商品
@@ -180,21 +311,24 @@ export default class CarsScreen extends Component {
                 if(id > 0 && num > 0 && select !== false) products.push(id);
             }
         }
-        return products.length > 0 ? products : null; 
+        
+        if(products.length > 0) {
+            return products;
+        }else {
+            this.showAutoModal(Lang[Lang.default].youNotSelectProduct);
+            return false;
+        }
     };
 
-    //显示提示框, 自动关闭
+    //显示提示框
     showAutoModal = (msg) => {
-        let that = this;
         this.alertMsg = msg;
-        
-        this.setState({ 
-            showAlert: true,
-        }, ()=>{
-            that.timer = setTimeout(() => {
-                that.setState({ showAlert: false });
-            }, 3000);
-        });
+        this.setState({showAlert: true, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
     };
 
     //点击结算
@@ -204,19 +338,49 @@ export default class CarsScreen extends Component {
             let { navigation } = this.props;
             console.log(this.cars);
             // navigation.navigate('AddOrder');
-        }else {
-            this.showAutoModal(Lang[Lang.default].youNotSelectProduct);
         }
     };
 
     //点击收藏
     clickCollection = () => {
-        this.showAutoModal('你点击的是收藏！');
+        let products = this.selectProducts();
+        if(products) {
+            this.alertObject = {
+                text: '确定要收藏选中商品吗？',
+                leftText: '确定', 
+                rightText: '取消',
+                leftClick: ()=>{
+                    this.setState({deleteAlert: false,});
+                },
+                rightClick: ()=>{
+                    this.setState({deleteAlert: false,});
+                },
+            };
+            this.setState({
+                deleteAlert: true,
+            });
+        }
     };
 
     //点击删除
     clickDelete = () => {
-        this.showAutoModal('你点击的是删除！');
+        let products = this.selectProducts();
+        if(products) {
+            this.alertObject = {
+                text: '确定要删除选中商品吗？',
+                leftText: '确定', 
+                rightText: '取消',
+                leftClick: ()=>{
+                    this.setState({deleteAlert: false,});
+                },
+                rightClick: ()=>{
+                    this.setState({deleteAlert: false,});
+                },
+            };
+            this.setState({
+                deleteAlert: true,
+            });
+        }
     };
 }
 
@@ -230,30 +394,44 @@ class ModalAlert extends Component {
     static propTypes = {
         message: React.PropTypes.string.isRequired,
         visiable: React.PropTypes.bool.isRequired,
+        hideModal: React.PropTypes.func,
     };
     // 构造函数
     constructor(props) {
         super(props);
         this.state = {
         };
+        this.timer = null;
+    }
+
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     render() {
+        if(this.props.visiable) {
+            this.timer = setTimeout(this.props.hideModal, 2500);
+        }
         return (
             <Modal
                 animationType={"none"}
                 transparent={true}
                 visible={this.props.visiable}
-                onRequestClose={() => {}}
+                onRequestClose={() => {
+                    this.timer && clearTimeout(this.timer);
+                }}
             >
                 <TouchableOpacity 
                     style={modalStyle.modalBody} 
                     activeOpacity={1} 
-                    onPress={this.props.hideMenu} 
-                    onLongPress={this.props.hideMenu} 
+                    onPress={this.props.hideModal} 
+                    onLongPress={this.props.hideModal} 
                 >
                     <View style={modalStyle.alertBody}>
-                        <View style={modalStyle.alertIcon}>
+                        <View style={modalStyle.alertIconView}>
+                            <Image source={require('../../images/careful_big.png')} style={modalStyle.alertIcon} />
                         </View>
                         <Text style={modalStyle.alertMssage}>{this.props.message}</Text>
                     </View>
@@ -330,6 +508,106 @@ var styles = StyleSheet.create({
         fontSize: 14,
         color: '#fff',
     },
+    invalidListBox: {
+        marginBottom: PX.marginTB
+    },
+    invalidGoodBox: {
+        height: 122,
+        flexDirection: 'row',
+        padding: PX.marginLR,
+        marginBottom: 5,
+        backgroundColor: '#fff',
+    },
+    invalidView: {
+        width: 32,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+    },
+    invalidText1: {
+        fontSize: 12,
+        color: Color.gainsboro2,
+    },
+    invalidText2: {
+        fontSize: 14,
+        color: Color.gainsboro2,
+    },
+    invalidText3: {
+        fontSize: 16,
+        color: Color.gainsboro2,
+    },
+    invalidGoodImg: {
+        width: 90,
+        height: 90,
+        marginRight: 12,
+    },
+    invalidItemRight: {
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    invalidGoodName: {
+        color: Color.lightBack,
+        fontSize: 14,
+    },
+    invalidGoodAttr: {
+        color: Color.gainsboro,
+        fontSize: 12,
+    },
+    invalidItemRightFoot: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    timeLimit: {
+        paddingLeft: 7,
+        paddingRight: 7,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2,
+        color: '#fff',
+        fontSize: 12,
+        backgroundColor: Color.gainsboro2,
+        marginLeft: 10,
+    },
+    invalidClearBox: {
+        height: PX.rowHeight1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: -5,
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: Color.lavender,
+    },
+    invalidClearText: {
+        paddingTop: 6,
+        paddingBottom: 6,
+        paddingLeft: 15,
+        paddingRight: 15,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: Color.mainColor,
+        fontSize: 12,
+        color: Color.mainColor,
+    },
+    goodlistTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: PX.rowHeight1,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        marginBottom: PX.marginTB,
+    },
+    goodTopLine: {
+        flex: 1,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.mainColor,
+    },
+    goodlistTopText: {
+        fontSize: 16,
+        color: Color.mainColor,
+        paddingLeft: 25,
+        paddingRight: 25,
+    },
 });
 
 var modalStyle = StyleSheet.create({
@@ -346,12 +624,15 @@ var modalStyle = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, .7)',
         alignItems: 'center',
     },
+    alertIconView: {
+        width: 50,
+        height: 50,
+        marginTop: 28,
+        marginBottom: 14,
+    },
     alertIcon: {
         width: 50,
         height: 50,
-        backgroundColor: '#fff',
-        marginTop: 28,
-        marginBottom: 14,
     },
     alertMssage: {
         fontSize: 16,

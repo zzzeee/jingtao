@@ -129,7 +129,7 @@ export default class CityItem extends Component {
         return (
             <ProductItem 
                 product={obj} 
-                _key={rowid} 
+                key={rowid} 
                 boxStyle={{
                     marginLeft: margin_left, 
                     marginTop: 15,

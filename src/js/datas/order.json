@@ -20,7 +20,8 @@
             "price" : "65",
             "martPrice" : "99",
             "attr": "6 * 330ml",
-            "number": 6
+            "number": 6,
+            "isDelete": 1
         }, {
             "id": 3,
             "type": 1,
@@ -30,6 +31,15 @@
             "martPrice" : "999",
             "attr": "12 * 330ml",
             "number": 1
+        }, {
+            "id": 3,
+            "type": 1,
+            "name": "哈尔滨啤酒",
+            "imgurl": "",
+            "price" : "258",
+            "martPrice" : "999",
+            "attr": "12 * 330ml",
+            "number": 4
         }],
         "expressMoney": 10,
         "expressType": "顺丰快递",
@@ -46,7 +56,8 @@
             "price" : "65",
             "martPrice" : "99",
             "attr": "6 * 330ml",
-            "number": 1
+            "number": 1,
+            "isDelete": 1
         }, {
             "id": 10,
             "type": 0,
