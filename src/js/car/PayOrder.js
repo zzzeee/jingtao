@@ -12,6 +12,7 @@ import {
     Modal,
     Image,
     TouchableOpacity,
+    Button,
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
@@ -44,6 +45,7 @@ export default class PayOrder extends Component {
 
     render() {
         let that = this;
+        let { navigation } = this.props;
         return (
             <Modal
                 animationType={"slide"}
@@ -84,8 +86,15 @@ export default class PayOrder extends Component {
                                 <Image style={styles.iconStyle} source={require('../../images/car/pufa.png')} />
                                 <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang[Lang.default].pufapay}</Text>
                             </View>
-                            <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                            <View style={styles.rowBox}>
+                                <Text style={[styles.redColor2, {paddingRight: 8}]}>首次支付赠送80积分</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
+                            </View>
                         </TouchableOpacity>
+                        <Button title="支付完成" onPress={()=>{
+                            this.hideModal();
+                            navigation.navigate('PayFinish');
+                        }} />
                     </View>
                 </View>
             </Modal>

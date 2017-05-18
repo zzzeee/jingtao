@@ -34,8 +34,8 @@ export default class CarsScreen extends Component {
             carDatas: null,     //购物车商品
             invalidList: null,  //购物车失效商品
             goodList: null,     //猜你喜欢的商品列表
-            isSelect: true,     //当前全选状态
-            ctrlSelect: true,   //改变子选择状态
+            isSelect: false,    //当前全选状态
+            ctrlSelect: false,  //改变子选择状态
             changeKEY1: null,   //将要改变的子选项
             changeKEY2: null,   //将要改变的子子选项
             editing: false,
@@ -376,16 +376,17 @@ export default class CarsScreen extends Component {
     //删除、收藏等操作结果通知
     resultMsgAnimated = () => {
         let that = this;
-        Animated.timing(this.state.msgPositon, {
+        Animated.timing(that.state.msgPositon, {
             toValue: PX.rowHeight1,
             duration: 450,
-        }).start();
-        this.timer = setTimeout(()=>{
-            Animated.timing(that.state.msgPositon, {
-                toValue: 0,
-                duration: 300,
-            }).start();
-        }, 3000);
+        }).start(()=>{
+            that.timer = setTimeout(()=>{
+                Animated.timing(that.state.msgPositon, {
+                    toValue: 0,
+                    duration: 300,
+                }).start();
+            }, 3000);
+        });
     };
 
     //点击结算
@@ -415,16 +416,17 @@ export default class CarsScreen extends Component {
     //点击删除
     clickDelete = () => {
         let products = this.selectProducts();
+        let that = this;
         if(products) {
             this.showAlertMoudle(
                 '确定要删除选中商品吗？',
                 '确定', 
                 '取消',
                 () => {
-                    this.setState({
+                    that.setState({
                         deleteAlert: false,
                         operateMsg: '删除成功!',
-                    }, this.resultMsgAnimated);
+                    }, that.resultMsgAnimated);
                 },
                 () => this.setState({deleteAlert: false,}),
             );

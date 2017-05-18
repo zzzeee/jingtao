@@ -136,7 +136,7 @@ export default class AddOrder extends Component {
                         <Text style={styles.footRowRightText}>{Lang[Lang.default].updateOrder}</Text>
                     </TouchableOpacity>
                 </View>
-                <PayOrder visible={this.state.showPayModal} />
+                <PayOrder visible={this.state.showPayModal} navigation={navigation} />
             </View>
         );
     }

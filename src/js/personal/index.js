@@ -100,10 +100,16 @@ export default class PersonalScreen extends Component {
                     </View>
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang[Lang.default].myIntegral, 'MyIntegral')}
-                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null)}
-                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null)}
-                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null)}
+                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang[Lang.default].myIntegral, 'MyIntegral', null)}
+                    {this.btnRow(
+                        require('../../images/personal/coupon.png'), 
+                        Lang[Lang.default].coupon, 
+                        null, 
+                        str_replace(Lang[Lang.default].couponBeOverdue, 3)
+                    )}
+                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
+                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null, null)}
+                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null, null)}
                 </View>
                 <View style={styles.btnsListBox}>
                     {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null)}
@@ -141,7 +147,7 @@ export default class PersonalScreen extends Component {
     };
 
     //按钮栏
-    btnRow = (img, txt, name) => {
+    btnRow = (img, txt, name, rightTxt) => {
         return (
             <TouchableOpacity onPress={()=>{
                 if(name) {
@@ -152,7 +158,10 @@ export default class PersonalScreen extends Component {
                     <Image style={styles.bigIcon} source={img} style={styles.bigIcon} />
                     <View style={styles.btnRowRightBox}>
                         <Text style={styles.defalueFont}>{txt}</Text>
-                        <Image source={require('../../images/list_more.png')} style={styles.bigIcon} />
+                        <View style={styles.lightTextBox}>
+                            <Text style={styles.btnRowRighText}>{rightTxt}</Text>
+                            <Image source={require('../../images/list_more.png')} style={styles.bigIcon} />
+                        </View>
                     </View>
                     
                 </View>
@@ -295,5 +304,10 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginLeft: PX.marginLR,
+    },
+    btnRowRighText: {
+        paddingRight: 8,
+        fontSize: 13,
+        color: Color.red,
     },
 });

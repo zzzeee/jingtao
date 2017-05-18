@@ -112,6 +112,16 @@ const language = {
         recommendGoods: '推荐商品',
         inTheEnd: '已经到底啦！',
         select: '选择',
+        couponBeOverdue: '%s张即将过期',
+        payFinish: '支付完成',
+        payFinishInfo: '成功支付 ¥%s',
+        packageGetReady: '您的包裹正准备出仓',
+        iphone: '电话',
+        address: '地址',
+        giveIntegral: '送积分',
+        getConfirmReceipt: '确认收货后获得',
+        viewOrder: '查看订单',
+        goHome: '返回首页',
     },
 };
 
