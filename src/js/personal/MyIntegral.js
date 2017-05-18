@@ -11,8 +11,8 @@ import {
     Text,
     Button,
     Image,
-    ScrollView,
     Animated,
+    FlatList,
 } from 'react-native';
 
 import Urls from '../public/apiUrl';
@@ -20,6 +20,7 @@ import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
+import list from '../datas/detailedList.json';
 
 export default class MyIntegral extends Component {
     constructor(props) {
@@ -27,12 +28,20 @@ export default class MyIntegral extends Component {
         this.state = {
             point: 800,
             rotation: new Animated.Value(0),
+            datas: null,
         };
     }
 
     componentDidMount() {
+        this.initDatas();
         this.startAnimation();
     }
+
+    initDatas = () => {
+        this.setState({
+            datas: list,
+        });
+    };
 
     startAnimation = () => {
         this.state.rotation.setValue(0);
@@ -46,13 +55,40 @@ export default class MyIntegral extends Component {
     render() {
         let { navigation } = this.props;
         return (
-            <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].personalIntegral}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
+                            navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
                 />
+                <FlatList
+                    ref={(_ref)=>this.ref_flatList=_ref} 
+                    data={this.state.datas}
+                    keyExtractor={(item, index) => (index)}
+                    enableEmptySections={true}
+                    renderItem={this._renderItem}
+                    ListHeaderComponent={this.listHead}
+                    ListFooterComponent={()=>{
+                        return (
+                            <View style={styles.listFootView}>
+                                <Text style={styles.listFootText}>{Lang[Lang.default].inTheEnd}</Text>
+                            </View>
+                        );
+                    }}
+                    onEndReached={()=>{
+                        // this.loadMore();
+                    }}
+                />
+            </View>
+        );
+    }
+
+    // 页面头部
+    listHead = () => {
+        let { navigation } = this.props;
+        return (
+            <View style={styles.container}>
                 <View style={styles.topBox}>
                     <Image
                         style={styles.integral_top_bg1}
@@ -95,12 +131,51 @@ export default class MyIntegral extends Component {
                     <Text style={styles.ruleTextLeft}>{Lang[Lang.default].integralDetailed}</Text>
                     <Text style={styles.ruleTextRight} onPress={()=>navigation.navigate('IntegralRule')}>{Lang[Lang.default].integralRule}</Text>
                 </View>
-            </ScrollView>
+            </View>
         );
-    }
+    };
+
+    //积分使用明细
+    _renderItem = ({item, index}) => {
+        let name = item.sName || null;
+        let used = item.used || null;
+        let useTime = item.useTime || null;
+        let number = parseInt(item.number) || 0;
+        let headImg = item.headImg || null;
+        let img = headImg ? {uri: headImg} : require('../../images/empty.png');
+        let color = Color.gainsboro;
+        if(number > 0) {
+            number = '+' + number;
+            color = Color.mainColor;
+        }
+        return (
+            <View style={styles.rowStyle}>
+                <Image source={img} style={styles.headImgStyle} />
+                <View style={styles.rowRightStyle}>
+                    <View style={styles.rowBetweenStyle}>
+                        <Text style={styles.nameText}>{name}</Text>
+                        <Text style={styles.useTimeText}>{useTime}</Text>
+                    </View>
+                    <View style={[styles.rowBetweenStyle, {alignItems: 'center'}]}>
+                        <View>
+                        <Text style={[styles.usedStyle, {
+                            backgroundColor: color,
+                        }]}>{used}</Text>
+                        </View>
+                        <Text style={[styles.numberStyle, {
+                            color: color,
+                        }]}>{number}</Text>
+                    </View>
+                </View>
+            </View>
+        );
+    };
 }
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
     container: {
         backgroundColor: Color.lightGrey,
     },
@@ -215,5 +290,65 @@ const styles = StyleSheet.create({
         color: Color.gainsboro,
         fontSize: 14,
         padding: 3,
+    },
+    rowStyle: {
+        height: 80,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        marginLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
+    },
+    headImgStyle: {
+        width: 60,
+        height: 60,
+        marginTop: PX.marginTB,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: Color.lavender,
+    },
+    rowRightStyle: {
+        flex: 1,
+        height: 80,
+        marginLeft: 10,
+    },
+    rowBetweenStyle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    nameText: {
+        fontSize: 14,
+        marginTop: 13,
+        marginBottom: 12,
+        color: Color.lightBack,
+    },
+    useTimeText: {
+        fontSize: 12,
+        color: Color.gray,
+        marginTop: 17,
+    },
+    usedStyle: {
+        color: '#fff',
+        fontSize: 12,
+        paddingTop: 4,
+        paddingBottom: 4,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 3,
+    },
+    numberStyle: {
+        fontSize: 25,
+    },
+    listFootView: {
+        height: PX.rowHeight2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: Color.floralWhite,
+    },
+    listFootText: {
+        color: Color.lightGrey,
+        fontSize: 12,
     },
 });

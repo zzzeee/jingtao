@@ -110,6 +110,8 @@ const language = {
         invalid: '失效',
         clearInvalidProduct: '清除失效商品',
         recommendGoods: '推荐商品',
+        inTheEnd: '已经到底啦！',
+        select: '选择',
     },
 };
 

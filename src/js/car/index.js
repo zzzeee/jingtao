@@ -239,7 +239,17 @@ export default class CarsScreen extends Component {
                 <View style={styles.invalidView}>
                     <Text style={styles.invalidText1}>{Lang[Lang.default].invalid}</Text>
                 </View>
-                <Image source={goodImg} style={styles.invalidGoodImg} />
+                <Image source={goodImg} style={styles.invalidGoodImg}>
+                    <Image style={styles.invalidGoodImg} source={require('../../images/car/invalid_goodimg_over.png')}>
+                        <View style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <Text style={styles.invalidText4}>{Lang[Lang.default].invalid}</Text>
+                        </View>
+                    </Image>
+                </Image>
                 <View style={styles.invalidItemRight}>
                     <Text style={styles.invalidText2}>{goodName}</Text>
                     <Text style={styles.invalidText1}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
@@ -384,7 +394,7 @@ export default class CarsScreen extends Component {
         if(products) {
             let { navigation } = this.props;
             console.log(this.cars);
-            // navigation.navigate('AddOrder');
+            navigation.navigate('AddOrder');
         }
     };
 
@@ -586,14 +596,17 @@ var styles = StyleSheet.create({
         fontSize: 16,
         color: Color.gainsboro2,
     },
+    invalidText4: {
+        color: '#fff',
+        fontSize: 13,
+    },
     invalidGoodImg: {
         width: 90,
         height: 90,
-        marginRight: 12,
     },
     invalidItemRight: {
-        flex: 1,
         justifyContent: 'space-between',
+        marginLeft: 12,
     },
     invalidGoodName: {
         color: Color.lightBack,

@@ -54,7 +54,7 @@ export default class AddOrder extends Component {
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
                 />
-                <View style={styles.flex}>
+                <View style={styles.body}>
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
                     <View style={styles.addressSession}>
                         <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
@@ -72,13 +72,15 @@ export default class AddOrder extends Component {
                         </Image>
                     </View>
                     {Order.orderInfo.map((item, index) => this.storeSession(item, index))}
-                    <View style={styles.couponBox}>
-                        <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
-                        <View style={styles.rowViewStyle}>
-                            <Text style={styles.couponExplainStyle}>{Lang[Lang.default].haveCoupon}</Text>
-                            <Image source={require('../../images/list_more.png')} style={styles.couponMoreImage} />
+                    <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate('Coupon')}>
+                        <View style={styles.couponBox}>
+                            <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
+                            <View style={styles.rowViewStyle}>
+                                <Text style={styles.couponExplainStyle}>{Lang[Lang.default].haveCoupon}</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.couponMoreImage} />
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.integralBox}>
                         <View style={styles.integralBoxHead}>
                             <Text style={styles.defaultFont}>{Lang[Lang.default].integralSwap}</Text>
@@ -235,6 +237,10 @@ export default class AddOrder extends Component {
 const styles = StyleSheet.create({
     flex: {
         flex: 1,
+    },
+    body: {
+        flex: 1,
+        backgroundColor: Color.lightGrey,
     },
     container: {
         backgroundColor: Color.lightGrey,

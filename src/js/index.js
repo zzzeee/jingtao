@@ -19,6 +19,7 @@ import TabNavScreen from './tabNav';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
+import Coupon from './car/Coupon';
 import LocationInfo from './home/LocationInfo';
 import EmptyCar from './car/EmptyCar';
 
@@ -50,6 +51,11 @@ const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
 );
 
+//购物车 - 提交订单 - 选择优惠券
+const CouponScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Coupon} />
+);
+
 //购物车 - 空购物车 - 测试
 const EmptyCarScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={EmptyCar} />
@@ -72,6 +78,9 @@ const AppNavigator = StackNavigator({
     },
     AddOrder: {
         screen: AddOrderScreen,
+    },
+    Coupon: {
+        screen: CouponScreen,
     },
     LocationInfo: {
         screen: LocationInfoScreen,
