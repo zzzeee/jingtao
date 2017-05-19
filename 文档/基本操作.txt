@@ -4,3 +4,5 @@ adb devices
 adb reverse tcp:8081 tcp:8081
 // 打包命令
 gradlew assembleRelease
+// 清除缓存
+gradlew clean

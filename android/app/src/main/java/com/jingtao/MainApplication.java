@@ -3,6 +3,7 @@ package com.jingtao;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cn.jpush.reactnativejpush.JPushPackage;
 import com.yunpeng.alipay.AlipayPackage;
 import com.theweflex.react.WeChatPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -16,6 +17,9 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
+  private boolean SHUTDOWN_TOAST = false;
+  private boolean SHUTDOWN_LOG = false;
+
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
@@ -28,7 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new AlipayPackage(),
             new WeChatPackage(),
-            new VectorIconsPackage()
+            new VectorIconsPackage(),
+            new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
       );
     }
   };

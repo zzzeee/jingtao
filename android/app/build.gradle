@@ -95,6 +95,10 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        manifestPlaceholders = [
+            JPUSH_APPKEY: "a610db20bc2a684176df27ed",
+            APP_CHANNEL: "developer-default"
+        ]
     }
     splits {
         abi {
@@ -135,6 +139,8 @@ android {
 }
 
 dependencies {
+    compile project(':jpush-react-native')
+    compile project(':jcore-react-native')
     compile project(':react-native-yunpeng-alipay')
     compile project(':react-native-wechat')
     compile project(':react-native-vector-icons')

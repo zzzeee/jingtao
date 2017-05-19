@@ -63,13 +63,18 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        JPushModule.addReceiveNotificationListener((map) => {
-            console.log("alertContent: " + map.alertContent);
-            console.log("extras: " + map.extras);
-            // var extra = JSON.parse(map.extras);
-            // console.log(extra.key + ": " + extra.value);
+        JPushModule.addReceiveCustomMsgListener((message) => {
+            this.setState({pushMsg: message});
         });
+        JPushModule.addReceiveNotificationListener((message) => {
+            console.log("receive notification: " + message);
+        })
         this.getProvinceDatas(31);
+    }
+
+    componentWillUnmount() {
+        JPushModule.removeReceiveCustomMsgListener();
+        JPushModule.removeReceiveNotificationListener();
     }
 
     render() {
