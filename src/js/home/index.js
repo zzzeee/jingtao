@@ -26,6 +26,7 @@ import Utils from '../public/utils';
 import BtnIcon from '../public/BtnIcon';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
+import JPushModule from 'jpush-react-native';
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -62,6 +63,12 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
+        JPushModule.addReceiveNotificationListener((map) => {
+            console.log("alertContent: " + map.alertContent);
+            console.log("extras: " + map.extras);
+            // var extra = JSON.parse(map.extras);
+            // console.log(extra.key + ": " + extra.value);
+        });
         this.getProvinceDatas(31);
     }
 
@@ -80,10 +87,7 @@ export default class HomeScreen extends Component {
                     <BtnIcon 
                         style={styles.btnRight} 
                         width={PX.headIconSize} 
-                        src={require("../../images/search.png")} 
-                        press={()=>{
-                            this.props.navigation.navigate('LocationInfo');
-                        }}
+                        src={require("../../images/search.png")}
                     />
                 </View>
                 <Animated.View style={[styles.hideHead, {

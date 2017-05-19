@@ -31,17 +31,19 @@ export default class MyIntegral extends Component {
     render() {
         let { navigation } = this.props;
         return (
-            <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].integralRule}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
                 />
-                <View style={styles.topBox}>
-                    {Rule.map((item, index) => this.textBlock(item, index))}
-                </View>
-            </ScrollView>
+                <ScrollView contentContainerStyle={styles.container}>
+                    <View style={styles.topBox}>
+                        {Rule.map((item, index) => this.textBlock(item, index))}
+                    </View>
+                </ScrollView>
+            </View>
         );
     }
 
@@ -58,6 +60,9 @@ export default class MyIntegral extends Component {
 }
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
     container: {
         backgroundColor: Color.lightGrey,
         paddingBottom: 10,

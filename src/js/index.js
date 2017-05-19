@@ -22,7 +22,7 @@ import AddOrder from './car/AddOrder';
 import Coupon from './car/Coupon';
 import PayFinish from './car/PayFinish';
 import LocationInfo from './home/LocationInfo';
-import EmptyCar from './car/EmptyCar';
+import TestPage from './personal/TestPage';
 
 //显示格式
 const MyNavScren = ({navigation, NavScreen}) => {
@@ -62,9 +62,9 @@ const PayFinishScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={PayFinish} />
 );
 
-//购物车 - 空购物车 - 测试
-const EmptyCarScreen = ({ navigation }) => (
-    <MyNavScren navigation={navigation} NavScreen={EmptyCar} />
+//个人中心 - 测试集合
+const TestPageScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={TestPage} />
 );
 
 //首页 - 获取定位 - 测试
@@ -94,8 +94,8 @@ const AppNavigator = StackNavigator({
     LocationInfo: {
         screen: LocationInfoScreen,
     },
-    EmptyCar: {
-        screen: EmptyCarScreen,
+    TestPage: {
+        screen: TestPageScreen,
     },
 }, {
     initialRouteName: 'TabNav',

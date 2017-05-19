@@ -112,8 +112,9 @@ export default class PersonalScreen extends Component {
                     {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null, null)}
                 </View>
                 <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null)}
-                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null)}
+                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null, null)}
+                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null, null)}
+                    {this.btnRow(require('../../images/personal/helpNote.png'), '测试专用', 'TestPage', '这里为测试链接')}
                 </View>
             </ScrollView>
             <AppHead 
