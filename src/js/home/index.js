@@ -63,30 +63,29 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        // console.log(JPushModule);
-        // JPushModule.addReceiveCustomMsgListener((message) => {
-        //     console.warn('addReceiveCustomMsgListener1111: ' + message);
-        //     this.setState({pushMsg: message});
-        // });
-        // JPushModule.addReceiveNotificationListener((message) => {
-        //     console.warn('addReceiveNotificationListener22222: ' + message);
-        //     console.log("receive notification: " + message);
-        // })
-        JPushModule.addReceiveNotificationListener((map) => {  
-            //自定义推送的消息  
-            console.log("alertContent: " + map.alertContent);
-            //extra是可选配置上的附件字段  
-            console.log("extras: " + map.extras);  
-            var message = JSON.parse(map.extras);  
-            this.storeDB(message);//我这里是把内容存在了数据库里面，你可以把这里的message放到state里面显示出来  
-            //这里面解析json数据，并存在数据库中，同时显示在通知栏上  
-        })  
-  
-        //点击通知进入应用的主页，相当于跳转到制定的页面  
-        JPushModule.addReceiveOpenNotificationListener((map) => {  
-            //console.log("Opening notification!");  
-            this.props.navigator.replace({name: "HomePage",component:HomePage});  
-        });
+        JPushModule.notifyJSDidLoad();
+		JPushModule.addReceiveCustomMsgListener((map) => {
+			this.setState({
+				pushMsg: map.message
+			});
+			console.log("extras: " + map.extras);
+		});
+		JPushModule.addReceiveNotificationListener((map) => {
+			console.log("alertContent: " + map.alertContent);
+            alert(map);
+			console.log("extras: " + map.extras);
+			// var extra = JSON.parse(map.extras);
+			// console.log(extra.key + ": " + extra.value);
+		});
+		JPushModule.addReceiveOpenNotificationListener((map) => {
+			console.log("Opening notification!");
+            console.log(map);
+			console.log("map.extra: " + map.key);
+        // 跳转界面 
+		});
+		JPushModule.addGetRegistrationIdListener((registrationId) => {
+			console.log("Device register succeed, registrationId " + registrationId);
+		});
         this.getProvinceDatas(31);
     }
 
