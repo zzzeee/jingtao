@@ -20,21 +20,37 @@ import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {Rule, str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
-// import WebIM from '../../webim/Lib/WebIM';
-// var conn = WebIM.conn;
-// var options = { 
-//     apiUrl: WebIM.config.apiURL,
-//     user: 'zzz',
-//     pwd: '123456',
-//     appKey: WebIM.config.appkey
-// };
-// conn.open(options);
+import WebIM from '../../webim/Lib/WebIM';
+// console.log(WebIM);
+var conn = WebIM.conn;
+conn.listen({
+    onOpened: function ( message ) {          //连接成功回调
+        // 如果isAutoLogin设置为false，那么必须手动设置上线，否则无法收消息
+        // 手动上线指的是调用conn.setPresence(); 如果conn初始化时已将isAutoLogin设置为true
+        // 则无需调用conn.setPresence();   
+        console.log('连接成功！！！！');
+        conn.setPresence();           
+    }, 
+    onTextMessage: function (message) {
+        console.log(message);
+    },
+});
 
 export default class TestPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
+    }
+
+    componentDidMount() {
+        var options = { 
+            apiUrl: WebIM.config.apiURL,
+            user: 'zzz',
+            pwd: '123456',
+            appKey: WebIM.config.appkey
+        };
+        conn.open(options);
     }
 
     render() {
@@ -47,21 +63,12 @@ export default class TestPage extends Component {
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
                 />
-                <View style={styles.Square}>
-                    <WebView
-                        javaScriptEnabled={true}
-                        scalesPageToFit={true}
-                        source={{uri: 'http://jingtaomart.com/mobile/chat/index.html'}}
-                        style={styles.Square}
-                        startInLoadingState ={true}
-                    />
-                </View>
                 <ScrollView contentContainerStyle={styles.container}>
                     <Button title="发送给abc" onPress={()=>{
-                        // this.sendMsg('abc');
+                        this.sendMsg('abc');
                     }} />
                     <Button title="发送给admin" onPress={()=>{
-                        // this.sendMsg('admin');
+                        this.sendMsg('admin');
                     }} />
                 </ScrollView>
             </View>
