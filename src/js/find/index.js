@@ -64,6 +64,13 @@ export default class FindScreen extends Component {
             this.setMDYPlist(mdyp);
         }
     };
+    //检查时间是否带有时分秒
+    checkTimeString = (t) => {
+        if(t && t.length <= 10 && t.indexOf(':') < 0) {
+            return t + ' 00:00:00';
+        }
+        return t;
+    };
     //设置限时抢购列表
     setXSQGlist = (datas) => {
         if(datas && datas.sTatus) {
@@ -72,7 +79,8 @@ export default class FindScreen extends Component {
             let end = xsqg.pbEndTime || null;
             let proList = xsqg.activityAry || [];
             let coupons = datas.couponAry || [];
-
+            start = this.checkTimeString(start);
+            end = this.checkTimeString(end);
             this.setState({
                 fetchError: false,
                 isRefreshing: false,
@@ -165,8 +173,10 @@ export default class FindScreen extends Component {
     beOverdue = () => {
         let timer = new Date().getTime();
         if(!this.state.startTime || !this.state.endTime || timer > this.state.endTime || timer < this.state.startTime) {
+            // alert('beOverdue');
             return false;
         }else {
+            // alert('beOverdue');
             return true;
         }
     };
@@ -258,6 +268,7 @@ export default class FindScreen extends Component {
     };
 
     render() {
+        console.log('find render');
         return (
             <View style={styles.flex}>
                 <View>

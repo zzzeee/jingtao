@@ -23,18 +23,6 @@ import BtnIcon from '../public/BtnIcon';
 import WebIM from '../../webim/Lib/WebIM';
 // console.log(WebIM);
 var conn = WebIM.conn;
-conn.listen({
-    onOpened: function ( message ) {          //连接成功回调
-        // 如果isAutoLogin设置为false，那么必须手动设置上线，否则无法收消息
-        // 手动上线指的是调用conn.setPresence(); 如果conn初始化时已将isAutoLogin设置为true
-        // 则无需调用conn.setPresence();   
-        console.log('连接成功！！！！');
-        conn.setPresence();           
-    }, 
-    onTextMessage: function (message) {
-        console.log(message);
-    },
-});
 
 export default class TestPage extends Component {
     constructor(props) {
@@ -44,6 +32,19 @@ export default class TestPage extends Component {
     }
 
     componentDidMount() {
+        let that = this;
+        conn.listen({
+            onOpened: function ( message ) {          //连接成功回调
+                // 如果isAutoLogin设置为false，那么必须手动设置上线，否则无法收消息
+                // 手动上线指的是调用conn.setPresence(); 如果conn初始化时已将isAutoLogin设置为true
+                // 则无需调用conn.setPresence();   
+                console.log('连接成功！！！！');
+                conn.setPresence();
+            }, 
+            onTextMessage: function (message) {
+                console.log(message);
+            },
+        });
         var options = { 
             apiUrl: WebIM.config.apiURL,
             user: 'zzz',

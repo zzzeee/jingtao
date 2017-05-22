@@ -26,7 +26,6 @@ import Utils from '../public/utils';
 import BtnIcon from '../public/BtnIcon';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
-import JPushModule from 'jpush-react-native';
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -63,35 +62,7 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        JPushModule.notifyJSDidLoad();
-		JPushModule.addReceiveCustomMsgListener((map) => {
-			this.setState({
-				pushMsg: map.message
-			});
-			console.log("extras: " + map.extras);
-		});
-		JPushModule.addReceiveNotificationListener((map) => {
-			console.log("alertContent: " + map.alertContent);
-            alert(map);
-			console.log("extras: " + map.extras);
-			// var extra = JSON.parse(map.extras);
-			// console.log(extra.key + ": " + extra.value);
-		});
-		JPushModule.addReceiveOpenNotificationListener((map) => {
-			console.log("Opening notification!");
-            console.log(map);
-			console.log("map.extra: " + map.key);
-        // 跳转界面 
-		});
-		JPushModule.addGetRegistrationIdListener((registrationId) => {
-			console.log("Device register succeed, registrationId " + registrationId);
-		});
         this.getProvinceDatas(31);
-    }
-
-    componentWillUnmount() {
-        JPushModule.removeReceiveCustomMsgListener();
-        JPushModule.removeReceiveNotificationListener();
     }
 
     render() {

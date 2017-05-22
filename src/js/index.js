@@ -14,6 +14,7 @@ import {
 
 import { StackNavigator } from 'react-navigation';
 import { Color, PX } from './public/globalStyle';
+import JPushModule from 'jpush-react-native';
 
 import TabNavScreen from './tabNav';
 import MyIntegral from './personal/MyIntegral';
@@ -25,17 +26,56 @@ import LocationInfo from './home/LocationInfo';
 import TestPage from './personal/TestPage';
 
 //显示格式
-const MyNavScren = ({navigation, NavScreen}) => {
-    let { router } = TabNavScreen;
-    return (
-        <View style={styles.flex}>
-            <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
-            <View style={styles.container}>
-                <NavScreen navigation={navigation} router={router} />
+class MyNavScren extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
+
+    componentDidMount() {
+        JPushModule.notifyJSDidLoad();
+        JPushModule.addReceiveCustomMsgListener((map) => {
+            console.log("addReceiveCustomMsgListener: ");
+            console.log(map);
+        });
+        JPushModule.addReceiveNotificationListener((map) => {
+            //收到通知
+            console.log("收到通知 addReceiveNotificationListener: ");
+            console.log(map);
+        });
+        JPushModule.addReceiveOpenNotificationListener((map) => {
+            //打开通知
+            console.log("打开通知 addReceiveOpenNotificationListener: ");
+            console.log(map);
+        });
+        JPushModule.addGetRegistrationIdListener((registrationId) => {
+            console.log("addGetRegistrationIdListener: ");
+            console.log("Device register succeed, registrationId " + registrationId);
+        });
+    }
+
+    componentWillUnmount() {
+        JPushModule.removeReceiveCustomMsgListener();
+        JPushModule.removeReceiveNotificationListener();
+        JPushModule.removeReceiveOpenNotificationListener();
+        JPushModule.removeGetRegistrationIdListener();
+    }
+
+    render() {
+        let { router } = TabNavScreen;
+        let { navigation, NavScreen } = this.props;
+        let scolor = (Color && Color.mainColor) ? Color.mainColor : '#E55645';
+        return (
+            <View style={styles.flex}>
+                <StatusBar backgroundColor={scolor} barStyle="light-content" />
+                <View style={styles.container}>
+                    <NavScreen navigation={navigation} router={router} />
+                </View>
             </View>
-        </View>
-    );
-};
+        );
+    }
+}
 
 //个人中心 - 我的积分
 const MyIntegralScreen = ({ navigation }) => (

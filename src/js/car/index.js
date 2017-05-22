@@ -554,14 +554,14 @@ var styles = StyleSheet.create({
         alignItems: 'center',
     },
     btnCollection: {
-        width: 90,
+        width: 100,
         height: PX.rowHeight1,
         backgroundColor: Color.orange,
         justifyContent: 'center',
         alignItems: 'center',
     },
     btnDelete: {
-        width: 90,
+        width: 100,
         height: PX.rowHeight1,
         backgroundColor: Color.mainColor,
         justifyContent: 'center',
