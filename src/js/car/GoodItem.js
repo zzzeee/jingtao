@@ -92,7 +92,17 @@ export default class GoodItem extends Component {
             return (
                 <View style={styles.goodBox}>
                     <View style={styles.selectIconView}>
-                        <BtnIcon src={selectIcon} width={20} press={this.changeSelectState} style={{padding: 0}} />
+                        <BtnIcon 
+                            src={selectIcon} 
+                            width={20} 
+                            press={this.changeSelectState} 
+                            style={{
+                                paddingLeft: PX.marginLR,
+                                paddingRight: 12,
+                                paddingTop: 35,
+                                paddingBottom: 35,
+                            }} 
+                        />
                     </View>
                     <Image source={goodImg} style={styles.goodImg} />
                     <View style={styles.gItemRight}>
@@ -169,6 +179,7 @@ var styles = StyleSheet.create({
         height: 122,
         flexDirection: 'row',
         padding: PX.marginLR,
+        paddingLeft: 0,
         borderTopWidth: 1,
         borderTopColor: Color.lavender,
     },
@@ -179,7 +190,6 @@ var styles = StyleSheet.create({
     goodImg: {
         width: 90,
         height: 90,
-        marginLeft: 12,
         marginRight: 12,
     },
     gItemRight: {

@@ -13,3 +13,6 @@
    请求支付的字符串格式或内容不对，
    注：timestmap时间格式中的空格需转换成 %20
       字符连接符 & 最好先转换成HTML实体(&amp;)再发给客户端, 客户端再把 &amp; 还原成 &
+
+5. mac keytool工具
+   /Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/bin

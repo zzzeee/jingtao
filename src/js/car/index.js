@@ -130,15 +130,21 @@ export default class CarsScreen extends Component {
                     </Animated.View>
                     <View style={styles.carFooter}>
                         <View style={styles.rowStyle}>
-                            <BtnIcon width={20} text={Lang[Lang.default].selectAll} src={selectIcon} press={()=>{
-                                let newState = !this.state.isSelect;
-                                this.setState({
-                                    isSelect: newState,
-                                    ctrlSelect: newState,
-                                    changeKEY1: null,
-                                    changeKEY2: null,
-                                });
-                            }} />
+                            <BtnIcon 
+                                width={20} 
+                                text={Lang[Lang.default].selectAll} 
+                                src={selectIcon} 
+                                press={()=>{
+                                    let newState = !this.state.isSelect;
+                                    this.setState({
+                                        isSelect: newState,
+                                        ctrlSelect: newState,
+                                        changeKEY1: null,
+                                        changeKEY2: null,
+                                    });
+                                }} 
+                                style={{padding: 0}}
+                            />
                         </View>
                         {this.state.editing ?
                             <View style={styles.rowStyle}>

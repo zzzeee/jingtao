@@ -41,10 +41,7 @@ export default class CountDown extends Component {
         let timer = new Date().getTime();
         let {startTime, endTime} = this.props;
         if(timer >= startTime && timer <= endTime) {
-            // alert('timeout');
             this.calculationTime(endTime);
-        }else {
-            // alert('no go in timeout');
         }
     }
 
@@ -55,7 +52,6 @@ export default class CountDown extends Component {
     }
 
     render() {
-        console.log('countdown render');
         if(!this.state.animate) return null;
         //天数模块
         let dayItem = this.create_item(this.state.days);

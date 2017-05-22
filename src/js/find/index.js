@@ -41,12 +41,19 @@ export default class FindScreen extends Component {
 
         this.pageOffest = 1;
         this.pageNumber = 10;
+        this.lockTime = 3000;
         this.ref_flatList = null;
         this.loadMoreLock = false;
     }
 
     componentDidMount() {
         this.initPage();
+    }
+
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     //初始化页面
@@ -66,10 +73,11 @@ export default class FindScreen extends Component {
     };
     //检查时间是否带有时分秒
     checkTimeString = (t) => {
-        if(t && t.length <= 10 && t.indexOf(':') < 0) {
-            return t + ' 00:00:00';
+        let str = t.replace(/-/g, "/") || '';
+        if(str && str.length <= 10 && str.indexOf(':') < 0) {
+            return str + ' 00:00:00';
         }
-        return t;
+        return str;
     };
     //设置限时抢购列表
     setXSQGlist = (datas) => {
@@ -108,18 +116,26 @@ export default class FindScreen extends Component {
     };
 
     // 加载更多
-    loadMore = async () => {
+    loadMore = () => {
+        let stime = new Date().getTime();
         if(!this.loadMoreLock) {
-            this.loadMoreLock = true;
-            let ret2 = await this.getMDYPDatas();
-            if(ret2 && ret2.sTatus && ret2.shopAry.length) {
-                let MDYP = this.state.MDYP.concat(ret2.shopAry);
-                console.log(MDYP);
-                this.pageOffest++;
-                this.setState({ MDYP }, ()=>{
-                    this.loadMoreLock = false;
-                });
-            }
+            let that = this;
+            Utils.fetch(Urls.getFindShopList, 'POST', {
+                sPage: this.pageOffest,
+                sPerNum: this.pageNumber,
+            }, function(result){
+                let etime = new Date().getTime();
+                let t = that.lockTime - (etime - stime);
+                if(result && result.sTatus && result.shopAry.length) {
+                    let MDYP = that.state.MDYP.concat(result.shopAry);
+                    console.log(MDYP);
+                    that.pageOffest++;
+                    that.setState({ MDYP });
+                    that.timer = setTimeout(() => { 
+                        that.loadMoreLock = false;
+                    }, t > 0 ? t : 1);
+                }
+            });
         }
     };
 
@@ -268,7 +284,6 @@ export default class FindScreen extends Component {
     };
 
     render() {
-        console.log('find render');
         return (
             <View style={styles.flex}>
                 <View>
@@ -295,11 +310,12 @@ export default class FindScreen extends Component {
                             if(!this.loadMoreLock) {
                                 console.log('正在加载更多 ..');
                                 this.loadMore();
+                                this.loadMoreLock = true;
                             }else {
                                 console.log('加载更多已被锁住。');
                             }
                         }}
-                        // onEndReachedThreshold={50}
+                        // onEndReachedThreshold={20}
                         getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
                         refreshing={this.state.isRefreshing}
                         onRefresh={()=>{
