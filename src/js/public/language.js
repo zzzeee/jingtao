@@ -110,7 +110,7 @@ const language = {
         invalid: '失效',
         clearInvalidProduct: '清除失效商品',
         recommendGoods: '推荐商品',
-        inTheEnd: '已经到底啦！',
+        inTheEnd: '已经到底啦',
         select: '选择',
         couponBeOverdue: '%s张即将过期',
         payFinish: '支付完成',
@@ -122,6 +122,12 @@ const language = {
         getConfirmReceipt: '确认收货后获得',
         viewOrder: '查看订单',
         goHome: '返回首页',
+        product: '商品',
+        shop: '店铺',
+        comprehensive: '综合',
+        price: '价格',
+        newGood: '新品',
+        popularity: '人气',
     },
 };
 
@@ -145,7 +151,7 @@ export const Rule = [{
  * @param s   string 要替换的字符串
  */
 export var str_replace = function (str, s) {
-    return str.replace(/%s/, s);
+    return str.replace(/%s/g, s);
 };
 
 export default language;

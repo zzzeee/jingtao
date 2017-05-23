@@ -1,3 +1,9 @@
+/**
+ * 首页 - 选中省份 - 城市列表 - 商品列表
+ * @auther linzeyong
+ * @date   2017.04.18
+ */
+
 import React, { Component } from 'react';
 import {
     StyleSheet,

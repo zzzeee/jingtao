@@ -1,3 +1,9 @@
+/**
+ * 首页 - 头部卡片列表
+ * @auther linzeyong
+ * @date   2017.04.18
+ */
+
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -26,6 +32,7 @@ export default class HeadBox extends Component {
             datas: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
+        this.nav = this.props.navigation;
     }
 
     componentWillMount() {
@@ -94,7 +101,14 @@ export default class HeadBox extends Component {
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
                     {/*<BtnIcon width={20} src={img_down} />*/}
                 </View>
-                <Image source={{uri: cimg}} style={styles.cityImage} />
+                <TouchableOpacity onPress={()=>{
+                    this.nav.navigate('CityGoodShopList', {
+                        index: 0,
+                        pid: obj.region_id,
+                    });
+                }}>
+                    <Image source={{uri: cimg}} style={styles.cityImage} />
+                </TouchableOpacity>
                 <View style={styles.cityfoot}>
                     <BtnIcon src={img_enter} size={12} text={lang.cn.goin + name} />
                     <BtnIcon src={img_mark} size={12} text={lang.cn.allSeller} />

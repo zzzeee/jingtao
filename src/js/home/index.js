@@ -123,6 +123,7 @@ export default class HomeScreen extends Component {
                             showFloatMenu={this.showFloatMenu} 
                             pid={this.state.provinceID} 
                             datas={this.state.datas} 
+                            navigation={this.props.navigation}
                         />
                     }
                 </ScrollView>

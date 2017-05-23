@@ -1,3 +1,9 @@
+/**
+ * 首页 - 选中省份下方 - 城市列表
+ * @auther linzeyong
+ * @date   2017.04.18
+ */
+
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -88,7 +94,7 @@ export default class CityList extends Component {
                 enableEmptySections={true}
                 dataSource={this.state.dataSource}
                 renderRow={this.renderItem.bind(this)}
-                renderHeader ={(props)=><HeadBox datas={this.state.datas} />}
+                renderHeader ={(props)=><HeadBox datas={this.state.datas} navigation={this.props.navigation} />}
             />
         );
     }

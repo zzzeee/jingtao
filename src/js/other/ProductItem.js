@@ -50,7 +50,6 @@ export default class ProductItem extends Component {
             if(aimg) gimg = aimg;
         }
         let img = gimg ? {uri: gimg} : require('../../images/empty.png');
-
         return (
             <View style={[styles.productBox, {width: width}, boxStyle]}>
                 <View style={styles.gImageBox}>
@@ -97,8 +96,8 @@ var styles = StyleSheet.create({
         elevation: 3,
     },
     gImageBox: {
-        // borderBottomColor : Color.lavender,
-        // borderBottomWidth : pixel,
+        borderBottomColor : Color.lavender,
+        borderBottomWidth : pixel,
     },
     goodNameView: {
         height: 30,
