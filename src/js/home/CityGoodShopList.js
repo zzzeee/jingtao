@@ -12,12 +12,13 @@ import {
     Image,
     ListView,
     TouchableOpacity,
+    Animated,
 } from 'react-native';
 
 import Util from '../public/utils';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
-import { Size, pixel, PX, Color } from '../public/globalStyle';
+import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import cityGoods from '../datas/cityGoods.json';
@@ -29,15 +30,18 @@ export default class CityGoodShopList extends Component {
         super(props);
         this.state = {
             datas: null,
+            datas2: null,
             cityName: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            leftValue: new Animated.Value(0),
         };
     }
 
     componentDidMount() {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params && navigation.state.params.pid) {
-            this.initList(this.props.navigation.state.params.pid);
+            this.initList(navigation.state.params.pid);
+            this.playAnimated(navigation.state.params.index);
         }
     }
 
@@ -49,6 +53,24 @@ export default class CityGoodShopList extends Component {
                 totalNum: cityGoods.length,
                 dataSource: this.state.dataSource.cloneWithRows(cityGoods),
             });
+        }
+    };
+
+    changeList = (datas) => {
+        let _datas = datas ? datas : [];
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(_datas),
+        });
+    };
+
+    //播放动画
+    playAnimated = (value) => {
+        let val = this.state.leftValue._value;
+        if(!!val != !!value) {
+            Animated.timing(this.state.leftValue, {
+                toValue: val ? 0 : (Size.width / 2),
+                duration: 150,
+            }).start();
         }
     };
     
@@ -72,31 +94,51 @@ export default class CityGoodShopList extends Component {
     };
 
     render() {
-        if(!this.state.datas) return null;
-        console.log(this.state.dataSource);
         return (
             <View style={styles.flex}>
                 <View>
                     <AppHead
                         center={<BtnIcon 
-                                width={20} 
-                                text={this.state.cityName} 
-                                src={require("../../images/car/address_nav.png")} 
-                            />}
+                            width={20} 
+                            text={this.state.cityName} 
+                            src={require("../../images/car/address_nav.png")} 
+                            txtStyle={{
+                                color: Color.mainColor,
+                                fontSize: FontSize.headFontSize,
+                                fontWeight: FontSize.headFontWeight,
+                            }}
+                        />}
                         left={<BtnIcon width={PX.headIconSize} press={()=>{
                                 this.props.navigation.goBack(null);
                         }} src={require("../../images/back.png")} />}
                     />
                 </View>
-                <View style={[styles.flex, {backgroundColor: '#123'}]}>
-                    <ListView
-                        ref={(ref)=>this.ref_listview=ref}
-                        dataSource={this.state.dataSource}
-                        contentContainerStyle={styles.listViewStyle}
-                        renderRow={(this.state.datas && this.state.datas.length > 3) ? this._renderItem.bind(this) : this._renderItem2}
-                        enableEmptySections={true}  //允许空数据
-                        renderHeader={this.pageTop}
-                    />
+                <View style={styles.flex}>
+                    <View>
+                        <ListView
+                            ref={(ref)=>this.ref_listview=ref}
+                            dataSource={this.state.dataSource}
+                            contentContainerStyle={styles.listViewStyle}
+                            renderRow={(obj, sectionID, rowID)=>{
+                                if(this.state.dataSource._cachedRowCount > 3) {
+                                    return this._renderItem(obj, sectionID, rowID, this.state.totalNum);
+                                }else {
+                                    return this._renderItem2(obj, sectionID, rowID);
+                                }
+                            }}
+                            enableEmptySections={true}  //允许空数据
+                            renderHeader={this.pageTop}
+                        />
+                    </View>
+                    {this.state.dataSource._cachedRowCount === 0 ?
+                        <View style={styles.centerStyle}>
+                            <Image source={require('../../images/home/noContent.png')} style={styles.noContentImg}>
+                                <Text style={styles.fontStyle1}>该地区还没有信息。</Text>
+                                <Text style={styles.fontStyle1}>小二正在努力补充中!</Text>
+                            </Image>
+                        </View>
+                        : null
+                    }
                     <View style={styles.topSwitchBox}>
                         <Image 
                             resizeMode="stretch"
@@ -118,11 +160,16 @@ export default class CityGoodShopList extends Component {
                 </View>
                 <View style={styles.topBtnBox}>
                     <View style={styles.btnTopLineBox}>
-                        <View style={styles.btnTopLine}>
-                        </View>
+                        <Animated.View style={[styles.btnTopLine, {
+                            left: this.state.leftValue,
+                        }]}>
+                        </Animated.View>
                     </View>
                     <View style={styles.topBtnRow}>
-                        <TouchableOpacity style={styles.flex}>
+                        <TouchableOpacity onPress={()=>{
+                            this.playAnimated(0);
+                            this.changeList(this.state.datas);
+                        }} style={styles.flex}>
                             <View style={[styles.topBtnView, {
                                 borderRightWidth: 1,
                                 borderRightColor: Color.lavender,
@@ -130,7 +177,10 @@ export default class CityGoodShopList extends Component {
                                 <Text style={styles.defaultFont}>{Lang[Lang.default].product}</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.flex}>
+                        <TouchableOpacity onPress={()=>{
+                            this.playAnimated(1);
+                            this.changeList(this.state.datas2);
+                        }} style={styles.flex}>
                             <View style={styles.topBtnView}>
                                 <Text style={styles.defaultFont}>{Lang[Lang.default].shop}</Text>
                             </View>
@@ -165,9 +215,8 @@ export default class CityGoodShopList extends Component {
         );
     };
 
-    // 列表的行内容
-    _renderItem = (obj, sectionID, rowID) => {
-        let num = this.state.totalNum || 0;
+    // 列表的行内容(多于3行)
+    _renderItem = (obj, sectionID, rowID, num) => {
         let width = (Size.width - 6) / 2 - 5;
         let ad = null;
         let _marginTop = 0;
@@ -228,6 +277,40 @@ export default class CityGoodShopList extends Component {
             </View>
         );
     };
+
+    // 列表的行内容(不多于3行)
+    _renderItem2 = (obj, sectionID, rowID, num) => {
+        let imgurl = obj.gThumbPic || null;
+        let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
+        let name = obj.gName || '';
+        let stock = obj.stock || 0;
+        let price = obj.gDiscountPrice || null;
+
+        return (
+            <View style={[styles.rowStyle, {
+                height: Size.width * 0.507,
+                marginTop: PX.marginTB,
+                backgroundColor: '#fff',
+            }]}>
+                <View style={styles.goodLeftView}>
+                    <Image style={styles.goodImgStyle} source={img} />
+                </View>
+                <View style={styles.goodRightView}>
+                    <BtnIcon 
+                        src={require('../../images/market.png')} 
+                        width={15} text={'abc'} 
+                        txtStyle={styles.fontStyle2} 
+                    />
+                    <Text style={styles.fontStyle3}>{name}</Text>
+                    <Text style={styles.fontStyle4}>{Lang[Lang.default].stock + ':' + stock}</Text>
+                    <Text style={styles.fontStyle5}>
+                        {Lang[Lang.default].RMB}
+                        <Text style={{fontSize: 19}}>{price}</Text>
+                    </Text>                    
+                </View>
+            </View>
+        );
+    }
 }
 
 var styles = StyleSheet.create({
@@ -241,12 +324,50 @@ var styles = StyleSheet.create({
     fontStyle1: {
         fontSize: 12,
         color: Color.gainsboro2,
+        lineHeight: 18,
+    },
+    fontStyle2: {
+        fontSize: 12,
+        color: Color.gray,
+    },
+    fontStyle3: {
+        fontSize: 13,
+        color: Color.lightBack,
+        lineHeight: 17,
+    },
+    fontStyle4: {
+        fontSize: 11,
+        color: Color.gray,
+    },
+    fontStyle5: {
+        fontSize: 10,
+        color: Color.red,
+    },
+    rowStyle: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     listViewStyle : {
         backgroundColor: Color.floralWhite,
         flexDirection : 'row',
         flexWrap: 'wrap',
         paddingLeft: 5,
+        paddingBottom: 15,
+    },
+    centerStyle: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noContentImg: {
+        width: 185,
+        height: 102,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    topBgBox: {
+        width: Size.width,
+        marginLeft: -5,
     },
     topBtnBox: {
         paddingBottom: 5,
@@ -303,5 +424,22 @@ var styles = StyleSheet.create({
         height: 64,
         justifyContent: 'flex-end',
         alignItems: 'center',
+    },
+    goodLeftView: {
+        borderRightColor: Color.lavender,
+        borderRightWidth: pixel,
+    },
+    goodImgStyle: {
+        width: Size.width * 0.507,
+        height: Size.width * 0.507,
+    },
+    goodRightView: {
+        height: Size.width * 0.507,
+        justifyContent: 'space-between',
+        paddingLeft: 7,
+        paddingRight: PX.marginLR,
+        paddingTop: 10,
+        paddingBottom: 15,
+        backgroundColor: 'green',
     },
 });

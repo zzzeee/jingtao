@@ -128,6 +128,7 @@ const language = {
         price: '价格',
         newGood: '新品',
         popularity: '人气',
+        stock: '库存',
     },
 };
 
