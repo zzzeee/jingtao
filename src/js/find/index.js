@@ -141,32 +141,13 @@ export default class FindScreen extends Component {
 
     // 获取限时抢购商品
     getXSQGDatas = () => {
-        return this.async_fetch(Urls.getPanicBuyingProductList, null);
+        return Utils.async_fetch(Urls.getPanicBuyingProductList, 'post', null);
     };
 
     // 获取名店列表
     getMDYPDatas = () => {
         let json = 'sPage=' + this.pageOffest + '&sPerNum' + this.pageNumber;
-        return this.async_fetch(Urls.getFindShopList, json);
-    };
-
-    // fetch有返回数据型
-    async_fetch = (url, json) => {
-        return fetch(url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: json,
-        })
-        .then((response) => response.json())
-        .then((responseText) => {
-            return responseText;
-        })
-        .catch((error) => {
-            return null;
-        });
+        return Utils.async_fetch(Urls.getFindShopList, 'post', json);
     };
 
     // 限时抢购的头部
@@ -255,7 +236,9 @@ export default class FindScreen extends Component {
              return null;
         }else if(this.state.fetchError) {
             return (
-                <View style={errorStyles.bodyView}>
+                <View style={[errorStyles.bodyView, {
+                    height: Size.height - PX.headHeight - PX.tabHeight,
+                }]}>
                     <Text style={errorStyles.refaceBtn} onPress={this.initPage}>{Lang[Lang.default].reconnect}</Text>
                     <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
                 </View>

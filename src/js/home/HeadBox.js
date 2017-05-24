@@ -83,6 +83,15 @@ export default class HeadBox extends Component {
         );
     }
 
+    linkList = (_pid, _index) => {
+        if(_pid > 0 && this.nav) {
+            this.nav.navigate('CityGoodShopList', {
+                index: _index,
+                pid: _pid,
+            });
+        }
+    };
+
     renderItem = (obj, sectionID, rowID) => {
         let name = obj.region_name || '';
         let cimg = obj.griImg || null;
@@ -101,17 +110,12 @@ export default class HeadBox extends Component {
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
                     {/*<BtnIcon width={20} src={img_down} />*/}
                 </View>
-                <TouchableOpacity onPress={()=>{
-                    this.nav.navigate('CityGoodShopList', {
-                        index: 0,
-                        pid: obj.region_id,
-                    });
-                }}>
+                <TouchableOpacity onPress={()=>this.linkList(obj.region_id, 0)}>
                     <Image source={{uri: cimg}} style={styles.cityImage} />
                 </TouchableOpacity>
                 <View style={styles.cityfoot}>
-                    <BtnIcon src={img_enter} size={12} text={lang.cn.goin + name} />
-                    <BtnIcon src={img_mark} size={12} text={lang.cn.allSeller} />
+                    <BtnIcon src={img_enter} size={12} text={lang.cn.goin + name} press={()=>this.linkList(obj.region_id, 0)} />
+                    <BtnIcon src={img_mark} size={12} text={lang.cn.allSeller} press={()=>this.linkList(obj.region_id, 1)} />
                 </View>
             </View>
         );

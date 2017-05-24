@@ -20,6 +20,8 @@ var urls = {
     getFindShopList: host + '/api/FindNController/getFindShopAndProductsList',
     //获取优惠券的图片
     getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
+    //获取城市的产品列表
+    getProductList: host + '/api/ProductController/getProductListByParameter',
 };
 
 export default urls;

@@ -98,6 +98,7 @@ var Util = {
             fetch(url, fetchOptions)
             .then((response) => response.json())
             .then((responseText) => {
+                load_error && load_error(null);
                 callback(responseText);
             })
             .catch((error) => {
@@ -108,6 +109,26 @@ var Util = {
             load_error_config.errText2 = Lang[Lang.default].programError;
             load_error && load_error(ErrorView(load_error_config, fetchFunc));
         }
+    },
+
+    //仅用于异步请求 (async / await)
+    async_fetch: function (url, type, json) {
+        let head = type.toUpperCase() == 'POST' ? {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: json,
+            } : {};
+        return fetch(url, head)
+        .then((response) => response.json())
+        .then((responseText) => {
+            return responseText;
+        })
+        .catch((error) => {
+            return null;
+        });
     },
 
     //网络请求出错
