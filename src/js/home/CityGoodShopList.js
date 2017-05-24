@@ -13,6 +13,7 @@ import {
     ListView,
     TouchableOpacity,
     Animated,
+    Modal,
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
@@ -47,6 +48,7 @@ export default class CityGoodShopList extends Component {
         this.number = 10;
         this.pid = null;
         this.index = null;
+        this.loadMoreLock = false;
     }
 
     componentDidMount() {
@@ -57,6 +59,12 @@ export default class CityGoodShopList extends Component {
             this.playAnimated(this.index);
             this.initDatas();
         }
+    }
+
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     //播放动画
@@ -74,7 +82,6 @@ export default class CityGoodShopList extends Component {
     
     // 获取新数据
     initDatas = () => {
-        // console.log('initDatas: ' + this.index);
         if(this.index == 0) {
             this.getProudctList();
         }else if(this.index == 1) {
@@ -84,19 +91,20 @@ export default class CityGoodShopList extends Component {
 
     //获取商品列表
     getProudctList = () => {
-        if(this.pid !== null && this.pid > 0 && this.index !== null) {
+        if(this.pid !== null && this.pid > 0 && this.index !== null && !this.loadMoreLock) {
             let that = this;
+            this.loadMoreLock = true;
             Util.fetch(Urls.getProductList, 'get', {
                 pCity: this.pid,
                 pPage: that.page,
                 pPerNum: that.number,
             }, function(result) {
-                // console.log(result);
                 if(result && result.sTatus && result.proAry && result.proAry.length > 0) {
                     let ret = result.proAry || [];
                     let num = parseInt(result.proNum) || 0;
                     if(that.index == 0) {
                         that.page++;
+                        that.loadMoreLock = false;
                         let _datas = that.state.datas ? that.state.datas.concat(ret) : ret;
                         that.setState({
                             datas: _datas,
@@ -164,6 +172,7 @@ export default class CityGoodShopList extends Component {
                 <View style={styles.topBtnRow}>
                     <TouchableOpacity onPress={()=>{
                         this.index = 0;
+                        this.loadMoreLock = false;
                         this.playAnimated();
                         this.changeList();
                     }} style={styles.flex}>
@@ -176,6 +185,7 @@ export default class CityGoodShopList extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{
                         this.index = 1;
+                        this.loadMoreLock = false;
                         this.playAnimated();
                         this.changeList();
                     }} style={styles.flex}>
@@ -228,11 +238,16 @@ export default class CityGoodShopList extends Component {
                         enableEmptySections={true}  //允许空数据
                         renderHeader={()=>this.pageTop(this.state.isFloat ? null : btnBox)}
                         onEndReached={()=>{
-                            if(this.state.totalNum && (this.page - 1) * this.number < this.state.totalNum) {
-                                this.initDatas();
+                            if(!this.loadMoreLock) {
+                                console.log('正在加载更多 ..');
+                                if(this.state.totalNum && ((this.page - 1) * this.number) < this.state.totalNum) {
+                                    this.initDatas();
+                                }
+                            }else {
+                                console.log('加载更多已被锁住。');
                             }
                         }}
-                        onEndReachedThreshold={50}
+                        // onEndReachedThreshold={50}
                     />
                 </View>
                 {this.state.dataSource._cachedRowCount === 0 ?
@@ -259,6 +274,11 @@ export default class CityGoodShopList extends Component {
                                 fontSize: FontSize.headFontSize,
                                 fontWeight: FontSize.headFontWeight,
                             }}
+                            press={()=>{
+                                if(this.ref_listview) {
+                                    this.ref_listview.scrollTo({x: 0, y: 0, animated: true})
+                                }
+                            }}
                         />}
                         left={<BtnIcon width={PX.headIconSize} press={()=>{
                                 this.props.navigation.goBack(null);
@@ -271,11 +291,16 @@ export default class CityGoodShopList extends Component {
                     }
                     {this.state.isFloat ? btnBox : null}
                     <View style={styles.topSwitchBox}>
-                        <Image 
-                            resizeMode="stretch"
-                            style={styles.topSwitchImg}
-                            source={require('../../images/home/lahuan.png')} 
-                        />
+                        <TouchableOpacity style={{
+                            flex: 1,
+                            alignItems: 'center',
+                        }}>
+                            <Image 
+                                resizeMode="stretch"
+                                style={styles.topSwitchImg}
+                                source={require('../../images/home/lahuan.png')} 
+                            />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -405,6 +430,40 @@ export default class CityGoodShopList extends Component {
     };
 }
 
+
+class ModalContent extends Component {
+    render() {
+        let {content, visiable} = this.props;
+        if(!content) return null;
+        return (
+            <Modal
+                animationType={"slide"}
+                transparent={true}
+                visible={visiable}
+                onRequestClose={() => {
+                }}
+            >
+                <View style={styles.modalView}>
+                    <View style={styles.modalTopView}>
+                        <Image style={styles.overNameImg}>
+                            <Image style={styles.closeImg} />
+                            <View style={styles.circleImgBox}>
+                                <Image styles={styles.topSwitchImg} />
+                            </View>
+                        </Image>
+                    </View>
+                    <View>
+                        <Text></Text>
+                        <Text></Text>
+                    </View>
+                    <View>
+                    </View>
+                </View>
+            </Modal>
+        );
+    }
+}
+
 var styles = StyleSheet.create({
     flex : {
         flex : 1,
@@ -467,10 +526,10 @@ var styles = StyleSheet.create({
         width: Size.width,
     },
     topSwitchBox: {
-        width: 10,
+        width: 10 + 10,
         height: 26 + PX.headHeight,
         position: 'absolute',
-        right: Size.width * 0.128,
+        right: Size.width * 0.128 - 5,
         top: -PX.headHeight,
     },
     topSwitchImg: {
@@ -528,5 +587,11 @@ var styles = StyleSheet.create({
         height: Size.width * 0.507,
         justifyContent: 'space-between',
         paddingLeft: 7,
+    },
+    modalView: {
+
+    },
+    circleImgBox: {
+
     },
 });

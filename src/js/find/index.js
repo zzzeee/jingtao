@@ -124,10 +124,10 @@ export default class FindScreen extends Component {
                 sPage: this.pageOffest,
                 sPerNum: this.pageNumber,
             }, function(result){
-                let etime = new Date().getTime();
-                let t = that.lockTime - (etime - stime);
                 if(result && result.sTatus && result.shopAry.length) {
                     let MDYP = that.state.MDYP.concat(result.shopAry);
+                    let etime = new Date().getTime();
+                    let t = that.lockTime - (etime - stime);
                     console.log(MDYP);
                     that.pageOffest++;
                     that.setState({ MDYP });
