@@ -83,11 +83,11 @@ export default class HeadBox extends Component {
         );
     }
 
-    linkList = (_pid, _index) => {
-        if(_pid > 0 && this.nav) {
+    linkList = (_id, _index) => {
+        if(_id > 0 && this.nav) {
             this.nav.navigate('CityGoodShopList', {
                 index: _index,
-                pid: _pid,
+                cid: _id,
             });
         }
     };

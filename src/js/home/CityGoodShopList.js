@@ -16,17 +16,24 @@ import {
     Modal,
 } from 'react-native';
 
-import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
 import Util from '../public/utils';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
-import cityGoods from '../datas/cityGoods.json';
 import ProductItem from '../other/ProductItem';
+import cityInfo from '../datas/cityInfo.json';
 
 var topImgHeight = Size.width * 0.48;
+/**
+ * 拉线总长         70
+ * 露出部份         26
+ * startTop 默认偏移量top = 26 - 70 = -44
+ * endTop   动画结束后被标题栏摭住的长度，往上为正值
+ */
+var startTop = -44; 
+var endTop = 10;
 export default class CityGoodShopList extends Component {
     //构造函数
     constructor(props) {
@@ -41,20 +48,23 @@ export default class CityGoodShopList extends Component {
             totalNum: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             leftValue: new Animated.Value(0),
+            topValue: new Animated.Value(startTop),
             load_or_error: null,
             isFloat: false,
+            visiable: false,
         };
+
         this.page = 1;
         this.number = 10;
-        this.pid = null;
+        this.cid = null;
         this.index = null;
         this.loadMoreLock = false;
     }
 
     componentDidMount() {
         let { navigation } = this.props;
-        if(navigation && navigation.state && navigation.state.params && navigation.state.params.pid) {
-            this.pid = navigation.state.params.pid;
+        if(navigation && navigation.state && navigation.state.params && navigation.state.params.cid) {
+            this.cid = navigation.state.params.cid;
             this.index = navigation.state.params.index || 0;
             this.playAnimated(this.index);
             this.initDatas();
@@ -91,11 +101,11 @@ export default class CityGoodShopList extends Component {
 
     //获取商品列表
     getProudctList = () => {
-        if(this.pid !== null && this.pid > 0 && this.index !== null && !this.loadMoreLock) {
+        if(this.cid !== null && this.cid > 0 && this.index !== null && !this.loadMoreLock) {
             let that = this;
             this.loadMoreLock = true;
             Util.fetch(Urls.getProductList, 'get', {
-                pCity: this.pid,
+                pCity: this.cid,
                 pPage: that.page,
                 pPerNum: that.number,
             }, function(result) {
@@ -138,7 +148,7 @@ export default class CityGoodShopList extends Component {
         }
     };
 
-    // 切换列表
+    //切换列表
     changeList = () => {
         let _datas = this.index ? this.state.datas2 : this.state.datas;
         let _total = this.index ? this.state.data2Num : this.state.dataNum;
@@ -150,6 +160,15 @@ export default class CityGoodShopList extends Component {
         }else {
             this.initDatas();
         }
+    };
+
+    //拉环伸缩动画
+    lineSwitchPlay = (val) => {
+        Animated.spring(this.state.topValue, {
+            toValue: val,
+            friction: 4,        //摩擦力
+            tension: 40,        //张力
+        }).start();
     };
 
     render() {
@@ -263,6 +282,10 @@ export default class CityGoodShopList extends Component {
         );
         return (
             <View style={styles.flex}>
+                <ModalContent cityInfo={cityInfo} visiable={this.state.visiable} hideModal={()=>{
+                    this.lineSwitchPlay(startTop);
+                    this.setState({visiable: false});
+                }} />
                 <View>
                     <AppHead
                         center={<BtnIcon 
@@ -290,8 +313,11 @@ export default class CityGoodShopList extends Component {
                         this.state.load_or_error : body
                     }
                     {this.state.isFloat ? btnBox : null}
-                    <View style={styles.topSwitchBox}>
-                        <TouchableOpacity style={{
+                    <Animated.View style={[styles.topSwitchBox, {top: this.state.topValue}]}>
+                        <TouchableOpacity onPress={()=>{
+                            this.lineSwitchPlay(-endTop);
+                            this.setState({visiable: true});
+                        }} style={{
                             flex: 1,
                             alignItems: 'center',
                         }}>
@@ -301,7 +327,7 @@ export default class CityGoodShopList extends Component {
                                 source={require('../../images/home/lahuan.png')} 
                             />
                         </TouchableOpacity>
-                    </View>
+                    </Animated.View>
                 </View>
             </View>
         );
@@ -430,11 +456,11 @@ export default class CityGoodShopList extends Component {
     };
 }
 
-
+// 城市简介
 class ModalContent extends Component {
     render() {
-        let {content, visiable} = this.props;
-        if(!content) return null;
+        let {cityInfo, visiable} = this.props;
+        if(!cityInfo) return null;
         return (
             <Modal
                 animationType={"slide"}
@@ -443,20 +469,31 @@ class ModalContent extends Component {
                 onRequestClose={() => {
                 }}
             >
-                <View style={styles.modalView}>
-                    <View style={styles.modalTopView}>
-                        <Image style={styles.overNameImg}>
-                            <Image style={styles.closeImg} />
-                            <View style={styles.circleImgBox}>
-                                <Image styles={styles.topSwitchImg} />
-                            </View>
-                        </Image>
-                    </View>
-                    <View>
-                        <Text></Text>
-                        <Text></Text>
-                    </View>
-                    <View>
+                <View style={styles.modalBody}>
+                    <View style={styles.modalMain}>
+                        <View style={styles.modalTopView}>
+                            <Image style={styles.overNameImg} source={require('../../images/home/citybg.png')}>
+                                <TouchableOpacity onPress={this.props.hideModal} style={{
+                                    marginTop: 8,
+                                    marginLeft: 7,
+                                }}>
+                                <Image style={styles.closeImg} source={require('../../images/close.png')} />
+                                </TouchableOpacity>
+                                <View style={styles.circleImgBox}>
+                                    <Image 
+                                        resizeMode="stretch"
+                                        style={styles.topSwitchImg}
+                                        source={require('../../images/home/lahuan.png')} 
+                                    />
+                                </View>
+                            </Image>
+                        </View>
+                        <View>
+                            <Text></Text>
+                            <Text></Text>
+                        </View>
+                        <View>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -527,14 +564,14 @@ var styles = StyleSheet.create({
     },
     topSwitchBox: {
         width: 10 + 10,
-        height: 26 + PX.headHeight,
+        height: 70,
         position: 'absolute',
         right: Size.width * 0.128 - 5,
-        top: -PX.headHeight,
+        // top: -44,
     },
     topSwitchImg: {
         width: 10,
-        height: 26 + PX.headHeight,
+        height: 70,
     },
     btnTopLineBox: {
         width: Size.width,
@@ -588,10 +625,32 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingLeft: 7,
     },
-    modalView: {
-
+    modalBody: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    },
+    modalMain: {
+        width: Size.width * 0.853,
+        minHeight: 300,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        marginTop: PX.headHeight + 70 - 16 - endTop,
+    },
+    overNameImg: {
+        width: Size.width * 0.853,
+        height: 100,
+        justifyContent: 'space-between',
+    },
+    closeImg: {
+        width: 26,
+        height: 26,
     },
     circleImgBox: {
-
+        width: 10,
+        height: 70,
+        position: 'absolute',
+        right: Size.width * 0.128 - (((Size.width * (1 - 0.853))) / 2) - 0.1,
+        top: -54,
     },
 });

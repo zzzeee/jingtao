@@ -35,6 +35,7 @@ export default class CityItem extends Component {
             productNumber: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
+        this.nav = this.props.navigation;
     }
 
     componentWillMount() {
@@ -56,6 +57,15 @@ export default class CityItem extends Component {
                 datas: city,
                 productNumber: list.length,
                 dataSource: this.state.dataSource.cloneWithRows(list),
+            });
+        }
+    };
+
+    linkList = (_id, _index) => {
+        if(_id > 0 && this.nav) {
+            this.nav.navigate('CityGoodShopList', {
+                index: _index,
+                cid: _id,
             });
         }
     };
@@ -105,6 +115,7 @@ export default class CityItem extends Component {
                             color={Color.lightBack}
                             src={img_enter}
                             text={lang.cn.goin + name}
+                            press={()=>this.linkList(id, 0)}
                         />
                     </View>
                     <View style={styles.leftBorder}>
@@ -114,6 +125,7 @@ export default class CityItem extends Component {
                             color={Color.lightBack}
                             src={img_mark}
                             text={lang.cn.allSeller}
+                            press={()=>this.linkList(id, 1)}
                         />
                     </View>
                     <View style={styles.leftBorder}>
