@@ -14,6 +14,8 @@ import {
     TouchableOpacity,
     Animated,
     Modal,
+    ScrollView,
+    PanResponder,
 } from 'react-native';
 
 import Util from '../public/utils';
@@ -25,7 +27,6 @@ import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
 import cityInfo from '../datas/cityInfo.json';
 
-var topImgHeight = Size.width * 0.48;
 /**
  * 拉线总长         70
  * 露出部份         26
@@ -34,13 +35,15 @@ var topImgHeight = Size.width * 0.48;
  */
 var startTop = -44; 
 var endTop = 10;
+var topImgHeight = Size.width * 0.48;
+
 export default class CityGoodShopList extends Component {
     //构造函数
     constructor(props) {
         super(props);
         this.state = {
             provinceID: null,
-            cityName: null,
+            cityName: '宁波',
             datas: null,
             datas2: null,
             dataNum: null,
@@ -48,7 +51,6 @@ export default class CityGoodShopList extends Component {
             totalNum: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             leftValue: new Animated.Value(0),
-            topValue: new Animated.Value(startTop),
             load_or_error: null,
             isFloat: false,
             visiable: false,
@@ -59,6 +61,7 @@ export default class CityGoodShopList extends Component {
         this.cid = null;
         this.index = null;
         this.loadMoreLock = false;
+        this.topValue = new Animated.Value(startTop);
     }
 
     componentDidMount() {
@@ -164,12 +167,56 @@ export default class CityGoodShopList extends Component {
 
     //拉环伸缩动画
     lineSwitchPlay = (val) => {
-        Animated.spring(this.state.topValue, {
+        Animated.spring(this.topValue, {
             toValue: val,
             friction: 4,        //摩擦力
             tension: 40,        //张力
         }).start();
     };
+
+    //拉环触屏事件
+    _panResponder = PanResponder.create({
+        // 要求成为响应者：
+        onStartShouldSetPanResponder: (evt, gestureState) => false,
+        onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+        onPanResponderGrant: (evt, gestureState) => {
+            //console.group('触屏开始');
+        },
+        onPanResponderMove: (evt, gestureState) => {
+            //console.group('触屏过程');
+            const {dy} = gestureState;
+            let y = startTop + dy;
+            if(y < 0) {
+                this.topValue.setValue(y);
+            }
+        },
+        onPanResponderTerminationRequest: (evt, gestureState) => true,
+        onPanResponderRelease: (evt, gestureState) => {
+            //console.group('触屏结束');
+            const {dy} = gestureState;
+            if(dy > 10) {
+                Animated.spring(this.topValue, {
+                    toValue: -endTop,
+                    friction: 4,        //摩擦力
+                    tension: 40,        //张力
+                }).start();
+                this.setState({visiable: true});
+            } else {
+                Animated.spring(this.topValue, {
+                    toValue: startTop,
+                    friction: 4,        //摩擦力
+                    tension: 40,        //张力
+                }).start();
+            }
+        },
+        onShouldBlockNativeResponder: (evt, gestureState) => {
+            // 返回一个布尔值，决定当前组件是否应该阻止原生组件成为JS响应者
+            // 默认返回true。目前暂时只支持android。
+            return true;
+        },
+    });
 
     render() {
         let _style = {};
@@ -313,14 +360,11 @@ export default class CityGoodShopList extends Component {
                         this.state.load_or_error : body
                     }
                     {this.state.isFloat ? btnBox : null}
-                    <Animated.View style={[styles.topSwitchBox, {top: this.state.topValue}]}>
+                    <Animated.View style={[styles.topSwitchBox, {top: this.topValue}]} {...this._panResponder.panHandlers}>
                         <TouchableOpacity onPress={()=>{
-                            this.lineSwitchPlay(-endTop);
-                            this.setState({visiable: true});
-                        }} style={{
-                            flex: 1,
-                            alignItems: 'center',
-                        }}>
+                            // this.lineSwitchPlay(-endTop);
+                            // this.setState({visiable: true});
+                        }} style={styles.centerStyle}>
                             <Image 
                                 resizeMode="stretch"
                                 style={styles.topSwitchImg}
@@ -461,6 +505,10 @@ class ModalContent extends Component {
     render() {
         let {cityInfo, visiable} = this.props;
         if(!cityInfo) return null;
+        let name = cityInfo.name || '';
+        let pingying = cityInfo.pingying || '';
+        let details = cityInfo.details || [];
+
         return (
             <Modal
                 animationType={"slide"}
@@ -488,11 +536,24 @@ class ModalContent extends Component {
                                 </View>
                             </Image>
                         </View>
-                        <View>
-                            <Text></Text>
-                            <Text></Text>
+                        <View style={{alignItems: 'center'}}>
+                            <Text style={styles.cityNameStyle}>{name}</Text>
+                            <Text style={styles.cityPingYingStyle}>{pingying}</Text>
                         </View>
-                        <View>
+                        <View style={styles.pTextBox}>
+                            <ScrollView contentContainerStyle={styles.scrollViewStyle}>
+                                {details.map(function(item, index) {
+                                    let img = index % 2 ? 
+                                        require('../../images/home/locationorange.png') : 
+                                        require('../../images/home/locationyellow.png');
+                                    return (
+                                        <View key={index} style={styles.pTextItem}>
+                                            <Image source={img} style={styles.pTextImg} />
+                                            <Text style={styles.pTextStyle}>{item}</Text>
+                                        </View>
+                                    );
+                                })}
+                            </ScrollView>
                         </View>
                     </View>
                 </View>
@@ -504,6 +565,10 @@ class ModalContent extends Component {
 var styles = StyleSheet.create({
     flex : {
         flex : 1,
+    },
+    centerStyle: {
+        flex: 1,
+        alignItems: 'center',
     },
     defaultFont: {
         color: Color.lightBack,
@@ -563,10 +628,11 @@ var styles = StyleSheet.create({
         width: Size.width,
     },
     topSwitchBox: {
-        width: 10 + 10,
-        height: 70,
+        width: 10 + 20,
+        height: 70 + 15,
         position: 'absolute',
-        right: Size.width * 0.128 - 5,
+        right: Size.width * 0.128 - 10,
+        paddingBottom: 15,
         // top: -44,
     },
     topSwitchImg: {
@@ -628,14 +694,15 @@ var styles = StyleSheet.create({
     modalBody: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalMain: {
         width: Size.width * 0.853,
-        minHeight: 300,
         borderRadius: 8,
         backgroundColor: '#fff',
         marginTop: PX.headHeight + 70 - 16 - endTop,
+        paddingBottom: 15,
+        // marginBottom: PX.headHeight + 70 - 16 - endTop,
     },
     overNameImg: {
         width: Size.width * 0.853,
@@ -650,7 +717,47 @@ var styles = StyleSheet.create({
         width: 10,
         height: 70,
         position: 'absolute',
-        right: Size.width * 0.128 - (((Size.width * (1 - 0.853))) / 2) - 0.1,
+        right: Size.width * 0.128 - (((Size.width * (1 - 0.853))) / 2) - 0.14,
         top: -54,
+    },
+    cityNameStyle: {
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 4,
+        paddingBottom: 4,
+        fontSize: 14,
+        color: Color.lightBack,
+        borderBottomColor: Color.lightBack,
+        borderBottomWidth: 1,
+    },
+    cityPingYingStyle: {
+        fontSize: 10,
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        color: Color.lightBack,
+    },
+    pTextBox: {
+        paddingTop: PX.marginLR,
+        paddingBottom: PX.marginLR,
+        marginLeft: 20,
+        marginRight: 20,
+        maxHeight: Size.height - ((PX.headHeight + 70 - 16 - endTop) * 2) - 150,
+    },
+    pTextItem: {
+        marginBottom: PX.marginLR,
+        flexDirection: 'row',
+    },
+    pTextImg: {
+        width: PX.iconSize26,
+        height: PX.iconSize26,
+    },
+    pTextStyle: {
+        paddingLeft: 5,
+        fontSize: 12,
+        color: Color.lightBack,
+        lineHeight: 18,
+        paddingRight: 20,
     },
 });
