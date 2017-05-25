@@ -18,6 +18,7 @@ import {
     PanResponder,
 } from 'react-native';
 
+import Swiper from 'react-native-swiper';
 import Util from '../public/utils';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
@@ -54,14 +55,18 @@ export default class CityGoodShopList extends Component {
             load_or_error: null,
             isFloat: false,
             visiable: false,
+            showSort: true,
         };
 
         this.page = 1;
         this.number = 10;
+        this.page2 = 1;
+        this.number2 = 10;
         this.cid = null;
         this.index = null;
         this.loadMoreLock = false;
         this.topValue = new Animated.Value(startTop);
+        this.lastOffsetY = 0;
     }
 
     componentDidMount() {
@@ -96,9 +101,19 @@ export default class CityGoodShopList extends Component {
     // 获取新数据
     initDatas = () => {
         if(this.index == 0) {
-            this.getProudctList();
+            if(this.state.totalNum && ((this.page - 1) * this.number) >= this.state.totalNum) {
+                console.log('无更多商品可以加载。');
+            }else {
+                console.log('开始加载更多商品。');
+                this.getProudctList();
+            }
         }else if(this.index == 1) {
-            this.getShopList();
+            if(this.state.totalNum && ((this.page2 - 1) * this.number2) >= this.state.totalNum) {
+                console.log('无更多店铺可以加载。');
+            }else {
+                console.log('开始加载更多店铺。');
+                this.getShopList();
+            }
         }
     };
 
@@ -112,7 +127,7 @@ export default class CityGoodShopList extends Component {
                 pPage: that.page,
                 pPerNum: that.number,
             }, function(result) {
-                if(result && result.sTatus && result.proAry && result.proAry.length > 0) {
+                if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let ret = result.proAry || [];
                     let num = parseInt(result.proNum) || 0;
                     if(that.index == 0) {
@@ -124,9 +139,12 @@ export default class CityGoodShopList extends Component {
                             dataNum: num,
                             totalNum: num,
                             dataSource: that.state.dataSource.cloneWithRows(_datas),
+                            load_or_error: null,
                         });
+                        return;
                     }
                 }
+                that.setState({load_or_error: null});
             }, function(view) {
                 that.setState({load_or_error: view});
             }, {
@@ -137,31 +155,60 @@ export default class CityGoodShopList extends Component {
 
     //获取商铺列表
     getShopList = () => {
-        let that = this;
-        let _datas = [];
-        let num = 0;
-        if(that.index == 1) {
-            that.setState({
-                datas2: _datas,
-                data2Num: num,
-                totalNum: num,
-                dataSource: that.state.dataSource.cloneWithRows(_datas),
-                load_or_error: null,
+        if(this.cid !== null && this.cid > 0 && this.index !== null && !this.loadMoreLock) {
+            let that = this;
+            // console.log('开始查询');
+            Util.fetch(Urls.getFindShopList, 'POST', {
+                sPage: that.page2,
+                sPerNum: that.number2,
+            }, function(result){
+                // console.log(result);
+                if(result && result.sTatus && result.shopAry && result.shopAry.length) {
+                    // console.log('查询结果可用');
+                    let ret = result.shopAry || [];
+                    let num = result.shopAry.length || 0;
+                    if(that.index == 1) {
+                        that.page2++;
+                        that.loadMoreLock = false;
+                        let _datas = that.state.datas2 ? that.state.datas2.concat(ret) : ret;
+                        // console.log(_datas);
+                        that.setState({
+                            datas2: _datas,
+                            data2Num: num,
+                            totalNum: num,
+                            dataSource: that.state.dataSource.cloneWithRows(_datas),
+                            load_or_error: null,
+                        });
+                        return;
+                    }
+                }
+                that.setState({load_or_error: null});
+            }, function(view) {
+                that.setState({load_or_error: view});
+            }, {
+                hideLoad: true,
             });
         }
     };
 
     //切换列表
-    changeList = () => {
-        let _datas = this.index ? this.state.datas2 : this.state.datas;
-        let _total = this.index ? this.state.data2Num : this.state.dataNum;
-        if(_datas && _total) {
-            this.setState({
-                totalNum: _total,
-                dataSource: this.state.dataSource.cloneWithRows(_datas),
-            });
-        }else {
-            this.initDatas();
+    changeList = (_index) => {
+        if(_index == 0 || _index == 1) {
+            //重置部分属性
+            this.index = _index;
+            this.playAnimated();
+            this.loadMoreLock = false;
+            //更换列表数据
+            let _datas = this.index ? this.state.datas2 : this.state.datas;
+            let _total = this.index ? this.state.data2Num : this.state.dataNum;
+            if(_datas && _total) {
+                this.setState({
+                    totalNum: _total,
+                    dataSource: this.state.dataSource.cloneWithRows(_datas),
+                });
+            }else {
+                this.initDatas();
+            }
         }
     };
 
@@ -237,10 +284,7 @@ export default class CityGoodShopList extends Component {
                 </View>
                 <View style={styles.topBtnRow}>
                     <TouchableOpacity onPress={()=>{
-                        this.index = 0;
-                        this.loadMoreLock = false;
-                        this.playAnimated();
-                        this.changeList();
+                        this.changeList(0);
                     }} style={styles.flex}>
                         <View style={[styles.topBtnView, {
                             borderRightWidth: 1,
@@ -250,40 +294,40 @@ export default class CityGoodShopList extends Component {
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{
-                        this.index = 1;
-                        this.loadMoreLock = false;
-                        this.playAnimated();
-                        this.changeList();
+                        this.changeList(1);
                     }} style={styles.flex}>
                         <View style={styles.topBtnView}>
                             <Text style={styles.defaultFont}>{Lang[Lang.default].shop}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.topBtnRow}>
-                    <TouchableOpacity style={styles.flex}>
-                        <View style={styles.topBtnView}>
-                            <Text style={styles.defaultFont}>{Lang[Lang.default].comprehensive}</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex}>
-                        <View style={styles.topBtnView}>
-                            <Text style={styles.defaultFont}>{Lang[Lang.default].price}</Text>
-                            <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex}>
-                        <View style={styles.topBtnView}>
-                            <Text style={styles.defaultFont}>{Lang[Lang.default].newGood}</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex}>
-                        <View style={styles.topBtnView}>
-                            <Text style={styles.defaultFont}>{Lang[Lang.default].popularity}</Text>
-                            <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                {this.state.showSort ?
+                    <View style={styles.topBtnRow}>
+                        <TouchableOpacity style={styles.flex}>
+                            <View style={styles.topBtnView}>
+                                <Text style={styles.defaultFont}>{Lang[Lang.default].comprehensive}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.flex}>
+                            <View style={styles.topBtnView}>
+                                <Text style={styles.defaultFont}>{Lang[Lang.default].price}</Text>
+                                <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.flex}>
+                            <View style={styles.topBtnView}>
+                                <Text style={styles.defaultFont}>{Lang[Lang.default].newGood}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.flex}>
+                            <View style={styles.topBtnView}>
+                                <Text style={styles.defaultFont}>{Lang[Lang.default].popularity}</Text>
+                                <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    : null
+                }
             </View>
         );
         let body = (
@@ -294,21 +338,25 @@ export default class CityGoodShopList extends Component {
                         dataSource={this.state.dataSource}
                         onScroll={this._onScroll}
                         contentContainerStyle={styles.listViewStyle}
-                        renderRow={(obj, sectionID, rowID)=>{
-                            if(this.state.dataSource._cachedRowCount > 3) {
-                                return this._renderItem(obj, sectionID, rowID, this.state.totalNum);
+                        removeClippedSubviews={false}
+                        renderRow={(obj, sectionID, rowID) => {
+                            if(this.index == 0) {
+                                //商品列表
+                                if(this.state.dataSource._cachedRowCount > 3) {
+                                    return this._renderItem(obj, sectionID, rowID, this.state.totalNum);
+                                }else {
+                                    return this._renderItem2(obj, sectionID, rowID);
+                                }
                             }else {
-                                return this._renderItem2(obj, sectionID, rowID);
+                                //店铺列表
+                                return this._renderItem3(obj, sectionID, rowID);
                             }
                         }}
                         enableEmptySections={true}  //允许空数据
                         renderHeader={()=>this.pageTop(this.state.isFloat ? null : btnBox)}
                         onEndReached={()=>{
                             if(!this.loadMoreLock) {
-                                console.log('正在加载更多 ..');
-                                if(this.state.totalNum && ((this.page - 1) * this.number) < this.state.totalNum) {
-                                    this.initDatas();
-                                }
+                                this.initDatas();
                             }else {
                                 console.log('加载更多已被锁住。');
                             }
@@ -389,7 +437,7 @@ export default class CityGoodShopList extends Component {
         );
     };
 
-    // 列表的行内容(多于3行)
+    // 商品列表的行内容(多于3行)
     _renderItem = (obj, sectionID, rowID, num) => {
         let width = (Size.width - 5) / 2;
         let ad = null;
@@ -454,8 +502,8 @@ export default class CityGoodShopList extends Component {
         );
     };
 
-    // 列表的行内容(不多于3行)
-    _renderItem2 = (obj, sectionID, rowID, num) => {
+    // 商品列表的行内容(不多于3行)
+    _renderItem2 = (obj, sectionID, rowID) => {
         let imgurl = obj.gThumbPic || null;
         let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
         let name = obj.gName || '';
@@ -463,7 +511,7 @@ export default class CityGoodShopList extends Component {
         let price = obj.gDiscountPrice || null;
 
         return (
-            <View style={[styles.rowStyle, {
+            <View key={rowID} style={[styles.rowStyle, {
                 width: Size.width,
                 height: Size.width * 0.507,
                 marginBottom: PX.marginTB,
@@ -473,30 +521,131 @@ export default class CityGoodShopList extends Component {
                     <Image style={styles.goodImgStyle} source={img} />
                 </View>
                 <View style={styles.goodRightView}>
-                    <BtnIcon 
-                        src={require('../../images/market.png')} 
-                        width={15} text={'abc'} 
-                        txtStyle={styles.fontStyle2} 
-                    />
-                    <Text style={styles.fontStyle3}>{name}</Text>
-                    <Text style={styles.fontStyle4}>{Lang[Lang.default].stock + ':' + stock}</Text>
-                    <Text style={styles.fontStyle5}>
-                        {Lang[Lang.default].RMB}
-                        <Text style={{fontSize: 19}}>{price}</Text>
-                    </Text>
+                    <View>
+                        <BtnIcon 
+                            src={require('../../images/market.png')} 
+                            width={15} text={'abc'} 
+                            txtStyle={styles.fontStyle2} 
+                            style={{
+                                marginBottom: 13, 
+                                marginTop: 10,
+                                paddingTop: 0,
+                                paddingBottom: 0,
+                            }}
+                        />
+                        <Text style={styles.fontStyle3}>{name}</Text>
+                    </View>
+                    <View>
+                        <Text style={[styles.fontStyle4, {
+                            paddingBottom: 17,
+                        }]}>{Lang[Lang.default].stock + ':' + stock}</Text>
+                        <Text style={[styles.fontStyle5, {paddingBottom: 15,}]}>
+                            {Lang[Lang.default].RMB}
+                            <Text style={{fontSize: 19}}>{price}</Text>
+                        </Text>
+                    </View>
                 </View>
             </View>
         );
-    }
+    };
+
+    // 店铺列表
+    _renderItem3 = (obj, sectionID, rowID) => {
+        let name = obj.sName || '';
+        let list = obj.proAry || [];
+        // console.log(obj);
+        return (
+            <View key={rowID} style={[styles.shopItemBox, styles.shadowStyle]}>
+                <View style={styles.shopItemTop}>
+                    <BtnIcon width={26} src={require('../../images/car/shophead.png')} text={name} />
+                    <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
+                </View>
+                <Swiper
+                    width={Size.width - 25}
+                    height={(Size.width - 25) * 0.4 + 26}
+                    style={styles.wrapper} 
+                    horizontal={true}
+                    showsPagination={true}
+                    paginationStyle={styles.paginationStyle}
+                    dot={(<View 
+                        style={{
+                            backgroundColor:'rgba(0, 0, 0, .3)',
+                            width: 6,
+                            height: 6,
+                            borderRadius: 3,
+                            margin: 5,
+                        }}
+                    />)}
+                    activeDot={(<View 
+                        style={{
+                            backgroundColor:'rgba(0, 0, 0, .8)',
+                            width: 6,
+                            height: 6,
+                            borderRadius: 3,
+                            margin: 5,
+                        }}
+                    />)}
+                    autoplay={false}
+                    showsButtons={false}>
+                    {list.map(function(item, index) {
+                        let id = item.gID || 0;
+                        let gimg = item.gThumbPic || null;
+                        let img = gimg ? {uri: gimg} : require('../../images/empty.png');
+                        let gname = '这里是商品名称';
+                        let gstock = 99;
+                        let gprice = 699.00;
+                        if(id > 0) {
+                            return (
+                                <View key={index} style={styles.swiperGoodItem}>
+                                    <View>
+                                        <Image source={img} style={styles.swiperGoodImg} />
+                                    </View>
+                                    <View style={styles.swiperItemRight}>
+                                        <View>
+                                            <Text style={styles.fontStyle3}>{gname}</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={[styles.fontStyle4, {
+                                                paddingBottom: 17,
+                                            }]}>{Lang[Lang.default].stock + ':' + gstock}</Text>
+                                            <Text style={styles.fontStyle5}>
+                                                {Lang[Lang.default].RMB}
+                                                <Text style={{fontSize: 19}}>{gprice}</Text>
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            );
+                        }else {
+                            return null;
+                        }
+                    })}
+                </Swiper>
+            </View>
+        );
+    };
 
     _onScroll = (e) => {
         // console.log(e.nativeEvent);
         let offsetY = e.nativeEvent.contentOffset.y || 0;
+        //判断浮动
         if(offsetY > topImgHeight && !this.state.isFloat) {
             this.setState({isFloat: true});
         }else if(offsetY < topImgHeight && this.state.isFloat) {
             this.setState({isFloat: false});
         }
+        //判断是否显示排序
+        if(offsetY > topImgHeight && offsetY > this.lastOffsetY && this.state.showSort) {
+            //当移动距离大于顶部背景图的高度时,向上不显示排序按钮行
+             this.setState({showSort: false});
+        }else if(offsetY > topImgHeight && offsetY < this.lastOffsetY && !this.state.showSort) {
+            //当移动距离大于顶部背景图的高度时,向下显示排序按钮行
+            this.setState({showSort: true});
+        }else if(offsetY < topImgHeight && !this.state.showSort) {
+            //当移动距离小于顶部背景图的高度时,不隐藏
+            this.setState({showSort: true});
+        }
+        this.lastOffsetY = offsetY;
     };
 }
 
@@ -518,7 +667,7 @@ class ModalContent extends Component {
                 }}
             >
                 <View style={styles.modalBody}>
-                    <View style={styles.modalMain}>
+                    <View style={[styles.modalMain, styles.shadowStyle]}>
                         <View style={styles.modalTopView}>
                             <Image style={styles.overNameImg} source={require('../../images/home/citybg.png')}>
                                 <TouchableOpacity onPress={this.props.hideModal} style={{
@@ -569,6 +718,13 @@ var styles = StyleSheet.create({
     centerStyle: {
         flex: 1,
         alignItems: 'center',
+    },
+    shadowStyle: {
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 0.5,
+        shadowOffset: {"height": 0.5},
+        elevation: 2,
     },
     defaultFont: {
         color: Color.lightBack,
@@ -741,23 +897,75 @@ var styles = StyleSheet.create({
     pTextBox: {
         paddingTop: PX.marginLR,
         paddingBottom: PX.marginLR,
-        marginLeft: 20,
-        marginRight: 20,
         maxHeight: Size.height - ((PX.headHeight + 70 - 16 - endTop) * 2) - 150,
     },
     pTextItem: {
         marginBottom: PX.marginLR,
         flexDirection: 'row',
+        marginLeft: 20,
+        marginRight: 20,
     },
     pTextImg: {
         width: PX.iconSize26,
         height: PX.iconSize26,
     },
     pTextStyle: {
+        flex: 1,
         paddingLeft: 5,
         fontSize: 12,
         color: Color.lightBack,
         lineHeight: 18,
+    },
+    shopItemBox: {
+        paddingLeft: 10,
+        paddingRight: PX.marginLR,
+        backgroundColor: '#fff',
+        marginBottom: PX.marginTB,
+    },
+    shopItemTop: {
+        height: PX.rowHeight2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    btnGoToShop: {
+        fontSize: 11,
+        color: Color.gainsboro,
+        paddingTop: 6,
+        paddingBottom: 6,
+        paddingLeft: 15,
+        paddingRight: 15,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: Color.floralWhite,
+    },
+    paginationStyle: {
+        position: 'absolute',
+        left: 0,
+        right: 0, 
+        bottom: 0,
+        height: 26,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    swiperGoodItem: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderWidth: pixel,
+        borderColor: Color.lavender,
+    },
+    swiperGoodImg: {
+        width: (Size.width - 25) * 0.4,
+        height: (Size.width - 25) * 0.4,
+    },
+    swiperItemRight: {
+        marginTop: 5,
+        marginBottom: 5,
+        borderLeftWidth: pixel,
+        borderLeftColor: Color.lavender,
+        paddingLeft: 20,
         paddingRight: 20,
+        paddingTop: 5,
+        paddingBottom: 5,
     },
 });
