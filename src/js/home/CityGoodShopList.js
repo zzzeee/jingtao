@@ -440,6 +440,7 @@ export default class CityGoodShopList extends Component {
     // 商品列表的行内容(多于3行)
     _renderItem = (obj, sectionID, rowID, num) => {
         let width = (Size.width - 5) / 2;
+        let _height = width + 65 + 5;
         let ad = null;
         let _marginTop = 0;
         let _marginRight = 0;
@@ -447,6 +448,7 @@ export default class CityGoodShopList extends Component {
         if(rowID % 2 === 0) _marginRight = 5;
         if(rowID > 0 && rowID % 2 === 0) _marginTop = -64 - 5;
         if(rowID == 1) {
+            _height += 64 + 5;
             ad = (
                 <View style={{
                     width: width,
@@ -462,14 +464,14 @@ export default class CityGoodShopList extends Component {
         }
 
         if(rowID == (num - 2)) {
-            let _height = 64;
+            let end_height = 64;
             if(num % 2) {
-                _height = width + 65 - 64;
+                end_height = width + 65 - 64;
             }
             end = (
                 <View style={{
                     width: width,
-                    height: _height,
+                    height: end_height,
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
@@ -478,6 +480,7 @@ export default class CityGoodShopList extends Component {
                     </Image>
                 </View>
             );
+            _height += end_height;
         }else if (rowID == (num - 1) && num % 2) {
             _marginTop = -width - 64 - 5;
         }
@@ -485,9 +488,10 @@ export default class CityGoodShopList extends Component {
         return (
             <View key={rowID} style={{
                 width: width,
+                height: _height,
                 marginRight: _marginRight,
-                marginBottom: 5,
                 marginTop: _marginTop,
+                // marginBottom: 5,
             }}>
                 {ad}
                 <ProductItem
@@ -557,13 +561,17 @@ export default class CityGoodShopList extends Component {
         return (
             <View key={rowID} style={[styles.shopItemBox, styles.shadowStyle]}>
                 <View style={styles.shopItemTop}>
-                    <BtnIcon width={26} src={require('../../images/car/shophead.png')} text={name} />
+                    <BtnIcon width={26} 
+                        src={require('../../images/car/shophead.png')} 
+                        text={name} 
+                        style={{padding: 0}}
+                    />
                     <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
                 </View>
+                <View style={{width: Size.width - 25}}>
                 <Swiper
                     width={Size.width - 25}
                     height={(Size.width - 25) * 0.4 + 26}
-                    style={styles.wrapper} 
                     horizontal={true}
                     showsPagination={true}
                     paginationStyle={styles.paginationStyle}
@@ -621,6 +629,7 @@ export default class CityGoodShopList extends Component {
                         }
                     })}
                 </Swiper>
+                </View>
             </View>
         );
     };
@@ -812,7 +821,7 @@ var styles = StyleSheet.create({
         height: PX.rowHeight2,
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: pixel,
+        borderBottomWidth: 1,
         borderBottomColor: Color.lavender,
         backgroundColor: '#fff',
     },
@@ -923,6 +932,7 @@ var styles = StyleSheet.create({
         marginBottom: PX.marginTB,
     },
     shopItemTop: {
+        width: Size.width - 25,
         height: PX.rowHeight2,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -932,7 +942,7 @@ var styles = StyleSheet.create({
         fontSize: 11,
         color: Color.gainsboro,
         paddingTop: 6,
-        paddingBottom: 6,
+        paddingBottom: 5,
         paddingLeft: 15,
         paddingRight: 15,
         borderRadius: 8,
@@ -959,6 +969,7 @@ var styles = StyleSheet.create({
         height: (Size.width - 25) * 0.4,
     },
     swiperItemRight: {
+        justifyContent: 'space-between',
         marginTop: 5,
         marginBottom: 5,
         borderLeftWidth: pixel,
