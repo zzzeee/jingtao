@@ -34,6 +34,7 @@ export default class CarsScreen extends Component {
             carDatas: null,     //购物车商品
             invalidList: null,  //购物车失效商品
             goodList: null,     //猜你喜欢的商品列表
+            tmpDatas: [],       //猜你喜欢商品的数据缓存
             isSelect: false,    //当前全选状态
             ctrlSelect: false,  //改变子选择状态
             changeKEY1: null,   //将要改变的子选项
@@ -105,7 +106,19 @@ export default class CarsScreen extends Component {
             : null;
         let right = this.state.carDatas ?
             <Text style={styles.editCarText} onPress={()=>{
-                this.setState({editing: !this.state.editing})
+                let newState = !this.state.editing;
+                if(newState) {
+                    this.setState({
+                        editing: newState,
+                        tmpDatas: this.state.goodList,
+                        goodList: [],
+                    });
+                }else {
+                    this.setState({
+                        editing: newState,
+                        goodList: this.state.tmpDatas,
+                    });
+                }
             }}>
                 {this.state.editing ? Lang[Lang.default].done : Lang[Lang.default].edit}
             </Text> 
@@ -220,13 +233,16 @@ export default class CarsScreen extends Component {
         return (
             <View>
                 {cars}
-                <View style={styles.goodlistTop}>
-                    <View style={styles.goodTopLine}></View>
-                    <View>
-                        <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                {this.state.editing ?
+                    null :
+                    <View style={styles.goodlistTop}>
+                        <View style={styles.goodTopLine}></View>
+                        <View>
+                            <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                        </View>
+                        <View style={styles.goodTopLine}></View>
                     </View>
-                    <View style={styles.goodTopLine}></View>
-                </View>
+                }
             </View>
         );
     };
@@ -296,6 +312,7 @@ export default class CarsScreen extends Component {
             <ProductItem 
                 product={item} 
                 key={index}
+                ref={'ProductItem' + index}
                 showDiscount={true}
                 width={(Size.width - 5) / 2}
                 boxStyle={{
@@ -408,12 +425,18 @@ export default class CarsScreen extends Component {
     //点击收藏
     clickCollection = () => {
         let products = this.selectProducts();
+        let that = this;
         if(products) {
             this.showAlertMoudle(
                 '确定要收藏选中商品吗？',
                 '确定', 
                 '取消',
-                () => this.setState({deleteAlert: false,}),
+                () => {
+                    that.setState({
+                        deleteAlert: false,
+                        operateMsg: '收藏成功!',
+                    }, that.resultMsgAnimated);
+                },
                 () => this.setState({deleteAlert: false,}),
             );
         }
@@ -504,6 +527,9 @@ var styles = StyleSheet.create({
     editCarText: {
         fontSize: 14,
         color: Color.orangeRed,
+        fontWeight: 'bold',
+        padding: 5,         // 增大点击面积
+        paddingLeft: 10,    // 增大点击面积
         paddingRight: PX.marginLR,
     },
     rowStyle: {
@@ -650,8 +676,8 @@ var styles = StyleSheet.create({
         borderTopColor: Color.lavender,
     },
     invalidClearText: {
-        paddingTop: 6,
-        paddingBottom: 6,
+        paddingTop: 5,
+        paddingBottom: 5,
         paddingLeft: 15,
         paddingRight: 15,
         borderRadius: 8,
@@ -664,7 +690,7 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: PX.rowHeight1,
+        height: PX.rowHeight2,
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         marginBottom: PX.marginTB,

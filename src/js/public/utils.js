@@ -102,11 +102,9 @@ var Util = {
                 callback(responseText);
             })
             .catch((error) => {
-                console.log('catch 111111111111');
                 load_error && load_error(ErrorView(load_error_config, fetchFunc));
             });
         } catch(error) {
-            console.log('catch 22222222222222');
             console.error(error);
             load_error_config.errText2 = Lang[Lang.default].programError;
             load_error && load_error(ErrorView(load_error_config, fetchFunc));

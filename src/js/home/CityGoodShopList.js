@@ -644,10 +644,11 @@ export default class CityGoodShopList extends Component {
             this.setState({isFloat: false});
         }
         //判断是否显示排序
-        if(offsetY > topImgHeight && offsetY > this.lastOffsetY && this.state.showSort) {
+        let minY = 20; // 显示/隐藏 至少需移动的最小距离
+        if(offsetY > topImgHeight && (offsetY - minY) > this.lastOffsetY && this.state.showSort) {
             //当移动距离大于顶部背景图的高度时,向上不显示排序按钮行
              this.setState({showSort: false});
-        }else if(offsetY > topImgHeight && offsetY < this.lastOffsetY && !this.state.showSort) {
+        }else if(offsetY > topImgHeight && offsetY < (this.lastOffsetY - minY) && !this.state.showSort) {
             //当移动距离大于顶部背景图的高度时,向下显示排序按钮行
             this.setState({showSort: true});
         }else if(offsetY < topImgHeight && !this.state.showSort) {

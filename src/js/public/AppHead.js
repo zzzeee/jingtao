@@ -20,7 +20,7 @@ export default class AppHead extends Component {
 		
 	    return (
 			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
-				<View style={styles.sideBox}>
+				<View style={[styles.sideBox, {left: 0}]}>
 					{left ? left : null}
 				</View>
 				<View style={styles.middleBox}>
@@ -29,7 +29,7 @@ export default class AppHead extends Component {
 						<Text style={[styles.title, textStyle]}>{title}</Text>
 					}
 				</View>
-				<View style={styles.sideBox}>
+				<View style={[styles.sideBox, {right: 0}]}>
 					{right ? right : null}
 				</View>
 			</View>
@@ -51,12 +51,14 @@ var styles = StyleSheet.create({
         elevation: 4,
 	},
 	sideBox : {
-		flex: 1,
+		height: PX.headHeight,
+		position: 'absolute',
 		justifyContent: 'center',
 		alignItems: 'center',
+		top: 0,
 	},
 	middleBox : {
-		flex : 5,
+		flex : 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

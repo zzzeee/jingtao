@@ -1,5 +1,5 @@
 /**
- * APP购物车
+ * APP购物车 - 提交订单 - 支付完成
  * @auther linzeyong
  * @date   2017.04.18
  */

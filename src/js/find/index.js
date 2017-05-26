@@ -13,6 +13,7 @@ import {
     Image,
     ListView,
     FlatList,
+    TouchableOpacity,
 } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -152,7 +153,6 @@ export default class FindScreen extends Component {
 
     // 限时抢购的头部
     getPanicBuying = () => {
-        let timer = new Date().getTime();
         return (
             <View style={styles.panicBuyingHead}>
                 <Image source={require('../../images/find/xsqg.png')} resizeMode="stretch" style={styles.xsqgImgStyle} />
@@ -170,10 +170,8 @@ export default class FindScreen extends Component {
     beOverdue = () => {
         let timer = new Date().getTime();
         if(!this.state.startTime || !this.state.endTime || timer > this.state.endTime || timer < this.state.startTime) {
-            // alert('beOverdue');
             return false;
         }else {
-            // alert('beOverdue');
             return true;
         }
     };
@@ -213,11 +211,38 @@ export default class FindScreen extends Component {
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
                             let id = item.hID || 0;
-                            if(id > 0) {
+                            let sid = item.sId || 0;
+                            let stime = item.hStartTime || null;
+                            let etime = item.hSendTime || null;
+                            let ntime = new Date().getTime();
+                            let isable = item.isable || 0;
+                            let receive = item.receive || false;
+                            stime = new Date(stime).getTime();
+                            etime = new Date(etime).getTime();
+                            if(id > 0 && ntime > stime && ntime < etime) {
+                                let bg = receive ?
+                                    require('../../images/find/coupons_bg_out.png') : (
+                                        sid > 0 ?
+                                        require('../../images/find/coupons_bg_shop.png') :
+                                        require('../../images/find/coupons_bg_self.png')
+                                    );
                                 return (
-                                    <View key={index} style={{height: 120}}>
-                                        <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} />
-                                    </View>
+                                    <TouchableOpacity key={index} style={{height: 120, backgroundColor: '#fff'}}>
+                                        {/* <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} /> */}
+                                        <Image source={}>
+                                            <View>
+                                                <View>
+                                                    <Text></Text>
+                                                    <Text></Text>
+                                                </View>
+                                                <View>
+                                                    <Text></Text>
+                                                    <Text></Text>
+                                                    <Text></Text>
+                                                </View>
+                                            </View>
+                                        </Image>
+                                    </TouchableOpacity>
                                 );
                             }else {
                                 return null;
@@ -520,12 +545,12 @@ var styles = StyleSheet.create({
     btnGoToShop: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingTop: 8,
-        paddingBottom: 8,
-        borderWidth: pixel,
+        paddingTop: 6,
+        paddingBottom: 5,
+        borderWidth: 1,
         borderColor: Color.gray,
-        backgroundColor: Color.floralWhite,
-        borderRadius: 2,
+        // backgroundColor: Color.floralWhite,
+        borderRadius: 6,
         fontSize: 12,
         color: Color.gainsboro,
     },
