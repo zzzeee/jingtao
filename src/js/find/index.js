@@ -232,7 +232,7 @@ export default class FindScreen extends Component {
                                 let sname = sid > 0 ? '商城通用' : '入驻商名称';
                                 let hname = item.hName || null;
                                 return (
-                                    <TouchableOpacity key={index} style={{height: 120, backgroundColor: '#fff'}}>
+                                    <View key={index} style={{height: 120, backgroundColor: '#fff'}}>
                                         {/* <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} /> */}
                                         <Image source={bg} style={styles.couponsBg} resizeMode="stretch">
                                             <View style={styles.shopProductBox}>
@@ -241,27 +241,22 @@ export default class FindScreen extends Component {
                                                         <Text style={{fontSize: 11}}>{Lang[Lang.default].RMB}</Text>
                                                         <Text style={{fontSize: 24}}>{money}</Text>
                                                     </Text>
-                                                    <Text  style={{fontSize: 13, color: Color.lightBack}}>{'满' + maxMoney + '减'}</Text>
+                                                    <Text numberOfLines={1} style={{fontSize: 13, color: Color.lightBack}}>
+                                                        {str_replace(Lang[Lang.default].howMuch, maxMoney)}
+                                                    </Text>
                                                 </View>
                                                 <View style={styles.couponsRight}>
-                                                    <Text style={{
-                                                        backgroundColor: color,
-                                                        paddingBottom: 3,
-                                                        paddingTop: 3,
-                                                        paddingLeft: 8,
-                                                        paddingRight: 8,
-                                                        color: '#fff',
-                                                        borderRadius: 4,
-                                                        marginBottom: 15,
-                                                    }}>{sname}</Text>
-                                                    <Text style={{fontSize: 16, color: Color.lightBack, marginBottom: 10}}>{hname}</Text>
-                                                    <Text style={{fontSize: 11, color: Color.gray}}>
-                                                        {'时间:' + stime.substr(0, 10) + '-' + etime.substr(0, 10)}
+                                                    <Text  numberOfLines={1} style={[styles.couponShopName, {backgroundColor: color,}]}>
+                                                        {sname}
+                                                    </Text>
+                                                    <Text numberOfLines={1} style={styles.couponName}>{hname}</Text>
+                                                    <Text numberOfLines={1} style={{fontSize: 11, color: Color.gray}}>
+                                                        {Lang[Lang.default].usePeriod + ':' + stime.substr(0, 10) + '-' + etime.substr(0, 10)}
                                                     </Text>
                                                 </View>
                                             </View>
                                         </Image>
-                                    </TouchableOpacity>
+                                    </View>
                                 );
                             }else {
                                 return null;
@@ -518,16 +513,34 @@ var styles = StyleSheet.create({
         height: 120,
     },
     couponsLeft: {
-        width: Size.width * 0.8 * 0.345,
+        minWidth: Size.width * 0.8 * 0.345,
         height: 120,
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: 5,
     },
     couponsRight: {
-        width: Size.width * 0.8 * (1 - 0.345),
-        paddingLeft: 10,
-        paddingTop: 15,
+        marginLeft: 10,
+        marginTop: 15,
+        justifyContent: 'center',
+    },
+    couponShopName: {
+        paddingBottom: 3,
+        paddingTop: 3,
+        paddingLeft: 8,
+        paddingRight: 8,
+        color: '#fff',
+        borderRadius: 4,
+        marginBottom: 15,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+    },
+    couponName: {
+        fontSize: 15, 
+        color: Color.lightBack, 
+        marginBottom: 10,
+        marginTop: 10,
     },
     paginationStyle: {
         position: 'absolute',

@@ -129,6 +129,8 @@ const language = {
         newGood: '新品',
         popularity: '人气',
         stock: '库存',
+        howMuch: '满%s钱',
+        usePeriod: '使用期限',
     },
 };
 
