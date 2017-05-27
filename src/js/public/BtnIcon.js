@@ -41,7 +41,7 @@ export default class BtnIcon extends Component {
         let height = this.props.height ? this.props.height : width;
 
         return (
-            <TouchableOpacity style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
+            <TouchableOpacity activeOpacity={1} style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
                 {this.props.src ? 
                     <Image source={this.props.src} resizeMode={this.props.resizeMode} style={[{
                         width: width,

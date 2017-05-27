@@ -156,7 +156,12 @@ export default class CarsScreen extends Component {
                                         changeKEY2: null,
                                     });
                                 }} 
-                                style={{padding: 0}}
+                                style={{
+                                    padding: 0, 
+                                    paddingLeft: PX.marginLR,
+                                    paddingTop: 5,
+                                    paddingBottom: 5,
+                                }}
                             />
                         </View>
                         {this.state.editing ?
@@ -541,7 +546,7 @@ var styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent: 'space-between',
         backgroundColor: '#fff',
-        paddingLeft: PX.marginLR,
+        // paddingLeft: PX.marginLR,
         borderTopWidth: 1,
         borderTopColor: Color.lavender,
     },

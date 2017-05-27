@@ -98,7 +98,12 @@ export default class ShopItem extends Component {
                                     ctrlSelect: newState,
                                 });
                             }}
-                            style={{padding: 0}}
+                            style={{
+                                padding: 0, 
+                                paddingLeft: PX.marginLR,
+                                paddingTop: 5,
+                                paddingBottom: 5,
+                            }}
                         />
                         <BtnIcon 
                             width={20} 
@@ -147,7 +152,7 @@ var styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingLeft: PX.marginLR,
+        // paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
     },
     rowStyle: {

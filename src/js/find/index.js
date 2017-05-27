@@ -24,7 +24,8 @@ import Utils from '../public/utils';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import ProductItem from '../other/ProductItem';
-import CountDown from "./CountDown";
+import CountDown from './CountDown';
+import CouponItem from '../other/CouponItem';
 
 export default class FindScreen extends Component {
     constructor(props) {
@@ -210,57 +211,7 @@ export default class FindScreen extends Component {
                         autoplayTimeout={3}
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
-                            let id = item.hID || 0;
-                            let sid = item.sId || 0;
-                            let stime = item.hStartTime || null;
-                            let etime = item.hSendTime || null;
-                            let ntime = new Date().getTime();
-                            let isable = item.isable || 0;
-                            let money = item.hMoney || null;
-                            let maxMoney = item.hUseMoney || null;
-                            let receive = item.receive || false;
-                            let _stime = new Date(stime).getTime();
-                            let _etime = new Date(etime).getTime();
-                            if(id > 0 && ntime > _stime && ntime < _etime) {
-                                let bg = receive ?
-                                    require('../../images/find/coupons_bg_out.png') : (
-                                        sid > 0 ?
-                                        require('../../images/find/coupons_bg_shop.png') :
-                                        require('../../images/find/coupons_bg_self.png')
-                                    );
-                                let color = sid > 0 ? Color.orange : Color.mainColor;
-                                let sname = sid > 0 ? '商城通用' : '入驻商名称';
-                                let hname = item.hName || null;
-                                return (
-                                    <View key={index} style={{height: 120, backgroundColor: '#fff'}}>
-                                        {/* <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} /> */}
-                                        <Image source={bg} style={styles.couponsBg} resizeMode="stretch">
-                                            <View style={styles.shopProductBox}>
-                                                <View style={styles.couponsLeft}>
-                                                    <Text style={{color: color}}>
-                                                        <Text style={{fontSize: 11}}>{Lang[Lang.default].RMB}</Text>
-                                                        <Text style={{fontSize: 24}}>{money}</Text>
-                                                    </Text>
-                                                    <Text numberOfLines={1} style={{fontSize: 13, color: Color.lightBack}}>
-                                                        {str_replace(Lang[Lang.default].howMuch, maxMoney)}
-                                                    </Text>
-                                                </View>
-                                                <View style={styles.couponsRight}>
-                                                    <Text  numberOfLines={1} style={[styles.couponShopName, {backgroundColor: color,}]}>
-                                                        {sname}
-                                                    </Text>
-                                                    <Text numberOfLines={1} style={styles.couponName}>{hname}</Text>
-                                                    <Text numberOfLines={1} style={{fontSize: 11, color: Color.gray}}>
-                                                        {Lang[Lang.default].usePeriod + ':' + stime.substr(0, 10) + '-' + etime.substr(0, 10)}
-                                                    </Text>
-                                                </View>
-                                            </View>
-                                        </Image>
-                                    </View>
-                                );
-                            }else {
-                                return null;
-                            }
+                            return <CouponItem key={index} width={Size.width * 0.8} height={120} coupon={item} leftRatio={0.345} />;
                         })}
                     </Swiper>
                 </Image>
@@ -507,40 +458,6 @@ var styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     wrapper: {
-    },
-    couponsBg: {
-        width: Size.width * 0.8,
-        height: 120,
-    },
-    couponsLeft: {
-        minWidth: Size.width * 0.8 * 0.345,
-        height: 120,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingLeft: 5,
-    },
-    couponsRight: {
-        marginLeft: 10,
-        marginTop: 15,
-        justifyContent: 'center',
-    },
-    couponShopName: {
-        paddingBottom: 3,
-        paddingTop: 3,
-        paddingLeft: 8,
-        paddingRight: 8,
-        color: '#fff',
-        borderRadius: 4,
-        marginBottom: 15,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-    },
-    couponName: {
-        fontSize: 15, 
-        color: Color.lightBack, 
-        marginBottom: 10,
-        marginTop: 10,
     },
     paginationStyle: {
         position: 'absolute',
