@@ -67,7 +67,6 @@ const TabNavs = TabNavigator({
         screen: HomeScreen,
         path: 'home',
         navigationOptions : {
-            // tabBarLabel: Lang[Lang.default].tab_home,
             tabBarLabel: ({ focused })=>{
                 let selectStyle = focused ? {color: Color.mainColor} : {};
                 return <Text style={[styles.labelTextStyle, selectStyle]}>{Lang[Lang.default].tab_home}</Text>;
@@ -76,20 +75,12 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
-            // tabBar: ({state}) => ({
-            //     label: Lang[Lang.default].tab_home,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/homeSelect.png') : require('../images/navs/home.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
         },
     },
     Find: {
         screen: FindScreen,
         path: 'find',
         navigationOptions : {
-            // tabBarLabel: Lang[Lang.default].tab_find,
             tabBarLabel: ({ focused })=>{
                 let selectStyle = focused ? {color: Color.mainColor} : {};
                 return <Text style={[styles.labelTextStyle, selectStyle]}>{Lang[Lang.default].tab_find}</Text>;
@@ -98,20 +89,12 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
-            // tabBar: ({state}) => ({
-            //     label: Lang[Lang.default].tab_find,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/findSelect.png') : require('../images/navs/find.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
         },
     },
     Classify: {
         screen: ClassScreen,
         path: 'classify',
         navigationOptions : {
-            // tabBarLabel: Lang[Lang.default].tab_class,
             tabBarLabel: ({ focused })=>{
                 let selectStyle = focused ? {color: Color.mainColor} : {};
                 return <Text style={[styles.labelTextStyle, selectStyle]}>{Lang[Lang.default].tab_class}</Text>;
@@ -120,13 +103,6 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
-            // tabBar: ({state}) => ({
-            //     label: Lang[Lang.default].tab_class,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/classSelect.png') : require('../images/navs/class.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
         },
     },
     Car: {
@@ -141,20 +117,12 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
-            // tabBar: ({state}) => ({
-            //     label: Lang[Lang.default].tab_car,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/carSelect.png') : require('../images/navs/car.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
         },
     },
     Personal: {
         screen: PersonalScreen,
         path: 'personal',
         navigationOptions : {
-            // tabBarLabel: Lang[Lang.default].tab_personal,
             tabBarLabel: ({ focused })=>{
                 let selectStyle = focused ? {color: Color.mainColor} : {};
                 return <Text style={[styles.labelTextStyle, selectStyle]}>{Lang[Lang.default].tab_personal}</Text>;
@@ -163,13 +131,6 @@ const TabNavs = TabNavigator({
                 let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
                 return <Image source={img} style={styles.tabIcon} />;
             },
-            // tabBar: ({state}) => ({
-            //     label: Lang[Lang.default].tab_personal,
-            //     icon: ({ focused }) => {
-            //         let img = focused ? require('../images/navs/personalSelect.png') : require('../images/navs/personal.png');
-            //         return <Image source={img} style={styles.tabIcon} />;
-            //     },
-            // }),
         },
     }
 }, {
@@ -216,3 +177,21 @@ const styles = StyleSheet.create({
 });
 
 export default TabNavs;
+
+// export default () => (
+//     <TabNavs
+//         onNavigationStateChange={(prevState, currentState) => {
+//             if (console.group) {
+//                 console.group('Navigation onNavigationStateChange: ');
+//                 console.log('prevState: ', prevState);
+//                 console.log('currentState: ', currentState);
+//                 console.groupEnd();
+//             } else {
+//                 console.log('Navigation onNavigationStateChange: ', {
+//                     prevState: prevState,
+//                     currentState: currentState,
+//                 });
+//             }
+//         }}
+//     />
+// );

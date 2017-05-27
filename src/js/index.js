@@ -17,6 +17,7 @@ import { Color, PX } from './public/globalStyle';
 import JPushModule from 'jpush-react-native';
 
 import TabNavScreen from './tabNav';
+import TabView from './tabView';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
@@ -64,19 +65,22 @@ class MyNavScren extends Component {
     }
 
     render() {
-        let { router } = TabNavScreen;
         let { navigation, NavScreen } = this.props;
-        let scolor = (Color && Color.mainColor) ? Color.mainColor : '#E55645';
         return (
             <View style={styles.flex}>
-                <StatusBar backgroundColor={scolor} barStyle="light-content" />
+                <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
                 <View style={styles.container}>
-                    <NavScreen navigation={navigation} router={router} />
+                    <NavScreen navigation={navigation} />
                 </View>
             </View>
         );
     }
 }
+
+// //首页主页
+// const TabNavScreen = ({ navigation }) => (
+//     <MyNavScren navigation={navigation} NavScreen={TabView} />
+// );
 
 //首页 - 城市的商品、店铺列表
 const CityGoodShopListScreen = ({ navigation }) => (

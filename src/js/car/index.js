@@ -56,6 +56,19 @@ export default class CarsScreen extends Component {
         this.initDatas();
     }
 
+    componentWillReceiveProps(nextProps) {
+        // if(nextProps.selectIndex == 3) {
+        //     this.setState({
+        //         isSelect: false,
+        //         ctrlSelect: false,
+        //         editing: false,
+        //         showAlert: false,
+        //         deleteAlert: false,
+        //         msgPositon: new Animated.Value(0),
+        //     });
+        // }
+    }
+
     componentWillUnmount() {
         // 如果存在this.timer，则使用clearTimeout清空。
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
