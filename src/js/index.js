@@ -17,7 +17,7 @@ import { Color, PX } from './public/globalStyle';
 import JPushModule from 'jpush-react-native';
 
 import TabNavScreen from './tabNav';
-import TabView from './tabView';
+// import TabView from './tabView';
 import Product from './product';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';

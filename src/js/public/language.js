@@ -133,6 +133,10 @@ const language = {
         usePeriod: '使用期限',
         productDetails: '商品详情',
         origin: '原产地',
+        sevenDays: '七天包退',
+        certifiedGuarantee: '正品保障',
+        lightningConsignment: '闪电发货',
+        directDeal: '商家直销',
     },
 };
 

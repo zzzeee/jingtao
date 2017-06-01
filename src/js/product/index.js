@@ -67,7 +67,7 @@ export default class ProductScreen extends Component {
         '</script>';
         // console.log(info);
         if(info && info.sTatus && info.proAry) {
-            // console.log(info.proAry);
+            console.log(info.proAry);
             this.setState({
                 goodList: Goods,
                 goodIofo: info.proAry,
@@ -149,10 +149,14 @@ export default class ProductScreen extends Component {
         }
         let startTime = new Date().getTime();
         let endTime = new Date('2017/6/28 23:59:59').getTime();
+        let shopHead = good.gShop.sLogo || null;
+        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
+        let shopName = good.gShop.sShopName || null;
+
         return (
             <View>
                 <View style={styles.whiteBg}>
-                    <View>
+                    <View style={styles.productImgBox}>
                         <Swiper
                             width={Size.width}
                             height={Size.width}
@@ -192,7 +196,11 @@ export default class ProductScreen extends Component {
                         </View>
                         <View style={styles.namePriceBoxBg}>
                             <View style={styles.namePriceBox}>
-                                <View style={[styles.centerBox, {height: 47}]}>
+                                <View style={[styles.centerBox, {
+                                    height: 47, 
+                                    borderBottomColor: Color.lavender,
+                                    borderBottomWidth: pixel,
+                                }]}>
                                     <Text style={[styles.txtStyle3, {paddingRight: 5, paddingTop: 4}]}>{Lang[Lang.default].RMB}</Text>
                                     {price_arr[0] ?
                                         <Text style={styles.txtStyle4}>{price_arr[0]}</Text>
@@ -202,10 +210,10 @@ export default class ProductScreen extends Component {
                                         <Text style={[styles.txtStyle5, {paddingRight: 5, paddingTop: 8}]}>{'.' + price_arr[1]}</Text>
                                         : null
                                     }
-                                    <Text style={[styles.txtStyle6, {paddingTop: 6}]}>{marketPrice}</Text>
+                                    <Text style={[styles.txtStyle6, {paddingTop: 7}]}>{marketPrice}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 42}]}>
-                                    <Text style={styles.txtStyle2} numberOfLines={2}>{name}</Text>
+                                    <Text style={[styles.txtStyle2, {lineHeight: 17}]} numberOfLines={2}>{name}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 20}]}>
                                 </View>
@@ -224,6 +232,57 @@ export default class ProductScreen extends Component {
                         {this.createSelectBox('规格', null)}
                         {this.createSelectBox('运费', null)}
                         {this.createSelectBox('领券', null)}
+                    </View>
+                </View>
+                <View style={styles.shopBox}>
+                    <View style={styles.headNameBox}>
+                        <View style={styles.shopHeadLeft}>
+                            <Image style={styles.shopHeadImg} source={shopHead} />
+                        </View>
+                        <View style={styles.shopHeadRight}>
+                            <View style={styles.rowStyle}>
+                                <Image source={require('../../images/vip.png')} style={styles.vipImg} />
+                                <Text numberOfLines={1} style={styles.txtStyle2}>{shopName}</Text>
+                            </View>
+                            <View style={styles.rowStyle}>
+                                <BtnIcon 
+                                    src={require('../../images/7day.png')} 
+                                    width={20} 
+                                    style={styles.shopMarkImg} 
+                                    text={Lang[Lang.default].sevenDays} 
+                                    txtStyle={styles.shopMarkText}
+                                    txtViewStyle={{minHeight: 12}}
+                                />
+                                <BtnIcon 
+                                    src={require('../../images/origin.png')} 
+                                    width={20} 
+                                    style={styles.shopMarkImg} 
+                                    text={Lang[Lang.default].certifiedGuarantee} 
+                                    txtStyle={styles.shopMarkText}
+                                    txtViewStyle={{minHeight: 12}}
+                                />
+                                <BtnIcon 
+                                    src={require('../../images/quick.png')} 
+                                    width={20} 
+                                    style={styles.shopMarkImg} 
+                                    text={Lang[Lang.default].lightningConsignment} 
+                                    txtStyle={styles.shopMarkText}
+                                    txtViewStyle={{minHeight: 12}}
+                                />
+                                <BtnIcon 
+                                    src={require('../../images/direct.png')} 
+                                    width={20} 
+                                    style={styles.shopMarkImg} 
+                                    text={Lang[Lang.default].directDeal} 
+                                    txtStyle={styles.shopMarkText}
+                                    txtViewStyle={{minHeight: 12}}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                    <View>
+                        <Text></Text>
+                        <Text></Text>
                     </View>
                 </View>
                 <View style={webStyle}>
@@ -302,6 +361,7 @@ var styles = StyleSheet.create({
     },
     rowStyle: {
         flexDirection: 'row',
+        alignItems: 'center',
     },
     txtStyle1 : {
         fontSize: 12,
@@ -310,7 +370,6 @@ var styles = StyleSheet.create({
     txtStyle2 : {
         fontSize: 14,
         color: Color.lightBack,
-        lineHeight: 17,
     },
     txtStyle3 : {
         color: Color.mainColor,
@@ -331,6 +390,10 @@ var styles = StyleSheet.create({
     },
     flatListStyle: {
         backgroundColor: Color.lightGrey,
+    },
+    wrapper: {
+        // borderBottomWidth: pixel,
+        // borderBottomColor: Color.lavender,
     },
     paginationStyle: {
         position: 'absolute',
@@ -362,6 +425,7 @@ var styles = StyleSheet.create({
         borderRadius: 3,
         borderWidth: 3,
         borderColor: Color.lightGrey,
+        padding: 5,
     },
     centerBox: {
         flexDirection: 'row',
@@ -439,12 +503,47 @@ var styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: 0,
+        bottom: 5,
         alignItems: 'center',
     },
     dotImg: {
         width: 26,
         height: 26,
+    },
+    shopBox: {
+        marginTop: PX.marginTB,
+        backgroundColor: '#fff',
+    },
+    headNameBox: {
+        margin: 15,
+        flexDirection: 'row',
+    },
+    shopHeadLeft: {
+        marginRight: PX.marginLR,
+    },
+    shopHeadImg: {
+        width: 80,
+        height: 80,
+    },
+    shopHeadRight: {
+        justifyContent: 'space-around',
+    },
+    vipImg: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
+    shopMarkImg: {
+        marginRight: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 0,
+    },
+    shopMarkText: {
+        color: Color.red,
+        fontSize: 10,
+        paddingLeft: 0,
     },
     goodlistTop: {
         flexDirection: 'row',
