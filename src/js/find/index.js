@@ -148,8 +148,10 @@ export default class FindScreen extends Component {
 
     // 获取名店列表
     getMDYPDatas = () => {
-        let json = 'sPage=' + this.pageOffest + '&sPerNum' + this.pageNumber;
-        return Utils.async_fetch(Urls.getFindShopList, 'post', json);
+        return Utils.async_fetch(Urls.getFindShopList, 'post', {
+            sPage: this.pageOffest,
+            sPerNum: this.pageNumber,
+        });
     };
 
     // 限时抢购的头部

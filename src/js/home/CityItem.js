@@ -148,6 +148,7 @@ export default class CityItem extends Component {
             <ProductItem 
                 product={obj} 
                 key={rowid} 
+                navigation={this.props.navigation}
                 boxStyle={{
                     marginLeft: margin_left, 
                     marginTop: 15,

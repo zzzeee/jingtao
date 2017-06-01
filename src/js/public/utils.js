@@ -50,6 +50,26 @@ const ErrorView = (obj, func) => {
 };
 
 var Util = {
+    /**
+     * 生成API访问JSON参数
+     */
+    createJson: function(data) {
+        if(typeof(data) == 'object') {
+            //data参数格式化
+            var str_data = '';
+            for (let key in data) {
+                if (typeof(data[key]) !== 'undefined' && data[key] !== null) {
+                    str_data += key + '=' + data[key] + '&';
+                }
+            }
+            if (str_data.length > 0) {
+                str_data = str_data.substring(0, str_data.length - 1);
+                str_data = str_data.replace(/\+/g,"%2B");
+            }
+            return str_data;
+        }
+        return data;
+    },
     /* fetch 网络请求数据
      * @param String url  请求地址
      * @param String type 请求方式： get / post
@@ -60,20 +80,9 @@ var Util = {
      */
     fetch: function (url, type, data, callback, load_error = null, load_error_config = {}) {
         var fetchOptions = {};
-        var str_data = '';
+        var str_data = this.createJson(data) || '';
         if(load_error && !load_error_config.hideLoad) {
             load_error && load_error(Loading({...load_error_config}));
-        }
-        //data参数格式化
-        for (let key in data) {
-            if (typeof(data[key]) !== 'undefined' && data[key] !== null) {
-                str_data += key + '=' + data[key] + '&';
-            }
-        }
-        
-        if (str_data.length > 0) {
-            str_data = str_data.substring(0, str_data.length - 1);
-            str_data = str_data.replace(/\+/g,"%2B");
         }
 
         //判断请求方式
@@ -112,15 +121,20 @@ var Util = {
     },
 
     //仅用于异步请求 (async / await)
-    async_fetch: function (url, type, json) {
-        let head = type.toUpperCase() == 'POST' ? {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: json,
-            } : {};
+    async_fetch: function (url, type, data) {
+        let str_param = this.createJson(data) || '';
+        let head = {};
+        if(type.toUpperCase() == 'POST') {
+            head.body = str_param;
+            head.method = 'POST';
+            head.headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+        }else {
+            url += '?' + str_param;
+            url = encodeURI(url);
+        }
         return fetch(url, head)
         .then((response) => response.json())
         .then((responseText) => {

@@ -131,6 +131,8 @@ const language = {
         stock: '库存',
         howMuch: '满%s元',
         usePeriod: '使用期限',
+        productDetails: '商品详情',
+        origin: '原产地',
     },
 };
 

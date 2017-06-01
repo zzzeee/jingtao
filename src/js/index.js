@@ -18,6 +18,7 @@ import JPushModule from 'jpush-react-native';
 
 import TabNavScreen from './tabNav';
 import TabView from './tabView';
+import Product from './product';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
@@ -87,6 +88,11 @@ const CityGoodShopListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={CityGoodShopList} />
 );
 
+//商品详情页
+const ProductScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Product} />
+);
+
 //个人中心 - 我的积分
 const MyIntegralScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={MyIntegral} />
@@ -125,6 +131,9 @@ const LocationInfoScreen = ({ navigation }) => (
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
+    },
+    Product: {
+        screen: ProductScreen,
     },
     CityGoodShopList: {
         screen: CityGoodShopListScreen,

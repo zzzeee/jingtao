@@ -22,6 +22,10 @@ var urls = {
     getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
     //获取城市的产品列表
     getProductList: host + '/api/ProductController/getProductListByParameter',
+    //获取商品详情
+    getProductInfo: 'http://vpn.jingtaomart.com/api/ProductController/getProductInfoByProID',
+    //获取图文详情
+    getProductDetails: 'http://vpn.jingtaomart.com/api/ProductController/getProductDetailInfoByProID',
 };
 
 export default urls;

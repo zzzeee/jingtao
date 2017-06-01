@@ -18,17 +18,22 @@ import {
 
 import Urls from '../public/apiUrl';
 import BtnIcon from '../public/BtnIcon';
-import { Size, PX, pixel, Color } from '../public/globalStyle';
+import { Size, PX, pixel, Color, FontSize } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import AppHead from '../public/AppHead';
 import { StackNavigator } from 'react-navigation';
 
+/**
+ * 显示头部背景的高度
+ * 以超出个人头像背景的高度时，显示不透明背景
+ */
+var showHeadBgHeight = PX.userTopHeight - PX.headHeight;
 export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            islogo: false,
-            showHeadBgColor: false,
+            islogo: true,
+            opacityVal: new Animated.Value(0),
         };
 
         this.ref_scrollview = null;
@@ -36,114 +41,114 @@ export default class PersonalScreen extends Component {
 
     render() {
         return (
-        <View style={styles.flex}>
-            <ScrollView 
-                contentContainerStyle={styles.scrollStyle}
-                ref={(_ref)=>this.ref_scrollview=_ref}  
-                onScroll={this._onScroll}
-            >
-                <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
-                    {this.state.islogo ?
-                        <View style={styles.headMainBox}>
-                            <View style={styles.headBox}>
-                                <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
-                                <Text style={styles.userNameText}>{'这里是名字'}</Text>
+            <View style={styles.flex}>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollStyle}
+                    ref={(_ref)=>this.ref_scrollview=_ref}  
+                    onScroll={this._onScroll}
+                >
+                    <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
+                        {this.state.islogo ?
+                            <View style={styles.headMainBox}>
+                                <View style={styles.headBox}>
+                                    <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
+                                    <Text style={styles.userNameText}>{'这里是名字'}</Text>
+                                </View>
+                                <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
+                                    <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, 5000)}</Text>
+                                    <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
+                                </Image>
+                            </View> :
+                            <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
+                                <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang[Lang.default].logo}</Text>
+                                <Text style={styles.bigBotton} onPress={()=>{}}>{Lang[Lang.default].register}</Text>
                             </View>
-                            <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
-                                <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, 5000)}</Text>
-                                <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
-                            </Image>
-                        </View> :
-                        <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
-                            <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang[Lang.default].logo}</Text>
-                            <Text style={styles.bigBotton} onPress={()=>{}}>{Lang[Lang.default].register}</Text>
+                        }
+                    </Image>
+                    <View style={styles.btnsListBox}>
+                        <View style={styles.orderRow}>
+                            <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
+                            <TouchableOpacity style={styles.lightTextBox}>
+                                <Text style={styles.lightText}>{Lang[Lang.default].viewAllOrder}</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
+                            </TouchableOpacity>
                         </View>
-                    }
-                </Image>
-                <View style={styles.btnsListBox}>
-                    <View style={styles.orderRow}>
-                        <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
-                        <TouchableOpacity style={styles.lightTextBox}>
-                            <Text style={styles.lightText}>{Lang[Lang.default].viewAllOrder}</Text>
-                            <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
-                        </TouchableOpacity>
+                        <View style={styles.ctrlBtnBox}>
+                            <BtnIcon 
+                                src={require('../../images/personal/daifukuan.png')} 
+                                width={26} 
+                                style={styles.btnCtrlOrder} 
+                                text={Lang[Lang.default].daifukuan} 
+                                txtStyle={[styles.normalText, {paddingTop: 5}]}
+                            />
+                            <BtnIcon 
+                                src={require('../../images/personal/daifahuo.png')} 
+                                width={26} 
+                                style={styles.btnCtrlOrder} 
+                                text={Lang[Lang.default].daifahuo} 
+                                txtStyle={[styles.normalText, {paddingTop: 5}]}
+                            />
+                            <BtnIcon 
+                                src={require('../../images/personal/daishouhuo.png')} 
+                                width={26} 
+                                style={styles.btnCtrlOrder} 
+                                text={Lang[Lang.default].daishouhuo} 
+                                txtStyle={[styles.normalText, {paddingTop: 5}]}
+                            />
+                            <BtnIcon 
+                                src={require('../../images/personal/shouhou.png')} 
+                                width={26} 
+                                style={styles.btnCtrlOrder} 
+                                text={Lang[Lang.default].shouhou}
+                                txtStyle={[styles.normalText, {paddingTop: 5}]}
+                            />
+                        </View>
                     </View>
-                    <View style={styles.ctrlBtnBox}>
-                        <BtnIcon 
-                            src={require('../../images/personal/daifukuan.png')} 
-                            width={26} 
-                            style={styles.btnCtrlOrder} 
-                            text={Lang[Lang.default].daifukuan} 
-                            txtStyle={[styles.normalText, {paddingTop: 5}]}
-                        />
-                        <BtnIcon 
-                            src={require('../../images/personal/daifahuo.png')} 
-                            width={26} 
-                            style={styles.btnCtrlOrder} 
-                            text={Lang[Lang.default].daifahuo} 
-                            txtStyle={[styles.normalText, {paddingTop: 5}]}
-                        />
-                        <BtnIcon 
-                            src={require('../../images/personal/daishouhuo.png')} 
-                            width={26} 
-                            style={styles.btnCtrlOrder} 
-                            text={Lang[Lang.default].daishouhuo} 
-                            txtStyle={[styles.normalText, {paddingTop: 5}]}
-                        />
-                        <BtnIcon 
-                            src={require('../../images/personal/shouhou.png')} 
-                            width={26} 
-                            style={styles.btnCtrlOrder} 
-                            text={Lang[Lang.default].shouhou}
-                            txtStyle={[styles.normalText, {paddingTop: 5}]}
-                        />
+                    <View style={styles.btnsListBox}>
+                        {this.btnRow(require('../../images/personal/myIntegral.png'), Lang[Lang.default].myIntegral, 'MyIntegral', null)}
+                        {this.btnRow(
+                            require('../../images/personal/coupon.png'), 
+                            Lang[Lang.default].coupon, 
+                            null, 
+                            str_replace(Lang[Lang.default].couponBeOverdue, 3)
+                        )}
+                        {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
+                        {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null, null)}
+                        {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null, null)}
                     </View>
-                </View>
-                <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/myIntegral.png'), Lang[Lang.default].myIntegral, 'MyIntegral', null)}
-                    {this.btnRow(
-                        require('../../images/personal/coupon.png'), 
-                        Lang[Lang.default].coupon, 
-                        null, 
-                        str_replace(Lang[Lang.default].couponBeOverdue, 3)
-                    )}
-                    {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
-                    {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null, null)}
-                    {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null, null)}
-                </View>
-                <View style={styles.btnsListBox}>
-                    {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null, null)}
-                    {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null, null)}
-                    {this.btnRow(require('../../images/personal/helpNote.png'), '测试专用', 'TestPage', '这里为测试链接')}
-                </View>
-            </ScrollView>
-            <AppHead 
-                float={true}
-                style={{
-                    elevation: this.state.showHeadBgColor ? 4 : 0,
-                    backgroundColor: this.state.showHeadBgColor ? Color.mainColor : 'transparent',
-                }}
-                textStyle={{color: '#fff'}}
-                title={Lang[Lang.default].persional} 
-                left={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
-                right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
-            />
-        </View>);
+                    <View style={styles.btnsListBox}>
+                        {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null, null)}
+                        {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null, null)}
+                        {this.btnRow(require('../../images/personal/helpNote.png'), '测试专用', 'TestPage', '这里为测试链接')}
+                    </View>
+                </ScrollView>
+                <Animated.View style={[styles.topHeadBg, {
+                    opacity: this.state.opacityVal.interpolate({
+                        inputRange: [0, showHeadBgHeight],
+                        outputRange: [0, 1]
+                    }),
+                }]}>
+                </Animated.View>
+                <AppHead 
+                    float={true}
+                    style={{
+                        elevation: this.state.opacityVal._value == 1 ? 4 : 0,
+                        backgroundColor: 'transparent',
+                    }}
+                    textStyle={{color: '#fff'}}
+                    title={Lang[Lang.default].persional} 
+                    left={(<BtnIcon width={PX.headIconSize} src={require("../../images/personal/config_white.png")} />)}
+                    right={(<BtnIcon width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
+                />
+            </View>);
     }
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
-        let showHeight = PX.headHeight + 10;
-        let hideHeight = PX.headHeight;
-
-        if(offsetY > showHeight) {
-            if(!this.state.showHeadBgColor) {
-                this.setState({showHeadBgColor: true})
-            }
-        }else if(offsetY < hideHeight) {
-            if(this.state.showHeadBgColor) {
-                this.setState({showHeadBgColor: false})
-            }
+        if(offsetY < showHeadBgHeight) {
+            this.state.opacityVal.setValue(offsetY);
+        }else {
+            this.state.opacityVal.setValue(showHeadBgHeight);
         }
     };
 
@@ -179,6 +184,13 @@ var styles = StyleSheet.create({
         color: Color.lightBack,
         fontSize: 14,
     },
+    topHeadBg : {
+        backgroundColor: Color.mainColor,
+		height: PX.headHeight,
+        position: 'absolute',
+        left: 0, 
+        right: 0,
+	},
     scrollStyle: {
         backgroundColor: Color.lightGrey,
     },

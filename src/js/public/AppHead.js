@@ -16,7 +16,7 @@ export default class AppHead extends Component {
   	}
 
 	render() {
-		let {title, center, float, style, textStyle, left, right} = this.props;
+		let {title, onPress, center, float, style, textStyle, left, right} = this.props;
 		
 	    return (
 			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
@@ -26,7 +26,7 @@ export default class AppHead extends Component {
 				<View style={styles.middleBox}>
 					{center ?
 						center :
-						<Text style={[styles.title, textStyle]}>{title}</Text>
+						<Text style={[styles.title, textStyle]} onPress={onPress}>{title}</Text>
 					}
 				</View>
 				<View style={[styles.sideBox, {right: 0}]}>

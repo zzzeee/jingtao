@@ -4,6 +4,7 @@ import {
     Text,
     View,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import { PX, Color, pixel } from '../public/globalStyle';
@@ -34,9 +35,11 @@ export default class ProductItem extends Component {
             goodNameViewStyle, 
             goodNameStyle, 
             goodPriceStyle, 
-            showDiscount 
+            showDiscount,
+            navigation,
         } = this.props;
         if(!product) return null;
+        let gid = product.gID || 0;
         let type = product.num || 0;
         let gimg = product.gThumbPic || '';
         let name = product.gName || '';
@@ -51,35 +54,41 @@ export default class ProductItem extends Component {
         }
         let img = gimg ? {uri: gimg} : require('../../images/empty.png');
         return (
-            <View style={[styles.productBox, {width: width}, boxStyle]}>
-                <View style={styles.gImageBox}>
-                    <Image source={img} style={{
-                        width: width,
-                        height: height,
-                    }} />
+            <TouchableOpacity activeOpacity={1} onPress={()=>{
+                if(gid > 0 && navigation) {
+                    navigation.navigate('Product', {gid: gid});
+                }
+            }}>
+                <View style={[styles.productBox, {width: width}, boxStyle]}>
+                    <View style={styles.gImageBox}>
+                        <Image source={img} style={{
+                            width: width,
+                            height: height,
+                        }} />
+                    </View>
+                    <View style={[styles.goodNameView, goodNameViewStyle]}>
+                        <Text style={[styles.goodNameText, goodNameStyle]} numberOfLines={1}>
+                            {name}
+                        </Text>
+                    </View>
+                    <View style={[styles.gPriceBox, goodPriceStyle]}>
+                        {dPrice ?
+                            <Text style={styles.priceFH}>{Lang[Lang.default].RMB}</Text>
+                            : null
+                        }
+                        <Text style={styles.gprice1}>{dPrice}</Text>
+                        <Text style={styles.gprice2}>{gPrice}</Text>
+                        {(showDiscount && discount && discount > 0 && discount < 1) ?
+                            <View style={styles.discountView}>
+                                <Text style={styles.discountText}>
+                                    {str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}
+                                </Text>
+                            </View>
+                            : null
+                        }
+                    </View>
                 </View>
-                <View style={[styles.goodNameView, goodNameViewStyle]}>
-                    <Text style={[styles.goodNameText, goodNameStyle]} numberOfLines={1}>
-                        {name}
-                    </Text>
-                </View>
-                <View style={[styles.gPriceBox, goodPriceStyle]}>
-                    {dPrice ?
-                        <Text style={styles.priceFH}>{Lang[Lang.default].RMB}</Text>
-                        : null
-                    }
-                    <Text style={styles.gprice1}>{dPrice}</Text>
-                    <Text style={styles.gprice2}>{gPrice}</Text>
-                    {(showDiscount && discount && discount > 0 && discount < 1) ?
-                        <View style={styles.discountView}>
-                            <Text style={styles.discountText}>
-                                {str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}
-                            </Text>
-                        </View>
-                        : null
-                    }
-                </View>
-            </View>
+            </TouchableOpacity>
         );
     }
 }
