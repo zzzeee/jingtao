@@ -13,7 +13,6 @@ import {
     TouchableOpacity,
     FlatList,
     WebView,
-    PanResponder,
 } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -21,11 +20,12 @@ import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
-import { Size, PX, pixel, Color } from '../public/globalStyle';
+import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
+import ProductDetail from './productDetail';
 
 var footHeight = 50;
 var moreHeight = 45;
@@ -36,21 +36,17 @@ export default class ProductScreen extends Component {
         super(props);
         this.state = {
             isFavorite: false,
-            goodList: null,     //猜你喜欢的商品列表
+            goodList: [],     //猜你喜欢的商品列表
             goodIofo: null,
             webViewHeight: 0,
+            fetchError: null,
         };
+        this.page = 1;
+        this.pageNumber = 10;
     }
 
     componentDidMount() {
-        let gid = this.props.navigation && 
-            this.props.navigation.state &&
-            this.props.navigation.state.params && 
-            this.props.navigation.state.params.gid ?
-            this.props.navigation.state.params.gid : 0;
-        if(gid && gid > 0) {
-            this.initDatas(gid);
-        }
+        this.initDatas();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -67,21 +63,34 @@ export default class ProductScreen extends Component {
     }
 
     //初始化数据
-    initDatas = async (id) => {
-        let info = await Utils.async_fetch(Urls.getProductInfo, 'get', {gID: id});
-        // console.log(info);
-        if(info && info.sTatus && info.proAry) {
-            console.log(info.proAry);
-            this.setState({
-                goodList: Goods,
-                goodIofo: info.proAry,
+    initDatas = async () => {
+        let gid = this.props.navigation && 
+            this.props.navigation.state &&
+            this.props.navigation.state.params && 
+            this.props.navigation.state.params.gid ?
+            this.props.navigation.state.params.gid : 0;
+        if(gid > 0) {
+            let info = await Utils.async_fetch(Urls.getProductInfo, 'post', {gID: gid});
+            let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
+                pPage: this.page, 
+                pPerNum: this.pageNumber,
             });
+            let state = {};
+            // console.log(info);
+            // console.log(list);
+            if(info && info.sTatus && info.proInfo) {
+                state.fetchError = false;
+                state.goodIofo = info.proInfo;
+                state.isFavorite = info.proInfo.fStatus == 1 ? true : false;
+                if(list && list.sTatus && list.proAry && list.proAry.length) {
+                    state.goodList = list.proAry;
+                    this.page++;
+                }
+            }else {
+                state.fetchError = true;
+            }
+            this.setState(state);
         }
-    };
-
-    //列表滚动
-    _onScroll = (e) => {
-        let offsetY = e.nativeEvent.contentOffset.y || 0;
     };
 
     render() {
@@ -109,24 +118,34 @@ export default class ProductScreen extends Component {
                     }}
                 />
                 <View style={styles.flex}>
-                    {gid && gid > 0 ?
-                        <FlatList
-                            ref={(_ref)=>this.ref_flatList=_ref} 
-                            data={this.state.goodList}
-                            numColumns={2}
-                            onScroll={this._onScroll}
-                            removeClippedSubviews={false}
-                            contentContainerStyle={styles.flatListStyle}
-                            keyExtractor={(item, index) => (index)}
-                            enableEmptySections={true}
-                            renderItem={this._renderItem}
-                            ListHeaderComponent={this.pageHead}
-                            scrollEnabled={this.state.scrollEnabled}
-                            onEndReached={()=>{
-                                // this.loadMore();
-                            }}
-                        />
-                        : null
+                    {this.state.fetchError === null ?
+                        null : (this.state.fetchError ?
+                            <View style={errorStyles.bodyView}>
+                                <Text style={errorStyles.refaceBtn} onPress={this.initDatas}>{Lang[Lang.default].reconnect}</Text>
+                                <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
+                            </View>
+                            :
+                            ((gid && gid > 0) ?
+                                <FlatList
+                                    ref={(_ref)=>this.ref_flatList=_ref} 
+                                    data={this.state.goodList}
+                                    numColumns={2}
+                                    onScroll={this._onScroll}
+                                    removeClippedSubviews={false}
+                                    contentContainerStyle={styles.flatListStyle}
+                                    keyExtractor={(item, index) => (index)}
+                                    enableEmptySections={true}
+                                    renderItem={this._renderItem}
+                                    ListHeaderComponent={this.pageHead}
+                                    scrollEnabled={this.state.scrollEnabled}
+                                    onEndReached={()=>{
+                                        console.log('加载更多');
+                                        // this.loadMore();
+                                    }}
+                                />
+                                : null
+                            )
+                        )
                     }
                 </View>
                 <View style={styles.footRow}>
@@ -175,22 +194,17 @@ export default class ProductScreen extends Component {
             price_arr = price.split('.');
         }
         for(let i in good.gImgs) {
-            let _img = good.gImgs[i].pUrl || null;
-            let _isDel = parseInt(good.gImgs[i].pDel) || false;
-            if(_img && !_isDel) {
-                img_arr.push(_img);
-            }
+            let _img = good.gImgs[i].gThumBPic || null;
+            _img && img_arr.push(_img);
         }
+        // console.log(img_arr);
         let startTime = new Date().getTime();
         let endTime = new Date('2017/6/28 23:59:59').getTime();
-        let shopName = good.gShop.sShopName || null;
-        let shopHead = good.gShop && good.gShop.sLogo ? good.gShop.sLogo : null;
+        let shopName = good.sName || null;
+        let shopHead = good.sLogo || null;
         shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
         return (
-            <View onLayout={(e)=>{
-                console.log(e);
-                console.log(e.nativeEvent);
-            }}>
+            <View>
                 <View style={styles.whiteBg}>
                     <View style={styles.productImgBox}>
                         <Swiper
@@ -332,32 +346,10 @@ export default class ProductScreen extends Component {
     //页面头部 - 商品详情
     pageHead = () => {
         if(!this.state.goodIofo) return null;
-        let webStyle = {
-            width: Size.width,
-            height: this.state.webViewHeight,
-        };
         return (
             <View>
                 {this.productInfo()}
-                <View style={webStyle}>
-                    <WebView
-                        javaScriptEnabled={true}
-                        scalesPageToFit={false}
-                        source={{uri: Urls.getProductDetails + this.state.goodIofo.gID}}
-                        style={webStyle}
-                        onNavigationStateChange={(info)=>{
-                            // console.log(info);
-                            let arr = info.title.split('*');
-                            let width = parseInt(arr[0]) || 0;
-                            let height = parseInt(arr[1]) || 0;
-                            let _height = Size.width * height / width || 0;
-                            if(_height < 999999 && _height > 0 && _height != this.state.webViewHeight) {
-                                console.log('更新webview高度为：' + _height);
-                                this.setState({webViewHeight: _height})
-                            }
-                        }}
-                    />
-                </View>
+                <ProductDetail productID={parseInt(this.state.goodIofo.gID)} />
                 <View style={styles.goodlistTop}>
                     <View style={styles.goodTopLine}></View>
                     <View>

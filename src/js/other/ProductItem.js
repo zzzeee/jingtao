@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import Urls from '../public/apiUrl';
 import { PX, Color, pixel } from '../public/globalStyle';
 import Lang, { str_replace } from '../public/language';
 
@@ -52,6 +53,7 @@ export default class ProductItem extends Component {
             let aimg = product.adImg || '';
             if(aimg) gimg = aimg;
         }
+        if(gimg && gimg.indexOf('http') !== 0) gimg = Urls.host + gimg;
         let img = gimg ? {uri: gimg} : require('../../images/empty.png');
         return (
             <TouchableOpacity activeOpacity={1} onPress={()=>{
