@@ -25,7 +25,7 @@ var urls = {
     //获取商品详情
     getProductInfo: 'http://vpn.jingtaomart.com/api/ProductController/getProductInfoByProID',
     //获取图文详情
-    getProductDetails: 'http://vpn.jingtaomart.com/api/ProductController/getProductDetailInfoByProID',
+    getProductDetails: 'http://api.ub33.cn/api/ProductController/getProductDetailInfoByProID?gID=',
 };
 
 export default urls;

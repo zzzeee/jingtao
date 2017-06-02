@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     FlatList,
     WebView,
+    PanResponder,
 } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -26,6 +27,10 @@ import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
 
+var footHeight = 50;
+var moreHeight = 45;
+var bodyHeight = Size.height - 20 - PX.headHeight - footHeight;
+
 export default class ProductScreen extends Component {
     constructor(props) {
         super(props);
@@ -33,7 +38,6 @@ export default class ProductScreen extends Component {
             isFavorite: false,
             goodList: null,     //猜你喜欢的商品列表
             goodIofo: null,
-            details: null,
             webViewHeight: 0,
         };
     }
@@ -49,31 +53,35 @@ export default class ProductScreen extends Component {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        let gid = nextProps.navigation && 
+            nextProps.navigation.state &&
+            nextProps.navigation.state.params && 
+            nextProps.navigation.state.params.gid ?
+            nextProps.navigation.state.params.gid : 0;
+        if(gid && gid > 0 && nextState != this.state) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     //初始化数据
     initDatas = async (id) => {
         let info = await Utils.async_fetch(Urls.getProductInfo, 'get', {gID: id});
-        // let detail = await Utils.async_fetch(Urls.getProductDetails, 'get', {gID: id});
-        let html = '<p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160822/1471854636374275.png" title="五常大米-款2详情图_01.png"/></p><p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160820/1471654771409435.png" title="五常大米-款2详情图_02.png"/></p><p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160820/1471654771766714.png" title="五常大米-款2详情图_03.png"/></p><p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160820/1471654773812607.png" title="五常大米-款2详情图_04.png"/></p><p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160820/1471654774857299.png" title="五常大米-款2详情图_05.png"/></p><p style="white-space: normal;"><img src="http://www.jingtaomart.com/bdimages/upload1/20160820/1471654775754350.png" title="五常大米-款2详情图_06.png"/></p><p><br/></p>';
-        html = '<div id="box">' + html + '</div>';
-        let script = 
-        '<script type="text/javascript">' + 
-            'window.onload = function(){' +
-                'var width = document.body.offsetWidth;' +
-                'var height = document.body.offsetHeight;' +
-                'console.log(height);' +
-                'document.title = "640*6154";' +
-                'window.location.hash = "#" + height;' +
-            '}' +
-        '</script>';
         // console.log(info);
         if(info && info.sTatus && info.proAry) {
             console.log(info.proAry);
             this.setState({
                 goodList: Goods,
                 goodIofo: info.proAry,
-                details: html + script,
             });
         }
+    };
+
+    //列表滚动
+    _onScroll = (e) => {
+        let offsetY = e.nativeEvent.contentOffset.y || 0;
     };
 
     render() {
@@ -97,7 +105,7 @@ export default class ProductScreen extends Component {
                     left={left}
                     right={right}
                     onPress={()=>{
-                        this.ref_flatList && this.ref_flatList.scrollToOffset({x: 0, y: 0, animated: true});
+                        this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
                     }}
                 />
                 <View style={styles.flex}>
@@ -106,12 +114,14 @@ export default class ProductScreen extends Component {
                             ref={(_ref)=>this.ref_flatList=_ref} 
                             data={this.state.goodList}
                             numColumns={2}
+                            onScroll={this._onScroll}
                             removeClippedSubviews={false}
                             contentContainerStyle={styles.flatListStyle}
                             keyExtractor={(item, index) => (index)}
                             enableEmptySections={true}
                             renderItem={this._renderItem}
                             ListHeaderComponent={this.pageHead}
+                            scrollEnabled={this.state.scrollEnabled}
                             onEndReached={()=>{
                                 // this.loadMore();
                             }}
@@ -119,19 +129,43 @@ export default class ProductScreen extends Component {
                         : null
                     }
                 </View>
+                <View style={styles.footRow}>
+                    <View style={styles.rowStyle}>
+                        <BtnIcon 
+                            src={require('../../images/navs/carSelect.png')} 
+                            width={22} 
+                            style={styles.productContactImg} 
+                            text={Lang[Lang.default].tab_car}
+                            txtStyle={styles.productContactTxt}
+                            txtViewStyle={{minHeight: 12}}
+                        />
+                        <BtnIcon 
+                            src={require('../../images/custem_center.png')} 
+                            width={22} 
+                            style={styles.productContactImg} 
+                            text={Lang[Lang.default].customer}
+                            txtStyle={styles.productContactTxt}
+                            txtViewStyle={{minHeight: 12}}
+                        />
+                    </View>
+                    <View style={styles.rowStyle}>
+                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}>
+                            <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.orange}]}>
+                            <Text style={styles.txtStyle8}>{Lang[Lang.default].buyNow}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         );
     }
 
-    //页面头部 - 商品详情
-    pageHead = () => {
+    //商品主要信息
+    productInfo = () => {
         if(!this.state.goodIofo) return null;
-        
         let good = this.state.goodIofo || {};
-        let webStyle = {
-            width: Size.width,
-            height: this.state.webViewHeight,
-        };
+        let gid = good.gID;
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;
@@ -149,12 +183,14 @@ export default class ProductScreen extends Component {
         }
         let startTime = new Date().getTime();
         let endTime = new Date('2017/6/28 23:59:59').getTime();
-        let shopHead = good.gShop.sLogo || null;
-        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
         let shopName = good.gShop.sShopName || null;
-
+        let shopHead = good.gShop && good.gShop.sLogo ? good.gShop.sLogo : null;
+        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
         return (
-            <View>
+            <View onLayout={(e)=>{
+                console.log(e);
+                console.log(e.nativeEvent);
+            }}>
                 <View style={styles.whiteBg}>
                     <View style={styles.productImgBox}>
                         <Swiper
@@ -240,7 +276,7 @@ export default class ProductScreen extends Component {
                             <Image style={styles.shopHeadImg} source={shopHead} />
                         </View>
                         <View style={styles.shopHeadRight}>
-                            <View style={styles.rowStyle}>
+                            <View style={[styles.rowStyle, {marginBottom: 10}]}>
                                 <Image source={require('../../images/vip.png')} style={styles.vipImg} />
                                 <Text numberOfLines={1} style={styles.txtStyle2}>{shopName}</Text>
                             </View>
@@ -280,16 +316,34 @@ export default class ProductScreen extends Component {
                             </View>
                         </View>
                     </View>
-                    <View>
-                        <Text></Text>
-                        <Text></Text>
+                    <View style={styles.shopBtnBox}>
+                        <Text style={[styles.shopBtn, {marginRight: 55}]}>{Lang[Lang.default].shopStroll}</Text>
+                        <Text style={styles.shopBtn}>{Lang[Lang.default].shopCollection}</Text>
                     </View>
                 </View>
+                <View style={styles.upArrowBox}>
+                    <Image style={styles.upArrowImg} source={require('../../images/up_arrow.png')} />
+                    <Text style={styles.txtStyle7}>{Lang[Lang.default].upArrowTxt}</Text>
+                </View>
+            </View>
+        );
+    };
+
+    //页面头部 - 商品详情
+    pageHead = () => {
+        if(!this.state.goodIofo) return null;
+        let webStyle = {
+            width: Size.width,
+            height: this.state.webViewHeight,
+        };
+        return (
+            <View>
+                {this.productInfo()}
                 <View style={webStyle}>
                     <WebView
                         javaScriptEnabled={true}
                         scalesPageToFit={false}
-                        source={{html: this.state.details}}
+                        source={{uri: Urls.getProductDetails + this.state.goodIofo.gID}}
                         style={webStyle}
                         onNavigationStateChange={(info)=>{
                             // console.log(info);
@@ -387,6 +441,14 @@ var styles = StyleSheet.create({
         color: Color.gainsboro,
         fontSize: 14,
         textDecorationLine: 'line-through',
+    },
+    txtStyle7: {
+        color: Color.gainsboro2,
+        fontSize: 14,
+    },
+    txtStyle8: {
+        color: '#fff',
+        fontSize: 14,
     },
     flatListStyle: {
         backgroundColor: Color.lightGrey,
@@ -526,7 +588,7 @@ var styles = StyleSheet.create({
         height: 80,
     },
     shopHeadRight: {
-        justifyContent: 'space-around',
+        justifyContent: 'center',
     },
     vipImg: {
         width: 20,
@@ -544,6 +606,61 @@ var styles = StyleSheet.create({
         color: Color.red,
         fontSize: 10,
         paddingLeft: 0,
+    },
+    shopBtnBox: {
+        marginTop: 6,
+        height: 55,
+        borderTopWidth: 1,
+        borderTopColor: Color.lavender,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    shopBtn: {
+        color: Color.mainColor,
+        borderColor: Color.mainColor,
+        borderWidth: 1,
+        fontSize: 11,
+        borderRadius: 8,
+        paddingTop: 5,
+        paddingBottom: 5,
+        paddingLeft: 15,
+        paddingRight: 15,
+    },
+    upArrowBox: {
+        height: moreHeight,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    upArrowImg: {
+        width: 12,
+        height: 12,
+    },
+    footRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+    },
+    productContactImg: {
+        marginLeft: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 0,
+        height: footHeight,
+        width: 52,
+    },
+    productContactTxt: {
+        color: Color.lightBack,
+        fontSize: 10,
+        paddingLeft: 0,
+    },
+    btnProductShopping: {
+        width: Size.width * 0.283,
+        height: footHeight,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     goodlistTop: {
         flexDirection: 'row',

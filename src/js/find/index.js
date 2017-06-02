@@ -268,7 +268,7 @@ export default class FindScreen extends Component {
                             width={100} 
                             height={PX.headHeight - 10}
                             src={require("../../images/logoTitle.png")}
-                            press={()=>this.ref_flatList.scrollToOffset({x: 0, y: 0, animated: true})}
+                            press={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
                         />}
                         right={<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />}
                     />

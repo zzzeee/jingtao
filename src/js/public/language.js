@@ -137,6 +137,12 @@ const language = {
         certifiedGuarantee: '正品保障',
         lightningConsignment: '闪电发货',
         directDeal: '商家直销',
+        shopStroll: '进店逛逛',
+        shopCollection: '收藏店铺',
+        upArrowTxt: '上拉查看图文详情',
+        customer: '客服',
+        joinCar: '加入购物车',
+        buyNow: '立即购买',
     },
 };
 
