@@ -8,15 +8,20 @@ import React , { Component } from 'react';
 import {
     StyleSheet,
     View,
+    Text,
+    Image,
     WebView,
 } from 'react-native';
 
 import Urls from '../public/apiUrl';
-import { Size, PX, } from '../public/globalStyle';
+import Lang, {str_replace} from '../public/language';
+import { Size, PX, Color, } from '../public/globalStyle';
+
 export default class ProductDetail extends Component {
     // 默认参数
     static defaultProps = {
         productID: 0,
+        moreHeight: 45,
     };
     // 参数类型
     static propTypes = {
@@ -48,25 +53,50 @@ export default class ProductDetail extends Component {
             height: this.state.webViewHeight,
         };
         return (
-            <View style={webStyle}>
-                <WebView
-                    javaScriptEnabled={true}
-                    scalesPageToFit={false}
-                    source={{uri: Urls.getProductDetails + this.props.productID}}
-                    style={webStyle}
-                    onNavigationStateChange={(info)=>{
-                        // console.log(info);
-                        let arr = info.title.split('*');
-                        let width = parseInt(arr[0]) || 0;
-                        let height = parseInt(arr[1]) || 0;
-                        let _height = Size.width * height / width || 0;
-                        if(_height < 999999 && _height > 0 && _height != this.state.webViewHeight) {
-                            console.log('更新webview高度为：' + _height);
-                            this.setState({webViewHeight: _height})
-                        }
-                    }}
-                />
+            <View>
+                <View style={[styles.upArrowBox, {height: this.props.moreHeight,}]}>
+                    <Image style={styles.upArrowImg} source={require('../../images/up_arrow.png')} />
+                    <Text style={styles.upArrowText}>{Lang[Lang.default].upArrowTxt}</Text>
+                </View>
+                <View style={webStyle}>
+                    <WebView
+                        javaScriptEnabled={true}
+                        scalesPageToFit={false}
+                        source={{uri: Urls.getProductDetails + this.props.productID}}
+                        style={webStyle}
+                        onNavigationStateChange={(info)=>{
+                            // console.log(info);
+                            let arr = info.title.split('*');
+                            let width = parseInt(arr[0]) || 0;
+                            let height = parseInt(arr[1]) || 0;
+                            let _height = Size.width * height / width || 0;
+                            if(_height < 999999 && _height > 0 && _height != this.state.webViewHeight) {
+                                console.log('更新webview高度为：' + _height);
+                                this.setState({webViewHeight: _height})
+                            }
+                        }}
+                    />
+                </View>
             </View>
         );
     }
 }
+
+var styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
+    upArrowBox: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    upArrowImg: {
+        width: 12,
+        height: 12,
+    },
+    upArrowText: {
+        color: Color.gainsboro2,
+        fontSize: 14,
+    },
+});

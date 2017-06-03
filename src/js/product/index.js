@@ -43,23 +43,17 @@ export default class ProductScreen extends Component {
         };
         this.page = 1;
         this.pageNumber = 10;
+        this.loadMoreLock = false;
     }
 
     componentDidMount() {
         this.initDatas();
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        let gid = nextProps.navigation && 
-            nextProps.navigation.state &&
-            nextProps.navigation.state.params && 
-            nextProps.navigation.state.params.gid ?
-            nextProps.navigation.state.params.gid : 0;
-        if(gid && gid > 0 && nextState != this.state) {
-            return true;
-        }else {
-            return false;
-        }
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     //初始化数据
@@ -90,6 +84,26 @@ export default class ProductScreen extends Component {
                 state.fetchError = true;
             }
             this.setState(state);
+        }
+    };
+
+    // 加载更多
+    loadMore = () => {
+        if(!this.loadMoreLock) {
+            let that = this;
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getRecommendList, 'get', {
+                pPage: this.page, 
+                pPerNum: this.pageNumber,
+            }, function(result){
+                if(result && result.sTatus && result.proAry && result.proAry.length) {
+                    let goodList = that.state.goodList.concat(result.proAry);
+                    console.log(goodList);
+                    that.page++;
+                    that.loadMoreLock = false;
+                    that.setState({ goodList });
+                }
+            });
         }
     };
 
@@ -127,7 +141,9 @@ export default class ProductScreen extends Component {
                             :
                             ((gid && gid > 0) ?
                                 <FlatList
-                                    ref={(_ref)=>this.ref_flatList=_ref} 
+                                    ref={(_ref)=>{
+                                        this.ref_flatList=_ref;
+                                    }} 
                                     data={this.state.goodList}
                                     numColumns={2}
                                     onScroll={this._onScroll}
@@ -137,10 +153,13 @@ export default class ProductScreen extends Component {
                                     enableEmptySections={true}
                                     renderItem={this._renderItem}
                                     ListHeaderComponent={this.pageHead}
-                                    scrollEnabled={this.state.scrollEnabled}
                                     onEndReached={()=>{
-                                        console.log('加载更多');
-                                        // this.loadMore();
+                                        if(!this.loadMoreLock) {
+                                            console.log('正在加载更多 ..');
+                                            this.loadMore();
+                                        }else {
+                                            console.log('加载更多已被锁住。');
+                                        }
                                     }}
                                 />
                                 : null
@@ -335,10 +354,6 @@ export default class ProductScreen extends Component {
                         <Text style={styles.shopBtn}>{Lang[Lang.default].shopCollection}</Text>
                     </View>
                 </View>
-                <View style={styles.upArrowBox}>
-                    <Image style={styles.upArrowImg} source={require('../../images/up_arrow.png')} />
-                    <Text style={styles.txtStyle7}>{Lang[Lang.default].upArrowTxt}</Text>
-                </View>
             </View>
         );
     };
@@ -349,7 +364,7 @@ export default class ProductScreen extends Component {
         return (
             <View>
                 {this.productInfo()}
-                <ProductDetail productID={parseInt(this.state.goodIofo.gID)} />
+                <ProductDetail moreHeight={moreHeight} productID={parseInt(this.state.goodIofo.gID)} />
                 <View style={styles.goodlistTop}>
                     <View style={styles.goodTopLine}></View>
                     <View>
@@ -433,10 +448,6 @@ var styles = StyleSheet.create({
         color: Color.gainsboro,
         fontSize: 14,
         textDecorationLine: 'line-through',
-    },
-    txtStyle7: {
-        color: Color.gainsboro2,
-        fontSize: 14,
     },
     txtStyle8: {
         color: '#fff',
@@ -619,20 +630,12 @@ var styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    upArrowBox: {
-        height: moreHeight,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-    },
-    upArrowImg: {
-        width: 12,
-        height: 12,
-    },
     footRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: '#fff',
+        borderTopColor: Color.lavender,
+        borderTopWidth: pixel,
     },
     productContactImg: {
         marginLeft: 10,

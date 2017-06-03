@@ -122,6 +122,7 @@ export default class FindScreen extends Component {
         let stime = new Date().getTime();
         if(!this.loadMoreLock) {
             let that = this;
+            this.loadMoreLock = true;
             Utils.fetch(Urls.getFindShopList, 'POST', {
                 sPage: this.pageOffest,
                 sPerNum: this.pageNumber,
@@ -285,7 +286,6 @@ export default class FindScreen extends Component {
                             if(!this.loadMoreLock) {
                                 console.log('正在加载更多 ..');
                                 this.loadMore();
-                                this.loadMoreLock = true;
                             }else {
                                 console.log('加载更多已被锁住。');
                             }
