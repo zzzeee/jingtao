@@ -5,7 +5,9 @@ import {
 	Text,
 	Geolocation,
 } from 'react-native';
+
 import Utils from '../public/utils';
+
 export default class LocationInfo extends Component {
 	constructor(props) {
 		super(props);

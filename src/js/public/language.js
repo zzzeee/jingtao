@@ -143,6 +143,11 @@ const language = {
         customer: '客服',
         joinCar: '加入购物车',
         buyNow: '立即购买',
+        productDelete: '您要找的商品已经被删除',
+        nothing: '无',
+        selected: '已选',
+        freight: '运费',
+        takeCoupon: '领券',
     },
 };
 

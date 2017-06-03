@@ -44,6 +44,7 @@ export default class ProductScreen extends Component {
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
+        this.selected = ['红色', 'XXXL超级大号', '丝滑蚕丝材质'];
     }
 
     componentDidMount() {
@@ -170,14 +171,6 @@ export default class ProductScreen extends Component {
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
                         <BtnIcon 
-                            src={require('../../images/navs/carSelect.png')} 
-                            width={22} 
-                            style={styles.productContactImg} 
-                            text={Lang[Lang.default].tab_car}
-                            txtStyle={styles.productContactTxt}
-                            txtViewStyle={{minHeight: 12}}
-                        />
-                        <BtnIcon 
                             src={require('../../images/custem_center.png')} 
                             width={22} 
                             style={styles.productContactImg} 
@@ -185,13 +178,21 @@ export default class ProductScreen extends Component {
                             txtStyle={styles.productContactTxt}
                             txtViewStyle={{minHeight: 12}}
                         />
+                        <BtnIcon 
+                            src={require('../../images/navs/carSelect.png')} 
+                            width={22} 
+                            style={styles.productContactImg} 
+                            text={Lang[Lang.default].tab_car}
+                            txtStyle={styles.productContactTxt}
+                            txtViewStyle={{minHeight: 12}}
+                        />
                     </View>
                     <View style={styles.rowStyle}>
-                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}>
-                            <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.orange}]}>
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].buyNow}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}>
+                            <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -222,6 +223,13 @@ export default class ProductScreen extends Component {
         let shopName = good.sName || null;
         let shopHead = good.sLogo || null;
         shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
+        let coupons = good.coupons || [{
+            hId: 121,
+            hName: '满50减3',
+        }, {
+            hId: 121,
+            hName: '满100减20',
+        }];
         return (
             <View>
                 <View style={styles.whiteBg}>
@@ -279,7 +287,10 @@ export default class ProductScreen extends Component {
                                         <Text style={[styles.txtStyle5, {paddingRight: 5, paddingTop: 8}]}>{'.' + price_arr[1]}</Text>
                                         : null
                                     }
-                                    <Text style={[styles.txtStyle6, {paddingTop: 7}]}>{marketPrice}</Text>
+                                    <Text style={[styles.txtStyle6, {
+                                        paddingTop: 7,
+                                        textDecorationLine: 'line-through',
+                                    }]}>{marketPrice}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 42}]}>
                                     <Text style={[styles.txtStyle2, {lineHeight: 17}]} numberOfLines={2}>{name}</Text>
@@ -298,9 +309,12 @@ export default class ProductScreen extends Component {
                         <View style={styles.selectLineSide}></View>
                     </View>
                     <View style={styles.SelectsBox}>
-                        {this.createSelectBox('规格', null)}
-                        {this.createSelectBox('运费', null)}
-                        {this.createSelectBox('领券', null)}
+                        {this.createSelectBox(Lang[Lang.default].selected , this.selectAttrInfo())}
+                        {this.createSelectBox(Lang[Lang.default].freight, null)}
+                        {coupons ?
+                            this.createSelectBox(Lang[Lang.default].takeCoupon, this.couponListInfo(coupons))
+                            : null
+                        }
                     </View>
                 </View>
                 <View style={styles.shopBox}>
@@ -379,7 +393,7 @@ export default class ProductScreen extends Component {
     //生成选择框
     createSelectBox = (title, ement) => {
         return (
-            <View style={styles.SelectBox}>
+            <TouchableOpacity activeOpacity={1} style={styles.SelectBox}>
                 <View style={styles.SelectBoxChild1}>
                     <View style={styles.SelectBoxChild2}>
                         {ement}
@@ -391,8 +405,55 @@ export default class ProductScreen extends Component {
                 <View style={styles.selectSpotView}>
                     <Image source={require('../../images/more_dot.png')} style={styles.dotImg} />
                 </View>
-            </View>
+            </TouchableOpacity>
         );
+    };
+
+    //已选规格
+    selectAttrInfo = () => {
+        let list = this.selected;
+        let attrText = <Text style={styles.txtStyle6}>{Lang[Lang.default].nothing}</Text>;
+        if(typeof(list) == 'object' && list.length) {
+            let attr = '';
+            for(let i in list) {
+                if(list.length - 1 == i) {
+                    attr += list[i];
+                }else {
+                    attr += list[i] + ', ';
+                }
+            }
+            attrText = <Text style={[styles.txtStyle1, {lineHeight: 19}]} numberOfLines={2}>{attr}</Text>;
+        }
+        return (
+            <View style={styles.selectedBox}>{attrText}</View>
+        );
+    };
+
+    //优惠券列表信息
+    couponListInfo = (list) => {
+        if(typeof(list) == 'object' && list.length) {
+            let i = 0;
+            return (
+                <View>
+                    {list.map((item, index)=>{
+                        if(i < 2) {
+                            i++;
+                            let name = item.hName || '';
+                            return (
+                                <View key={index} style={styles.couponRow}>
+                                    <Text style={styles.couponIcon}>领</Text>
+                                    <Text style={styles.txtStyle7} numberOfLines={1}>{name}</Text>
+                                </View>
+                            );
+                        }else {
+                            return null;
+                        }
+                    })}
+                </View>
+            );
+        }else {
+            return null;
+        }
     };
 
     //猜你喜欢商品
@@ -447,7 +508,10 @@ var styles = StyleSheet.create({
     txtStyle6: {
         color: Color.gainsboro,
         fontSize: 14,
-        textDecorationLine: 'line-through',
+    },
+    txtStyle7 : {
+        fontSize: 12,
+        color: Color.lightBack,
     },
     txtStyle8: {
         color: '#fff',
@@ -545,8 +609,8 @@ var styles = StyleSheet.create({
         borderRadius: 2,
         flex: 1,
         margin: 5,
-        alignItems: 'center',
         justifyContent: 'center',
+        paddingBottom: 5,
     },
     selectTitleView: {
         position: 'absolute',
@@ -568,12 +632,35 @@ var styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: 5,
+        bottom: 4,
         alignItems: 'center',
     },
     dotImg: {
         width: 26,
         height: 26,
+    },
+    selectedBox: {
+        alignItems: 'center',
+        paddingLeft: 3,
+        paddingRight: 3,
+    },
+    couponRow: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        paddingBottom: 5,
+        paddingLeft: 5,
+    },
+    couponIcon: {
+        fontSize: 11,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 1,
+        paddingBottom: 1,
+        color: '#fff',
+        backgroundColor: Color.red,
+        borderRadius: 2,
+        marginRight: 5,
     },
     shopBox: {
         marginTop: PX.marginTB,

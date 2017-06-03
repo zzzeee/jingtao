@@ -21,7 +21,6 @@ export default class ProductDetail extends Component {
     // 默认参数
     static defaultProps = {
         productID: 0,
-        moreHeight: 45,
     };
     // 参数类型
     static propTypes = {
@@ -48,13 +47,18 @@ export default class ProductDetail extends Component {
 
     render() {
         if(!this.props.productID || this.props.productID <= 0) return null;
+        let webHeight = this.state.webViewHeight;
         let webStyle = {
             width: Size.width,
-            height: this.state.webViewHeight,
+            height: webHeight,
+        };
+        let webBoxStyle = {
+            width: Size.width,
+            height: webHeight ? webHeight + 50 : 0,
         };
         return (
-            <View>
-                <View style={[styles.upArrowBox, {height: this.props.moreHeight,}]}>
+            <View style={webBoxStyle}>
+                <View style={styles.upArrowBox}>
                     <Image style={styles.upArrowImg} source={require('../../images/up_arrow.png')} />
                     <Text style={styles.upArrowText}>{Lang[Lang.default].upArrowTxt}</Text>
                 </View>
@@ -70,7 +74,7 @@ export default class ProductDetail extends Component {
                             let width = parseInt(arr[0]) || 0;
                             let height = parseInt(arr[1]) || 0;
                             let _height = Size.width * height / width || 0;
-                            if(_height < 999999 && _height > 0 && _height != this.state.webViewHeight) {
+                            if(_height < 999999 && _height > 0 && _height != webHeight) {
                                 console.log('更新webview高度为：' + _height);
                                 this.setState({webViewHeight: _height})
                             }
@@ -87,9 +91,11 @@ var styles = StyleSheet.create({
         flex: 1,
     },
     upArrowBox: {
+        height: 50,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        backgroundColor: Color.lightGrey,
     },
     upArrowImg: {
         width: 12,

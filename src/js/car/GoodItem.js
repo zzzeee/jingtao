@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import InputText from '../public/InputText';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, Color } from '../public/globalStyle';
@@ -77,67 +78,68 @@ export default class GoodItem extends Component {
         if(!this.props.good) return null;
         let good = this.props.good;
         let gid = good.id || 0;
-        let number = parseInt(this.state.number) || 0;
-        if(gid > 0 && number > 0) {
-            let selectIcon = this.state.isSelect ? 
-                require('../../images/car/select.png') : 
-                require('../../images/car/no_select.png');
-            let img = good.goodImgUrl || null;
-            let goodImg = img ? {uri: img} : require('../../images/empty.png');
-            let goodName = good.name || '';
-            let goodAttr = good.attr || '';
-            let goodPrice = good.price || null;
-            let goodMartPrice = good.martPrice || null;
-            let goodType = good.type || 0;
-            return (
-                <View style={styles.goodBox}>
-                    <View style={styles.selectIconView}>
-                        <BtnIcon 
-                            src={selectIcon} 
-                            width={20} 
-                            press={this.changeSelectState} 
-                            style={{
-                                paddingLeft: PX.marginLR,
-                                paddingRight: 12,
-                                paddingTop: 35,
-                                paddingBottom: 35,
-                            }} 
-                        />
-                    </View>
-                    <Image source={goodImg} style={styles.goodImg} />
-                    <View style={styles.gItemRight}>
-                        <Text style={styles.goodName}>{goodName}</Text>
-                        <Text style={styles.goodAttr}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
-                        <View style={styles.gItemRightFoot}>
-                            <View style={styles.goodPriceBox}>
-                                <Text style={styles.goodPrice}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                                {goodType == 1 ?
-                                    <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
-                                    : null
-                                }
-                            </View>
-                            <View style={styles.ctrlNumberBox}>
-                                <TouchableOpacity 
-                                    style={[styles.btnCtrlNumber, {borderRightWidth: 1}]}
-                                    onPress={()=>{this.changeNumber(-1)}}
-                                >
-                                    <Text style={styles.btnCtrlNumberText}>-</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.btnCtrlNumberText}>{number}</Text>
-                                <TouchableOpacity 
-                                    style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}
-                                    onPress={()=>{this.changeNumber(1)}}
-                                >
-                                    <Text style={styles.btnCtrlNumberText}>+</Text>
-                                </TouchableOpacity>
-                            </View>
+        let number = this.state.number || '';
+        let selectIcon = this.state.isSelect ? 
+            require('../../images/car/select.png') : 
+            require('../../images/car/no_select.png');
+        let img = good.goodImgUrl || null;
+        let goodImg = img ? {uri: img} : require('../../images/empty.png');
+        let goodName = good.name || '';
+        let goodAttr = good.attr || '';
+        let goodPrice = good.price || null;
+        let goodMartPrice = good.martPrice || null;
+        let goodType = good.type || 0;
+        return (
+            <View style={styles.goodBox}>
+                <View style={styles.selectIconView}>
+                    <BtnIcon 
+                        src={selectIcon} 
+                        width={20} 
+                        press={this.changeSelectState} 
+                        style={{
+                            paddingLeft: PX.marginLR,
+                            paddingRight: 12,
+                            paddingTop: 35,
+                            paddingBottom: 35,
+                        }} 
+                    />
+                </View>
+                <Image source={goodImg} style={styles.goodImg} />
+                <View style={styles.gItemRight}>
+                    <Text style={styles.goodName}>{goodName}</Text>
+                    <Text style={styles.goodAttr}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
+                    <View style={styles.gItemRightFoot}>
+                        <View style={styles.goodPriceBox}>
+                            <Text style={styles.goodPrice}>{Lang[Lang.default].RMB + goodPrice}</Text>
+                            {goodType == 1 ?
+                                <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
+                                : null
+                            }
+                        </View>
+                        <View style={styles.ctrlNumberBox}>
+                            <TouchableOpacity 
+                                style={[styles.btnCtrlNumber, {borderRightWidth: 1}]}
+                                onPress={()=>{this.changeNumber(-1)}}
+                            >
+                                <Text style={styles.btnCtrlNumberText}>-</Text>
+                            </TouchableOpacity>
+                            <InputText
+                                keyType="numeric"
+                                vText={number + ''}
+                                style={styles.btnCtrlNumberInput}
+                                onChange={(txt)=>this.setState({number: parseInt(txt)})}
+                            />
+                            <TouchableOpacity 
+                                style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}
+                                onPress={()=>{this.changeNumber(1)}}
+                            >
+                                <Text style={styles.btnCtrlNumberText}>+</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
-            );
-        }else {
-            return null;
-        }
+            </View>
+        );
     }
 
     // 更新购物车数据
@@ -161,7 +163,7 @@ export default class GoodItem extends Component {
     // 改变商品数量
     changeNumber = (x) => {
         if(x === 1 || x === -1) {
-            let number = this.state.number + x;
+            let number = parseInt(this.state.number) + parseInt(x);
             if(number > 0) {
                 this.setState({number: number }, ()=>{
                     this.updateCar(this.props.key1, this.props.key2);
@@ -237,8 +239,8 @@ var styles = StyleSheet.create({
         borderWidth: 1,
     },
     btnCtrlNumber: {
-        width: 24,
-        height: 22,
+        width: 22,
+        height: 24,
         alignItems: 'center',
         justifyContent: 'center',
         borderColor: Color.lavender,
@@ -247,5 +249,17 @@ var styles = StyleSheet.create({
     btnCtrlNumberText: {
         color: Color.lightBack,
         fontSize: 11,
+    },
+    btnCtrlNumberInput: {
+        width: 32,
+        height: 22,
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: Color.lightBack,
+        fontSize: 11,
+        padding: 0,
+        borderWidth: 0,
+        borderRadius: 0,
+        textAlign: 'center',
     },
 });

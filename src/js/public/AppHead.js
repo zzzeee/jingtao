@@ -1,3 +1,9 @@
+/**
+ * APP头部
+ * @auther linzeyong
+ * @date   2017.06.02
+ */
+
 import React, { Component } from 'react';
 import {
 	StyleSheet,
