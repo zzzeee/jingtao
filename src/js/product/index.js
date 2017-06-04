@@ -27,6 +27,7 @@ import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
 import ProductDetail from './productDetail';
 import ProductAttr from './productAttr';
+import ReturnAlert from './returnAlert';
 
 var footHeight = 50;
 var moreHeight = 45;
@@ -42,11 +43,16 @@ export default class ProductScreen extends Component {
             webViewHeight: 0,
             fetchError: null,
             selected: [],   // 已选规格
-            showSelectBox: false,
+            showAttrBox: false,
+            attrType: null,
+            showReturnMsg: false,
         };
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
+        this.error = null;
+        this.message = null;
+        this.attrDatas = null;
     }
 
     componentDidMount() {
@@ -78,7 +84,7 @@ export default class ProductScreen extends Component {
             if(info && info.sTatus && info.proInfo) {
                 state.fetchError = false;
                 state.goodIofo = info.proInfo;
-                state.goodIofo.gDel = 1;
+                // state.goodIofo.gDel = 1;
                 state.isFavorite = info.proInfo.fStatus == 1 ? true : false;
                 if(list && list.sTatus && list.proAry && list.proAry.length) {
                     state.goodList = list.proAry;
@@ -111,14 +117,52 @@ export default class ProductScreen extends Component {
         }
     };
 
-    hideModal = () => {
-        this.setState({showSelectBox: false,});
+    hideAttr = () => {
+        this.setState({showAttrBox: false,});
+    };
+
+    showAttr = (type) => {
+        this.setState({
+            attrType: type,
+            showAttrBox: true,
+        });
+    }
+
+    //商品属性选择结果
+    attrCallBack = (datas) => {
+        if(datas && datas.names) {
+            this.attrDatas = datas;
+            this.error = 0;
+            this.message = Lang[Lang.default].successfullyJoinCar;
+        }else {
+            this.error = 9;
+            this.message = Lang[Lang.default].paramError;
+        }
+        this.setState({
+            selected: datas.names,
+            showAttrBox: false,
+            showReturnMsg: true,
+        }, () => {
+            this.timer = setTimeout(()=>{
+                if(this.state.showReturnMsg) {
+                    this.hideReturnMsg();
+                }
+            }, 2500);
+        });
+    };
+
+    //隐藏提示框
+    hideReturnMsg = () => {
+        this.error = null;
+        this.message = null;
+        this.setState({
+            showReturnMsg: false,
+        });
     };
 
     render() {
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
-        let gid = good.gID || 0;
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         let left = <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />;
         let right = (
@@ -148,40 +192,7 @@ export default class ProductScreen extends Component {
                                 <Text style={errorStyles.refaceBtn} onPress={this.initDatas}>{Lang[Lang.default].reconnect}</Text>
                                 <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
                             </View>
-                            :
-                            ((gid && gid > 0) ?
-                                <View>
-                                    <FlatList
-                                        ref={(_ref)=>{
-                                            this.ref_flatList=_ref;
-                                        }} 
-                                        data={this.state.goodList}
-                                        numColumns={2}
-                                        onScroll={this._onScroll}
-                                        removeClippedSubviews={false}
-                                        contentContainerStyle={styles.flatListStyle}
-                                        keyExtractor={(item, index) => (index)}
-                                        enableEmptySections={true}
-                                        renderItem={this._renderItem}
-                                        ListHeaderComponent={this.pageHead}
-                                        onEndReached={()=>{
-                                            if(!this.loadMoreLock) {
-                                                console.log('正在加载更多 ..');
-                                                this.loadMore();
-                                            }else {
-                                                console.log('加载更多已被锁住。');
-                                            }
-                                        }}
-                                    />
-                                    <ProductAttr 
-                                        isShow={this.state.showSelectBox} 
-                                        attrs={good.attrs} 
-                                        chlidAtrrs={good.chlidAtrrs}
-                                        hideModal={this.hideModal}
-                                    />
-                                </View>
-                                : null
-                            )
+                            : this.pageBody()
                         )
                     }
                 </View>
@@ -218,17 +229,62 @@ export default class ProductScreen extends Component {
                             style={[styles.btnProductShopping, {
                                 backgroundColor: gdel ? Color.gray : Color.mainColor,
                             }]}
-                            onPress={()=>{
-                                this.setState({showSelectBox: true});
-                            }}
+                            onPress={() => {this.showAttr(0)}}
                         >
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+                <ReturnAlert 
+                    isShow={this.state.showReturnMsg} 
+                    error={this.error}
+                    message={this.message}
+                    hideMsg={this.hideReturnMsg}
+                />
             </View>
         );
     }
+
+    pageBody = () => {
+        let good = this.state.goodIofo || {};
+        let gid = good.gID || 0;
+        if(gid && gid > 0) {
+            return (
+                <View>
+                    <FlatList
+                        ref={(_ref)=>this.ref_flatList=_ref} 
+                        data={this.state.goodList}
+                        numColumns={2}
+                        onScroll={this._onScroll}
+                        removeClippedSubviews={false}
+                        contentContainerStyle={styles.flatListStyle}
+                        keyExtractor={(item, index) => (index)}
+                        enableEmptySections={true}
+                        renderItem={this._renderItem}
+                        ListHeaderComponent={this.pageHead}
+                        onEndReached={()=>{
+                            if(!this.loadMoreLock) {
+                                console.log('正在加载更多 ..');
+                                this.loadMore();
+                            }else {
+                                console.log('加载更多已被锁住。');
+                            }
+                        }}
+                    />
+                    <ProductAttr 
+                        isShow={this.state.showAttrBox}
+                        attrs={good.attrs}
+                        chlidAtrrs={good.chlidAtrrs}
+                        hideModal={this.hideAttr}
+                        type={this.state.attrType}
+                        attrCallBack={this.attrCallBack}
+                    />
+                </View>
+            );
+        }else {
+            return null;
+        }
+    };
 
     //商品主要信息
     productInfo = () => {
@@ -360,7 +416,10 @@ export default class ProductScreen extends Component {
                         <View style={styles.selectLineSide}></View>
                     </View>
                     <View style={styles.SelectsBox}>
-                        {this.createSelectBox(Lang[Lang.default].selected , this.selectAttrInfo())}
+                        {this.createSelectBox(Lang[Lang.default].selected , 
+                            this.selectAttrInfo(), 
+                            ()=>{this.showAttr(1)}
+                        )}
                         {this.createSelectBox(Lang[Lang.default].freight, null)}
                         {coupons ?
                             this.createSelectBox(Lang[Lang.default].takeCoupon, this.couponListInfo(coupons))
@@ -442,9 +501,9 @@ export default class ProductScreen extends Component {
     };
 
     //生成选择框
-    createSelectBox = (title, ement) => {
+    createSelectBox = (title, ement, press) => {
         return (
-            <TouchableOpacity activeOpacity={1} style={styles.SelectBox}>
+            <TouchableOpacity activeOpacity={1} style={styles.SelectBox} onPress={press}>
                 <View style={styles.SelectBoxChild1}>
                     <View style={styles.SelectBoxChild2}>
                         {ement}
@@ -465,14 +524,7 @@ export default class ProductScreen extends Component {
         let list = this.state.selected;
         let attrText = Lang[Lang.default].nothing;
         if(typeof(list) == 'object' && list && list.length) {
-            attrText = '';
-            for(let i in list) {
-                if(list.length - 1 == i) {
-                    attrText += list[i];
-                }else {
-                    attrText += list[i] + ', ';
-                }
-            }
+            attrText = list.join(', ');
         }
         return (
             <View style={styles.selectedBox}>

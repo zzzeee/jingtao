@@ -150,6 +150,9 @@ const language = {
         takeCoupon: '领券',
         determine: '确定',
         shopNumber: '购买数量',
+        shopNumberLessOne: '购买数量不能为 0',
+        insufficientStock: '购买数量超出库存啦!',
+        successfullyJoinCar: '加入购物车成功',
     },
 };
 

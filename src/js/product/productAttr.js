@@ -18,6 +18,7 @@ import {
 import CtrlNumber from '../other/CtrlNumber';
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
+import ReturnAlert from './returnAlert';
 
 export default class ProductAttr extends Component {
     // 默认参数
@@ -31,6 +32,7 @@ export default class ProductAttr extends Component {
         attrs: React.PropTypes.array,
         chlidAtrrs: React.PropTypes.array,
         type: React.PropTypes.oneOf([0, 1]),
+        attrCallBack: React.PropTypes.func,
     };
     // 构造函数
     constructor(props) {
@@ -40,17 +42,95 @@ export default class ProductAttr extends Component {
             showReturnMsg: false,
         };
         this.number = 1;
-        this.returnMsg = null;
+        this.error = null;
+        this.message = null;
     }
+
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
+    }
+
+    //数量检查
+    checkFunc = (num) => {
+        if(isNaN(num) || num < 0) {
+            this.error = 1;
+            this.message = Lang[Lang.default].missParam;
+        }else if(num === 0) {
+            this.error = 2;
+            this.message = Lang[Lang.default].shopNumberLessOne;
+        }else if(num > 9) {
+            this.error = 2;
+            this.message = Lang[Lang.default].insufficientStock;
+        }else {
+            return true;
+        }
+        return false;
+    };
+
+    //数量添加失败
+    addFailFunc = (num) => {
+        if(this.error) {
+            this.setState({
+                showReturnMsg: true,
+            }, () => {
+                this.timer = setTimeout(()=>{
+                    if(this.state.showReturnMsg) {
+                        this.hideReturnMsg();
+                    }
+                }, 2500);
+            });
+        }
+    };
+
+    //隐藏提示框
+    hideReturnMsg = () => {
+        this.error = null;
+        this.message = null;
+        this.setState({
+            showReturnMsg: false,
+        });
+    };
+
+    //数量添加成功
+    addSuccessFunc = (num) => {
+        this.number = num;
+        // console.log('已选数量：' + this.number);
+    };
+
+    //获取所有规格
+    getAllChildAttr = () => {
+        let datas = {
+            index: [],
+            names: [],
+            number: this.number,
+        };
+        let that = this;
+        let chlidAtrrs = this.props.chlidAtrrs || [];
+        for(let i in chlidAtrrs) {
+            let index = parseInt(that.state.selects[i]) || 0;
+            let name = chlidAtrrs[i][index] || '';
+            datas.index.push(index);
+            datas.names.push(name);
+        }
+        console.log('属性选择：', datas);
+        return datas;
+    };
+
+    //加入购物车、确定事件
+    joinCarFunc = () => {
+        this.props.attrCallBack(this.getAllChildAttr());
+    };
 
     render() {
         let { isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
-        let _attrs = attrs;
-        let _chlidAtrrs = chlidAtrrs;
-        _attrs[1] = {name: '套餐'};
-        _attrs[2] = {name: '颜色'};
-        _chlidAtrrs[1] = ['套餐一', '套餐二', '套餐三', '套餐四',];
-        _chlidAtrrs[2] = ['红色', '黑色', '白色', ];
+        // let _attrs = attrs;
+        // let _chlidAtrrs = chlidAtrrs;
+        // _attrs[1] = {name: '套餐'};
+        // _attrs[2] = {name: '颜色'};
+        // _chlidAtrrs[1] = ['套餐一', '套餐二', '套餐三', '套餐四',];
+        // _chlidAtrrs[2] = ['红色', '黑色', '白色', ];
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
         let price = 79.00;
         let stock = 999;
@@ -74,18 +154,20 @@ export default class ProductAttr extends Component {
                             </TouchableOpacity>
                         </View>
                         <ScrollView>
-                            {_attrs.map((item, index) => {
-                                let cAttr = _chlidAtrrs[index] || [];
+                            {attrs.map((item, index) => {
+                                let cAttr = chlidAtrrs[index] || [];
                                 return this.attrBox(item, index, cAttr);
                             })}
                             <View style={styles.shopNumberBox}>
                                 <View style={styles.shopNumberLeft}>
                                     <Text style={styles.shopNumberTitle}>{Lang[Lang.default].shopNumber}</Text>
                                 </View>
-                                <CtrlNumber num={this.number} callBack={(num)=>{
-                                    this.number = num;
-                                    console.log('已选数量：' + this.number);
-                                }} />
+                                <CtrlNumber 
+                                    num={this.number} 
+                                    callBack={this.addSuccessFunc}
+                                    checkFunc={this.checkFunc}
+                                    addFailFunc={this.addFailFunc}
+                                />
                             </View>
                         </ScrollView>
                     </View>
@@ -94,6 +176,7 @@ export default class ProductAttr extends Component {
                             <TouchableOpacity 
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
+                                onPress={this.joinCarFunc}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].joinCar}</Text>
                             </TouchableOpacity>
@@ -108,6 +191,7 @@ export default class ProductAttr extends Component {
                             <TouchableOpacity 
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
+                                onPress={this.joinCarFunc}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].determine}</Text>
                             </TouchableOpacity>
@@ -116,6 +200,12 @@ export default class ProductAttr extends Component {
                     <View style={styles.productImgBox}>
                         <Image source={img} style={styles.productImg} />
                     </View>
+                    <ReturnAlert 
+                        isShow={this.state.showReturnMsg} 
+                        error={this.error}
+                        message={this.message}
+                        hideMsg={this.hideReturnMsg}
+                    />
                 </View>
             </Modal>
         );
