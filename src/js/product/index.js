@@ -26,6 +26,7 @@ import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
 import ProductDetail from './productDetail';
+import ProductAttr from './productAttr';
 
 var footHeight = 50;
 var moreHeight = 45;
@@ -37,14 +38,15 @@ export default class ProductScreen extends Component {
         this.state = {
             isFavorite: false,
             goodList: [],     //猜你喜欢的商品列表
-            goodIofo: null,
+            goodIofo: {},
             webViewHeight: 0,
             fetchError: null,
+            selected: [],   // 已选规格
+            showSelectBox: false,
         };
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
-        this.selected = ['红色', 'XXXL超级大号', '丝滑蚕丝材质'];
     }
 
     componentDidMount() {
@@ -71,11 +73,12 @@ export default class ProductScreen extends Component {
                 pPerNum: this.pageNumber,
             });
             let state = {};
-            // console.log(info);
+            console.log(info);
             // console.log(list);
             if(info && info.sTatus && info.proInfo) {
                 state.fetchError = false;
                 state.goodIofo = info.proInfo;
+                state.goodIofo.gDel = 1;
                 state.isFavorite = info.proInfo.fStatus == 1 ? true : false;
                 if(list && list.sTatus && list.proAry && list.proAry.length) {
                     state.goodList = list.proAry;
@@ -108,18 +111,24 @@ export default class ProductScreen extends Component {
         }
     };
 
+    hideModal = () => {
+        this.setState({showSelectBox: false,});
+    };
+
     render() {
         let { navigation } = this.props;
-        let gid = navigation.state.params.gid || 0;
+        let good = this.state.goodIofo || {};
+        let gid = good.gID || 0;
+        let gdel = good.gDel && good.gDel != '0' ? true : false;
         let left = <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />;
         let right = (
             <View style={styles.rowStyle}>
                 <BtnIcon width={PX.headIconSize} src={
                     this.state.isFavorite ? 
-                    require("../../images/favorite_on.png") :
-                    require("../../images/favorite.png")} 
+                    require("../../images/product/favorite_on.png") :
+                    require("../../images/product/favorite.png")} 
                 />
-                <BtnIcon width={PX.headIconSize} style={{marginLeft: 5}} src={require("../../images/share_orange.png")} />
+                <BtnIcon width={PX.headIconSize} style={{marginLeft: 5}} src={require("../../images/product/share_orange.png")} />
             </View>
         );
         return (
@@ -141,28 +150,36 @@ export default class ProductScreen extends Component {
                             </View>
                             :
                             ((gid && gid > 0) ?
-                                <FlatList
-                                    ref={(_ref)=>{
-                                        this.ref_flatList=_ref;
-                                    }} 
-                                    data={this.state.goodList}
-                                    numColumns={2}
-                                    onScroll={this._onScroll}
-                                    removeClippedSubviews={false}
-                                    contentContainerStyle={styles.flatListStyle}
-                                    keyExtractor={(item, index) => (index)}
-                                    enableEmptySections={true}
-                                    renderItem={this._renderItem}
-                                    ListHeaderComponent={this.pageHead}
-                                    onEndReached={()=>{
-                                        if(!this.loadMoreLock) {
-                                            console.log('正在加载更多 ..');
-                                            this.loadMore();
-                                        }else {
-                                            console.log('加载更多已被锁住。');
-                                        }
-                                    }}
-                                />
+                                <View>
+                                    <FlatList
+                                        ref={(_ref)=>{
+                                            this.ref_flatList=_ref;
+                                        }} 
+                                        data={this.state.goodList}
+                                        numColumns={2}
+                                        onScroll={this._onScroll}
+                                        removeClippedSubviews={false}
+                                        contentContainerStyle={styles.flatListStyle}
+                                        keyExtractor={(item, index) => (index)}
+                                        enableEmptySections={true}
+                                        renderItem={this._renderItem}
+                                        ListHeaderComponent={this.pageHead}
+                                        onEndReached={()=>{
+                                            if(!this.loadMoreLock) {
+                                                console.log('正在加载更多 ..');
+                                                this.loadMore();
+                                            }else {
+                                                console.log('加载更多已被锁住。');
+                                            }
+                                        }}
+                                    />
+                                    <ProductAttr 
+                                        isShow={this.state.showSelectBox} 
+                                        attrs={good.attrs} 
+                                        chlidAtrrs={good.chlidAtrrs}
+                                        hideModal={this.hideModal}
+                                    />
+                                </View>
                                 : null
                             )
                         )
@@ -171,7 +188,7 @@ export default class ProductScreen extends Component {
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
                         <BtnIcon 
-                            src={require('../../images/custem_center.png')} 
+                            src={require('../../images/product/custem_center.png')} 
                             width={22} 
                             style={styles.productContactImg} 
                             text={Lang[Lang.default].customer}
@@ -188,10 +205,23 @@ export default class ProductScreen extends Component {
                         />
                     </View>
                     <View style={styles.rowStyle}>
-                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.orange}]}>
+                        <TouchableOpacity 
+                            activeOpacity ={1} 
+                            style={[styles.btnProductShopping, {
+                                backgroundColor: gdel ? Color.lightGrey : Color.orange,
+                            }]}
+                        >
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].buyNow}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity ={1} style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}>
+                        <TouchableOpacity 
+                            activeOpacity ={1} 
+                            style={[styles.btnProductShopping, {
+                                backgroundColor: gdel ? Color.gray : Color.mainColor,
+                            }]}
+                            onPress={()=>{
+                                this.setState({showSelectBox: true});
+                            }}
+                        >
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
                         </TouchableOpacity>
                     </View>
@@ -205,6 +235,7 @@ export default class ProductScreen extends Component {
         if(!this.state.goodIofo) return null;
         let good = this.state.goodIofo || {};
         let gid = good.gID;
+        let gdel = good.gDel && good.gDel != '0' ? true : false;
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;
@@ -234,39 +265,46 @@ export default class ProductScreen extends Component {
             <View>
                 <View style={styles.whiteBg}>
                     <View style={styles.productImgBox}>
-                        <Swiper
-                            width={Size.width}
-                            height={Size.width}
-                            style={styles.wrapper}
-                            horizontal={true}
-                            showsPagination={true}
-                            paginationStyle={styles.paginationStyle}
-                            dot={(<View 
-                                style={{
-                                    backgroundColor:'rgba(0, 0, 0, .3)',
-                                    width: 6,
-                                    height: 6,
-                                    borderRadius: 3,
-                                    margin: 5,
-                                }}
-                            />)}
-                            activeDot={(<View 
-                                style={{
-                                    backgroundColor:'rgba(229, 86, 69, 1)',
-                                    width: 6,
-                                    height: 6,
-                                    borderRadius: 3,
-                                    margin: 5,
-                                }}
-                            />)}
-                            autoplay={true}
-                            autoplayTimeout={3}
-                            showsButtons={false}
-                        >
-                            {img_arr.map((item, index)=>{
-                                return <Image key={index} source={{uri: item}} style={{width: Size.width, height: Size.width}} />;
-                            })}
-                        </Swiper>
+                        {gdel ?
+                            <View style={styles.productDeleteBox}>
+                                <Image style={styles.productDelete} source={require('../../images/product/product_deleted.png')}>
+                                    <Text style={styles.txtStyle6}>{Lang[Lang.default].productDelete}</Text>
+                                </Image> 
+                            </View> :
+                            <Swiper
+                                width={Size.width}
+                                height={Size.width}
+                                style={styles.wrapper}
+                                horizontal={true}
+                                showsPagination={true}
+                                paginationStyle={styles.paginationStyle}
+                                dot={(<View 
+                                    style={{
+                                        backgroundColor:'rgba(0, 0, 0, .3)',
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: 3,
+                                        margin: 5,
+                                    }}
+                                />)}
+                                activeDot={(<View 
+                                    style={{
+                                        backgroundColor:'rgba(229, 86, 69, 1)',
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: 3,
+                                        margin: 5,
+                                    }}
+                                />)}
+                                autoplay={true}
+                                autoplayTimeout={3}
+                                showsButtons={false}
+                            >
+                                {img_arr.map((item, index)=>{
+                                    return <Image key={index} source={{uri: item}} style={styles.productImg} />;
+                                })}
+                            </Swiper>
+                        }
                         <View style={styles.areaStockView}>
                             <Text style={[styles.txtStyle1, {paddingRight: 20}]}>{Lang[Lang.default].stock + ': 1000'}</Text>
                             <Text style={styles.txtStyle1}>{Lang[Lang.default].origin + ': 宁波'}</Text>
@@ -278,13 +316,23 @@ export default class ProductScreen extends Component {
                                     borderBottomColor: Color.lavender,
                                     borderBottomWidth: pixel,
                                 }]}>
-                                    <Text style={[styles.txtStyle3, {paddingRight: 5, paddingTop: 4}]}>{Lang[Lang.default].RMB}</Text>
+                                    <Text style={[styles.txtStyle3, {
+                                        paddingRight: 5, 
+                                        paddingTop: 4,
+                                        color: gdel ? Color.gainsboro : Color.mainColor,
+                                    }]}>{Lang[Lang.default].RMB}</Text>
                                     {price_arr[0] ?
-                                        <Text style={styles.txtStyle4}>{price_arr[0]}</Text>
+                                        <Text style={[styles.txtStyle4, {
+                                            color: gdel ? Color.gainsboro : Color.mainColor,
+                                        }]}>{price_arr[0]}</Text>
                                         : null
                                     }
                                     {price_arr[1] ?
-                                        <Text style={[styles.txtStyle5, {paddingRight: 5, paddingTop: 8}]}>{'.' + price_arr[1]}</Text>
+                                        <Text style={[styles.txtStyle5, {
+                                            paddingRight: 5, 
+                                            paddingTop: 8,
+                                            color: gdel ? Color.gainsboro : Color.mainColor,
+                                        }]}>{'.' + price_arr[1]}</Text>
                                         : null
                                     }
                                     <Text style={[styles.txtStyle6, {
@@ -293,7 +341,10 @@ export default class ProductScreen extends Component {
                                     }]}>{marketPrice}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 42}]}>
-                                    <Text style={[styles.txtStyle2, {lineHeight: 17}]} numberOfLines={2}>{name}</Text>
+                                    <Text style={[styles.txtStyle2, {
+                                        lineHeight: 17,
+                                        color: gdel ? Color.gainsboro : Color.lightBack,
+                                    }]} numberOfLines={2}>{name}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 20}]}>
                                 </View>
@@ -324,12 +375,12 @@ export default class ProductScreen extends Component {
                         </View>
                         <View style={styles.shopHeadRight}>
                             <View style={[styles.rowStyle, {marginBottom: 10}]}>
-                                <Image source={require('../../images/vip.png')} style={styles.vipImg} />
+                                <Image source={require('../../images/product/vip.png')} style={styles.vipImg} />
                                 <Text numberOfLines={1} style={styles.txtStyle2}>{shopName}</Text>
                             </View>
                             <View style={styles.rowStyle}>
                                 <BtnIcon 
-                                    src={require('../../images/7day.png')} 
+                                    src={require('../../images/product/7day.png')} 
                                     width={20} 
                                     style={styles.shopMarkImg} 
                                     text={Lang[Lang.default].sevenDays} 
@@ -337,7 +388,7 @@ export default class ProductScreen extends Component {
                                     txtViewStyle={{minHeight: 12}}
                                 />
                                 <BtnIcon 
-                                    src={require('../../images/origin.png')} 
+                                    src={require('../../images/product/origin.png')} 
                                     width={20} 
                                     style={styles.shopMarkImg} 
                                     text={Lang[Lang.default].certifiedGuarantee} 
@@ -345,7 +396,7 @@ export default class ProductScreen extends Component {
                                     txtViewStyle={{minHeight: 12}}
                                 />
                                 <BtnIcon 
-                                    src={require('../../images/quick.png')} 
+                                    src={require('../../images/product/quick.png')} 
                                     width={20} 
                                     style={styles.shopMarkImg} 
                                     text={Lang[Lang.default].lightningConsignment} 
@@ -353,7 +404,7 @@ export default class ProductScreen extends Component {
                                     txtViewStyle={{minHeight: 12}}
                                 />
                                 <BtnIcon 
-                                    src={require('../../images/direct.png')} 
+                                    src={require('../../images/product/direct.png')} 
                                     width={20} 
                                     style={styles.shopMarkImg} 
                                     text={Lang[Lang.default].directDeal} 
@@ -403,7 +454,7 @@ export default class ProductScreen extends Component {
                     <Text style={styles.SelectTitleText}>{title}</Text>
                 </View>
                 <View style={styles.selectSpotView}>
-                    <Image source={require('../../images/more_dot.png')} style={styles.dotImg} />
+                    <Image source={require('../../images/product/more_dot.png')} style={styles.dotImg} />
                 </View>
             </TouchableOpacity>
         );
@@ -411,27 +462,28 @@ export default class ProductScreen extends Component {
 
     //已选规格
     selectAttrInfo = () => {
-        let list = this.selected;
-        let attrText = <Text style={styles.txtStyle6}>{Lang[Lang.default].nothing}</Text>;
-        if(typeof(list) == 'object' && list.length) {
-            let attr = '';
+        let list = this.state.selected;
+        let attrText = Lang[Lang.default].nothing;
+        if(typeof(list) == 'object' && list && list.length) {
+            attrText = '';
             for(let i in list) {
                 if(list.length - 1 == i) {
-                    attr += list[i];
+                    attrText += list[i];
                 }else {
-                    attr += list[i] + ', ';
+                    attrText += list[i] + ', ';
                 }
             }
-            attrText = <Text style={[styles.txtStyle1, {lineHeight: 19}]} numberOfLines={2}>{attr}</Text>;
         }
         return (
-            <View style={styles.selectedBox}>{attrText}</View>
+            <View style={styles.selectedBox}>
+                <Text style={[styles.txtStyle1, {lineHeight: 19}]} numberOfLines={2}>{attrText}</Text>
+            </View>
         );
     };
 
     //优惠券列表信息
     couponListInfo = (list) => {
-        if(typeof(list) == 'object' && list.length) {
+        if(typeof(list) == 'object' && list && list.length) {
             let i = 0;
             return (
                 <View>
@@ -520,6 +572,19 @@ var styles = StyleSheet.create({
     flatListStyle: {
         backgroundColor: Color.lightGrey,
     },
+    productDeleteBox: {
+        backgroundColor: Color.lightGrey,
+        width: Size.width, 
+        height: Size.width,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    productDelete: {
+        width: 180,
+        height: 150,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
     wrapper: {
         // borderBottomWidth: pixel,
         // borderBottomColor: Color.lavender,
@@ -532,6 +597,10 @@ var styles = StyleSheet.create({
         height: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    productImg: {
+        width: Size.width, 
+        height: Size.width,
     },
     areaStockView: {
         height: 102,
@@ -611,6 +680,8 @@ var styles = StyleSheet.create({
         margin: 5,
         justifyContent: 'center',
         paddingBottom: 5,
+        paddingLeft: 3,
+        paddingRight: 3,
     },
     selectTitleView: {
         position: 'absolute',
@@ -641,15 +712,14 @@ var styles = StyleSheet.create({
     },
     selectedBox: {
         alignItems: 'center',
-        paddingLeft: 3,
-        paddingRight: 3,
+        paddingBottom: 5,
     },
     couponRow: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         paddingBottom: 5,
-        paddingLeft: 5,
+        paddingLeft: 2,
     },
     couponIcon: {
         fontSize: 11,

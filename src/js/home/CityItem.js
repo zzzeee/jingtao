@@ -78,9 +78,9 @@ export default class CityItem extends Component {
         let info = city.griInfo || '';
         let img = city.griImg || '';
         let img_down = require("../../images/down.png");
-        let img_enter = require("../../images/enter.png");
-        let img_mark = require("../../images/market.png");
-        let img_share = require("../../images/share.png");
+        let img_enter = require("../../images/home/enter.png");
+        let img_mark = require("../../images/home/market.png");
+        let img_share = require("../../images/home/share.png");
         return (
             <View>
                 <View style={styles.cityNameRow}>

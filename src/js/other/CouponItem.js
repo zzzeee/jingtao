@@ -85,7 +85,7 @@ export default class CouponItem extends Component {
                                 </View>
                             </View>
                             {this.state.receive ?
-                                <Image source={require('../../images/receive.png')} style={{
+                                <Image source={require('../../images/car/receive.png')} style={{
                                     width: height, 
                                     height: height,
                                     position: 'absolute',

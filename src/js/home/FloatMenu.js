@@ -44,17 +44,17 @@ export default class FloatMenu extends Component {
         this.renderObject = this.renderObject.bind(this);
         this.buttons = [{
             'title' : '',
-            'icon' : require('../../images/share.png'),
+            'icon' : require('../../images/home/share.png'),
             'detail' : '',
             'press' : this.showStartShare,
         }, {
             'title' : Lang[Lang.default].sellSpecialty,
-            'icon' : require('../../images/partner.png'),
+            'icon' : require('../../images/home/partner.png'),
             'detail' : Lang[Lang.default].sellSpecialty_txt,
             'press' : null,
         }, {
             'title' : '',
-            'icon' : require('../../images/hide.png'),
+            'icon' : require('../../images/home/hide.png'),
             'detail' : '',
             'press' : this.hideCity,
         }];

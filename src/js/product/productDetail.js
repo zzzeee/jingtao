@@ -59,7 +59,7 @@ export default class ProductDetail extends Component {
         return (
             <View style={webBoxStyle}>
                 <View style={styles.upArrowBox}>
-                    <Image style={styles.upArrowImg} source={require('../../images/up_arrow.png')} />
+                    <Image style={styles.upArrowImg} source={require('../../images/product/up_arrow.png')} />
                     <Text style={styles.upArrowText}>{Lang[Lang.default].upArrowTxt}</Text>
                 </View>
                 <View style={webStyle}>

@@ -527,7 +527,7 @@ export default class CityGoodShopList extends Component {
                 <View style={styles.goodRightView}>
                     <View>
                         <BtnIcon 
-                            src={require('../../images/market.png')} 
+                            src={require('../../images/home/market.png')} 
                             width={15} text={'abc'} 
                             txtStyle={styles.fontStyle2} 
                             style={{

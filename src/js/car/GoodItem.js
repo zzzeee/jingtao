@@ -14,7 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import InputText from '../public/InputText';
+import CtrlNumber from '../other/CtrlNumber';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, Color } from '../public/globalStyle';
@@ -37,14 +37,13 @@ export default class GoodItem extends Component {
         super(props);
         this.state = {
             isSelect: null,
-            number: null,
         };
+        this.number = null;
     }
 
     componentWillMount() {
-        if(this.props.good && this.props.good.number) {
+        if(this.props.good) {
             this.setState({
-                number: parseInt(this.props.good.number),
                 isSelect: this.props.ctrlSelect,
             }, ()=>this.updateCar(null, null));
         }
@@ -65,8 +64,7 @@ export default class GoodItem extends Component {
                 nextProps.changeKEY2 === nextProps.key2 &&
                 nextState.isSelect != this.state.isSelect
             ) ||
-            nextState.isSelect != this.state.isSelect || 
-            nextState.number != this.state.number
+            nextState.isSelect != this.state.isSelect
         ) {
             return true;
         }else {
@@ -78,7 +76,6 @@ export default class GoodItem extends Component {
         if(!this.props.good) return null;
         let good = this.props.good;
         let gid = good.id || 0;
-        let number = this.state.number || '';
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
@@ -116,26 +113,10 @@ export default class GoodItem extends Component {
                                 : null
                             }
                         </View>
-                        <View style={styles.ctrlNumberBox}>
-                            <TouchableOpacity 
-                                style={[styles.btnCtrlNumber, {borderRightWidth: 1}]}
-                                onPress={()=>{this.changeNumber(-1)}}
-                            >
-                                <Text style={styles.btnCtrlNumberText}>-</Text>
-                            </TouchableOpacity>
-                            <InputText
-                                keyType="numeric"
-                                vText={number + ''}
-                                style={styles.btnCtrlNumberInput}
-                                onChange={(txt)=>this.setState({number: parseInt(txt)})}
-                            />
-                            <TouchableOpacity 
-                                style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}
-                                onPress={()=>{this.changeNumber(1)}}
-                            >
-                                <Text style={styles.btnCtrlNumberText}>+</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <CtrlNumber num={parseInt(this.props.good.number)} callBack={(num)=>{
+                            this.number = num;
+                            this.updateCar(this.props.key1, this.props.key2);
+                        }} />
                     </View>
                 </View>
             </View>
@@ -148,7 +129,7 @@ export default class GoodItem extends Component {
         let { key1, key2, keyword, carDatas, updateCarDatas } = this.props;
         if(key1 !== null && key2 !== null && keyword !== null && carDatas && carDatas[key1] && updateCarDatas) {
             carDatas[key1][keyword][key2].select = newSelectState;
-            carDatas[key1][keyword][key2].number = this.state.number;
+            carDatas[key1][keyword][key2].number = this.number;
             updateCarDatas(carDatas, index1, index2);
         }
     };
@@ -159,18 +140,6 @@ export default class GoodItem extends Component {
             this.updateCar(this.props.key1, this.props.key2);
         });
     };
-
-    // 改变商品数量
-    changeNumber = (x) => {
-        if(x === 1 || x === -1) {
-            let number = parseInt(this.state.number) + parseInt(x);
-            if(number > 0) {
-                this.setState({number: number }, ()=>{
-                    this.updateCar(this.props.key1, this.props.key2);
-                });
-            }
-        }
-    }
 }
 
 var styles = StyleSheet.create({
@@ -228,38 +197,5 @@ var styles = StyleSheet.create({
         fontSize: 12,
         backgroundColor: Color.red,
         marginLeft: 10,
-    },
-    ctrlNumberBox: {
-        flexDirection: 'row',
-        width: 80,
-        height: 24,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderColor: Color.lavender,
-        borderWidth: 1,
-    },
-    btnCtrlNumber: {
-        width: 22,
-        height: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderColor: Color.lavender,
-        backgroundColor: Color.floralWhite,
-    },
-    btnCtrlNumberText: {
-        color: Color.lightBack,
-        fontSize: 11,
-    },
-    btnCtrlNumberInput: {
-        width: 32,
-        height: 22,
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: Color.lightBack,
-        fontSize: 11,
-        padding: 0,
-        borderWidth: 0,
-        borderRadius: 0,
-        textAlign: 'center',
     },
 });

@@ -144,10 +144,12 @@ const language = {
         joinCar: '加入购物车',
         buyNow: '立即购买',
         productDelete: '您要找的商品已经被删除',
-        nothing: '无',
+        nothing: '未选择',
         selected: '已选',
         freight: '运费',
         takeCoupon: '领券',
+        determine: '确定',
+        shopNumber: '购买数量',
     },
 };
 
