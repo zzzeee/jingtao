@@ -153,6 +153,10 @@ const language = {
         shopNumberLessOne: '购买数量不能为 0',
         insufficientStock: '购买数量超出库存啦!',
         successfullyJoinCar: '加入购物车成功',
+        selectDistributionArea: '选择配送地区',
+        selectProvince: '请选择省',
+        selectCity: '请选择市',
+        to: '至',
     },
 };
 

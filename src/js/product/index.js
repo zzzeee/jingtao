@@ -28,6 +28,7 @@ import CountDown from '../find/CountDown';
 import ProductDetail from './productDetail';
 import ProductAttr from './productAttr';
 import ReturnAlert from './returnAlert';
+import Areas from './Areas';
 
 var footHeight = 50;
 var moreHeight = 45;
@@ -46,6 +47,7 @@ export default class ProductScreen extends Component {
             showAttrBox: false,
             attrType: null,
             showReturnMsg: false,
+            showAreas: false,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -53,6 +55,9 @@ export default class ProductScreen extends Component {
         this.error = null;
         this.message = null;
         this.attrDatas = null;
+        this.province = null;
+        this.city = null;
+        this.freight = null;
     }
 
     componentDidMount() {
@@ -160,6 +165,26 @@ export default class ProductScreen extends Component {
         });
     };
 
+    //显示地区列表
+    showAreasBox = () => {
+        this.setState({showAreas: true});
+    };
+
+    //隐藏地区列表
+    hideAreasBox = () => {
+        this.setState({showAreas: false});
+    };
+
+    //获取查询运费的省市
+    getSelectArea = (province, city, freight) => {
+        if(province && freight >= 0) {
+            this.province = province;
+            this.city = city;
+            this.freight = freight;
+        }
+        this.hideAreasBox();
+    };
+
     render() {
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
@@ -235,12 +260,15 @@ export default class ProductScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <ReturnAlert 
-                    isShow={this.state.showReturnMsg} 
-                    error={this.error}
-                    message={this.message}
-                    hideMsg={this.hideReturnMsg}
-                />
+                {this.state.showReturnMsg ?
+                    <ReturnAlert 
+                        isShow={this.state.showReturnMsg} 
+                        error={this.error}
+                        message={this.message}
+                        hideMsg={this.hideReturnMsg}
+                    />
+                    : null
+                }
             </View>
         );
     }
@@ -278,6 +306,11 @@ export default class ProductScreen extends Component {
                         hideModal={this.hideAttr}
                         type={this.state.attrType}
                         attrCallBack={this.attrCallBack}
+                    />
+                    <Areas
+                        isShow={this.state.showAreas} 
+                        hideAreasBox={this.hideAreasBox}
+                        getSelectArea={this.getSelectArea}
                     />
                 </View>
             );
@@ -418,9 +451,12 @@ export default class ProductScreen extends Component {
                     <View style={styles.SelectsBox}>
                         {this.createSelectBox(Lang[Lang.default].selected , 
                             this.selectAttrInfo(), 
-                            ()=>{this.showAttr(1)}
+                            ()=>this.showAttr(1)
                         )}
-                        {this.createSelectBox(Lang[Lang.default].freight, null)}
+                        {this.createSelectBox(Lang[Lang.default].freight, 
+                            this.getFreightInfo(),
+                            this.showAreasBox
+                        )}
                         {coupons ?
                             this.createSelectBox(Lang[Lang.default].takeCoupon, this.couponListInfo(coupons))
                             : null
@@ -533,6 +569,28 @@ export default class ProductScreen extends Component {
         );
     };
 
+    //运费信息
+    getFreightInfo = () => {
+        let province = this.province && this.province.name ? this.province.name : null;
+        let city = this.city && this.city.name ? this.city.name : '';
+        let freight = this.freight || '';
+        if(province && freight) {
+            let str = Lang[Lang.default].to + ' ' + province + ' ' + city;
+            return (
+                <View style={styles.selectedBox}>
+                    <Text style={styles.txtStyle7} numberOfLines={2}>{str}</Text>
+                    <Text style={[styles.txtStyle9, {paddingTop: 4}]}>{'' + freight}</Text>
+                </View>
+            );
+        }else {
+            return (
+                <View style={styles.selectedBox}>
+                    <Text style={styles.txtStyle1}>{Lang[Lang.default].nothing}</Text>
+                </View>
+            );
+        }
+    };
+
     //优惠券列表信息
     couponListInfo = (list) => {
         if(typeof(list) == 'object' && list && list.length) {
@@ -620,6 +678,10 @@ var styles = StyleSheet.create({
     txtStyle8: {
         color: '#fff',
         fontSize: 14,
+    },
+    txtStyle9: {
+        color: Color.red,
+        fontSize: 12,
     },
     flatListStyle: {
         backgroundColor: Color.lightGrey,
@@ -764,7 +826,7 @@ var styles = StyleSheet.create({
     },
     selectedBox: {
         alignItems: 'center',
-        paddingBottom: 5,
+        paddingBottom: 4,
     },
     couponRow: {
         flexDirection: 'row',
