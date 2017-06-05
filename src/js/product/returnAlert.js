@@ -36,9 +36,11 @@ export default class ReturnAlert extends Component {
     render() {
         let {error, isShow, message, hideMsg} = this.props;
         if((!error && error !== 0) || !isShow) return null;
+        let img = error ? require('../../images/product/tost_fail.png') : require('../../images/product/tost_ok.png');
         return (
             <View style={styles.bodyBg}>
                 <TouchableOpacity style={styles.btnBg} onPress={hideMsg}>
+                    <Image source={img} style={styles.alertImg} />
                     <Text style={styles.alertText}>{message}</Text>
                 </TouchableOpacity>
             </View>
@@ -60,6 +62,10 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    alertImg: {
+        width: 100,
+        height: 80,
     },
     alertText: {
         color: '#fff',

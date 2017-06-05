@@ -306,6 +306,9 @@ export default class ProductScreen extends Component {
                         hideModal={this.hideAttr}
                         type={this.state.attrType}
                         attrCallBack={this.attrCallBack}
+                        productImg={good.gThumbPic}
+                        productPrice={good.gDiscountPrice}
+                        priceAtrrs={good.priceAtrrs}
                     />
                     <Areas
                         isShow={this.state.showAreas} 

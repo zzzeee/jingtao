@@ -118,6 +118,34 @@ export default class ProductAttr extends Component {
         return datas;
     };
 
+    //获取所选属性的价格
+    getAttrPrice = () => {
+        let that = this;
+        let selects = [];
+        let { attrs, chlidAtrrs } = this.props;
+        let priceAtrrs = this.props.priceAtrrs || [];
+        let productPrice = this.props.productPrice;
+        for(let i in chlidAtrrs) {
+            let check = attrs[i].check || false;
+            if(check && check !== '0') {
+                let index = parseInt(that.state.selects[i]) || 0;
+                selects.push(index);
+            }
+        }
+        console.log(selects);
+        console.log(priceAtrrs);
+        for(let i in selects) {
+            let index = selects[i] || 0;
+            console.log(priceAtrrs[index]);
+            if(typeof(priceAtrrs[index]) == 'string' || typeof(priceAtrrs[index]) == 'number') {
+                productPrice = parseFloat(priceAtrrs[index]);
+            }else if(priceAtrrs[index]) {
+                priceAtrrs = priceAtrrs[index];
+            }
+        }
+        return productPrice;
+    };
+
     //加入购物车、确定事件
     joinCarFunc = () => {
         this.props.attrCallBack(this.getAllChildAttr());
@@ -132,7 +160,6 @@ export default class ProductAttr extends Component {
         // _chlidAtrrs[1] = ['套餐一', '套餐二', '套餐三', '套餐四',];
         // _chlidAtrrs[2] = ['红色', '黑色', '白色', ];
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
-        let price = 79.00;
         let stock = 999;
         return (
             <Modal
@@ -146,7 +173,7 @@ export default class ProductAttr extends Component {
                     <View style={styles.modalBody}>
                         <View style={styles.priceStockRow}>
                             <View style={styles.priceStockBox}>
-                                <Text style={styles.priceText}>{Lang[Lang.default].RMB + price}</Text>
+                                <Text style={styles.priceText}>{Lang[Lang.default].RMB + this.getAttrPrice()}</Text>
                                 <Text style={styles.stockText}>{Lang[Lang.default].stock + ' ' + stock}</Text>
                             </View>
                             <TouchableOpacity onPress={hideModal} style={styles.rowCloseBox}>
