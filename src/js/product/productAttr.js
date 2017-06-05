@@ -33,6 +33,8 @@ export default class ProductAttr extends Component {
         chlidAtrrs: React.PropTypes.array,
         type: React.PropTypes.oneOf([0, 1]),
         attrCallBack: React.PropTypes.func,
+        priceAtrrs: React.PropTypes.array,
+        pWarehouse: React.PropTypes.array,
     };
     // 构造函数
     constructor(props) {
@@ -54,13 +56,14 @@ export default class ProductAttr extends Component {
 
     //数量检查
     checkFunc = (num) => {
+        let maxStock = this.getAttrStock();
         if(isNaN(num) || num < 0) {
             this.error = 1;
             this.message = Lang[Lang.default].missParam;
         }else if(num === 0) {
             this.error = 2;
             this.message = Lang[Lang.default].shopNumberLessOne;
-        }else if(num > 9) {
+        }else if(num > maxStock) {
             this.error = 2;
             this.message = Lang[Lang.default].insufficientStock;
         }else {
@@ -132,11 +135,8 @@ export default class ProductAttr extends Component {
                 selects.push(index);
             }
         }
-        console.log(selects);
-        console.log(priceAtrrs);
         for(let i in selects) {
             let index = selects[i] || 0;
-            console.log(priceAtrrs[index]);
             if(typeof(priceAtrrs[index]) == 'string' || typeof(priceAtrrs[index]) == 'number') {
                 productPrice = parseFloat(priceAtrrs[index]);
             }else if(priceAtrrs[index]) {
@@ -146,6 +146,28 @@ export default class ProductAttr extends Component {
         return productPrice;
     };
 
+    //获取所选属性的库存
+    getAttrStock = () => {
+        let that = this;
+        let pWarehouse = this.props.pWarehouse || [];
+        let datas = this.getAllChildAttr();
+        let names = datas.names.join(',') || null;
+        let indexs = datas.index.join(',') || null;
+        let stock = 0;
+        if(names && indexs) {
+            for(let i in pWarehouse) {
+                let attr_name = pWarehouse[i].whPackname || null;
+                let attr_index = pWarehouse[i].whSubscript || null;
+                let number = parseInt(pWarehouse[i].whNum) || 0;
+                if(names == attr_name && indexs == attr_index) {
+                    stock = number;
+                    break;
+                }
+            }
+        }
+        return stock;
+    };
+
     //加入购物车、确定事件
     joinCarFunc = () => {
         this.props.attrCallBack(this.getAllChildAttr());
@@ -153,14 +175,8 @@ export default class ProductAttr extends Component {
 
     render() {
         let { isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
-        // let _attrs = attrs;
-        // let _chlidAtrrs = chlidAtrrs;
-        // _attrs[1] = {name: '套餐'};
-        // _attrs[2] = {name: '颜色'};
-        // _chlidAtrrs[1] = ['套餐一', '套餐二', '套餐三', '套餐四',];
-        // _chlidAtrrs[2] = ['红色', '黑色', '白色', ];
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
-        let stock = 999;
+        let stock = this.getAttrStock();
         return (
             <Modal
                 animationType={"slide"}

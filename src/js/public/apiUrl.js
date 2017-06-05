@@ -30,6 +30,8 @@ var urls = {
     getProductDetails: host + '/api/ProductController/getProductDetailInfoByProID?gID=',
     //获取推荐商品列表
     getRecommendList: host + '/api/ProductNController/getRecommendedProductsList',
+    //获取指定地区的运费
+    getProductFreight: host + '/api/ProductNController/getProductFreightByProvinceID',
 };
 
 export default urls;

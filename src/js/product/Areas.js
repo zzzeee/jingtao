@@ -15,6 +15,8 @@ import {
     ScrollView,
 } from 'react-native';
 
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
@@ -25,7 +27,9 @@ export default class Areas extends Component {
     };
     // 参数类型
     static propTypes = {
+        gid: React.PropTypes.number.isRequired,
         isShow: React.PropTypes.bool.isRequired,
+        areas: React.PropTypes.array.isRequired,
         hideAreasBox: React.PropTypes.func,
         getSelectArea: React.PropTypes.func,
     };
@@ -40,55 +44,20 @@ export default class Areas extends Component {
         };
     }
 
+    componentWillMount() {
+        if(this.props.areas && this.props.gid) {
+            this.setState({
+                datas: this.props.areas,
+            });
+        }
+    }
+
     componentDidMount() {
-        let datas = [{
-            id: 1,
-            name: '北京',
-            child: [{
-                id: 11,
-                name: '北京',
-            },],
-        }, {
-            id: 2,
-            name: '浙江',
-            child: [{
-                id: 21,
-                name: '杭州',
-            }, {
-                id: 22,
-                name: '宁波',
-            }, {
-                id: 23,
-                name: '温州',
-            }, {
-                id: 24,
-                name: '台州',
-            }, {
-                id: 25,
-                name: '湖州湖州湖州湖州'
-            }]
-        }, {
-            id: 3,
-            name: '福建',
-            child: [{
-                id: 31,
-                name: '福州'
-            }, {
-                id: 32,
-                name: '厦门'
-            }, {
-                id: 33,
-                name: '宁德'
-            }, {
-                id: 34,
-                name: '泉州'
-            }],
-        }];
-        this.setState({ datas });
     }
 
     clickArea = (index, id, name) => {
         if(id && name) {
+            let that = this;
             if(this.state.selectIndex > 0) {
                 this.setState({
                     city: {
@@ -97,7 +66,15 @@ export default class Areas extends Component {
                         name: name
                     }
                 }, () => {
-                    this.props.getSelectArea(this.state.province, this.state.city, 10.00);
+                    Utils.fetch(Urls.getProductFreight, 'post', {
+                        gID: this.props.gid, 
+                        pID: this.state.province.id,
+                    }, function(result) {
+                        if(result && result.sTatus) {
+                            let freight = result.pFreight ? parseFloat(result.pFreight) : 0;
+                            that.props.getSelectArea(that.state.province, that.state.city, freight);
+                        }
+                    });
                 });
             }else {
                 this.setState({
@@ -157,8 +134,8 @@ export default class Areas extends Component {
                         </View>
                         <ScrollView>
                             {_datas.map((item, index) => {
-                                let id = item.id || null;
-                                let name = item.name || null;
+                                let id = item.region_id || null;
+                                let name = item.region_name || null;
                                 return (
                                     <TouchableOpacity key={index} style={styles.areaRow} onPress={()=>{
                                         that.clickArea(index, id, name);

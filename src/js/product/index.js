@@ -275,7 +275,7 @@ export default class ProductScreen extends Component {
 
     pageBody = () => {
         let good = this.state.goodIofo || {};
-        let gid = good.gID || 0;
+        let gid = parseInt(good.gID) || 0;
         if(gid && gid > 0) {
             return (
                 <View>
@@ -309,8 +309,11 @@ export default class ProductScreen extends Component {
                         productImg={good.gThumbPic}
                         productPrice={good.gDiscountPrice}
                         priceAtrrs={good.priceAtrrs}
+                        pWarehouse={good.pWarehouse}
                     />
                     <Areas
+                        gid={gid}
+                        areas={good.areas}
                         isShow={this.state.showAreas} 
                         hideAreasBox={this.hideAreasBox}
                         getSelectArea={this.getSelectArea}
