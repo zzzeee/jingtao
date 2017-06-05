@@ -61,10 +61,11 @@ export default class CityItem extends Component {
         }
     };
 
-    linkList = (_id, _index) => {
+    linkList = (_id, _name, _index) => {
         if(_id > 0 && this.nav) {
             this.nav.navigate('CityGoodShopList', {
                 index: _index,
+                name: _name,
                 cid: _id,
             });
         }
@@ -115,7 +116,7 @@ export default class CityItem extends Component {
                             color={Color.lightBack}
                             src={img_enter}
                             text={lang.cn.goin + name}
-                            press={()=>this.linkList(id, 0)}
+                            press={()=>this.linkList(id, name, 0)}
                         />
                     </View>
                     <View style={styles.leftBorder}>
@@ -125,7 +126,7 @@ export default class CityItem extends Component {
                             color={Color.lightBack}
                             src={img_mark}
                             text={lang.cn.allSeller}
-                            press={()=>this.linkList(id, 1)}
+                            press={()=>this.linkList(id, name, 1)}
                         />
                     </View>
                     <View style={styles.leftBorder}>

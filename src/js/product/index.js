@@ -349,6 +349,8 @@ export default class ProductScreen extends Component {
         let shopName = good.sName || null;
         let shopHead = good.sLogo || null;
         shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
+        let isGive = parseInt(good.gIntegral) || 0;
+        let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;
         let coupons = good.coupons || [{
             hId: 121,
             hName: '满50减3',
@@ -442,6 +444,23 @@ export default class ProductScreen extends Component {
                                     }]} numberOfLines={2}>{name}</Text>
                                 </View>
                                 <View style={[styles.centerBox, {height: 20}]}>
+                                {isExchange ?
+                                    <View style={styles.rowStyle}>
+                                        <Text style={styles.couponIcon}>抵</Text>
+                                        <Text style={styles.txtStyle1}>{Lang[Lang.default].integralSwap}</Text>
+                                    </View>
+                                    : null
+                                }
+                                {isGive ?
+                                    <View style={[styles.rowStyle, {marginLeft: 20}]}>
+                                        <Text style={[styles.couponIcon, {
+                                            backgroundColor: Color.yellow,
+                                            marginRight: 5,
+                                        }]}>赠</Text>
+                                        <Text style={styles.txtStyle1}>{Lang[Lang.default].integralSend}</Text>
+                                    </View>
+                                    : null
+                                }
                                 </View>
                             </View>
                         </View>

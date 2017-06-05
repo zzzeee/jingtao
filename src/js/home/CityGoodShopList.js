@@ -44,7 +44,7 @@ export default class CityGoodShopList extends Component {
         super(props);
         this.state = {
             provinceID: null,
-            cityName: '宁波',
+            cityName: null,
             datas: null,
             datas2: null,
             dataNum: null,
@@ -67,6 +67,13 @@ export default class CityGoodShopList extends Component {
         this.loadMoreLock = false;
         this.topValue = new Animated.Value(startTop);
         this.lastOffsetY = 0;
+    }
+
+    componentWillMount() {
+        let name = this.props.navigation.state.params.name || null;
+        this.setState({
+            cityName: name,
+        });
     }
 
     componentDidMount() {
@@ -122,7 +129,7 @@ export default class CityGoodShopList extends Component {
         if(this.cid !== null && this.cid > 0 && this.index !== null && !this.loadMoreLock) {
             let that = this;
             this.loadMoreLock = true;
-            Util.fetch(Urls.getProductList, 'get', {
+            Util.fetch(Urls.getCityProductList, 'get', {
                 pCity: this.cid,
                 pPage: that.page,
                 pPerNum: that.number,
@@ -158,7 +165,8 @@ export default class CityGoodShopList extends Component {
         if(this.cid !== null && this.cid > 0 && this.index !== null && !this.loadMoreLock) {
             let that = this;
             // console.log('开始查询');
-            Util.fetch(Urls.getFindShopList, 'POST', {
+            Util.fetch(Urls.getCityShopList, 'get', {
+                sCityID: this.cid,
                 sPage: that.page2,
                 sPerNum: that.number2,
             }, function(result){
@@ -364,7 +372,7 @@ export default class CityGoodShopList extends Component {
                         // onEndReachedThreshold={50}
                     />
                 </View>
-                {this.state.dataSource._cachedRowCount === 0 ?
+                {this.isEmptyList() ?
                     <View style={styles.noContentBox}>
                         <Image source={require('../../images/home/noContent.png')} style={styles.noContentImg}>
                             <Text style={styles.fontStyle1}>该地区还没有信息。</Text>
@@ -424,6 +432,23 @@ export default class CityGoodShopList extends Component {
             </View>
         );
     }
+
+    isEmptyList = () => {
+        let datas = this.index ? this.state.datas2 : this.state.datas;
+        if(this.state.dataSource._cachedRowCount === 0) {
+            return true;
+        }else if(datas[0] && datas[0].recomdProduct) {
+            let empty = true;
+            for(let i in datas) {
+                if(datas[i].recomdProduct.length > 0) {
+                    empty = false;
+                }
+            }
+            return empty;
+        }else {
+            return false;
+        }
+    };
 
     //页面头部
     pageTop = (btnBox) => {
@@ -500,6 +525,7 @@ export default class CityGoodShopList extends Component {
                     product={obj}
                     goodNameViewStyle={{height: 30}}
                     goodPriceStyle={{height: 35}}
+                    navigation={this.props.navigation}
                 />
                 {end}
             </View>
@@ -555,9 +581,9 @@ export default class CityGoodShopList extends Component {
 
     // 店铺列表
     _renderItem3 = (obj, sectionID, rowID) => {
-        let name = obj.sName || '';
-        let list = obj.proAry || [];
-        // console.log(obj);
+        let name = obj.sShopName || '';
+        let list = obj.recomdProduct || [];
+        if(list.length == 0) return <View key={rowID}></View>;
         return (
             <View key={rowID} style={[styles.shopItemBox, styles.shadowStyle]}>
                 <View style={styles.shopItemTop}>
@@ -597,11 +623,11 @@ export default class CityGoodShopList extends Component {
                     showsButtons={false}>
                     {list.map(function(item, index) {
                         let id = item.gID || 0;
-                        let gimg = item.gThumbPic || null;
+                        let gimg = item.gThumBPic || null;
                         let img = gimg ? {uri: gimg} : require('../../images/empty.png');
-                        let gname = '这里是商品名称';
+                        let gname = item.gName || null;
                         let gstock = 99;
-                        let gprice = 699.00;
+                        let gprice = item.gDiscountPrice || null;
                         if(id > 0) {
                             return (
                                 <View key={index} style={styles.swiperGoodItem}>

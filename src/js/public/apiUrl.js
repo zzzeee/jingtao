@@ -23,7 +23,9 @@ var urls = {
     //获取优惠券的图片
     getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
     //获取城市的产品列表
-    getProductList: host + '/api/ProductController/getProductListByParameter',
+    getCityProductList: host + '/api/ProductController/getProductListByParameter',
+    //获取城市的店铺列表
+    getCityShopList: host + '/api/ShopNController/getCityShopListByParame',
     //获取商品详情
     getProductInfo: host + '/api/ProductNController/getProductInfoByProID',
     //获取图文详情

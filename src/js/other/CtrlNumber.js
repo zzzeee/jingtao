@@ -46,6 +46,22 @@ export default class CtrlNumber extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(this.state.number !== nextProps.num) {
+            this.setState({
+                number: nextProps.num,
+            });
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.state.number !== nextProps.num || this.state.number != nextState) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     // 改变商品数量
     changeNumber = async (_number) => {
         let number = parseInt(_number) || 0;

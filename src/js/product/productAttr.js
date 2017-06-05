@@ -56,15 +56,19 @@ export default class ProductAttr extends Component {
 
     //数量检查
     checkFunc = (num) => {
+        console.log(num);
         let maxStock = this.getAttrStock();
-        if(isNaN(num) || num < 0) {
+        if(isNaN(num)) {
             this.error = 1;
             this.message = Lang[Lang.default].missParam;
-        }else if(num === 0) {
+        }else if(num < 0) {
             this.error = 2;
+            this.message = Lang[Lang.default].stockNothing;
+        }else if(num === 0) {
+            this.error = 3;
             this.message = Lang[Lang.default].shopNumberLessOne;
         }else if(num > maxStock) {
-            this.error = 2;
+            this.error = 4;
             this.message = Lang[Lang.default].insufficientStock;
         }else {
             return true;
@@ -177,6 +181,11 @@ export default class ProductAttr extends Component {
         let { isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
         let stock = this.getAttrStock();
+        if(stock < this.number) {
+            this.number = stock > 0 ? 1 : 0;
+        }else if(this.number == 0 && stock > 0){
+            this.number = 1;
+        }
         return (
             <Modal
                 animationType={"slide"}
