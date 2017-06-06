@@ -46,6 +46,7 @@ export default class CarsScreen extends Component {
             deleteAlert: false,
             operateMsg: null,
             msgPositon: new Animated.Value(0),
+            isRefreshing: false,
         };
 
         this.page = 1;
@@ -55,6 +56,7 @@ export default class CarsScreen extends Component {
         this.alertMsg = '';
         this.ref_flatList = null;
         this.alertObject = {};
+        this.userinfo = null;
     }
 
     componentDidMount() {
@@ -68,28 +70,43 @@ export default class CarsScreen extends Component {
     }
 
     //初始化数据
-    initDatas = async () => {
+    initDatas = () => {
         let that = this;
-        let user = await _User.getUserInfo().then((user) => user);
-        if(user) {
-            that.userinfo = user;
-            let obj = Object.assign({}, user);
-            let car = await Utils.async_fetch(Urls.getCarInfo, 'post', obj);
-            console.log(car);
-            if(car && car.sTatus && car.cartAry) {
-                let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
-                    pPage: that.page, 
-                    pPerNum: that.pageNumber,
+        _User.getUserInfo().then((user) => {
+            // console.log(user);
+            if(user) {
+                Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
+                    console.log(car);
+                    if(car && car.sTatus && car.cartAry) {
+                        let orders_ok = car.cartAry.normalAry || [];
+                        let invalidList = car.cartAry.abnormalAry || [];
+                        that.setState({
+                            carDatas: orders_ok,
+                            invalidList: invalidList,
+                            isRefreshing: false,
+                        });
+                    }
                 });
-                let orders_ok = car.cartAry.normalAry || [];
-                let invalidList = car.cartAry.abnormalAry || [];
+
+                if(!that.state.goodList) {
+                    Utils.fetch(Urls.getRecommendList, 'get', user, (ret) => {
+                        // console.log(ret);
+                        if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
+                            that.page++;
+                            let list = ret.proAry || [];
+                            that.setState({
+                                goodList: list,
+                                isRefreshing: false,
+                            });
+                        }
+                    });
+                }
+            }else {
                 that.setState({
-                    carDatas: orders_ok,
-                    invalidList: invalidList,
-                    goodList: list,
+                    isRefreshing: false,
                 });
             }
-        }
+        });
     };
 
     // 加载更多
@@ -103,7 +120,7 @@ export default class CarsScreen extends Component {
             }, function(result){
                 if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let goodList = that.state.goodList.concat(result.proAry);
-                    console.log(goodList);
+                    console.log(result.proAry);
                     that.page++;
                     that.loadMoreLock = false;
                     that.setState({ goodList });
@@ -136,9 +153,6 @@ export default class CarsScreen extends Component {
                 {this.state.editing ? Lang[Lang.default].done : Lang[Lang.default].edit}
             </Text> 
             : null;
-        let selectIcon = this.state.isSelect ? 
-            require('../../images/car/select.png') : 
-            require('../../images/car/no_select.png');
 
         return (
             <View style={styles.flex}>
@@ -147,6 +161,17 @@ export default class CarsScreen extends Component {
                     left={left}
                     right={right}
                 />
+                {this.pageBody()}
+            </View>
+        );
+    }
+
+    pageBody = () => {
+        let selectIcon = this.state.isSelect ? 
+            require('../../images/car/select.png') : 
+            require('../../images/car/no_select.png');
+        if(this.state.carDatas) {
+            return (
                 <View style={styles.flex}>
                     <View style={styles.flex}>
                         {this.bodyContent()}
@@ -201,8 +226,14 @@ export default class CarsScreen extends Component {
                     <ModalAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                 </View>
-            </View>
-        );
+            );
+        }else {
+            return (
+                <View style={styles.flex}>
+                    {this.bodyContent()}
+                </View>
+            );
+        }
     }
 
     //购物车内容
@@ -251,7 +282,7 @@ export default class CarsScreen extends Component {
         return (
             <View>
                 {cars}
-                {this.state.editing ?
+                {(this.state.editing || !this.state.carDatas) ?
                     null :
                     <View style={styles.goodlistTop}>
                         <View style={styles.goodTopLine}></View>
@@ -316,10 +347,15 @@ export default class CarsScreen extends Component {
                 enableEmptySections={true}
                 renderItem={this._renderItem}
                 ListHeaderComponent={this.carsBox}
+                refreshing={this.state.isRefreshing}
+                onRefresh={()=>{
+                    this.setState({isRefreshing: true});
+                    this.initDatas();
+                }}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
                         console.log('正在加载更多 ..');
-                        this.loadMore();
+                        // this.loadMore();
                     }else {
                         console.log('加载更多已被锁住。');
                     }
@@ -353,7 +389,6 @@ export default class CarsScreen extends Component {
      * @param int/string key2 更改状态的子子选项
      */
     updateCarDatas = (datas, key1, key2) => {
-        // console.log(datas);
         this.cars = datas;
         if(key1 !== null) {
             //如果全部被选中激活全选
@@ -380,8 +415,8 @@ export default class CarsScreen extends Component {
         let _cars = this.cars;
         for(let i in _cars) {
             for(let j in _cars[i]['cPro']) {
-                let id = _cars[i]['cPro'][j].id || 0;
-                let num = _cars[i]['cPro'][j].number || 0;
+                let id = _cars[i]['cPro'][j].gID || 0;
+                let num = _cars[i]['cPro'][j].gNum || 0;
                 let select = _cars[i]['cPro'][j].select;
                 if(id > 0 && num > 0 && select !== false) products.push(id);
             }

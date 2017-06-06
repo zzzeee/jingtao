@@ -154,7 +154,9 @@ export default class ProductScreen extends Component {
             this.error = 9;
             this.message = Lang[Lang.default].paramError;
         }
-        if(tourist) this.userinfo = tourist;
+        if(tourist) {
+            this.userinfo = tourist;
+        }
         this.setState({
             selected: datas.names,
             showAttrBox: false,

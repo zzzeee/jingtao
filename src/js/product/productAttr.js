@@ -209,17 +209,13 @@ export default class ProductAttr extends Component {
                 that.btnLock = false;
                 if(result) {
                     if(result.sTatus == 1) {
+                        let _userid = null;
                         if(!userid && result.Tourist) {
                             console.log('存储新ID：' + result.Tourist);
                             _User.saveUserID(_User.keyTourist, result.Tourist)
-                            .then((result2) => {
-                                if(result2) {
-                                    that.props.attrCallBack(datas, result.Tourist);
-                                }
-                            });
-                        }else {
-                            that.props.attrCallBack(datas, null);
+                            .then(() => _userid = result.Tourist);
                         }
+                        that.props.attrCallBack(datas, _userid);
                     }else if(result.sMessage) {
                         that.error = 501;
                         that.message = result.sMessage;
@@ -284,7 +280,12 @@ export default class ProductAttr extends Component {
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
-                                    !this.btnLock && this.joinCarFunc();
+                                    if(!this.btnLock) {
+                                        console.log('1111')
+                                        this.joinCarFunc();
+                                    }else {
+                                        console.log('2222')
+                                    }
                                 }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].joinCar}</Text>
@@ -301,7 +302,12 @@ export default class ProductAttr extends Component {
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
-                                    !this.btnLock && this.joinCarFunc();
+                                    if(!this.btnLock) {
+                                        console.log('3333')
+                                        this.joinCarFunc();
+                                    }else {
+                                        console.log('4444')
+                                    }
                                 }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].determine}</Text>

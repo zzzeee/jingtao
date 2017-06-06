@@ -89,8 +89,7 @@ export default class GoodItem extends Component {
         let goodAttr = good.mcAttr || '';
         let goodPrice = good.gPrice || null;
         let goodType = good.type || 0;
-        let goodNum = parseInt(good.gNum);
-
+        this.number = parseInt(good.gNum);
         return (
             <View style={styles.goodBox}>
                 <View style={styles.selectIconView}>
@@ -119,7 +118,7 @@ export default class GoodItem extends Component {
                             }
                         </View>
                         <CtrlNumber 
-                            num={goodNum} 
+                            num={this.number} 
                             callBack={this.callBack} 
                             checkFunc={this.checkFunc} 
                             addFailFunc={this.addFailFunc}
@@ -177,7 +176,7 @@ export default class GoodItem extends Component {
         let { key1, key2, keyword, carDatas, updateCarDatas } = this.props;
         if(key1 !== null && key2 !== null && keyword !== null && carDatas && carDatas[key1] && updateCarDatas) {
             carDatas[key1][keyword][key2].select = newSelectState;
-            carDatas[key1][keyword][key2].number = this.number;
+            carDatas[key1][keyword][key2].gNum = this.number;
             updateCarDatas(carDatas, index1, index2);
         }
     };

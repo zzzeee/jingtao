@@ -28,11 +28,11 @@ export default class User {
     //保存会员/游客ID
     saveUserID = (key, id) => {
         return new Promise((resolve, reject) => {
-            AsyncStorage.setItem(key, id, (error, result) => {
+            AsyncStorage.setItem(key, id, (error) => {
                 if(error) {
                     reject(error);
                 }else {
-                    resolve(result);
+                    resolve();
                 }
             });
         });
@@ -41,11 +41,11 @@ export default class User {
     //删除会员/游客ID
     delUserID = (key) => {
         return new Promise((resolve, reject) => {
-            AsyncStorage.removeItem(key, (error, result) => {
+            AsyncStorage.removeItem(key, (error) => {
                 if(error) {
                     reject(error);
                 }else {
-                    resolve(result);
+                    resolve();
                 }
             });
         });
