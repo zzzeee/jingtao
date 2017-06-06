@@ -34,6 +34,10 @@ var urls = {
     getRecommendList: host + '/api/ProductNController/getRecommendedProductsList',
     //获取指定地区的运费
     getProductFreight: host + '/api/ProductNController/getProductFreightByProvinceID',
+    //添加商品到购物车
+    addCarProduct: host + '/api/ShoppingCartController/productShoppingCartInsert',
+    //获取购物车信息
+    getCarInfo: host + '/api/ShoppingCartController/getMemberShopCartProductList',
 };
 
 export default urls;

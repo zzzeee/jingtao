@@ -39,6 +39,9 @@ export default class GoodItem extends Component {
             isSelect: null,
         };
         this.number = null;
+        this.maxNum = null;
+        this.error = null;
+        this.message = null;
     }
 
     componentWillMount() {
@@ -75,17 +78,19 @@ export default class GoodItem extends Component {
     render() {
         if(!this.props.good) return null;
         let good = this.props.good;
-        let gid = good.id || 0;
+        this.maxNum = good.whNum || null;
+        let gid = good.gID || 0;
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
-        let img = good.goodImgUrl || null;
+        let img = good.gPicture || null;
         let goodImg = img ? {uri: img} : require('../../images/empty.png');
-        let goodName = good.name || '';
-        let goodAttr = good.attr || '';
-        let goodPrice = good.price || null;
-        let goodMartPrice = good.martPrice || null;
+        let goodName = good.gName || '';
+        let goodAttr = good.mcAttr || '';
+        let goodPrice = good.gPrice || null;
         let goodType = good.type || 0;
+        let goodNum = parseInt(good.gNum);
+
         return (
             <View style={styles.goodBox}>
                 <View style={styles.selectIconView}>
@@ -113,15 +118,58 @@ export default class GoodItem extends Component {
                                 : null
                             }
                         </View>
-                        <CtrlNumber num={parseInt(this.props.good.number)} callBack={(num)=>{
-                            this.number = num;
-                            this.updateCar(this.props.key1, this.props.key2);
-                        }} />
+                        <CtrlNumber 
+                            num={goodNum} 
+                            callBack={this.callBack} 
+                            checkFunc={this.checkFunc} 
+                            addFailFunc={this.addFailFunc}
+                        />
                     </View>
                 </View>
             </View>
         );
     }
+
+    //数量检查
+    checkFunc = (num) => {
+        if(isNaN(num)) {
+            this.error = 1;
+            this.message = Lang[Lang.default].missParam;
+        }else if(num < 0) {
+            this.error = 2;
+            this.message = Lang[Lang.default].stockNothing;
+        }else if(num === 0) {
+            this.error = 3;
+            this.message = Lang[Lang.default].shopNumberLessOne;
+        }else if(num > this.maxNum) {
+            this.error = 4;
+            this.message = Lang[Lang.default].insufficientStock;
+        }else {
+            return true;
+        }
+        return false;
+    };
+
+    callBack = (num) => {
+        this.number = num;
+        this.updateCar(this.props.key1, this.props.key2);
+    };
+
+    //数量添加失败
+    addFailFunc = (num) => {
+        if(this.error) {
+            alert(this.message);
+        }
+    };
+
+    //隐藏提示框
+    hideReturnMsg = () => {
+        this.error = null;
+        this.message = null;
+        this.setState({
+            showReturnMsg: false,
+        });
+    };
 
     // 更新购物车数据
     updateCar = (index1, index2) => {

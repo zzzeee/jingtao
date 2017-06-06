@@ -15,6 +15,7 @@ import {
     WebView,
 } from 'react-native';
 
+import User from '../public/user';
 import Swiper from 'react-native-swiper';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
@@ -29,7 +30,9 @@ import ProductDetail from './productDetail';
 import ProductAttr from './productAttr';
 import ReturnAlert from './returnAlert';
 import Areas from './Areas';
+import Coupons from './Coupons';
 
+var _User = new User();
 var footHeight = 50;
 var moreHeight = 45;
 var bodyHeight = Size.height - 20 - PX.headHeight - footHeight;
@@ -48,6 +51,7 @@ export default class ProductScreen extends Component {
             attrType: null,
             showReturnMsg: false,
             showAreas: false,
+            showCouponList: false,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -58,10 +62,16 @@ export default class ProductScreen extends Component {
         this.province = null;
         this.city = null;
         this.freight = null;
+        this.userinfo = null;
     }
 
     componentDidMount() {
-        this.initDatas();
+        let that = this;
+        _User.getUserInfo().then((_user) => {
+            console.log(_user);
+            that.userinfo = _user;
+            that.initDatas();
+        });
     }
 
     componentWillUnmount() {
@@ -78,7 +88,8 @@ export default class ProductScreen extends Component {
             this.props.navigation.state.params.gid ?
             this.props.navigation.state.params.gid : 0;
         if(gid > 0) {
-            let info = await Utils.async_fetch(Urls.getProductInfo, 'post', {gID: gid});
+            let obj = Object.assign({gID: gid}, this.userinfo);
+            let info = await Utils.async_fetch(Urls.getProductInfo, 'post', obj);
             let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
                 pPage: this.page, 
                 pPerNum: this.pageNumber,
@@ -134,7 +145,7 @@ export default class ProductScreen extends Component {
     }
 
     //商品属性选择结果
-    attrCallBack = (datas) => {
+    attrCallBack = (datas, tourist) => {
         if(datas && datas.names) {
             this.attrDatas = datas;
             this.error = 0;
@@ -143,6 +154,7 @@ export default class ProductScreen extends Component {
             this.error = 9;
             this.message = Lang[Lang.default].paramError;
         }
+        if(tourist) this.userinfo = tourist;
         this.setState({
             selected: datas.names,
             showAttrBox: false,
@@ -173,6 +185,16 @@ export default class ProductScreen extends Component {
     //隐藏地区列表
     hideAreasBox = () => {
         this.setState({showAreas: false});
+    };
+
+    //显示优惠券列表
+    showCouponBox = () => {
+        this.setState({showCouponList: true});
+    };
+
+    //隐藏优惠券列表
+    hideCouponBox = () => {
+        this.setState({showCouponList: false});
     };
 
     //获取查询运费的省市
@@ -277,6 +299,12 @@ export default class ProductScreen extends Component {
         let good = this.state.goodIofo || {};
         let gid = parseInt(good.gID) || 0;
         if(gid && gid > 0) {
+            let attrs = good.attrs || [];
+            let chlidAtrrs = good.chlidAtrrs || [];
+            let priceAtrrs = good.priceAtrrs || [];
+            let pWarehouse = good.pWarehouse || [];
+            let areas = good.areas || [];
+            let mCoupon = good.mCoupon || [];
             return (
                 <View>
                     <FlatList
@@ -301,14 +329,16 @@ export default class ProductScreen extends Component {
                     />
                     <ProductAttr 
                         isShow={this.state.showAttrBox}
-                        attrs={good.attrs}
-                        chlidAtrrs={good.chlidAtrrs}
+                        gid={gid}
+                        userid={this.userinfo}
+                        attrs={attrs}
+                        chlidAtrrs={chlidAtrrs}
                         hideModal={this.hideAttr}
                         type={this.state.attrType}
                         attrCallBack={this.attrCallBack}
                         productImg={good.gThumbPic}
                         productPrice={good.gDiscountPrice}
-                        priceAtrrs={good.priceAtrrs}
+                        priceAtrrs={priceAtrrs}
                         pWarehouse={good.pWarehouse}
                     />
                     <Areas
@@ -317,6 +347,13 @@ export default class ProductScreen extends Component {
                         isShow={this.state.showAreas} 
                         hideAreasBox={this.hideAreasBox}
                         getSelectArea={this.getSelectArea}
+                    />
+                    <Coupons
+                        gid={gid}
+                        userinfo={this.userinfo}
+                        coupons={mCoupon}
+                        isShow={this.state.showCouponList} 
+                        hideCouponBox={this.hideCouponBox}
                     />
                 </View>
             );
@@ -334,6 +371,15 @@ export default class ProductScreen extends Component {
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;
+        let shopName = good.sName || null;
+        let shopHead = good.sLogo || null;
+        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
+        let isGive = parseInt(good.gIntegral) || 0;
+        let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;
+        let isLimit = good.aStatus == 1 ? true : false;
+        let endTime = good.aEndtime || null;
+        let coupons = (good.mCoupon && good.mCoupon.length) ? good.mCoupon : null;
+        let productArea = good.pAttribution || '';
         let price_arr = [];
         let img_arr = [];
         if(price) {
@@ -343,21 +389,6 @@ export default class ProductScreen extends Component {
             let _img = good.gImgs[i].gThumBPic || null;
             _img && img_arr.push(_img);
         }
-        // console.log(img_arr);
-        let startTime = new Date().getTime();
-        let endTime = new Date('2017/6/28 23:59:59').getTime();
-        let shopName = good.sName || null;
-        let shopHead = good.sLogo || null;
-        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
-        let isGive = parseInt(good.gIntegral) || 0;
-        let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;
-        let coupons = good.coupons || [{
-            hId: 121,
-            hName: '满50减3',
-        }, {
-            hId: 121,
-            hName: '满100减20',
-        }];
         return (
             <View>
                 <View style={styles.whiteBg}>
@@ -403,8 +434,7 @@ export default class ProductScreen extends Component {
                             </Swiper>
                         }
                         <View style={styles.areaStockView}>
-                            <Text style={[styles.txtStyle1, {paddingRight: 20}]}>{Lang[Lang.default].stock + ': 1000'}</Text>
-                            <Text style={styles.txtStyle1}>{Lang[Lang.default].origin + ': 宁波'}</Text>
+                            <Text style={styles.txtStyle1}>{Lang[Lang.default].origin + ': ' + productArea}</Text>
                         </View>
                         <View style={styles.namePriceBoxBg}>
                             <View style={styles.namePriceBox}>
@@ -413,6 +443,10 @@ export default class ProductScreen extends Component {
                                     borderBottomColor: Color.lavender,
                                     borderBottomWidth: pixel,
                                 }]}>
+                                    {isLimit ?
+                                        <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
+                                        : null
+                                    }
                                     <Text style={[styles.txtStyle3, {
                                         paddingRight: 5, 
                                         paddingTop: 4,
@@ -465,9 +499,12 @@ export default class ProductScreen extends Component {
                             </View>
                         </View>
                     </View>
-                    <View style={styles.CountDownBox}>
-                        <CountDown startTime={startTime} endTime={endTime} />
-                    </View>
+                    {isLimit ?
+                        <View style={styles.CountDownBox}>
+                            <CountDown endTime={endTime} />
+                        </View>
+                        : null
+                    }
                     <View style={styles.selectLineBg}>
                         <View style={styles.selectLineSide}></View>
                         <View style={styles.selectLineMiddle}></View>
@@ -483,8 +520,10 @@ export default class ProductScreen extends Component {
                             this.showAreasBox
                         )}
                         {coupons ?
-                            this.createSelectBox(Lang[Lang.default].takeCoupon, this.couponListInfo(coupons))
-                            : null
+                            this.createSelectBox(Lang[Lang.default].takeCoupon, 
+                                this.couponListInfo(coupons),
+                                this.showCouponBox
+                            ) : null
                         }
                     </View>
                 </View>
@@ -621,11 +660,17 @@ export default class ProductScreen extends Component {
         if(typeof(list) == 'object' && list && list.length) {
             let i = 0;
             return (
-                <View>
+                <View style={{paddingRight: 5}}>
                     {list.map((item, index)=>{
-                        if(i < 2) {
+                        let name = item.hName || '';
+                        let isable = (item.isable && item.isable !== '0') ? true : false;
+                        let stime = item.hStartTime || null;
+                        let etime = item.hSendTime || null;
+                        let ntime = new Date().getTime();
+                        stime = new Date(stime).getTime();
+                        etime = new Date(etime).getTime();
+                        if(i < 2 && isable && stime < ntime && etime > ntime) {
                             i++;
-                            let name = item.hName || '';
                             return (
                                 <View key={index} style={styles.couponRow}>
                                     <Text style={styles.couponIcon}>领</Text>
@@ -638,9 +683,9 @@ export default class ProductScreen extends Component {
                     })}
                 </View>
             );
-        }else {
-            return null;
         }
+
+        return null;
     };
 
     //猜你喜欢商品
@@ -764,6 +809,17 @@ var styles = StyleSheet.create({
         borderColor: Color.lightGrey,
         padding: 5,
     },
+    timeLimit: {
+        paddingLeft: 7,
+        paddingRight: 7,
+        borderRadius: 2,
+        backgroundColor: Color.red,
+        color: '#fff',
+        paddingTop: 3,
+        paddingBottom: 3,
+        fontSize: 12,
+        marginRight: 5,
+    },
     centerBox: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -885,6 +941,7 @@ var styles = StyleSheet.create({
     shopHeadImg: {
         width: 80,
         height: 80,
+        borderRadius: 5,
     },
     shopHeadRight: {
         justifyContent: 'center',

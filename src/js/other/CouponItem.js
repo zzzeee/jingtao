@@ -20,10 +20,9 @@ import Lang, {str_replace} from '../public/language';
 export default class CouponItem extends Component {
     // 参数类型
     static propTypes = {
+        type: React.PropTypes.number.isRequired,
         width: React.PropTypes.number.isRequired,
-        height: React.PropTypes.number.isRequired,
         coupon: React.PropTypes.object.isRequired,
-        leftRatio: React.PropTypes.number,
     };
     constructor(props) {
         super(props);
@@ -33,8 +32,9 @@ export default class CouponItem extends Component {
     }
 
     render() {
-        let { width, height, coupon, leftRatio, backgroundColor } = this.props;
-        if(!coupon) return null;
+        let { type, width, style, coupon, backgroundColor } = this.props;
+        if(!coupon || !type) return null;
+        let leftRatio = 0.345; // 优惠券左边比率
         let id = coupon.hID || 0;
         let sid = coupon.sId || 0;
         let stime = coupon.hStartTime || null;
@@ -46,24 +46,37 @@ export default class CouponItem extends Component {
         let _stime = new Date(stime).getTime();
         let _etime = new Date(etime).getTime();
         let color = sid > 0 ? Color.orange : Color.mainColor;
-        let sname = sid > 0 ? '商城通用' : '入驻商名称';
+        let sname = sid > 0 ? Lang[Lang.default].shopCurrency : Lang[Lang.default].appCurrency;
         let hname = coupon.hName || null;
         let bgColor = backgroundColor ? backgroundColor : '#fff';
-        let bg = sid > 0 ?
+        let couponBg = null, height = null;
+        if(type == 1) {
+            height = 120;
+            couponBg = sid > 0 ?
                 require('../../images/find/coupons_bg_shop.png') :
                 require('../../images/find/coupons_bg_self.png');
-        if(this.state.receive) {
-             color = Color.gray;
-             bg = require('../../images/find/coupons_bg_out.png');
+            if(this.state.receive) {
+                color = Color.gray;
+                couponBg = require('../../images/find/coupons_bg_out.png');
+            }
+        }else if(type == 2) {
+            height = 116;
+            couponBg = sid > 0 ?
+                require('../../images/car/coupons_bg_shop.png') :
+                require('../../images/car/coupons_bg_self.png');
+            if(this.state.receive) {
+                color = Color.gray;
+                couponBg = require('../../images/car/coupons_bg_out.png');
+            }
         }
+        
         if(id > 0 && ntime > _stime && ntime < _etime) {
             return (
-                <View style={styles.flex}>
+                <View style={style}>
                     <TouchableOpacity activeOpacity={1} style={{backgroundColor: bgColor}} onPress={()=>{
                         this.setState({receive: true});
                     }}>
-                        {/* <Image source={{uri: Urls.getCouponImages + id}} resizeMode="stretch" style={{flex: 1}} /> */}
-                        <Image source={bg} style={{width: width, height: height}} resizeMode="stretch">
+                        <Image source={couponBg} style={{width: width, height: height}} resizeMode="stretch">
                             <View style={[styles.rowStyle, {flex: 1, height: height}]}>
                                 <View style={[styles.couponsLeft, {height: height, width: width * leftRatio}]}>
                                     <View style={styles.rowStyle}>

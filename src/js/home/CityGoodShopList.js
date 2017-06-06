@@ -81,7 +81,7 @@ export default class CityGoodShopList extends Component {
         if(navigation && navigation.state && navigation.state.params && navigation.state.params.cid) {
             this.cid = navigation.state.params.cid;
             this.index = navigation.state.params.index || 0;
-            this.playAnimated(this.index);
+            this.playAnimated();
             this.initDatas();
         }
     }
@@ -96,7 +96,8 @@ export default class CityGoodShopList extends Component {
     playAnimated = () => {
         if(this.index !== null) {
             let val = this.state.leftValue._value;
-            if(!!val != !!this.index) {
+            val = !!val;
+            if(val != !!this.index) {
                 Animated.timing(this.state.leftValue, {
                     toValue: val ? 0 : (Size.width / 2),
                     duration: 150,
@@ -174,7 +175,7 @@ export default class CityGoodShopList extends Component {
                 if(result && result.sTatus && result.shopAry && result.shopAry.length) {
                     // console.log('查询结果可用');
                     let ret = result.shopAry || [];
-                    let num = result.shopAry.length || 0;
+                    let num = result.shopNum || 0;
                     if(that.index == 1) {
                         that.page2++;
                         that.loadMoreLock = false;
@@ -437,7 +438,7 @@ export default class CityGoodShopList extends Component {
         let datas = this.index ? this.state.datas2 : this.state.datas;
         if(this.state.dataSource._cachedRowCount === 0) {
             return true;
-        }else if(datas[0] && datas[0].recomdProduct) {
+        }else if(datas && datas[0] && datas[0].recomdProduct) {
             let empty = true;
             for(let i in datas) {
                 if(datas[i].recomdProduct.length > 0) {

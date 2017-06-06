@@ -214,7 +214,7 @@ export default class FindScreen extends Component {
                         autoplayTimeout={3}
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
-                            return <CouponItem key={index} width={Size.width * 0.8} height={120} coupon={item} leftRatio={0.345} />;
+                            return <CouponItem key={index} width={Size.width * 0.8} type={1} coupon={item} />;
                         })}
                     </Swiper>
                 </Image>

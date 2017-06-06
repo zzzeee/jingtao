@@ -15,10 +15,15 @@ import {
     ScrollView,
 } from 'react-native';
 
+import User from '../public/user';
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import CtrlNumber from '../other/CtrlNumber';
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import ReturnAlert from './returnAlert';
+
+var _User = new User();
 
 export default class ProductAttr extends Component {
     // 默认参数
@@ -28,6 +33,7 @@ export default class ProductAttr extends Component {
     };
     // 参数类型
     static propTypes = {
+        gid: React.PropTypes.number.isRequired,
         isShow: React.PropTypes.bool.isRequired,
         attrs: React.PropTypes.array,
         chlidAtrrs: React.PropTypes.array,
@@ -43,6 +49,10 @@ export default class ProductAttr extends Component {
             selects: [],
             showReturnMsg: false,
         };
+
+        this.btnLock = false;
+        this.stock = null;
+        this.money = null;
         this.number = 1;
         this.error = null;
         this.message = null;
@@ -56,7 +66,6 @@ export default class ProductAttr extends Component {
 
     //数量检查
     checkFunc = (num) => {
-        console.log(num);
         let maxStock = this.getAttrStock();
         if(isNaN(num)) {
             this.error = 1;
@@ -174,16 +183,62 @@ export default class ProductAttr extends Component {
 
     //加入购物车、确定事件
     joinCarFunc = () => {
-        this.props.attrCallBack(this.getAllChildAttr());
+        this.btnLock = true;
+        let that = this;
+        let datas = this.getAllChildAttr();
+        if(this.stock <= 0) {
+            this.error = 2;
+            this.message = Lang[Lang.default].stockNothing;
+            this.setState({showReturnMsg: true});
+        }else if(!this.number || this.number <= 0) {
+            this.error = 3;
+            this.message = Lang[Lang.default].shopNumberLessOne;
+            this.setState({showReturnMsg: true});
+        }else if(datas && datas.names && datas.number && datas.index && this.money !== null) {
+            let userid = this.props.userid || null;
+            let obj = Object.assign({
+                gID: that.props.gid,
+                gAttr: datas.names.join(','),
+                gAttrSub: datas.index.join(','),
+                gNum: datas.number,
+                gPrice: that.money,
+            }, userid);
+            console.log(obj);
+            Utils.fetch(Urls.addCarProduct, 'post', obj, function(result) {
+                console.log(result);
+                that.btnLock = false;
+                if(result) {
+                    if(result.sTatus == 1) {
+                        if(!userid && result.Tourist) {
+                            console.log('存储新ID：' + result.Tourist);
+                            _User.saveUserID(_User.keyTourist, result.Tourist)
+                            .then((result2) => {
+                                if(result2) {
+                                    that.props.attrCallBack(datas, result.Tourist);
+                                }
+                            });
+                        }else {
+                            that.props.attrCallBack(datas, null);
+                        }
+                    }else if(result.sMessage) {
+                        that.error = 501;
+                        that.message = result.sMessage;
+                        that.setState({showReturnMsg: true});
+                    }
+                }
+            });
+        }
     };
 
     render() {
-        let { isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
+        let { gid, isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
+        if(!gid || !isShow) return null;
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
-        let stock = this.getAttrStock();
-        if(stock < this.number) {
-            this.number = stock > 0 ? 1 : 0;
-        }else if(this.number == 0 && stock > 0){
+        this.stock = this.getAttrStock();
+        this.money = this.getAttrPrice();
+        if(this.stock < this.number) {
+            this.number = this.stock > 0 ? 1 : 0;
+        }else if(this.number == 0 && this.stock > 0){
             this.number = 1;
         }
         return (
@@ -198,8 +253,8 @@ export default class ProductAttr extends Component {
                     <View style={styles.modalBody}>
                         <View style={styles.priceStockRow}>
                             <View style={styles.priceStockBox}>
-                                <Text style={styles.priceText}>{Lang[Lang.default].RMB + this.getAttrPrice()}</Text>
-                                <Text style={styles.stockText}>{Lang[Lang.default].stock + ' ' + stock}</Text>
+                                <Text style={styles.priceText}>{Lang[Lang.default].RMB + this.money}</Text>
+                                <Text style={styles.stockText}>{Lang[Lang.default].stock + ' ' + this.stock}</Text>
                             </View>
                             <TouchableOpacity onPress={hideModal} style={styles.rowCloseBox}>
                                 <Image style={styles.rowCloseImg} source={require('../../images/close.png')} />
@@ -228,7 +283,9 @@ export default class ProductAttr extends Component {
                             <TouchableOpacity 
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
-                                onPress={this.joinCarFunc}
+                                onPress={()=>{
+                                    !this.btnLock && this.joinCarFunc();
+                                }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].joinCar}</Text>
                             </TouchableOpacity>
@@ -243,7 +300,9 @@ export default class ProductAttr extends Component {
                             <TouchableOpacity 
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
-                                onPress={this.joinCarFunc}
+                                onPress={()=>{
+                                    !this.btnLock && this.joinCarFunc();
+                                }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].determine}</Text>
                             </TouchableOpacity>

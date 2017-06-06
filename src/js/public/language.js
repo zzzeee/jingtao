@@ -159,6 +159,8 @@ const language = {
         selectProvince: '请选择省',
         selectCity: '请选择市',
         to: '至',
+        appCurrency: '商城通用',
+        shopCurrency: '店铺专用',
     },
 };
 

@@ -16,16 +16,18 @@ import {
     Animated,
 } from 'react-native';
 
+import User from '../public/user';
+import Utils from '../public/utils';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
-import Order from '../datas/order.json';
-import Goods from '../datas/goods.json';
 import ShopItem from './ShopItem';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
+
+var _User = new User();
 
 export default class CarsScreen extends Component {
     constructor(props) {
@@ -46,6 +48,9 @@ export default class CarsScreen extends Component {
             msgPositon: new Animated.Value(0),
         };
 
+        this.page = 1;
+        this.pageNumber = 10;
+        this.loadMoreLock = false;
         this.cars = [];
         this.alertMsg = '';
         this.ref_flatList = null;
@@ -56,19 +61,6 @@ export default class CarsScreen extends Component {
         this.initDatas();
     }
 
-    componentWillReceiveProps(nextProps) {
-        // if(nextProps.selectIndex == 3) {
-        //     this.setState({
-        //         isSelect: false,
-        //         ctrlSelect: false,
-        //         editing: false,
-        //         showAlert: false,
-        //         deleteAlert: false,
-        //         msgPositon: new Animated.Value(0),
-        //     });
-        // }
-    }
-
     componentWillUnmount() {
         // 如果存在this.timer，则使用clearTimeout清空。
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
@@ -76,38 +68,46 @@ export default class CarsScreen extends Component {
     }
 
     //初始化数据
-    initDatas = () => {
-        if(Order.orderInfo) {
-            let orders = Order.orderInfo;
-            let orders_ok = [], invalidList = [];
-            for(let i in orders) {
-                let shop = {}, plist = [];
-                for(let j in orders[i]) {
-                    if(j == 'productList') {
-                        for(let k in orders[i][j]) {
-                            let p = orders[i][j][k] || null;
-                            if(p && p.id > 0 && p.number > 0 && !p.isDelete) {
-                                plist.push(p);
-                            }else {
-                                invalidList.push(p);
-                            }
-                        }
-                    }else {
-                        shop[j] = orders[i][j];
-                    }
-                }
-                if(plist.length > 0) {
-                    shop['productList'] = plist;
-                    orders_ok.push(shop);
-                }
+    initDatas = async () => {
+        let that = this;
+        let user = await _User.getUserInfo().then((user) => user);
+        if(user) {
+            that.userinfo = user;
+            let obj = Object.assign({}, user);
+            let car = await Utils.async_fetch(Urls.getCarInfo, 'post', obj);
+            console.log(car);
+            if(car && car.sTatus && car.cartAry) {
+                let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
+                    pPage: that.page, 
+                    pPerNum: that.pageNumber,
+                });
+                let orders_ok = car.cartAry.normalAry || [];
+                let invalidList = car.cartAry.abnormalAry || [];
+                that.setState({
+                    carDatas: orders_ok,
+                    invalidList: invalidList,
+                    goodList: list,
+                });
             }
-            // console.log(orders_ok);
-            // console.log(invalidList);
-            this.cars = orders_ok;
-            this.setState({
-                carDatas: orders_ok,
-                invalidList: invalidList,
-                goodList: Goods,
+        }
+    };
+
+    // 加载更多
+    loadMore = () => {
+        if(!this.loadMoreLock) {
+            let that = this;
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getRecommendList, 'get', {
+                pPage: this.page, 
+                pPerNum: this.pageNumber,
+            }, function(result){
+                if(result && result.sTatus && result.proAry && result.proAry.length) {
+                    let goodList = that.state.goodList.concat(result.proAry);
+                    console.log(goodList);
+                    that.page++;
+                    that.loadMoreLock = false;
+                    that.setState({ goodList });
+                }
             });
         }
     };
@@ -216,7 +216,7 @@ export default class CarsScreen extends Component {
                             key={index} 
                             key1={index}
                             shop={item} 
-                            keyword={'productList'}
+                            keyword={'cPro'}
                             carDatas={that.state.carDatas}
                             ctrlSelect={that.state.ctrlSelect} 
                             updateCarDatas={that.updateCarDatas}
@@ -267,12 +267,11 @@ export default class CarsScreen extends Component {
 
     //失效商品
     invalidProduct = (item, index) => {
-        let img = item.goodImgUrl || null;
+        let img = item.gPicture || null;
         let goodImg = img ? {uri: img} : require('../../images/empty.png');
-        let goodName = item.name || '';
-        let goodAttr = item.attr || '';
-        let goodPrice = item.price || null;
-        let goodMartPrice = item.martPrice || null;
+        let goodName = item.gName || '';
+        let goodAttr = item.mcAttr || '';
+        let goodPrice = item.gPrice || null;
         let goodType = item.type || 0;
         return (
             <View key={index} style={styles.invalidGoodBox}>
@@ -318,7 +317,12 @@ export default class CarsScreen extends Component {
                 renderItem={this._renderItem}
                 ListHeaderComponent={this.carsBox}
                 onEndReached={()=>{
-                    // this.loadMore();
+                    if(!this.loadMoreLock) {
+                        console.log('正在加载更多 ..');
+                        this.loadMore();
+                    }else {
+                        console.log('加载更多已被锁住。');
+                    }
                 }}
             />
         );
@@ -355,8 +359,8 @@ export default class CarsScreen extends Component {
             //如果全部被选中激活全选
             let isSelectAll = true;
             for(let i in datas) {
-                for(let j in datas[i]['productList']) {
-                    if(datas[i]['productList'][j].select === false) {
+                for(let j in datas[i]['cPro']) {
+                    if(datas[i]['cPro'][j].select === false) {
                         isSelectAll = false;
                     }
                 }
@@ -375,10 +379,10 @@ export default class CarsScreen extends Component {
         let products = [];
         let _cars = this.cars;
         for(let i in _cars) {
-            for(let j in _cars[i]['productList']) {
-                let id = _cars[i]['productList'][j].id || 0;
-                let num = _cars[i]['productList'][j].number || 0;
-                let select = _cars[i]['productList'][j].select;
+            for(let j in _cars[i]['cPro']) {
+                let id = _cars[i]['cPro'][j].id || 0;
+                let num = _cars[i]['cPro'][j].number || 0;
+                let select = _cars[i]['cPro'][j].select;
                 if(id > 0 && num > 0 && select !== false) products.push(id);
             }
         }
