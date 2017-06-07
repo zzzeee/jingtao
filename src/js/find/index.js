@@ -73,14 +73,19 @@ export default class FindScreen extends Component {
             this.setMDYPlist(mdyp);
         }
     };
+    
     //检查时间是否带有时分秒
     checkTimeString = (t) => {
-        let str = t.replace(/-/g, "/") || '';
-        if(str && str.length <= 10 && str.indexOf(':') < 0) {
-            return str + ' 00:00:00';
+        if(t) {
+            let str = t.replace(/-/g, "/") || '';
+            if(str && str.length <= 10 && str.indexOf(':') < 0) {
+                str = str + ' 00:00:00';
+            }
+            return str
         }
-        return str;
+        return t;
     };
+
     //设置限时抢购列表
     setXSQGlist = (datas) => {
         if(datas && datas.sTatus) {
@@ -214,6 +219,7 @@ export default class FindScreen extends Component {
                         autoplayTimeout={3}
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
+                            // return <Text key={index}>aaaaaaaaaaaaaa</Text>;
                             return <CouponItem key={index} width={Size.width * 0.8} type={1} coupon={item} />;
                         })}
                     </Swiper>
@@ -460,6 +466,7 @@ var styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     wrapper: {
+        backgroundColor: 'red',
     },
     paginationStyle: {
         position: 'absolute',

@@ -26,6 +26,7 @@ import Lang, {str_replace} from '../public/language';
 import ShopItem from './ShopItem';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
+import ErrorAlert from '../other/ErrorAlert';
 
 var _User = new User();
 
@@ -48,7 +49,7 @@ export default class CarsScreen extends Component {
             msgPositon: new Animated.Value(0),
             isRefreshing: false,
         };
-
+        
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
@@ -223,7 +224,7 @@ export default class CarsScreen extends Component {
                             </View>
                         }
                     </View>
-                    <ModalAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
+                    <ErrorAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                 </View>
             );
@@ -520,63 +521,6 @@ export default class CarsScreen extends Component {
     };
 }
 
-class ModalAlert extends Component {
-    // 默认参数
-    static defaultProps = {
-        message: '',
-        visiable: false,
-    };
-    // 参数类型
-    static propTypes = {
-        message: React.PropTypes.string.isRequired,
-        visiable: React.PropTypes.bool.isRequired,
-        hideModal: React.PropTypes.func,
-    };
-    // 构造函数
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-        this.timer = null;
-    }
-
-    componentWillUnmount() {
-        // 如果存在this.timer，则使用clearTimeout清空。
-        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
-    }
-
-    render() {
-        if(this.props.visiable) {
-            this.timer = setTimeout(this.props.hideModal, 2500);
-        }
-        return (
-            <Modal
-                animationType={"none"}
-                transparent={true}
-                visible={this.props.visiable}
-                onRequestClose={() => {
-                    this.timer && clearTimeout(this.timer);
-                }}
-            >
-                <TouchableOpacity 
-                    style={modalStyle.modalBody} 
-                    activeOpacity={1} 
-                    onPress={this.props.hideModal} 
-                    onLongPress={this.props.hideModal} 
-                >
-                    <View style={modalStyle.alertBody}>
-                        <View style={modalStyle.alertIconView}>
-                            <Image source={require('../../images/careful_big.png')} style={modalStyle.alertIcon} />
-                        </View>
-                        <Text style={modalStyle.alertMssage}>{this.props.message}</Text>
-                    </View>
-                </TouchableOpacity>
-            </Modal>
-        );
-    }
-}
-
 var styles = StyleSheet.create({
     flex: {
         flex: 1,
@@ -762,35 +706,5 @@ var styles = StyleSheet.create({
         color: Color.mainColor,
         paddingLeft: 25,
         paddingRight: 25,
-    },
-});
-
-var modalStyle = StyleSheet.create({
-    modalBody: {
-        width: Size.width,
-        height: Size.height,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    alertBody: {
-        width: 240,
-        height: 132,
-        borderRadius: 5,
-        backgroundColor: 'rgba(0, 0, 0, .7)',
-        alignItems: 'center',
-    },
-    alertIconView: {
-        width: 50,
-        height: 50,
-        marginTop: 28,
-        marginBottom: 14,
-    },
-    alertIcon: {
-        width: 50,
-        height: 50,
-    },
-    alertMssage: {
-        fontSize: 16,
-        color: '#fff',
     },
 });

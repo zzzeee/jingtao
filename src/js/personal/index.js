@@ -32,7 +32,7 @@ export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            islogo: true,
+            islogo: false,
             opacityVal: new Animated.Value(0),
         };
 
@@ -40,6 +40,7 @@ export default class PersonalScreen extends Component {
     }
 
     render() {
+        const { navigation } = this.props;
         return (
             <View style={styles.flex}>
                 <ScrollView 
@@ -60,8 +61,12 @@ export default class PersonalScreen extends Component {
                                 </Image>
                             </View> :
                             <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
-                                <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{}}>{Lang[Lang.default].logo}</Text>
-                                <Text style={styles.bigBotton} onPress={()=>{}}>{Lang[Lang.default].register}</Text>
+                                <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{
+                                    navigation.navigate('Login');
+                                }}>{Lang[Lang.default].logo}</Text>
+                                <Text style={styles.bigBotton} onPress={()=>{
+                                    navigation.navigate('Register');
+                                }}>{Lang[Lang.default].register}</Text>
                             </View>
                         }
                     </Image>

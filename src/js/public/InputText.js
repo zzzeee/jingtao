@@ -15,19 +15,28 @@ import {
 import { Size, Color, pixel } from '../public/globalStyle';
 
 export default class InputText extends Component {
+    // 默认参数
+    static defaultProps = {
+        onChange: () => {},
+        endEditing: () => {},
+    };
+    // 参数类型
+    static propTypes = {
+        onChange: React.PropTypes.func,
+        endEditing: React.PropTypes.func,
+    };
 	//构造
-	constructor(props)
-	{
+	constructor(props) {
 		super(props);
 		this.state = {};
 	}
 
 	render() {
-		let {vText, defaultValue, pText, pcolor, onChange, style, isPWD, length, focus, keyType, disEdit, multiline} = this.props;
+		let {vText, defaultValue, pText, pcolor, onChange, endEditing, style, isPWD, length, focus, keyType, disEdit, } = this.props;
 	    return (
             <TextInput
                 style={[styles.inputStyle, style]}
-                onChangeText={(text) => onChange(text)}
+                onChangeText={onChange}
                 value={vText ? vText : null}
                 defaultValue={defaultValue ? defaultValue : null}
                 placeholder={pText}
@@ -38,7 +47,8 @@ export default class InputText extends Component {
                 autoFocus={focus ? true : false}
                 keyboardType={keyType ? keyType : 'default'}
                 editable={disEdit ? false : true}
-                multiline={multiline ? multiline : false}
+                multiline={true}
+                onEndEditing={endEditing}
             />
 	    );
 	}
@@ -47,6 +57,7 @@ export default class InputText extends Component {
 const styles = StyleSheet.create({
 	inputStyle : {
         color : Color.lightBack,
+        padding : 9,
         fontSize : 14,
         height : 34,
         textAlignVertical: 'center',

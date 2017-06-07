@@ -38,6 +38,12 @@ var urls = {
     addCarProduct: host + '/api/ShoppingCartController/productShoppingCartInsert',
     //获取购物车信息
     getCarInfo: host + '/api/ShoppingCartController/getMemberShopCartProductList',
+    //登录验证
+    checkUser: host + '/api/MemberNController/checkMemberLoginStatus',
+    //发送验证码
+    sendCode: host + '/api/RegisterNController/sendRegisterMessage',
+    //用户注册
+    userRegister: host + '/api/RegisterNController/registerMemberInfoAdd',
 };
 
 export default urls;

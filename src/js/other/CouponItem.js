@@ -31,6 +31,18 @@ export default class CouponItem extends Component {
         };
     }
 
+    //检查时间是否带有时分秒
+    checkTimeString = (t) => {
+        if(t) {
+            let str = t.replace(/-/g, "/") || '';
+            if(str && str.length <= 10 && str.indexOf(':') < 0) {
+                str = str + ' 00:00:00';
+            }
+            return str
+        }
+        return t;
+    };
+
     render() {
         let { type, width, style, coupon, backgroundColor } = this.props;
         if(!coupon || !type) return null;
@@ -43,6 +55,8 @@ export default class CouponItem extends Component {
         let isable = coupon.isable || 0;
         let money = parseFloat(coupon.hMoney) || null;
         let maxMoney = parseFloat(coupon.hUseMoney) || null;
+        stime = this.checkTimeString(stime);
+        etime = this.checkTimeString(etime);
         let _stime = new Date(stime).getTime();
         let _etime = new Date(etime).getTime();
         let color = sid > 0 ? Color.orange : Color.mainColor;
@@ -69,7 +83,6 @@ export default class CouponItem extends Component {
                 couponBg = require('../../images/car/coupons_bg_out.png');
             }
         }
-        
         if(id > 0 && ntime > _stime && ntime < _etime) {
             return (
                 <View style={style}>

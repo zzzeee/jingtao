@@ -18,6 +18,8 @@ import JPushModule from 'jpush-react-native';
 
 import TabNavScreen from './tabNav';
 // import TabView from './tabView';
+import Login from './login';
+import Register from './login/register';
 import Product from './product';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';
@@ -83,6 +85,16 @@ class MyNavScren extends Component {
 //     <MyNavScren navigation={navigation} NavScreen={TabView} />
 // );
 
+//登录
+const LoginScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Login} />
+);
+
+//注册
+const RegisterScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Register} />
+);
+
 //首页 - 城市的商品、店铺列表
 const CityGoodShopListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={CityGoodShopList} />
@@ -131,6 +143,12 @@ const LocationInfoScreen = ({ navigation }) => (
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
+    },
+    Login: {
+        screen: LoginScreen,
+    },
+    Register: {
+        screen: RegisterScreen,
     },
     Product: {
         screen: ProductScreen,

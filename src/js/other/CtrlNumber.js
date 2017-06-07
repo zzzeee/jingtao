@@ -88,7 +88,9 @@ export default class CtrlNumber extends Component {
                     keyType="numeric"
                     vText={this.state.number + ''}
                     style={styles.btnCtrlNumberInput}
-                    onChange={(txt)=>this.changeNumber(txt)}
+                    onChange={(number)=>this.setState({number})}
+                    endEditing={() => this.changeNumber(this.state.number)}
+                    length={10}
                 />
                 <TouchableOpacity 
                     style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}

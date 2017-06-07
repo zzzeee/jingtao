@@ -66,6 +66,7 @@ export default class ProductAttr extends Component {
 
     //数量检查
     checkFunc = (num) => {
+        console.log(num);
         let maxStock = this.getAttrStock();
         if(isNaN(num)) {
             this.error = 1;

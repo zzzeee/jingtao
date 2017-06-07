@@ -161,6 +161,16 @@ const language = {
         to: '至',
         appCurrency: '商城通用',
         shopCurrency: '店铺专用',
+        passwordLogin: '密码登录',
+        inputMobile: '请输入手机号',
+        inputPassword: '请输入密码(至少6位数)',
+        loginProtocol: '登录代表你同意',
+        jingtaoProtocol: '境淘用户协议',
+        registerUser: '注册帐号',
+        registeredClickThere: '注册帐号,请点这里',
+        inputCode: '请输入验证码',
+        sendCode: '发送验证码',
+        resendCode: '重新发送',
     },
 };
 
