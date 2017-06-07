@@ -16,6 +16,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import User from '../public/user';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -23,6 +24,9 @@ import AppHead from '../public/AppHead';
 import Lang, {Rule, str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
+import ErrorAlert from '../other/ErrorAlert';
+
+var _User = new User();
 
 export default class Login extends Component {
     constructor(props) {
@@ -31,12 +35,15 @@ export default class Login extends Component {
             mobile: '',
             password: '',
             showPassword: false,
+            showAlert: false,
         };
         this.minPword = 6;
+        this.type = 1;
+        this.alertMsg = '';
     }
 
     componentDidMount() {
-        console.log('componentDidMount login');
+        // console.log('componentDidMount login');
     }
 
     //设置手机号值
@@ -64,8 +71,21 @@ export default class Login extends Component {
         return false;
     };
 
+    //显示提示框
+    showAutoModal = (msg) => {
+        this.alertMsg = msg;
+        this.setState({showAlert: true, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
+    };
+
     //验证用户名和密码是否有效
     checkUser = () => {
+        let that = this;
+        let navigation = this.props.navigation || null;
         let mobile = this.state.mobile || null;
         let pword = this.state.password || null;
         if(mobile && pword) {
@@ -74,13 +94,31 @@ export default class Login extends Component {
                 uPassword: pword,
             }, (result) => {
                 console.log(result);
+                if(result) {
+                    let ret = result.sTatus || 0;
+                    let msg = result.sMessage || null;
+                    let token = result.mToken || null;
+                    if(ret == 1 && token) {
+                        _User.saveUserID(_User.keyMember, token)
+                        .then(() => {
+                            console.log('存储会员ID：' + token);
+                            if(navigation) {
+                                let params = navigation.state.params || null;
+                                let back = param ? (params.back ? params.back : 'Personal') : 'Personal';
+                                console.log(param);
+                                navigation.navigate(back);
+                            }
+                        });
+                    }else if(msg) {
+                        that.showAutoModal(result.sMessage);
+                    }
+                }
             });
         }
     };
 
     render() {
         let { navigation } = this.props;
-        console.log(navigation);
         let color = this.checkFormat() ?  '#fff' : Color.lightBack;
         let bgcolor = this.checkFormat() ? Color.mainColor : Color.gray;
         let disabled = this.checkFormat() ? false : true;
@@ -173,6 +211,12 @@ export default class Login extends Component {
                         <Image source={require('../../images/login/left.png')} style={styles.iconSize12} />
                     </TouchableOpacity>
                 </ScrollView>
+                <ErrorAlert 
+                    type={this.type}
+                    visiable={this.state.showAlert} 
+                    message={this.alertMsg} 
+                    hideModal={this.hideAutoModal} 
+                />
             </View>
         );
     }

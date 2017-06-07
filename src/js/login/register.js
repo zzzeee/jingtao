@@ -139,8 +139,10 @@ export default class Register extends Component {
                     if(err == 6) {
                          that.type = 2;
                          that.timer = setTimeout(() => {
-                             that.props.navigation.navigate('Login');
-                         }, 2500);
+                             that.props.navigation.navigate('Login', {
+                                 back: 'Personal',
+                             });
+                         }, 2000);
                     }
                     if(msg) that.showAutoModal(result.sMessage);
                 }
@@ -247,7 +249,7 @@ export default class Register extends Component {
                             </View>
                         </View>
                     </View>
-                    <TouchableOpacity disabled={false} onPress={this.userRegister} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={this.userRegister} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
                         <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].register}</Text>
