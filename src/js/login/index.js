@@ -92,6 +92,7 @@ export default class Login extends Component {
             Utils.fetch(Urls.checkUser, 'post', {
                 uPhone: mobile,
                 uPassword: pword,
+                // tTourist: "20170607231326149684840682450552",
             }, (result) => {
                 console.log(result);
                 if(result) {
@@ -99,13 +100,17 @@ export default class Login extends Component {
                     let msg = result.sMessage || null;
                     let token = result.mToken || null;
                     if(ret == 1 && token) {
-                        _User.saveUserID(_User.keyMember, token)
-                        .then(() => {
-                            console.log('存储会员ID：' + token);
+                        _User.getUserID(_User.keyMember)
+                        .then((user) => {
+                            if(!user) {
+                                console.log('存储会员ID：' + token);
+                                _User.saveUserID(_User.keyMember, token);
+                            }else {
+                                console.log('已有会员ID：' + user);
+                            }
                             if(navigation) {
                                 let params = navigation.state.params || null;
-                                let back = param ? (params.back ? params.back : 'Personal') : 'Personal';
-                                console.log(param);
+                                let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
                                 navigation.navigate(back);
                             }
                         });

@@ -74,10 +74,10 @@ export default class CarsScreen extends Component {
     initDatas = () => {
         let that = this;
         _User.getUserInfo().then((user) => {
-            // console.log(user);
+            console.log(user);
             if(user) {
                 Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
-                    console.log(car);
+                    // console.log(car);
                     if(car && car.sTatus && car.cartAry) {
                         let orders_ok = car.cartAry.normalAry || [];
                         let invalidList = car.cartAry.abnormalAry || [];
@@ -100,12 +100,12 @@ export default class CarsScreen extends Component {
                                 }
                             });
                         }
+                    }else {
+                        that.setState({isRefreshing: false, });
                     }
                 });
             }else {
-                that.setState({
-                    isRefreshing: false,
-                });
+                that.setState({isRefreshing: false, });
             }
         });
     };
