@@ -86,22 +86,22 @@ export default class CarsScreen extends Component {
                             invalidList: invalidList,
                             isRefreshing: false,
                         });
-                    }
-                });
 
-                if(!that.state.goodList) {
-                    Utils.fetch(Urls.getRecommendList, 'get', user, (ret) => {
-                        // console.log(ret);
-                        if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
-                            that.page++;
-                            let list = ret.proAry || [];
-                            that.setState({
-                                goodList: list,
-                                isRefreshing: false,
+                        if(!that.state.goodList) {
+                            Utils.fetch(Urls.getRecommendList, 'get', user, (ret) => {
+                                // console.log(ret);
+                                if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
+                                    that.page++;
+                                    let list = ret.proAry || [];
+                                    that.setState({
+                                        goodList: list,
+                                        isRefreshing: false,
+                                    });
+                                }
                             });
                         }
-                    });
-                }
+                    }
+                });
             }else {
                 that.setState({
                     isRefreshing: false,
