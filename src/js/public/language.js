@@ -163,6 +163,8 @@ const language = {
         shopCurrency: '店铺专用',
         passwordLogin: '密码登录',
         inputMobile: '请输入手机号',
+        mobilePhoneFail: '手机号码错误',
+        mobilePhoneEmpty: '手机号码不能为空',
         inputPassword: '请输入密码(至少6位数)',
         loginProtocol: '登录代表你同意',
         jingtaoProtocol: '境淘用户协议',

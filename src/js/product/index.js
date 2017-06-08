@@ -280,9 +280,12 @@ export default class ProductScreen extends Component {
             fType: 1,
             flID: goodid,
         };
+        console.log(obj);
         if(this.userinfo && this.userinfo[_User.keyMember]) {
             obj = Object.assign(obj, this.userinfo);
+            console.log(obj);
             Utils.fetch(Urls.collection, 'post', obj, (result) => {
+                console.log(result);
                 if(result) {
                     let ret = result.sTatus || 0;
                     let msg = result.sMessage || null;

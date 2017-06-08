@@ -76,7 +76,6 @@ export default class CarsScreen extends Component {
         _User.getUserInfo().then((user) => {
             console.log(user);
             if(user) {
-                console.log(Urls.getCarInfo);
                 Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
                     console.log(car);
                     if(car && car.sTatus && car.cartAry) {

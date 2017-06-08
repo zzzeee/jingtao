@@ -32,7 +32,21 @@ export default class InputText extends Component {
 	}
 
 	render() {
-		let {vText, defaultValue, pText, pcolor, onChange, endEditing, style, isPWD, length, focus, keyType, disEdit, } = this.props;
+		let {
+            vText, 
+            defaultValue, 
+            pText, 
+            pcolor, 
+            onChange, 
+            endEditing, 
+            style, 
+            isPWD, 
+            length, 
+            focus, 
+            keyType, 
+            disEdit,
+            onFocus,
+         } = this.props;
 	    return (
             <TextInput
                 style={[styles.inputStyle, style]}
@@ -49,6 +63,7 @@ export default class InputText extends Component {
                 editable={disEdit ? false : true}
                 multiline={true}
                 onEndEditing={endEditing}
+                onFocus={onFocus}
             />
 	    );
 	}

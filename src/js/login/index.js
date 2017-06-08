@@ -36,6 +36,8 @@ export default class Login extends Component {
             password: '',
             showPassword: false,
             showAlert: false,
+            onFocusMobile: false,
+            onFocusPassword: false,
         };
         this.minPword = 6;
         this.type = 1;
@@ -45,6 +47,23 @@ export default class Login extends Component {
     componentDidMount() {
         // console.log('componentDidMount login');
     }
+
+    //设置哪个输入框获得焦点
+    setInputFocus = (key) => {
+        let obj = null;
+        if(key == 'tel') {
+            obj = {
+                onFocusMobile: true,
+                onFocusPassword: false,
+            };
+        }else if(key == 'pwd') {
+            obj = {
+                onFocusMobile: false,
+                onFocusPassword: true,
+            };
+        }
+        if(obj) this.setState(obj);
+    };
 
     //设置手机号值
     setMobile = (value) => {
@@ -65,7 +84,7 @@ export default class Login extends Component {
     checkFormat = () => {
         let mobile = this.state.mobile;
         let pword = this.state.password;
-        if(mobile && pword && /^1[34578]\d{9}$/.test(mobile) && pword.length >= this.minPword) {
+        if(mobile && pword && mobile.length == 11 && pword.length >= this.minPword) {
             return true;
         }
         return false;
@@ -82,17 +101,21 @@ export default class Login extends Component {
         this.setState({ showAlert: false });
     };
 
-    //验证用户名和密码是否有效
-    checkUser = () => {
+    //点击登录
+    startLogin = () => {
         let that = this;
         let navigation = this.props.navigation || null;
         let mobile = this.state.mobile || null;
         let pword = this.state.password || null;
         if(mobile && pword) {
+            if(!/^1[34578]\d{9}$/.test(mobile)) {
+                this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+                return;
+            }
+
             Utils.fetch(Urls.checkUser, 'post', {
                 uPhone: mobile,
                 uPassword: pword,
-                // tTourist: "20170607231326149684840682450552",
             }, (result) => {
                 console.log(result);
                 if(result) {
@@ -102,23 +125,22 @@ export default class Login extends Component {
                     if(ret == 1 && token) {
                         _User.getUserID(_User.keyMember)
                         .then((user) => {
-                            if(!user) {
-                                console.log('存储会员ID：' + token);
-                                _User.saveUserID(_User.keyMember, token);
-                            }else {
-                                console.log('已有会员ID：' + user);
-                            }
-                            if(navigation) {
-                                let params = navigation.state.params || null;
-                                let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
-                                navigation.navigate(back);
-                            }
+                            _User.saveUserID(_User.keyMember, token)
+                            .then({
+                                if(navigation) {
+                                    let params = navigation.state.params || null;
+                                    let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
+                                    navigation.navigate(back);
+                                }
+                            });
                         });
                     }else if(msg) {
                         that.showAutoModal(result.sMessage);
                     }
                 }
             });
+        }else {
+            this.showAutoModal(Lang[Lang.default].mobilePhoneEmpty);
         }
     };
 
@@ -150,10 +172,11 @@ export default class Login extends Component {
                                     length={11}
                                     style={styles.inputStyle}
                                     keyType={"numeric"}
+                                    onFocus={()=>this.setInputFocus('tel')}
                                 />
                             </View>
                             <View style={styles.inputRightStyle}>
-                                {this.state.mobile ?
+                                {(this.state.mobile && this.state.onFocusMobile) ?
                                     <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setMobile('')}>
                                         <Image source={require('../../images/login/close.png')} style={styles.iconSize18} />
                                     </TouchableOpacity>
@@ -175,9 +198,10 @@ export default class Login extends Component {
                                     isPWD={!this.state.showPassword}
                                     length={26}
                                     style={styles.inputStyle}
+                                    onFocus={()=>this.setInputFocus('pwd')}
                                 />
                             </View>
-                            {this.state.password ?
+                            {(this.state.password && this.state.onFocusPassword) ?
                                 <View style={styles.inputRightStyle}>
                                     <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setPassword('')}>
                                         <Image source={require('../../images/login/close.png')} style={styles.iconSize18}/>
@@ -204,7 +228,7 @@ export default class Login extends Component {
                         </View>
                         <View></View>
                     </View>
-                    <TouchableOpacity disabled={disabled} onPress={this.checkUser} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={this.startLogin} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
                         <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].logo}</Text>
