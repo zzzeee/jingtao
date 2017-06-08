@@ -111,7 +111,11 @@ var Util = {
                 callback(responseText);
             })
             .catch((error) => {
-                load_error && load_error(ErrorView(load_error_config, fetchFunc));
+                if(load_error) {
+                    load_error(ErrorView(load_error_config, fetchFunc));
+                }else if(load_error_config.catchFunc) {
+                    load_error_config.catchFunc(error);
+                }
             });
         } catch(error) {
             console.error(error);

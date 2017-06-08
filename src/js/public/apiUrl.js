@@ -22,7 +22,7 @@ var urls = {
     getFindShopList: host + '/api/FindNController/getFindShopAndProductsList',
     //获取优惠券的图片
     getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
-    //获取城市的产品列表
+    //获取城市的产品列表 (待改)
     getCityProductList: host + '/api/ProductController/getProductListByParameter',
     //获取城市的店铺列表
     getCityShopList: host + '/api/ShopNController/getCityShopListByParame',
@@ -44,6 +44,8 @@ var urls = {
     sendCode: host + '/api/RegisterNController/sendRegisterMessage',
     //用户注册
     userRegister: host + '/api/RegisterNController/registerMemberInfoAdd',
+    //收藏、取消收藏
+    collection: host + '/api/MemberNController/memberFollowStatusEditBymID',
 };
 
 export default urls;

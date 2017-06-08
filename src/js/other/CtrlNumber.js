@@ -36,10 +36,12 @@ export default class CtrlNumber extends Component {
         this.state = {
             number: null,
         };
+        this.lastNumber = null;
     }
 
     componentWillMount() {
         if(this.props.num) {
+            this.lastNumber = this.props.num;
             this.setState({
                 number: this.props.num,
             })
@@ -48,6 +50,7 @@ export default class CtrlNumber extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(this.state.number !== nextProps.num) {
+            this.lastNumber = nextProps.num;
             this.setState({
                 number: nextProps.num,
             });
@@ -67,8 +70,11 @@ export default class CtrlNumber extends Component {
         let number = parseInt(_number) || 0;
         let isAdd = await this.props.checkFunc(number);
         if(isAdd === false) {
-            this.props.addFailFunc(number);
+            this.setState({number: this.lastNumber}, () => {
+                this.props.addFailFunc(number);
+            });
         }else {
+            this.lastNumber = number;
             this.setState({number: number }, () => {
                 this.props.callBack(number);
             });

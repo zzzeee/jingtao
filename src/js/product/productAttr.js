@@ -41,6 +41,7 @@ export default class ProductAttr extends Component {
         attrCallBack: React.PropTypes.func,
         priceAtrrs: React.PropTypes.array,
         pWarehouse: React.PropTypes.array,
+        carDatas: React.PropTypes.array,
     };
     // 构造函数
     constructor(props) {
@@ -66,7 +67,6 @@ export default class ProductAttr extends Component {
 
     //数量检查
     checkFunc = (num) => {
-        console.log(num);
         let maxStock = this.getAttrStock();
         if(isNaN(num)) {
             this.error = 1;
@@ -163,10 +163,12 @@ export default class ProductAttr extends Component {
     //获取所选属性的库存
     getAttrStock = () => {
         let that = this;
+        let gid = this.props.gid;
         let pWarehouse = this.props.pWarehouse || [];
         let datas = this.getAllChildAttr();
         let names = datas.names.join(',') || null;
         let indexs = datas.index.join(',') || null;
+        let cars = this.props.carDatas || [];
         let stock = 0;
         if(names && indexs) {
             for(let i in pWarehouse) {
@@ -175,6 +177,12 @@ export default class ProductAttr extends Component {
                 let number = parseInt(pWarehouse[i].whNum) || 0;
                 if(names == attr_name && indexs == attr_index) {
                     stock = number;
+                    for(let c in cars) {
+                        if(names == cars[c].mcAttr && indexs == cars[c].mcAttrSub && gid == cars[c].gID) {
+                            let num = parseInt(cars[c].gNum) || 0;
+                            stock -= num;
+                        }
+                    }
                     break;
                 }
             }
@@ -204,19 +212,21 @@ export default class ProductAttr extends Component {
                 gNum: datas.number,
                 gPrice: that.money,
             }, userid);
-            console.log(obj);
             Utils.fetch(Urls.addCarProduct, 'post', obj, function(result) {
                 console.log(result);
                 that.btnLock = false;
                 if(result) {
                     if(result.sTatus == 1) {
-                        let _userid = null;
+                        let cars = result.cars || [];
                         if(!userid && result.Tourist) {
                             console.log('存储新ID：' + result.Tourist);
                             _User.saveUserID(_User.keyTourist, result.Tourist)
-                            .then(() => _userid = result.Tourist);
+                            .then(() => {
+                                that.props.attrCallBack(cars, obj, result.Tourist);
+                            });
+                        }else {
+                            that.props.attrCallBack(cars, obj, null);
                         }
-                        that.props.attrCallBack(datas, _userid);
                     }else if(result.sMessage) {
                         that.error = 501;
                         that.message = result.sMessage;
@@ -282,10 +292,7 @@ export default class ProductAttr extends Component {
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
                                     if(!this.btnLock) {
-                                        console.log('1111')
                                         this.joinCarFunc();
-                                    }else {
-                                        console.log('2222')
                                     }
                                 }}
                             >
@@ -304,10 +311,7 @@ export default class ProductAttr extends Component {
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
                                     if(!this.btnLock) {
-                                        console.log('3333')
                                         this.joinCarFunc();
-                                    }else {
-                                        console.log('4444')
                                     }
                                 }}
                             >

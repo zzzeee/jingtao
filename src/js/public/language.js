@@ -171,6 +171,7 @@ const language = {
         inputCode: '请输入验证码',
         sendCode: '发送验证码',
         resendCode: '重新发送',
+        notLoggedIn: '你还未登录!',
     },
 };
 

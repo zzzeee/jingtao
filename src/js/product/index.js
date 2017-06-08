@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     FlatList,
     WebView,
+    Animated,
 } from 'react-native';
 
 import User from '../public/user';
@@ -46,23 +47,26 @@ export default class ProductScreen extends Component {
             goodIofo: {},
             webViewHeight: 0,
             fetchError: null,
-            selected: [],   // 已选规格
+            lastSelected: {},   // 已选规格
             showAttrBox: false,
             attrType: null,
             showReturnMsg: false,
             showAreas: false,
             showCouponList: false,
+            msgPositon: new Animated.Value(0),  //收藏显示位置
         };
+        this.carNumber = 0;
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
         this.error = null;
         this.message = null;
-        this.attrDatas = null;
+        this.carDatas = [];
         this.province = null;
         this.city = null;
         this.freight = null;
         this.userinfo = null;
+        this.collectionMsg = null;      //收藏结果
     }
 
     componentDidMount() {
@@ -98,6 +102,12 @@ export default class ProductScreen extends Component {
             console.log(info);
             // console.log(list);
             if(info && info.sTatus && info.proInfo) {
+                if(info.proInfo.mCartNum && 
+                info.proInfo.mCartNum.length && 
+                typeof(info.proInfo.mCartNum) == 'object') {
+                    this.carDatas = info.proInfo.mCartNum;
+                    this.carNumber = info.proInfo.mCartNum.length;
+                }
                 state.fetchError = false;
                 state.goodIofo = info.proInfo;
                 // state.goodIofo.gDel = 1;
@@ -145,9 +155,10 @@ export default class ProductScreen extends Component {
     }
 
     //商品属性选择结果
-    attrCallBack = (datas, tourist) => {
-        if(datas && datas.names) {
-            this.attrDatas = datas;
+    attrCallBack = (datas, obj, tourist) => {
+        if(datas) {
+            this.carDatas = datas;
+            this.carNumber = datas.length;
             this.error = 0;
             this.message = Lang[Lang.default].successfullyJoinCar;
         }else {
@@ -157,21 +168,57 @@ export default class ProductScreen extends Component {
         if(tourist) {
             this.userinfo = tourist;
         }
-        this.setState({
-            selected: datas.names,
+        console.log(obj);
+        this.showReturnBox({
+            lastSelected: obj,
             showAttrBox: false,
             showReturnMsg: true,
-        }, () => {
+        });
+    };
+
+    //获取新增的购物车数量
+    getCarNumber = () => {
+        let tmp = [];
+        let goodid = this.state.goodIofo.gID;
+        let oldAttr = this.state.goodIofo.mCartNum || [];
+        let data = this.carDatas;
+        for(let o in oldAttr) {
+            let gid = oldAttr[o].gID || null;
+            let name = oldAttr[o].mcAttr || null;
+            let index = oldAttr[o].mcAttrSub || null;
+            if(gid && name && index) {
+                tmp.push(gid + name + index);
+            }
+        }
+
+        for(let i in data) {
+            let nameStr = data[i].names.join(',');
+            let subStr = data[i].index.join(',');
+            if(nameStr && subStr) {
+                let str = goodid + nameStr + subStr;
+                let isok = true;
+                for(let j in tmp) {
+                    if(str == tmp[j]) isok = false;
+                }
+                if(isok) tmp.push(str);
+            }
+        }
+        return tmp.length;
+    };
+
+    //显示提示框
+    showReturnBox = (obj) => {
+        this.setState(obj, () => {
             this.timer = setTimeout(()=>{
                 if(this.state.showReturnMsg) {
-                    this.hideReturnMsg();
+                    this.hideReturnBox();
                 }
             }, 2500);
         });
     };
 
     //隐藏提示框
-    hideReturnMsg = () => {
+    hideReturnBox = () => {
         this.error = null;
         this.message = null;
         this.setState({
@@ -209,6 +256,55 @@ export default class ProductScreen extends Component {
         this.hideAreasBox();
     };
 
+    //收藏等操作结果通知
+    resultMsgAnimated = (msg) => {
+        this.collectionMsg = msg;
+        Animated.timing(this.state.msgPositon, {
+            toValue: PX.rowHeight1,
+            duration: 450,
+        }).start(()=>{
+            this.timer = setTimeout(()=>{
+                Animated.timing(this.state.msgPositon, {
+                    toValue: 0,
+                    duration: 300,
+                }).start();
+            }, 2000);
+        });
+    };
+
+    //收藏、取消收藏
+    toggleCollection = () => {
+        let that = this;
+        let goodid = this.state.goodIofo.gID;
+        let obj = {
+            fType: 1,
+            flID: goodid,
+        };
+        if(this.userinfo && this.userinfo[_User.keyMember]) {
+            obj = Object.assign(obj, this.userinfo);
+            Utils.fetch(Urls.collection, 'post', obj, (result) => {
+                if(result) {
+                    let ret = result.sTatus || 0;
+                    let msg = result.sMessage || null;
+                    if(msg) {
+                        that.resultMsgAnimated(msg);
+                    }
+                    if(ret == 1) {
+                        that.setState({isFavorite: true,});
+                    }else if(ret == 2) {
+                        that.setState({isFavorite: false,});
+                    }
+                }
+            });
+        }else {
+            this.error = 11;
+            this.message = Lang[Lang.default].notLoggedIn;
+            this.showReturnBox({
+                showReturnMsg: true,
+            });
+        }
+    };
+
     render() {
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
@@ -216,10 +312,13 @@ export default class ProductScreen extends Component {
         let left = <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />;
         let right = (
             <View style={styles.rowStyle}>
-                <BtnIcon width={PX.headIconSize} src={
-                    this.state.isFavorite ? 
-                    require("../../images/product/favorite_on.png") :
-                    require("../../images/product/favorite.png")} 
+                <BtnIcon 
+                    width={PX.headIconSize}
+                    press={this.toggleCollection}
+                    src={this.state.isFavorite ? 
+                        require("../../images/product/favorite_on.png") :
+                        require("../../images/product/favorite.png")
+                    } 
                 />
                 <BtnIcon width={PX.headIconSize} style={{marginLeft: 5}} src={require("../../images/product/share_orange.png")} />
             </View>
@@ -245,24 +344,36 @@ export default class ProductScreen extends Component {
                         )
                     }
                 </View>
+                <Animated.View style={[styles.ctrlResultView, {bottom: this.state.msgPositon}]}>
+                    <Text style={styles.ctrlResultText}>{this.collectionMsg}</Text>
+                </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
                         <BtnIcon 
                             src={require('../../images/product/custem_center.png')} 
                             width={22} 
-                            style={styles.productContactImg} 
+                            style={[styles.productContactImg, {marginLeft: 10,}]} 
                             text={Lang[Lang.default].customer}
                             txtStyle={styles.productContactTxt}
                             txtViewStyle={{minHeight: 12}}
                         />
-                        <BtnIcon 
-                            src={require('../../images/navs/carSelect.png')} 
-                            width={22} 
-                            style={styles.productContactImg} 
-                            text={Lang[Lang.default].tab_car}
-                            txtStyle={styles.productContactTxt}
-                            txtViewStyle={{minHeight: 12}}
-                        />
+                        <View style={styles.btnCarBox}>
+                            <BtnIcon 
+                                src={require('../../images/navs/carSelect.png')} 
+                                width={22}
+                                press={()=>navigation.navigate('Car')}
+                                style={styles.productContactImg} 
+                                text={Lang[Lang.default].tab_car}
+                                txtStyle={styles.productContactTxt}
+                                txtViewStyle={{minHeight: 12}}
+                            />
+                            {(this.carNumber && this.carNumber > 0) ?
+                                <TouchableOpacity onPress={()=>navigation.navigate('Car')} style={styles.carNumberStyle}>
+                                    <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
+                                </TouchableOpacity>
+                                : null
+                            }
+                        </View>
                     </View>
                     <View style={styles.rowStyle}>
                         <TouchableOpacity 
@@ -289,7 +400,7 @@ export default class ProductScreen extends Component {
                         isShow={this.state.showReturnMsg} 
                         error={this.error}
                         message={this.message}
-                        hideMsg={this.hideReturnMsg}
+                        hideMsg={this.hideReturnBox}
                     />
                     : null
                 }
@@ -335,6 +446,7 @@ export default class ProductScreen extends Component {
                         userid={this.userinfo}
                         attrs={attrs}
                         chlidAtrrs={chlidAtrrs}
+                        carDatas={this.carDatas}
                         hideModal={this.hideAttr}
                         type={this.state.attrType}
                         attrCallBack={this.attrCallBack}
@@ -442,7 +554,7 @@ export default class ProductScreen extends Component {
                             <View style={styles.namePriceBox}>
                                 <View style={[styles.centerBox, {
                                     height: 47, 
-                                    borderBottomColor: Color.lavender,
+                                    borderBottomColor: Color.lightGrey,
                                     borderBottomWidth: pixel,
                                 }]}>
                                     {isLimit ?
@@ -473,13 +585,13 @@ export default class ProductScreen extends Component {
                                         textDecorationLine: 'line-through',
                                     }]}>{marketPrice}</Text>
                                 </View>
-                                <View style={[styles.centerBox, {height: 42}]}>
+                                <View style={[styles.centerBox, {height: (isExchange || isGive) ? 42 : 60}]}>
                                     <Text style={[styles.txtStyle2, {
-                                        lineHeight: 17,
+                                        lineHeight: 18,
                                         color: gdel ? Color.gainsboro : Color.lightBack,
                                     }]} numberOfLines={2}>{name}</Text>
                                 </View>
-                                <View style={[styles.centerBox, {height: 20}]}>
+                                <View style={[styles.centerBox, {height: (isExchange || isGive) ? 20 : 0}]}>
                                 {isExchange ?
                                     <View style={styles.rowStyle}>
                                         <Text style={styles.couponIcon}>抵</Text>
@@ -623,14 +735,10 @@ export default class ProductScreen extends Component {
 
     //已选规格
     selectAttrInfo = () => {
-        let list = this.state.selected;
-        let attrText = Lang[Lang.default].nothing;
-        if(typeof(list) == 'object' && list && list.length) {
-            attrText = list.join(', ');
-        }
+        let attr = this.state.lastSelected.gAttr || Lang[Lang.default].nothing;
         return (
             <View style={styles.selectedBox}>
-                <Text style={[styles.txtStyle1, {lineHeight: 19}]} numberOfLines={2}>{attrText}</Text>
+                <Text style={[styles.txtStyle1, {lineHeight: 19}]} numberOfLines={2}>{attr}</Text>
             </View>
         );
     };
@@ -807,8 +915,8 @@ var styles = StyleSheet.create({
         flex: 1,
         margin: 3,
         borderRadius: 3,
-        borderWidth: 3,
-        borderColor: Color.lightGrey,
+        borderWidth: 2,
+        borderColor: Color.gainsboro2,
         padding: 5,
     },
     timeLimit: {
@@ -985,6 +1093,19 @@ var styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
+    ctrlResultView: {
+        position: 'absolute',
+        width: Size.width,
+        height: PX.rowHeight1,
+        backgroundColor: 'rgba(0, 0, 0, .5)',
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    ctrlResultText: {
+        fontSize: 16,
+        color: '#fff',
+    },
     footRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -992,8 +1113,29 @@ var styles = StyleSheet.create({
         borderTopColor: Color.lavender,
         borderTopWidth: pixel,
     },
-    productContactImg: {
+    btnCarBox: {
         marginLeft: 10,
+    },
+    carNumberStyle: {
+        position: 'absolute',
+        left: 21,
+        top: 8,
+        height: 13,
+        borderRadius: 6.5,
+        paddingLeft: 7,
+        paddingRight: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: Color.red,
+        borderWidth: 1,
+        backgroundColor: '#fff',
+    },
+    carNumberTextStyle: {
+        fontSize: 9,
+        color: Color.red,
+        paddingBottom: 1,
+    },
+    productContactImg: {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',

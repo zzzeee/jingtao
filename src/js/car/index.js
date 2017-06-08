@@ -76,8 +76,9 @@ export default class CarsScreen extends Component {
         _User.getUserInfo().then((user) => {
             console.log(user);
             if(user) {
+                console.log(Urls.getCarInfo);
                 Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
-                    // console.log(car);
+                    console.log(car);
                     if(car && car.sTatus && car.cartAry) {
                         let orders_ok = car.cartAry.normalAry || [];
                         let invalidList = car.cartAry.abnormalAry || [];
@@ -103,6 +104,12 @@ export default class CarsScreen extends Component {
                     }else {
                         that.setState({isRefreshing: false, });
                     }
+                }, null, {
+                    catchFunc: (err) => {
+                        console.log('获取数据出错');
+                        console.log(err);
+                        that.setState({isRefreshing: false, });
+                    },
                 });
             }else {
                 that.setState({isRefreshing: false, });
@@ -242,7 +249,7 @@ export default class CarsScreen extends Component {
         let that = this;
         let cars = this.state.carDatas ? 
             <View style={{backgroundColor: Color.lightGrey}}>
-                {this.state.carDatas.map(function(item, index) {
+                {this.state.carDatas.map((item, index) => {
                     return (
                         <ShopItem 
                             key={index} 
@@ -254,6 +261,7 @@ export default class CarsScreen extends Component {
                             updateCarDatas={that.updateCarDatas}
                             changeKEY1={that.state.changeKEY1}
                             changeKEY2={that.state.changeKEY2}
+                            showAutoModal={that.showAutoModal}
                         />
                     );
                 })}
@@ -466,7 +474,7 @@ export default class CarsScreen extends Component {
                     toValue: 0,
                     duration: 300,
                 }).start();
-            }, 3000);
+            }, 1500);
         });
     };
 

@@ -77,10 +77,19 @@ export default class ShopItem extends Component {
     }
 
     render() {
-        let { shop, updateCarDatas, key1, carDatas, keyword, changeKEY1, changeKEY2 } = this.props;
+        let { 
+            shop, 
+            updateCarDatas, 
+            key1, 
+            carDatas, 
+            keyword, 
+            changeKEY1, 
+            changeKEY2, 
+            showAutoModal,
+        } = this.props;
         if(!shop) return null;
         let that = this;
-        let name = shop.name || '';
+        let name = shop.sShopName || '';
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
@@ -131,6 +140,7 @@ export default class ShopItem extends Component {
                             updateCarDatas={updateCarDatas}
                             changeKEY1={changeKEY1}
                             changeKEY2={changeKEY2}
+                            showAutoModal={showAutoModal}
                         />
                     );
                 })}

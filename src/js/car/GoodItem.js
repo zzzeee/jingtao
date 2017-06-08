@@ -142,7 +142,7 @@ export default class GoodItem extends Component {
             this.message = Lang[Lang.default].shopNumberLessOne;
         }else if(num > this.maxNum) {
             this.error = 4;
-            this.message = Lang[Lang.default].insufficientStock;
+            this.message = Lang[Lang.default].insufficientStock ;
         }else {
             return true;
         }
@@ -156,18 +156,9 @@ export default class GoodItem extends Component {
 
     //数量添加失败
     addFailFunc = (num) => {
-        if(this.error) {
-            alert(this.message);
+        if(this.error && this.props.showAutoModal) {
+            this.props.showAutoModal(this.message);
         }
-    };
-
-    //隐藏提示框
-    hideReturnMsg = () => {
-        this.error = null;
-        this.message = null;
-        this.setState({
-            showReturnMsg: false,
-        });
     };
 
     // 更新购物车数据

@@ -291,7 +291,7 @@ export default class CityGoodShopList extends Component {
                     }]}>
                     </Animated.View>
                 </View>
-                <View style={styles.topBtnRow}>
+                <View style={[styles.topBtnRow, {backgroundColor: '#f8f8f8'}]}>
                     <TouchableOpacity onPress={()=>{
                         this.changeList(0);
                     }} style={styles.flex}>
@@ -310,7 +310,7 @@ export default class CityGoodShopList extends Component {
                         </View>
                     </TouchableOpacity>
                 </View>
-                {this.state.showSort ?
+                {(this.state.showSort && this.index === 0) ?
                     <View style={styles.topBtnRow}>
                         <TouchableOpacity style={styles.flex}>
                             <View style={styles.topBtnView}>
@@ -670,17 +670,20 @@ export default class CityGoodShopList extends Component {
         }else if(offsetY < topImgHeight && this.state.isFloat) {
             this.setState({isFloat: false});
         }
-        //判断是否显示排序
-        let minY = 20; // 显示/隐藏 至少需移动的最小距离
-        if(offsetY > topImgHeight && (offsetY - minY) > this.lastOffsetY && this.state.showSort) {
-            //当移动距离大于顶部背景图的高度时,向上不显示排序按钮行
-             this.setState({showSort: false});
-        }else if(offsetY > topImgHeight && offsetY < (this.lastOffsetY - minY) && !this.state.showSort) {
-            //当移动距离大于顶部背景图的高度时,向下显示排序按钮行
-            this.setState({showSort: true});
-        }else if(offsetY < topImgHeight && !this.state.showSort) {
-            //当移动距离小于顶部背景图的高度时,不隐藏
-            this.setState({showSort: true});
+
+        if(this.index === 0) {
+            //判断是否显示排序
+            let minY = 20; // 显示/隐藏 至少需移动的最小距离
+            if(offsetY > topImgHeight && (offsetY - minY) > this.lastOffsetY && this.state.showSort) {
+                //当移动距离大于顶部背景图的高度时,向上不显示排序按钮行
+                this.setState({showSort: false});
+            }else if(offsetY > topImgHeight && offsetY < (this.lastOffsetY - minY) && !this.state.showSort) {
+                //当移动距离大于顶部背景图的高度时,向下显示排序按钮行
+                this.setState({showSort: true});
+            }else if(offsetY < topImgHeight && !this.state.showSort) {
+                //当移动距离小于顶部背景图的高度时,不隐藏
+                this.setState({showSort: true});
+            }
         }
         this.lastOffsetY = offsetY;
     };
@@ -862,7 +865,6 @@ var styles = StyleSheet.create({
     btnRightIcon: {
         width: 15,
         height: 15,
-        marginLeft: 5,
     },
     onEndImgStyle: {
         width: 100,
