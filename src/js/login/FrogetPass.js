@@ -1,7 +1,7 @@
 /**
- * 登录页面
+ * 忘记密码页面
  * @auther linzeyong
- * @date   2017.06.07
+ * @date   2017.06.09
  */
 
 import React , { Component } from 'react';
@@ -16,7 +16,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import User from '../public/user';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -24,32 +23,37 @@ import AppHead from '../public/AppHead';
 import Lang, {Rule, str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
+import SendCode from './verificationCode';
 import ErrorAlert from '../other/ErrorAlert';
 import FrequentModel from './FrequentModel';
 
-var _User = new User();
-
-export default class Login extends Component {
+export default class FrogetPass extends Component {
     constructor(props) {
         super(props);
         this.state = {
             mobile: '',
             password: '',
+            code: '',
             showPassword: false,
             showAlert: false,
             onFocusMobile: false,
             onFocusPassword: false,
+            onFocusCode: false,
             showFrequentModel: false,
         };
+
         this.minPword = 6;
         this.type = 1;
         this.alertMsg = '';
+        this.sendResult = false;
         this.clickNumber = 1;
         this.frequentNumber = 3;
     }
 
-    componentDidMount() {
-        // console.log('componentDidMount login');
+    componentWillUnmount() {
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     //设置哪个输入框获得焦点
@@ -59,14 +63,28 @@ export default class Login extends Component {
             obj = {
                 onFocusMobile: true,
                 onFocusPassword: false,
+                onFocusCode: false,
             };
         }else if(key == 'pwd') {
             obj = {
                 onFocusMobile: false,
                 onFocusPassword: true,
+                onFocusCode: false,
+            };
+        }else if(key == 'code') {
+            obj = {
+                onFocusMobile: false,
+                onFocusPassword: false,
+                onFocusCode: true,
             };
         }
         if(obj) this.setState(obj);
+    };
+
+    //隐藏频繁提示框
+    hideFrequentBox = () => {
+        this.clickNumber = 1;
+        this.setState({showFrequentModel: false});
     };
 
     //设置手机号值
@@ -79,19 +97,14 @@ export default class Login extends Component {
         this.setState({password: value});
     };
 
+    //设置验证码值
+    setCode = (value) => {
+        this.setState({code: value});
+    };
+
     //密码可见切换
     toggleShowPassword = (value) => {
         this.setState({showPassword: value});
-    };
-
-    //检测用户名、密码格式是否正确
-    checkFormat = () => {
-        let mobile = this.state.mobile;
-        let pword = this.state.password;
-        if(mobile && pword) {
-            return true;
-        }
-        return false;
     };
 
     //显示提示框
@@ -105,10 +118,24 @@ export default class Login extends Component {
         this.setState({ showAlert: false });
     };
 
-    //隐藏频繁提示框
-    hideFrequentBox = () => {
-        this.clickNumber = 1;
-        this.setState({showFrequentModel: false});
+    //检测用户名、密码格式是否正确
+    checkFormat = () => {
+        let mobile = this.state.mobile;
+        let pword = this.state.password;
+        let code = this.state.code;
+        if(mobile && pword && code) {
+            return true;
+        }
+        return false;
+    };
+
+    //检测是否可以允许发送验证码
+    checkCode = () => {
+        let mobile = this.state.mobile;
+        if(mobile) {
+            return true;
+        }
+        return false;
     };
 
     //检测用户输入是否正确
@@ -128,61 +155,83 @@ export default class Login extends Component {
         return false;
     };
 
-    //点击登录
-    startLogin = () => {
+    clickSendCode = (callback, disLock) => {
+        if(this.checkCode()) {
+            let that = this;
+            let mobile = this.state.mobile || '';
+            let cNumber = this.clickNumber || 1;
+            if(!/^1[34578]\d{9}$/.test(mobile)) {
+                disLock();
+                this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+            }else if(cNumber > 0 && cNumber % this.frequentNumber === 0) {
+                disLock();
+                this.setState({showFrequentModel: true});
+            }else {
+                Utils.fetch(Urls.sendCode, 'post', {
+                    mType: 'pwd',
+                    mPhone: this.state.mobile,
+                }, (result) => {
+                    console.log(result);
+                    that.clickNumber++;
+                    disLock();
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        if(ret == 1) {
+                            callback();
+                            that.sendResult = true;
+                        }else if(result.sMessage) {
+                            that.showAutoModal(result.sMessage);
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    //点击确定
+    userRegister = () => {
         let that = this;
-        let navigation = this.props.navigation || null;
-        let mobile = this.state.mobile || null;
-        let pword = this.state.password || null;
-        if(mobile && pword) {
+        let mobile = this.state.mobile || '';
+        let pword = this.state.password || '';
+        let code = this.state.code || '';
+        if(mobile && pword && code) {
             if(!this.showInputIsAble()) return;
-            Utils.fetch(Urls.checkUser, 'post', {
-                uPhone: mobile,
-                uPassword: pword,
+            Utils.fetch(Urls.updateUserPassword, 'post', {
+                mPhone: mobile,
+                mPwd: pword,
+                mCpwd: pword,
+                mPhoneCode: code,
             }, (result) => {
                 console.log(result);
                 that.clickNumber++;
                 if(result) {
-                    let ret = result.sTatus || 0;
+                    let err = result.sTatus || 0;
                     let msg = result.sMessage || null;
-                    let token = result.mToken || null;
-                    if(ret == 1 && token) {
-                        _User.getUserID(_User.keyMember)
-                        .then((user) => {
-                            _User.saveUserID(_User.keyMember, token)
-                            .then(() => {
-                                if(navigation) {
-                                    let params = navigation.state.params || null;
-                                    let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
-                                    navigation.navigate(back);
-                                }
-                            });
-                        });
-                    }else if(msg) {
-                        that.showAutoModal(result.sMessage);
+                    if(err == 8) {
+                         that.type = 2;
+                         msg = Lang[Lang.default].updatePasswordSuccess;
+                         that.timer = setTimeout(() => {
+                             that.props.navigation.navigate('Login');
+                         }, 2000);
                     }
+                    if(msg) that.showAutoModal(msg);
                 }
             });
-        }else {
-            this.showAutoModal(Lang[Lang.default].mobilePhoneEmpty);
         }
     };
 
     render() {
         let { navigation } = this.props;
-        let color = this.checkFormat() ?  '#fff' : Color.lightBack;
+        let color = this.checkFormat() ? '#fff' : Color.lightBack;
         let bgcolor = this.checkFormat() ? Color.mainColor : Color.gray;
         let disabled = this.checkFormat() ? false : true;
         return (
             <View style={styles.container}>
                 <AppHead
-                    title={Lang[Lang.default].passwordLogin}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
+                    title={Lang[Lang.default].forgetPassword}
+                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />}
-                    right={(<Text style={styles.forgetPasswordText} onPress={()=>{navigation.navigate('FrogetPass')}}>
-                        {Lang[Lang.default].forgetPassword}
-                    </Text>)}
+                    }} src={require("../../images/back.png")} />)}
                 />
                 <ScrollView contentContainerStyle={styles.scrollStyle}>
                     <View style={styles.inputRowStyle}>
@@ -193,7 +242,7 @@ export default class Login extends Component {
                             <View style={styles.inputMiddleStyle}>
                                 <InputText
                                     vText={this.state.mobile}
-                                    pText={Lang[Lang.default].inputMobile} 
+                                    pText={Lang[Lang.default].inputMobile}
                                     onChange={this.setMobile} 
                                     isPWD={false} 
                                     length={11}
@@ -220,7 +269,7 @@ export default class Login extends Component {
                             <View style={styles.inputMiddleStyle}>
                                 <InputText
                                     vText={this.state.password}
-                                    pText={str_replace(Lang[Lang.default].inputPassword, this.minPword)}
+                                    pText={Lang[Lang.default].inputNewPassword}
                                     onChange={this.setPassword}
                                     isPWD={!this.state.showPassword}
                                     length={26}
@@ -246,33 +295,48 @@ export default class Login extends Component {
                             }
                         </View>
                     </View>
-                    <View style={styles.textRowStyle}>
-                        <View>
-                            <Text style={styles.txtStyle2}>
-                                {Lang[Lang.default].loginProtocol}
-                                《<Text style={styles.txtStyle3}>{Lang[Lang.default].jingtaoProtocol}</Text>》
-                            </Text>
+                    <View style={styles.inputRowStyle}>
+                        <View style={styles.inputRowMain}>
+                            <View style={styles.inputLeftStyle}>
+                                <Image source={require('../../images/login/code.png')} style={styles.iconSize26} />
+                            </View>
+                            <View style={styles.inputMiddleStyle}>
+                                <InputText
+                                    vText={this.state.code}
+                                    pText={Lang[Lang.default].inputCode}
+                                    onChange={this.setCode}
+                                    isPWD={false}
+                                    length={10}
+                                    style={styles.inputStyle}
+                                    onFocus={()=>this.setInputFocus('code')}
+                                />
+                            </View>
+                            <View style={styles.inputRightStyle}>
+                                {(this.state.code && this.state.onFocusCode) ?
+                                    <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setCode('')}>
+                                        <Image source={require('../../images/login/close.png')} style={styles.iconSize18}/>
+                                    </TouchableOpacity>
+                                    : null
+                                }
+                                <SendCode sendCodeFunc={this.clickSendCode} enable={this.checkCode()} />
+                            </View>
                         </View>
-                        <View></View>
                     </View>
-                    <TouchableOpacity disabled={disabled} onPress={this.startLogin} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={this.userRegister} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
-                        <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].logo}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.registerRow} onPress={()=>{
-                        navigation.navigate('Register');
-                    }}>
-                        <Text style={styles.registerText}>{Lang[Lang.default].registeredClickThere}</Text>
-                        <Image source={require('../../images/login/left.png')} style={styles.iconSize12} />
+                        <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].determine}</Text>
                     </TouchableOpacity>
                 </ScrollView>
-                <ErrorAlert 
-                    type={this.type}
-                    visiable={this.state.showAlert} 
-                    message={this.alertMsg} 
-                    hideModal={this.hideAutoModal} 
-                />
+                {this.state.showAlert ?
+                    <ErrorAlert 
+                        type={this.type}
+                        visiable={this.state.showAlert} 
+                        message={this.alertMsg} 
+                        hideModal={this.hideAutoModal} 
+                    />
+                    : null
+                }
                 {this.state.showFrequentModel ? 
                     <FrequentModel isShow={this.state.showFrequentModel} callBack={this.hideFrequentBox} />
                     : null
@@ -289,13 +353,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Color.floralWhite,
-    },
-    forgetPasswordText: {
-        fontSize: 14,
-        color: Color.orangeRed,
-        fontWeight: 'bold',
-        padding: 5,         // 增大点击面积
-        paddingRight: PX.marginLR,
     },
     scrollStyle: {
         paddingTop: 10,
@@ -368,13 +425,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: Color.gray,
-        marginTop: 36,
+        marginTop: 80,
         borderRadius: 3,
     },
     registerRow: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
         marginTop: 20,
     },
     registerText: {

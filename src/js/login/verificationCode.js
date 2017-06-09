@@ -43,6 +43,7 @@ export default class SendCode extends Component {
         this.endTxt = Lang[Lang.default].resendCode;
         this.enColor = '#fff';
         this.disColor = Color.floralWhite;
+        this.btnLock = false;
     }
 
     componentWillMount() {
@@ -101,8 +102,13 @@ export default class SendCode extends Component {
             <TouchableOpacity disabled={!this.state.enable} style={[styles.btnBox, {
                 backgroundColor: bgColor,
             }]} onPress={()=>{
-                this.countDown(this.time);
-                this.props.sendCodeFunc();
+                if(!this.btnLock) {
+                    let that = this;
+                    this.btnLock = true;
+                    this.props.sendCodeFunc(()=>this.countDown(this.time), ()=>{
+                        that.btnLock = false;
+                    });
+                }
             }}>
                 <Text style={styles.btnText}>{this.state.text}</Text>
             </TouchableOpacity>

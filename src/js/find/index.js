@@ -65,7 +65,7 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(xsqg);
-        // console.log(mdyp);
+        console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({fetchError: true});
         }else {
@@ -345,36 +345,27 @@ export default class FindScreen extends Component {
 
     // 名店优品列表的行内容
     mdyp_renderItem = ({item}) => {
-        let name = item.sName || null;
+        let name = item.sShopName || null;
         let plist = item.proAry || [];
         let img = item.sLogo || '';
 
         if(name && plist.length > 0) {
             let p1 = null, p2 = null, p3 = null;
             if(plist[0] && plist[0].gThumbPic) {
-                p1 = (
-                    <Image source={{uri: plist[0].gThumbPic}} style={styles.flex} />
-                );
+                p1 = <Image source={{uri: plist[0].gThumbPic}} style={styles.flex} />;
             }
             if(plist[1] && plist[1].gThumbPic) {
-                p2 = (
-                    <Image source={{uri: plist[1].gThumbPic}} style={styles.flex} />
-                );
+                p2 = <Image source={{uri: plist[1].gThumbPic}} style={styles.flex} />;
             }
             if(plist[2] && plist[2].gThumbPic) {
-                p3 = (
-                    <Image source={{uri: plist[2].gThumbPic}} style={styles.flex} />
-                );
+                p3 = <Image source={{uri: plist[2].gThumbPic}} style={styles.flex} />;
             }
 
             return (
                 <View style={styles.shopItemBox}>
                     <View style={styles.shopItemHead}>
                         <View style={styles.shopLogoName}>
-                            {img ?
-                                <Image source={{uri: img}} resizeMode="center" style={styles.shopLogo} />
-                                : null
-                            }
+                            <Image source={require('../../images/car/shophead.png')} style={styles.shopLogo} />
                             <Text style={styles.defalutFont}>{name}</Text>
                         </View>
                         <View style={styles.gotoShopView}>

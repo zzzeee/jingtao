@@ -165,7 +165,7 @@ const language = {
         inputMobile: '请输入手机号',
         mobilePhoneFail: '手机号码错误',
         mobilePhoneEmpty: '手机号码不能为空',
-        inputPassword: '请输入密码(至少6位数)',
+        inputPassword: '请输入密码(至少%s位数)',
         loginProtocol: '登录代表你同意',
         jingtaoProtocol: '境淘用户协议',
         registerUser: '注册帐号',
@@ -174,6 +174,14 @@ const language = {
         sendCode: '发送验证码',
         resendCode: '重新发送',
         notLoggedIn: '你还未登录!',
+        operationFrequentAlert: '您的操作过于频繁, 请进行验证',
+        checkCode: '验证码',
+        refreshVerificationCode: '看不清, 刷新一下',
+        inputCodeError: '验证码输入错误,请重输!',
+        passwordMinLength: '密码长度要求%s位以上',
+        forgetPassword: '忘记密码',
+        inputNewPassword: '请输入新的密码',
+        updatePasswordSuccess: '密码修改成功,请登录',
     },
 };
 

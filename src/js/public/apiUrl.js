@@ -46,6 +46,8 @@ var urls = {
     userRegister: host + '/api/RegisterNController/registerMemberInfoAdd',
     //收藏、取消收藏
     collection: host + '/api/MemberNController/memberFollowStatusEditBymID',
+    //修改用户登录密码
+    updateUserPassword: host + '/api/MemberNController/memberPasswordEditByMID',
 };
 
 export default urls;

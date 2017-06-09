@@ -20,6 +20,7 @@ import TabNavScreen from './tabNav';
 // import TabView from './tabView';
 import Login from './login';
 import Register from './login/register';
+import FrogetPass from './login/FrogetPass';
 import Product from './product';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';
@@ -95,6 +96,11 @@ const RegisterScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Register} />
 );
 
+//忘记密码
+const FrogetPassScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={FrogetPass} />
+);
+
 //首页 - 城市的商品、店铺列表
 const CityGoodShopListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={CityGoodShopList} />
@@ -149,6 +155,9 @@ const AppNavigator = StackNavigator({
     },
     Register: {
         screen: RegisterScreen,
+    },
+    FrogetPass: {
+        screen: FrogetPassScreen,
     },
     Product: {
         screen: ProductScreen,

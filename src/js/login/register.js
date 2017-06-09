@@ -25,6 +25,7 @@ import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import SendCode from './verificationCode';
 import ErrorAlert from '../other/ErrorAlert';
+import FrequentModel from './FrequentModel';
 
 export default class Register extends Component {
     constructor(props) {
@@ -35,12 +36,18 @@ export default class Register extends Component {
             code: '',
             showPassword: false,
             showAlert: false,
+            onFocusMobile: false,
+            onFocusPassword: false,
+            onFocusCode: false,
+            showFrequentModel: false,
         };
 
         this.minPword = 6;
         this.type = 1;
         this.alertMsg = '';
         this.sendResult = false;
+        this.clickNumber = 1;
+        this.frequentNumber = 3;
     }
 
     componentWillUnmount() {
@@ -48,6 +55,37 @@ export default class Register extends Component {
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
         this.timer && clearTimeout(this.timer);
     }
+
+    //设置哪个输入框获得焦点
+    setInputFocus = (key) => {
+        let obj = null;
+        if(key == 'tel') {
+            obj = {
+                onFocusMobile: true,
+                onFocusPassword: false,
+                onFocusCode: false,
+            };
+        }else if(key == 'pwd') {
+            obj = {
+                onFocusMobile: false,
+                onFocusPassword: true,
+                onFocusCode: false,
+            };
+        }else if(key == 'code') {
+            obj = {
+                onFocusMobile: false,
+                onFocusPassword: false,
+                onFocusCode: true,
+            };
+        }
+        if(obj) this.setState(obj);
+    };
+
+    //隐藏频繁提示框
+    hideFrequentBox = () => {
+        this.clickNumber = 1;
+        this.setState({showFrequentModel: false});
+    };
 
     //设置手机号值
     setMobile = (value) => {
@@ -85,7 +123,7 @@ export default class Register extends Component {
         let mobile = this.state.mobile;
         let pword = this.state.password;
         let code = this.state.code;
-        if(mobile && pword && code && /^1[34578]\d{9}$/.test(mobile) && pword.length >= this.minPword) {
+        if(mobile && pword && code) {
             return true;
         }
         return false;
@@ -94,28 +132,58 @@ export default class Register extends Component {
     //检测是否可以允许发送验证码
     checkCode = () => {
         let mobile = this.state.mobile;
-        if(mobile && /^1[34578]\d{9}$/.test(mobile)) {
+        if(mobile) {
             return true;
         }
         return false;
     };
 
-    sendCode = () => {
+    //检测用户输入是否正确
+    showInputIsAble = () => {
+        let mobile = this.state.mobile || '';
+        let pword = this.state.password || '';
+        let cNumber = this.clickNumber || 1;
+        if(!/^1[34578]\d{9}$/.test(mobile)) {
+            this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+        }else if(pword.length < this.minPword) {
+            this.showAutoModal(str_replace(Lang[Lang.default].passwordMinLength, this.minPword));
+        }else if(cNumber > 0 && cNumber % this.frequentNumber === 0) {
+            this.setState({showFrequentModel: true});
+        }else {
+            return true;
+        }
+        return false;
+    };
+
+    clickSendCode = (callback, disLock) => {
         if(this.checkCode()) {
             let that = this;
-            Utils.fetch(Urls.sendCode, 'post', {
-                mPhone: this.state.mobile,
-            }, (result) => {
-                console.log(result);
-                if(result) {
-                    let ret = result.sTatus || 0;
-                    if(ret == 1) {
-                        that.sendResult = true;
-                    }else if(result.sMessage) {
-                        that.showAutoModal(result.sMessage);
+            let mobile = this.state.mobile || '';
+            let cNumber = this.clickNumber || 1;
+            if(!/^1[34578]\d{9}$/.test(mobile)) {
+                disLock();
+                this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+            }else if(cNumber > 0 && cNumber % this.frequentNumber === 0) {
+                disLock();
+                this.setState({showFrequentModel: true});
+            }else {
+                Utils.fetch(Urls.sendCode, 'post', {
+                    mPhone: this.state.mobile,
+                }, (result) => {
+                    console.log(result);
+                    that.clickNumber++;
+                    disLock();
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        if(ret == 1) {
+                            callback();
+                            that.sendResult = true;
+                        }else if(result.sMessage) {
+                            that.showAutoModal(result.sMessage);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     };
 
@@ -126,6 +194,7 @@ export default class Register extends Component {
         let pword = this.state.password || '';
         let code = this.state.code || '';
         if(mobile && pword && code) {
+            if(!this.showInputIsAble()) return;
             Utils.fetch(Urls.userRegister, 'post', {
                 mPhone: mobile,
                 mPwd: pword,
@@ -133,6 +202,7 @@ export default class Register extends Component {
                 mCode: code,
             }, (result) => {
                 console.log(result);
+                that.clickNumber++;
                 if(result) {
                     let err = result.sTatus || 0;
                     let msg = result.sMessage || null;
@@ -144,7 +214,7 @@ export default class Register extends Component {
                              });
                          }, 2000);
                     }
-                    if(msg) that.showAutoModal(result.sMessage);
+                    if(msg) that.showAutoModal(msg);
                 }
             });
         }
@@ -178,10 +248,11 @@ export default class Register extends Component {
                                     length={11}
                                     style={styles.inputStyle}
                                     keyType={"numeric"}
+                                    onFocus={()=>this.setInputFocus('tel')}
                                 />
                             </View>
                             <View style={styles.inputRightStyle}>
-                                {this.state.mobile ?
+                                {(this.state.mobile && this.state.onFocusMobile) ?
                                     <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setMobile('')}>
                                         <Image source={require('../../images/login/close.png')} style={styles.iconSize18} />
                                     </TouchableOpacity>
@@ -198,14 +269,15 @@ export default class Register extends Component {
                             <View style={styles.inputMiddleStyle}>
                                 <InputText
                                     vText={this.state.password}
-                                    pText={Lang[Lang.default].inputPassword} 
+                                    pText={str_replace(Lang[Lang.default].inputPassword, this.minPword)}
                                     onChange={this.setPassword}
                                     isPWD={!this.state.showPassword}
                                     length={26}
                                     style={styles.inputStyle}
+                                    onFocus={()=>this.setInputFocus('pwd')}
                                 />
                             </View>
-                            {this.state.password ?
+                            {(this.state.password && this.state.onFocusPassword) ?
                                 <View style={styles.inputRightStyle}>
                                     <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setPassword('')}>
                                         <Image source={require('../../images/login/close.png')} style={styles.iconSize18}/>
@@ -236,16 +308,17 @@ export default class Register extends Component {
                                     isPWD={false}
                                     length={10}
                                     style={styles.inputStyle}
+                                    onFocus={()=>this.setInputFocus('code')}
                                 />
                             </View>
                             <View style={styles.inputRightStyle}>
-                                {this.state.code ?
+                                {(this.state.code && this.state.onFocusCode) ?
                                     <TouchableOpacity style={styles.btnStyle} onPress={()=>this.setCode('')}>
                                         <Image source={require('../../images/login/close.png')} style={styles.iconSize18}/>
                                     </TouchableOpacity>
                                     : null
                                 }
-                                <SendCode sendCodeFunc={this.sendCode} enable={this.checkCode()} />
+                                <SendCode sendCodeFunc={this.clickSendCode} enable={this.checkCode()} />
                             </View>
                         </View>
                     </View>
@@ -261,6 +334,10 @@ export default class Register extends Component {
                     message={this.alertMsg} 
                     hideModal={this.hideAutoModal} 
                 />
+                {this.state.showFrequentModel ? 
+                    <FrequentModel isShow={this.state.showFrequentModel} callBack={this.hideFrequentBox} />
+                    : null
+                }
             </View>
         );
     }

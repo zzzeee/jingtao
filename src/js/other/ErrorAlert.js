@@ -52,6 +52,7 @@ export default class ErrorAlert extends Component {
         }
         let img = {};
         let type = this.props.type || 1;
+        console.warn(type);
         if(type == 1) {
             img = require('../../images/careful_big.png');
         }else if(type == 2) {
