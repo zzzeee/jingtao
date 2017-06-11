@@ -582,6 +582,7 @@ export default class CityGoodShopList extends Component {
 
     // 店铺列表
     _renderItem3 = (obj, sectionID, rowID) => {
+        let { navigation } = this.props;
         let name = obj.sShopName || '';
         let list = obj.recomdProduct || [];
         if(list.length == 0) return <View key={rowID}></View>;
@@ -623,15 +624,17 @@ export default class CityGoodShopList extends Component {
                     autoplay={false}
                     showsButtons={false}>
                     {list.map(function(item, index) {
-                        let id = item.gID || 0;
+                        let gid = item.gID || 0;
                         let gimg = item.gThumBPic || null;
                         let img = gimg ? {uri: gimg} : require('../../images/empty.png');
                         let gname = item.gName || null;
                         let gstock = 99;
                         let gprice = item.gDiscountPrice || null;
-                        if(id > 0) {
+                        if(gid > 0) {
                             return (
-                                <View key={index} style={styles.swiperGoodItem}>
+                                <TouchableOpacity key={index} style={styles.swiperGoodItem} onPress={()=>{
+                                    navigation.navigate('Product', {gid: gid});
+                                }}>
                                     <View>
                                         <Image source={img} style={styles.swiperGoodImg} />
                                     </View>
@@ -649,7 +652,7 @@ export default class CityGoodShopList extends Component {
                                             </Text>
                                         </View>
                                     </View>
-                                </View>
+                                </TouchableOpacity>
                             );
                         }else {
                             return null;

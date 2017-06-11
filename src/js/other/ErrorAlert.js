@@ -4,6 +4,7 @@
  * @date   2017.06.07
  */
 
+import PropTypes from 'prop-types';
 import React , { Component } from 'react';
 import {
     StyleSheet,
@@ -52,7 +53,6 @@ export default class ErrorAlert extends Component {
         }
         let img = {};
         let type = this.props.type || 1;
-        console.warn(type);
         if(type == 1) {
             img = require('../../images/careful_big.png');
         }else if(type == 2) {
@@ -75,7 +75,7 @@ export default class ErrorAlert extends Component {
                 >
                     <View style={modalStyle.alertBody}>
                         <View style={modalStyle.alertIconView}>
-                            <Image source={require('../../images/careful_big.png')} style={modalStyle.alertIcon} />
+                            <Image source={img} style={modalStyle.alertIcon} />
                         </View>
                         <Text style={modalStyle.alertMssage}>{this.props.message}</Text>
                     </View>

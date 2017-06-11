@@ -19,6 +19,7 @@ import JPushModule from 'jpush-react-native';
 import TabNavScreen from './tabNav';
 // import TabView from './tabView';
 import Login from './login';
+import LoginWord from './login/LoginWord';
 import Register from './login/register';
 import FrogetPass from './login/FrogetPass';
 import Product from './product';
@@ -91,6 +92,11 @@ const LoginScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Login} />
 );
 
+//登录 - 用户须知
+const LoginWordScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={LoginWord} />
+);
+
 //注册
 const RegisterScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Register} />
@@ -152,6 +158,9 @@ const AppNavigator = StackNavigator({
     },
     Login: {
         screen: LoginScreen,
+    },
+    LoginWord: {
+        screen: LoginWordScreen,
     },
     Register: {
         screen: RegisterScreen,

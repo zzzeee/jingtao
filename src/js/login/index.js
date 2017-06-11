@@ -250,7 +250,9 @@ export default class Login extends Component {
                         <View>
                             <Text style={styles.txtStyle2}>
                                 {Lang[Lang.default].loginProtocol}
-                                《<Text style={styles.txtStyle3}>{Lang[Lang.default].jingtaoProtocol}</Text>》
+                                《<Text style={styles.txtStyle3} onPress={()=>{
+                                    navigation.navigate('LoginWord');
+                                }}>{Lang[Lang.default].jingtaoProtocol}</Text>》
                             </Text>
                         </View>
                         <View></View>
@@ -267,12 +269,15 @@ export default class Login extends Component {
                         <Image source={require('../../images/login/left.png')} style={styles.iconSize12} />
                     </TouchableOpacity>
                 </ScrollView>
-                <ErrorAlert 
-                    type={this.type}
-                    visiable={this.state.showAlert} 
-                    message={this.alertMsg} 
-                    hideModal={this.hideAutoModal} 
-                />
+                {this.state.showAlert ?
+                    <ErrorAlert 
+                        type={this.type}
+                        visiable={this.state.showAlert} 
+                        message={this.alertMsg} 
+                        hideModal={this.hideAutoModal} 
+                    />
+                    : null
+                }
                 {this.state.showFrequentModel ? 
                     <FrequentModel isShow={this.state.showFrequentModel} callBack={this.hideFrequentBox} />
                     : null

@@ -82,25 +82,26 @@ export default class CtrlNumber extends Component {
     }
 
     render() {
+        let num = parseInt(this.state.number) || 0;
         return (
             <View style={styles.ctrlNumberBox}>
                 <TouchableOpacity 
                     style={[styles.btnCtrlNumber, {borderRightWidth: 1}]}
-                    onPress={()=>{this.changeNumber(this.state.number - 1)}}
+                    onPress={()=>{this.changeNumber(num - 1)}}
                 >
                     <Text style={styles.btnCtrlNumberText}>-</Text>
                 </TouchableOpacity>
                 <InputText
                     keyType="numeric"
-                    vText={this.state.number + ''}
+                    vText={num + ''}
                     style={styles.btnCtrlNumberInput}
                     onChange={(number)=>this.setState({number})}
-                    endEditing={() => this.changeNumber(this.state.number)}
+                    endEditing={() => this.changeNumber(num)}
                     length={10}
                 />
                 <TouchableOpacity 
                     style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}
-                    onPress={()=>{this.changeNumber(this.state.number + 1)}}
+                    onPress={()=>{this.changeNumber(num + 1)}}
                 >
                     <Text style={styles.btnCtrlNumberText}>+</Text>
                 </TouchableOpacity>

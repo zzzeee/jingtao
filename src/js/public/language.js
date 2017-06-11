@@ -182,6 +182,7 @@ const language = {
         forgetPassword: '忘记密码',
         inputNewPassword: '请输入新的密码',
         updatePasswordSuccess: '密码修改成功,请登录',
+        jingtaoUserAgreement: '境淘用户协议',
     },
 };
 

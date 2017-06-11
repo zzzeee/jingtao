@@ -381,6 +381,7 @@ export default class CarsScreen extends Component {
                 ref={'ProductItem' + index}
                 showDiscount={true}
                 width={(Size.width - 5) / 2}
+                navigation={this.props.navigation}
                 boxStyle={{
                     marginRight: 5,
                     marginBottom: 5,

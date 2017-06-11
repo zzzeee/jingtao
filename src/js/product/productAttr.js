@@ -243,7 +243,9 @@ export default class ProductAttr extends Component {
         let img = productImg ? {uri: productImg} : require('../../images/empty.png');
         this.stock = this.getAttrStock();
         this.money = this.getAttrPrice();
-        if(this.stock < this.number) {
+        if(!this.stock || this.stock < 0) {
+            this.number = 0;
+        }else if(this.stock < this.number) {
             this.number = this.stock > 0 ? 1 : 0;
         }else if(this.number == 0 && this.stock > 0){
             this.number = 1;
