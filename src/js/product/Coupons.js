@@ -15,6 +15,8 @@ import {
     ScrollView,
 } from 'react-native';
 
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import CouponItem from '../other/CouponItem';
@@ -27,7 +29,6 @@ export default class Coupons extends Component {
     };
     // 参数类型
     static propTypes = {
-        gid: React.PropTypes.number.isRequired,
         isShow: React.PropTypes.bool.isRequired,
         coupons: React.PropTypes.array.isRequired,
         hideCouponBox: React.PropTypes.func,
@@ -37,22 +38,68 @@ export default class Coupons extends Component {
         super(props);
         this.state = {
             datas: [],
+            userCoupons: null,  //已领取过的优惠券
         };
+        this._userCoupons = null;
     }
 
     componentWillMount() {
-        if(this.props.coupons && this.props.gid) {
+        if(this.props.coupons) {
             this.setState({
                 datas: this.props.coupons,
             });
-            this.giveList = []; //已领取过的优惠券
         }
     }
+
+    componentDidMount() {
+        let { userid } = this.props;
+        let that = this;
+        if(userid) {
+            Utils.fetch(Urls.getUserCoupons, 'post', {
+                mToken: userid,
+            }, (result)=>{
+                if(result && result.sTatus && result.couponAry) {
+                    let datas = result.couponAry || [];
+                    let coupons = [];
+                    for(let i in datas) {
+                        let id = datas[i].hId || 0;
+                        let stime = datas[i].hStartTime || null;
+                        let etime = datas[i].hSendTime || null;
+                        let ntime = new Date().getTime();
+                        // let isable = datas[i].isable || 0;
+                        stime = that.checkTimeString(stime);
+                        etime = that.checkTimeString(etime);
+                        let _stime = new Date(that.checkTimeString(stime)).getTime();
+                        let _etime = new Date(that.checkTimeString(etime)).getTime();
+                        if(id > 0 && ntime > _stime && ntime < _etime) {
+                            coupons.push(id);
+                        }
+                    }
+                    that._userCoupons = coupons;
+                    that.setState({
+                        userCoupons: coupons,
+                    });
+                }
+            });
+        }
+    }
+
+    //检查时间是否带有时分秒
+    checkTimeString = (t) => {
+        if(t) {
+            let str = t.replace(/-/g, "/") || '';
+            if(str && str.length <= 10 && str.indexOf(':') < 0) {
+                str = str + ' 00:00:00';
+            }
+            return str
+        }
+        return t;
+    };
 
     addCoupon = (id) => {
         let _id = parseInt(id) || 0;
         if(_id > 0) {
-            let list = this.giveList;
+            let list = this._userCoupons;
             let isok = true;
             for(let i in list) {
                 if(_id == list[i]) {
@@ -60,14 +107,17 @@ export default class Coupons extends Component {
                     break;
                 }
             }
-            if(isok) this.giveList.push(_id);
+            if(isok) {
+                list.push(_id);
+                this._userCoupons = list;
+            }
         }
-        console.log(this.giveList);
     };
 
     render() {
-        let { isShow, hideCouponBox, userid, } = this.props;
+        let { isShow, hideCouponBox, userid, navigation, back, backObj } = this.props;
         if(!isShow) return null;
+        console.log(this.state.datas);
         let that = this;
         return (
             <Modal
@@ -80,7 +130,7 @@ export default class Coupons extends Component {
                 <View style={styles.modalHtml}>
                     <View style={styles.modalBody}>
                         <View style={styles.fristRow}>
-                            <Text style={styles.txtStyle1}>{Lang[Lang.default].selectDistributionArea}</Text>
+                            <Text style={styles.txtStyle1}>{Lang[Lang.default].receiveCoupon}</Text>
                             <TouchableOpacity onPress={hideCouponBox} style={styles.rowCloseBox}>
                                 <Image style={styles.rowCloseImg} source={require('../../images/close.png')} />
                             </TouchableOpacity>
@@ -95,8 +145,12 @@ export default class Coupons extends Component {
                                         style={styles.couponRow}
                                         width={Size.width * 0.907}
                                         coupon={item}
-                                        giveList={that.giveList}
+                                        userCoupons={that.state.userCoupons}
                                         callback={that.addCoupon}
+                                        back={back}
+                                        backObj={backObj}
+                                        navigation={navigation}
+                                        hideCouponBox={hideCouponBox}
                                     />);
                             })}
                         </ScrollView>

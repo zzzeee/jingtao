@@ -21,7 +21,7 @@ import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {Rule, str_replace} from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import ErrorAlert from '../other/ErrorAlert';
@@ -154,7 +154,8 @@ export default class Login extends Component {
                                 if(navigation) {
                                     let params = navigation.state.params || null;
                                     let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
-                                    navigation.navigate(back);
+                                    let backObj = params ? (params.backObj ? params.backObj : {}) : {};
+                                    navigation.navigate(back, backObj);
                                 }
                             });
                         });

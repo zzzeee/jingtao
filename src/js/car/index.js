@@ -27,6 +27,7 @@ import ShopItem from './ShopItem';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
 import ErrorAlert from '../other/ErrorAlert';
+import Coupons from '../product/Coupons';
 
 var _User = new User();
 
@@ -48,6 +49,8 @@ export default class CarsScreen extends Component {
             operateMsg: null,
             msgPositon: new Animated.Value(0),
             isRefreshing: false,
+            showCouponList: false,
+            uCoupons: [],
         };
         
         this.page = 1;
@@ -76,6 +79,7 @@ export default class CarsScreen extends Component {
         _User.getUserInfo().then((user) => {
             console.log(user);
             if(user) {
+                that.userinfo = user;
                 Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
                     console.log(car);
                     if(car && car.sTatus && car.cartAry) {
@@ -136,6 +140,35 @@ export default class CarsScreen extends Component {
         }
     };
 
+    //显示优惠券列表
+    showCouponBox = (sid) => {
+        if(sid && sid > 0) {
+            Utils.fetch(Urls.getShopCoupons, 'post', {
+                sID: sid,
+            }, (result) => {
+                console.log(result);
+                if(result && result.sTatus && result.mCoupon) {
+                    let list = result.mCoupon || [];
+                    this.setState({
+                        showCouponList: true,
+                        uCoupons: list,
+                    });
+                }
+            }, null, {
+                catchFunc: (err) => {
+                    console.log('获取数据出错');
+                    console.log(err);
+                    alert(Lang[Lang.default].serverError);
+                },
+            });
+        }
+    };
+
+    //隐藏优惠券列表
+    hideCouponBox = () => {
+        this.setState({showCouponList: false});
+    };
+
     render() {
         let { navigation } = this.props;
         let left = (navigation.state.params && navigation.state.params.goGoodDetails) ? 
@@ -160,7 +193,7 @@ export default class CarsScreen extends Component {
                 {this.state.editing ? Lang[Lang.default].done : Lang[Lang.default].edit}
             </Text> 
             : null;
-
+        let mToken = this.userinfo && this.userinfo[_User.keyMember] ? this.userinfo[_User.keyMember] : null;
         return (
             <View style={styles.flex}>
                 <AppHead 
@@ -169,6 +202,17 @@ export default class CarsScreen extends Component {
                     right={right}
                 />
                 {this.pageBody()}
+                {this.state.showCouponList ?
+                    <Coupons
+                        userid={mToken}
+                        coupons={this.state.uCoupons}
+                        isShow={this.state.showCouponList}
+                        hideCouponBox={this.hideCouponBox}
+                        navigation={navigation}
+                        back={'Car'}
+                    />
+                    : null
+                }
             </View>
         );
     }
@@ -261,6 +305,7 @@ export default class CarsScreen extends Component {
                             changeKEY1={that.state.changeKEY1}
                             changeKEY2={that.state.changeKEY2}
                             showAutoModal={that.showAutoModal}
+                            showCouponBox={this.showCouponBox}
                         />
                     );
                 })}

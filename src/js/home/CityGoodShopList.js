@@ -26,7 +26,7 @@ import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
-import cityInfo from '../datas/cityInfo.json';
+import CityTopImgs from './CityTopImgs';
 
 /**
  * 拉线总长         70
@@ -56,6 +56,8 @@ export default class CityGoodShopList extends Component {
             isFloat: false,
             visiable: false,
             showSort: true,
+            cityInfo: null,
+            cityImgs: [],
         };
 
         this.page = 1;
@@ -82,6 +84,7 @@ export default class CityGoodShopList extends Component {
             this.cid = navigation.state.params.cid;
             this.index = navigation.state.params.index || 0;
             this.playAnimated();
+            this.getCityInfo();
             this.initDatas();
         }
     }
@@ -104,6 +107,27 @@ export default class CityGoodShopList extends Component {
                 }).start();
             }
         }
+    };
+
+    //城市的基本信息
+    getCityInfo = () => {
+        let that = this;
+        Util.fetch(Urls.getCityImgBanner, 'post', {
+            cityID: this.cid,
+        }, (result) => {
+            if(result && result.sTatus == 1 && result.adData) {
+                let datas = result.adData || {};
+                let areaInfo = datas.areaInfo || [];
+                let adsInfo = datas.adsImg || [];
+                let obj = {
+                    cityImgs: [].concat(areaInfo, adsInfo),
+                };
+                if(areaInfo && areaInfo[0]) obj.cityInfo = areaInfo[0];
+                that.setState(obj);
+            }
+        }, null, {catchFunc: (err)=>{
+            console.log(err);
+        }});
     };
     
     // 获取新数据
@@ -386,7 +410,7 @@ export default class CityGoodShopList extends Component {
         );
         return (
             <View style={styles.flex}>
-                <ModalContent cityInfo={cityInfo} visiable={this.state.visiable} hideModal={()=>{
+                <ModalContent cityInfo={this.state.cityInfo} visiable={this.state.visiable} hideModal={()=>{
                     this.lineSwitchPlay(startTop);
                     this.setState({visiable: false});
                 }} />
@@ -456,7 +480,12 @@ export default class CityGoodShopList extends Component {
         return (
             <View style={styles.topBgBox}>
                 <View style={styles.topBgImgBox}>
-                    <Image style={styles.topBgImg} source={require('../../images/empty.png')} />
+                    <CityTopImgs 
+                        width={Size.width} 
+                        height={topImgHeight} 
+                        cityImgs={this.state.cityImgs} 
+                        navigation={this.props.navigation} 
+                    />
                 </View>
                 {btnBox}
             </View>
@@ -697,10 +726,10 @@ class ModalContent extends Component {
     render() {
         let {cityInfo, visiable} = this.props;
         if(!cityInfo) return null;
-        let name = cityInfo.name || '';
+        let name = cityInfo.region_name || '';
         let pingying = cityInfo.pingying || '';
-        let details = cityInfo.details || [];
-
+        let content = cityInfo.griInfo || '';
+        let details = [content]
         return (
             <Modal
                 animationType={"slide"}
@@ -821,6 +850,10 @@ var styles = StyleSheet.create({
     },
     topBtnBox: {
         paddingBottom: 5,
+    },
+    topBgImgBox: {
+        height: topImgHeight,
+        width: Size.width,
     },
     topBgImg: {
         height: topImgHeight,

@@ -13,7 +13,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import Toast from 'react-native-root-toast';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
@@ -35,7 +34,6 @@ export default class CouponItem extends Component {
 
     componentWillMount() {
         let { coupon } = this.props;
-        console.log(coupon);
         if(coupon) {
             let id = coupon.hID || 0;
             let isReceive = this.isReceiveCoupon(id);
@@ -44,15 +42,6 @@ export default class CouponItem extends Component {
             });
         }
     }
-
-    componentWillUnmount() {
-        // 请注意Un"m"ount的m是小写
-
-        // 如果存在this.timer，则使用clearTimeout清空。
-        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
-    }
-
     //检查时间是否带有时分秒
     checkTimeString = (t) => {
         if(t) {
@@ -68,36 +57,40 @@ export default class CouponItem extends Component {
     //点击领取优惠券
     clickCoupon = (id) => {
         let that = this;
-        let { userid, callback, } = this.props;
-        if(id && id > 0 && userid && !this.state.receive) {
-            Utils.fetch(Urls.userGiveCoupon, 'POST', {
-                hID: id,
-                mToken: userid,
-            }, (result)=>{
-                // console.log(result);
-                if(result) {
-                    let ret = result.sTatus || 0;
-                    let msg = result.sMessage || null;
-                    if(msg) {
-                        that.timer = Toast.show(msg, {
-                            duration: Toast.durations.LONG,
-                            position: Toast.positions.CENTER,
-                            hideOnPress: true,
-                        });
+        let { userid, callback, back, backObj, navigation, hideCouponBox } = this.props;
+        if(userid) {
+            if(id && id > 0 && !this.state.receive) {
+                Utils.fetch(Urls.userGiveCoupon, 'POST', {
+                    hID: id,
+                    mToken: userid,
+                }, (result)=>{
+                    console.log(result);
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        let msg = result.sMessage || null;
+                        if(ret == 1 || ret == 5) {
+                            that.setState({
+                                receive: true,
+                            }, () => {
+                                callback && callback(id);
+                            });
+                        }else if(msg) {
+                            alert(msg);
+                        }
                     }
-                    if(ret == 1 || ret == 5) {
-                        this.setState({receive: true}, ()=>{
-                            callback && callback(id);
-                        });
-                    }
-                }
-            }, null, {
-                catchFunc: (err) => {
-                    console.log('获取数据出错');
-                    console.log(err);
-                    alert(Lang[Lang.default].serverError);
-                },
-            });
+                }, null, {
+                    catchFunc: (err) => {
+                        console.log('获取数据出错');
+                        console.log(err);
+                        alert(Lang[Lang.default].serverError);
+                    },
+                });
+            }
+        }else {
+            hideCouponBox && hideCouponBox();
+            if(navigation) {
+                navigation.navigate('Login', {back: back, backObj: backObj, });
+            }
         }
     };
 
@@ -105,7 +98,7 @@ export default class CouponItem extends Component {
     isReceiveCoupon = (id) => {
         let isok = true;
         let _id = parseInt(id) || 0;
-        let list = this.props.giveList || [];
+        let list = this.props.userCoupons || [];
         if(_id > 0 && list && list.length) {
             for(let i in list) {
                 if(_id == list[i]) {
@@ -138,12 +131,13 @@ export default class CouponItem extends Component {
         let hname = coupon.hName || null;
         let bgColor = backgroundColor ? backgroundColor : '#fff';
         let couponBg = null, height = null;
+        let isReceive = (this.state.receive || this.isReceiveCoupon(id)) ? true : false;
         if(type == 1) {
             height = 120;
             couponBg = sid > 0 ?
                 require('../../images/find/coupons_bg_shop.png') :
                 require('../../images/find/coupons_bg_self.png');
-            if(this.state.receive) {
+            if(isReceive) {
                 color = Color.gray;
                 couponBg = require('../../images/find/coupons_bg_out.png');
             }
@@ -152,7 +146,7 @@ export default class CouponItem extends Component {
             couponBg = sid > 0 ?
                 require('../../images/car/coupons_bg_shop.png') :
                 require('../../images/car/coupons_bg_self.png');
-            if(this.state.receive) {
+            if(isReceive) {
                 color = Color.gray;
                 couponBg = require('../../images/car/coupons_bg_out.png');
             }
@@ -162,7 +156,7 @@ export default class CouponItem extends Component {
                 <View style={style}>
                     <TouchableOpacity 
                         activeOpacity={1}
-                        disabled={this.state.receive}
+                        disabled={isReceive}
                         style={{backgroundColor: bgColor}}
                         onPress={()=>{
                             this.clickCoupon(id);
@@ -189,7 +183,7 @@ export default class CouponItem extends Component {
                                     </Text>
                                 </View>
                             </View>
-                            {this.state.receive ?
+                            {isReceive ?
                                 <Image source={require('../../images/car/receive.png')} style={{
                                     width: height, 
                                     height: height,

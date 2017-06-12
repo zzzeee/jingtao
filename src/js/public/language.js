@@ -74,6 +74,8 @@ const language = {
         total: '共计',
         total2: '合计',
         coupon: '优惠券',
+        myCoupons: '我的优惠券',
+        receiveCoupon: '领取优惠券',
         haveCoupon: '有可用的优惠券',
         timeLimit: '限时',
         integral: '积分',
@@ -184,6 +186,8 @@ const language = {
         inputNewPassword: '请输入新的密码',
         updatePasswordSuccess: '密码修改成功,请登录',
         jingtaoUserAgreement: '境淘商城用户协议',
+        addressList: '我的收货地址',
+        addAddress: '新建收货地址',
     },
 };
 

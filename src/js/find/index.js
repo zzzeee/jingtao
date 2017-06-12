@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 
 import Swiper from 'react-native-swiper';
+import User from '../public/user';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
@@ -26,6 +27,8 @@ import Lang, {str_replace} from '../public/language';
 import ProductItem from '../other/ProductItem';
 import CountDown from './CountDown';
 import CouponItem from '../other/CouponItem';
+
+var _User = new User();
 
 export default class FindScreen extends Component {
     constructor(props) {
@@ -40,7 +43,8 @@ export default class FindScreen extends Component {
             MDYP: null,
             isRefreshing: false,
         };
-
+        this.mToken = null;
+        this.userCoupons = [];
         this.pageOffest = 1;
         this.pageNumber = 10;
         this.lockTime = 3000;
@@ -62,15 +66,43 @@ export default class FindScreen extends Component {
     initPage = async () => {
         this.pageOffest = 1;
         this.pageNumber = 10;
+        this.mToken = await _User.getUserID(_User.keyMember);
+        let uCoupons = await this.getUserCoupons();
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
+        // console.log(uCoupons);
         // console.log(xsqg);
-        console.log(mdyp);
+        // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({fetchError: true});
         }else {
+            this.setUserCoupons(uCoupons);
             this.setXSQGlist(xsqg);
             this.setMDYPlist(mdyp);
+        }
+    };
+
+    // 获取限时抢购商品
+    getXSQGDatas = () => {
+        return Utils.async_fetch(Urls.getPanicBuyingProductList, 'post', null);
+    };
+
+    // 获取名店列表
+    getMDYPDatas = () => {
+        return Utils.async_fetch(Urls.getFindShopList, 'post', {
+            sPage: this.pageOffest,
+            sPerNum: this.pageNumber,
+        });
+    };
+
+    //获取用户已领取过的优惠券
+    getUserCoupons = () => {
+        if(this.mToken) {
+            return Utils.async_fetch(Urls.getUserCoupons, 'post', {
+                mToken: this.mToken,
+            });
+        }else {
+            return null;
         }
     };
     
@@ -107,6 +139,7 @@ export default class FindScreen extends Component {
             });
         }
     };
+
     //设置名店优品列表
     setMDYPlist = (datas) => {
         if(datas && datas.sTatus && datas.shopAry) {
@@ -118,6 +151,28 @@ export default class FindScreen extends Component {
                     isRefreshing: false,
                     MDYP: mdyp,
                 });
+            }
+        }
+    };
+
+    //把用户领取过的优惠券ID放入数组
+    setUserCoupons = (datas) => {
+        if(datas && datas.sTatus && datas.couponAry) {
+            let that = this;
+            let coupons = datas.couponAry || [];
+            for(let i in coupons) {
+                let id = coupons[i].hId || 0;
+                let stime = coupons[i].hStartTime || null;
+                let etime = coupons[i].hSendTime || null;
+                let ntime = new Date().getTime();
+                // let isable = coupons[i].isable || 0;
+                stime = that.checkTimeString(stime);
+                etime = that.checkTimeString(etime);
+                let _stime = new Date(that.checkTimeString(stime)).getTime();
+                let _etime = new Date(that.checkTimeString(etime)).getTime();
+                if(id > 0 && ntime > _stime && ntime < _etime) {
+                    that.userCoupons.push(id);
+                }
             }
         }
     };
@@ -145,19 +200,6 @@ export default class FindScreen extends Component {
                 }
             });
         }
-    };
-
-    // 获取限时抢购商品
-    getXSQGDatas = () => {
-        return Utils.async_fetch(Urls.getPanicBuyingProductList, 'post', null);
-    };
-
-    // 获取名店列表
-    getMDYPDatas = () => {
-        return Utils.async_fetch(Urls.getFindShopList, 'post', {
-            sPage: this.pageOffest,
-            sPerNum: this.pageNumber,
-        });
     };
 
     // 限时抢购的头部
@@ -188,6 +230,7 @@ export default class FindScreen extends Component {
     // 优惠券
     couponView = () => {
         if(this.state.coupons.length > 0) {
+            let that = this;
             return (
                 <Image source={require('../../images/find/coupon_bg.png')} resizeMode="stretch" style={styles.couponBox}>
                     <Swiper
@@ -219,8 +262,18 @@ export default class FindScreen extends Component {
                         autoplayTimeout={3}
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
-                            // return <Text key={index}>aaaaaaaaaaaaaa</Text>;
-                            return <CouponItem key={index} width={Size.width * 0.8} type={1} coupon={item} />;
+                            return (
+                                <CouponItem 
+                                    key={index} 
+                                    width={Size.width * 0.8} 
+                                    type={1} 
+                                    coupon={item} 
+                                    navigation={that.props.navigation}
+                                    back={'Find'}
+                                    userid={that.mToken}
+                                    userCoupons={that.userCoupons}
+                                />
+                            );
                         })}
                     </Swiper>
                 </Image>

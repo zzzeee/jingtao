@@ -20,7 +20,7 @@ import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {Rule, str_replace} from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import SendCode from './verificationCode';

@@ -29,7 +29,9 @@ import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
 import Coupon from './car/Coupon';
 import PayFinish from './car/PayFinish';
-import LocationInfo from './home/LocationInfo';
+import AddressList from './personal/AddressList';
+import AddressAdd from './personal/AddressAdd';
+import CouponList from './personal/CouponList';
 import TestPage from './personal/TestPage';
 
 //显示格式
@@ -127,6 +129,21 @@ const IntegralRuleScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={IntegralRule} />
 );
 
+//个人中心 - 我的地址
+const AddressListScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={AddressList} />
+);
+
+//个人中心 - 我的地址 - 新增地址
+const AddressAddScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={AddressAdd} />
+);
+
+//个人中心 - 我的优惠券
+const CouponListScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={CouponList} />
+);
+
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -147,10 +164,10 @@ const TestPageScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={TestPage} />
 );
 
-//首页 - 获取定位 - 测试
-const LocationInfoScreen = ({ navigation }) => (
-    <MyNavScren navigation={navigation} NavScreen={LocationInfo} />
-);
+// //首页 - 获取定位 - 测试
+// const LocationInfoScreen = ({ navigation }) => (
+//     <MyNavScren navigation={navigation} NavScreen={LocationInfo} />
+// );
 
 const AppNavigator = StackNavigator({
     TabNav: {
@@ -189,8 +206,11 @@ const AppNavigator = StackNavigator({
     PayFinish: {
         screen: PayFinishScreen,
     },
-    LocationInfo: {
-        screen: LocationInfoScreen,
+    AddressList: {
+        screen: AddressListScreen,
+    },
+    AddressAdd: {
+        screen: AddressAddScreen,
     },
     TestPage: {
         screen: TestPageScreen,

@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import InputText from '../public/InputText';
-import Lang, {Rule, str_replace} from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 const CodeBg = [
     require('../../images/login/code_bg/bg.png'),

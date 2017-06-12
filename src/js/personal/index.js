@@ -119,7 +119,7 @@ export default class PersonalScreen extends Component {
                         )}
                         {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
                         {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null, null)}
-                        {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, null, null)}
+                        {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, 'AddressList', null)}
                     </View>
                     <View style={styles.btnsListBox}>
                         {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null, null)}

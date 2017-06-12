@@ -472,6 +472,9 @@ export default class ProductScreen extends Component {
                         coupons={mCoupon}
                         isShow={this.state.showCouponList} 
                         hideCouponBox={this.hideCouponBox}
+                        navigation={this.props.navigation}
+                        back={'Product'}
+                        backObj={{gid: gid}}
                     />
                 </View>
             );
@@ -629,7 +632,7 @@ export default class ProductScreen extends Component {
                         <View style={styles.selectLineSide}></View>
                     </View>
                     <View style={styles.SelectsBox}>
-                        {this.createSelectBox(Lang[Lang.default].selected , 
+                        {this.createSelectBox(Lang[Lang.default].specification, 
                             this.selectAttrInfo(), 
                             ()=>this.showAttr(1)
                         )}
@@ -769,10 +772,22 @@ export default class ProductScreen extends Component {
         }
     };
 
+    //检查时间是否带有时分秒
+    checkTimeString = (t) => {
+        if(t) {
+            let str = t.replace(/-/g, "/") || '';
+            if(str && str.length <= 10 && str.indexOf(':') < 0) {
+                str = str + ' 00:00:00';
+            }
+            return str
+        }
+        return t;
+    };
+
     //优惠券列表信息
     couponListInfo = (list) => {
         if(typeof(list) == 'object' && list && list.length) {
-            let i = 0;
+            let i = 0, that = this;
             return (
                 <View style={{paddingRight: 5}}>
                     {list.map((item, index)=>{
@@ -781,8 +796,8 @@ export default class ProductScreen extends Component {
                         let stime = item.hStartTime || null;
                         let etime = item.hSendTime || null;
                         let ntime = new Date().getTime();
-                        stime = new Date(stime).getTime();
-                        etime = new Date(etime).getTime();
+                        stime = new Date(that.checkTimeString(stime)).getTime();
+                        etime = new Date(that.checkTimeString(etime)).getTime();
                         if(i < 2 && isable && stime < ntime && etime > ntime) {
                             i++;
                             return (
@@ -792,7 +807,7 @@ export default class ProductScreen extends Component {
                                 </View>
                             );
                         }else {
-                            return null;
+                            return <View key={index}></View>;
                         }
                     })}
                 </View>

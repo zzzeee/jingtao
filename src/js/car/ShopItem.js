@@ -10,6 +10,7 @@ import {
     View,
     Text,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import BtnIcon from '../public/BtnIcon';
@@ -86,9 +87,11 @@ export default class ShopItem extends Component {
             changeKEY1, 
             changeKEY2, 
             showAutoModal,
+            showCouponBox,
         } = this.props;
         if(!shop) return null;
         let that = this;
+        let sid = shop.sId || 0;
         let name = shop.sShopName || '';
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
@@ -122,10 +125,12 @@ export default class ShopItem extends Component {
                             txtStyle={{marginLeft: 6}}
                         />
                     </View>
-                    <View style={[styles.rowStyle, {justifyContent: 'flex-end'}]}>
+                    <TouchableOpacity onPress={()=>{
+                        showCouponBox(sid);
+                    }} style={[styles.rowStyle, {justifyContent: 'flex-end'}]}>
                         <Text style={styles.shopCouponText}>{Lang[Lang.default].coupon}</Text>
                         <Image source={require('../../images/list_more_red.png')} style={styles.rightIconStyle} />
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 {shop[keyword].map(function(good, i) {
                     return (
@@ -172,6 +177,7 @@ var styles = StyleSheet.create({
     shopCouponText: {
         color: Color.mainColor,
         fontSize: 12,
+        padding: 5,
     },
     rightIconStyle: {
         width: 14,

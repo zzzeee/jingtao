@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import { Size, PX, pixel, Color } from '../public/globalStyle';
-import Lang, {Rule, str_replace} from '../public/language';
+import Lang, {str_replace} from '../public/language';
 
 export default class SendCode extends Component {
     // 默认参数

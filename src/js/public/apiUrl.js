@@ -50,6 +50,12 @@ var urls = {
     updateUserPassword: host + '/api/MemberNController/memberPasswordEditByMID',
     //会员领取优惠券
     userGiveCoupon: host + '/api/CouponNController/memberReceiveCouponAdd',
+    //获取城市图片及广告
+    getCityImgBanner: host + '/api/AdsNController/getCityAdsByCityId',
+    //获取用户的优惠券列表
+    getUserCoupons: host + '/api/CouponNController/getMemberCouponListByMID',
+    //获取商家的优惠券列表
+    getShopCoupons: host + '/api/CouponNController/getShopProductCouponList',
 };
 
 export default urls;
