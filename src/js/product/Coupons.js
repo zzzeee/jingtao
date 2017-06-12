@@ -1,5 +1,5 @@
 /**
- * 商品详情 - 地区选择(用于运费计算)
+ * 商品详情 - 优惠券列表
  * @auther linzeyong
  * @date   2017.06.04
  */
@@ -19,7 +19,7 @@ import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import CouponItem from '../other/CouponItem';
 
-export default class Areas extends Component {
+export default class Coupons extends Component {
     // 默认参数
     static defaultProps = {
         isShow: false,
@@ -45,45 +45,28 @@ export default class Areas extends Component {
             this.setState({
                 datas: this.props.coupons,
             });
+            this.giveList = []; //已领取过的优惠券
         }
     }
 
-    clickArea = (index, id, name) => {
-        if(id && name) {
-            let that = this;
-            if(this.state.selectIndex > 0) {
-                this.setState({
-                    city: {
-                        index: index,
-                        id: id,
-                        name: name
-                    }
-                }, () => {
-                    Utils.fetch(Urls.getProductFreight, 'post', {
-                        gID: this.props.gid, 
-                        pID: this.state.province.id,
-                    }, function(result) {
-                        if(result && result.sTatus) {
-                            let freight = result.pFreight ? parseFloat(result.pFreight) : 0;
-                            that.props.getSelectArea(that.state.province, that.state.city, freight);
-                        }
-                    });
-                });
-            }else {
-                this.setState({
-                    selectIndex: 1,
-                    province: {
-                        index: index,
-                        id: id,
-                        name: name
-                    }
-                });
+    addCoupon = (id) => {
+        let _id = parseInt(id) || 0;
+        if(_id > 0) {
+            let list = this.giveList;
+            let isok = true;
+            for(let i in list) {
+                if(_id == list[i]) {
+                    isok = false;
+                    break;
+                }
             }
+            if(isok) this.giveList.push(_id);
         }
+        console.log(this.giveList);
     };
 
     render() {
-        let { isShow, hideCouponBox, } = this.props;
+        let { isShow, hideCouponBox, userid, } = this.props;
         if(!isShow) return null;
         let that = this;
         return (
@@ -108,9 +91,12 @@ export default class Areas extends Component {
                                     <CouponItem
                                         key={index}
                                         type={2}
+                                        userid={userid}
                                         style={styles.couponRow}
                                         width={Size.width * 0.907}
                                         coupon={item}
+                                        giveList={that.giveList}
+                                        callback={that.addCoupon}
                                     />);
                             })}
                         </ScrollView>

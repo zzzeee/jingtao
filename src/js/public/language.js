@@ -12,6 +12,7 @@ const language = {
         reconnect: '点击重新连接',
         fetchError: '网络请求超时，请检查网络设置。',
         programError: '程序异常',
+        serverError: '访问服务器出错',
         logo: '登录',
         register: '注册',
         tab_home: '寻味',
@@ -182,7 +183,7 @@ const language = {
         forgetPassword: '忘记密码',
         inputNewPassword: '请输入新的密码',
         updatePasswordSuccess: '密码修改成功,请登录',
-        jingtaoUserAgreement: '境淘用户协议',
+        jingtaoUserAgreement: '境淘商城用户协议',
     },
 };
 

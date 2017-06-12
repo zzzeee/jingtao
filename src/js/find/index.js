@@ -345,20 +345,28 @@ export default class FindScreen extends Component {
 
     // 名店优品列表的行内容
     mdyp_renderItem = ({item}) => {
+        let navigation = this.props.navigation || null;
         let name = item.sShopName || null;
         let plist = item.proAry || [];
         let img = item.sLogo || '';
 
         if(name && plist.length > 0) {
             let p1 = null, p2 = null, p3 = null;
-            if(plist[0] && plist[0].gThumbPic) {
-                p1 = <Image source={{uri: plist[0].gThumbPic}} style={styles.flex} />;
+            let gid1 = gid2 = gid3 = 0;
+            if(plist[0]) {
+                let _img = plist[0].gThumbPic || null;
+                gid1 = plist[0].gID || 0;
+                p1 = <Image source={{uri: _img}} style={styles.flex} />;
             }
-            if(plist[1] && plist[1].gThumbPic) {
-                p2 = <Image source={{uri: plist[1].gThumbPic}} style={styles.flex} />;
+            if(plist[1]) {
+                let _img = plist[1].gThumbPic || null;
+                gid2 = plist[1].gID || 0;
+                p2 = <Image source={{uri: _img}} style={styles.flex} />;
             }
-            if(plist[2] && plist[2].gThumbPic) {
-                p3 = <Image source={{uri: plist[2].gThumbPic}} style={styles.flex} />;
+            if(plist[2]) {
+                let _img = plist[2].gThumbPic || null;
+                gid3 = plist[2].gID || 0;
+                p3 = <Image source={{uri: _img}} style={styles.flex} />;
             }
 
             return (
@@ -373,16 +381,28 @@ export default class FindScreen extends Component {
                         </View>
                     </View>
                     <View style={styles.shopProductBox}>
-                        <View style={styles.shopProductBig}>
+                        <TouchableOpacity onPress={()=>{
+                            if(navigation && gid1 && gid1 > 0) {
+                                navigation.navigate('Product', {gid: gid1});
+                            }
+                        }} style={styles.shopProductBig}>
                             {p1}
-                        </View>
+                        </TouchableOpacity>
                         <View>
-                            <View style={[styles.shopProductSmall, {marginBottom: 5}]}>
+                            <TouchableOpacity onPress={()=>{
+                                if(navigation && gid2 && gid2 > 0) {
+                                    navigation.navigate('Product', {gid: gid2});
+                                }
+                            }} style={[styles.shopProductSmall, {marginBottom: 5}]}>
                                 {p2}
-                            </View>
-                            <View style={styles.shopProductSmall}>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={()=>{
+                                if(navigation && gid3 && gid3 > 0) {
+                                    navigation.navigate('Product', {gid: gid3});
+                                }
+                            }} style={styles.shopProductSmall}>
                                 {p3}
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>

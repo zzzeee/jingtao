@@ -23,6 +23,7 @@ export default class Login extends Component {
 
     render() {
         let { navigation } = this.props;
+        let scrollref = null;
         return (
             <View style={styles.container}>
                 <AppHead
@@ -30,8 +31,11 @@ export default class Login extends Component {
                     left={<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
                     }} src={require("../../images/back.png")} />}
+                    onPress={() => {
+                        scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
+                    }}
                 />
-                <ScrollView contentContainerStyle={styles.scrollStyle}>
+                <ScrollView ref={(_ref)=>scrollref = _ref} contentContainerStyle={styles.scrollStyle}>
                     <Text style={styles.LoginWordText}>{LoginWord}</Text>
                 </ScrollView>
             </View>
@@ -43,12 +47,17 @@ const styles = StyleSheet.create({
     flex: {
         flex: 1,
     },
+    container: {
+        flex: 1,
+        backgroundColor: Color.lightGrey,
+    },
     scrollStyle: {
-        paddingTop: 10,
-        paddingBottom: 20,
+        padding: PX.marginLR,
+        marginTop: PX.marginTB,
+        backgroundColor: '#fff',
     },
     LoginWordText: {
-        fontSize: 12,
+        fontSize: 13,
         color: Color.lightBack,
         lineHeight: 18,
     },

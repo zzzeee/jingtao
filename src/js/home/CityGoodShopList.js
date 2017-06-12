@@ -130,7 +130,7 @@ export default class CityGoodShopList extends Component {
         if(this.cid !== null && this.cid > 0 && this.index !== null && !this.loadMoreLock) {
             let that = this;
             this.loadMoreLock = true;
-            Util.fetch(Urls.getCityProductList, 'get', {
+            Util.fetch(Urls.getProductList, 'get', {
                 pCity: this.cid,
                 pPage: that.page,
                 pPerNum: that.number,

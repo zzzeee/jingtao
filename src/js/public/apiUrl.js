@@ -22,8 +22,8 @@ var urls = {
     getFindShopList: host + '/api/FindNController/getFindShopAndProductsList',
     //获取优惠券的图片
     getCouponImages: host + '/api/CouponNController/getCouponInfoByCouponID?couponID=',
-    //获取城市的产品列表 (待改)
-    getCityProductList: host + '/api/ProductController/getProductListByParameter',
+    //获取产品列表 (城市，店铺，分类)
+    getProductList: host + '/api/ProductNController/getProductListByParame',
     //获取城市的店铺列表
     getCityShopList: host + '/api/ShopNController/getCityShopListByParame',
     //获取商品详情
@@ -48,6 +48,8 @@ var urls = {
     collection: host + '/api/MemberNController/memberFollowStatusEditBymID',
     //修改用户登录密码
     updateUserPassword: host + '/api/MemberNController/memberPasswordEditByMID',
+    //会员领取优惠券
+    userGiveCoupon: host + '/api/CouponNController/memberReceiveCouponAdd',
 };
 
 export default urls;

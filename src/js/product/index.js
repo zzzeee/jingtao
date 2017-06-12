@@ -421,6 +421,7 @@ export default class ProductScreen extends Component {
             let pWarehouse = good.pWarehouse || [];
             let areas = good.areas || [];
             let mCoupon = good.mCoupon || [];
+            let userid = (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
             return (
                 <View>
                     <FlatList
@@ -467,7 +468,7 @@ export default class ProductScreen extends Component {
                     />
                     <Coupons
                         gid={gid}
-                        userinfo={this.userinfo}
+                        userid={userid}
                         coupons={mCoupon}
                         isShow={this.state.showCouponList} 
                         hideCouponBox={this.hideCouponBox}
@@ -797,7 +798,6 @@ export default class ProductScreen extends Component {
                 </View>
             );
         }
-
         return null;
     };
 
