@@ -57,21 +57,23 @@ export default class Coupons extends Component {
         if(userid) {
             Utils.fetch(Urls.getUserCoupons, 'post', {
                 mToken: userid,
+                cUse: 1,
+                cStatus: 1,
             }, (result)=>{
                 if(result && result.sTatus && result.couponAry) {
                     let datas = result.couponAry || [];
                     let coupons = [];
                     for(let i in datas) {
                         let id = datas[i].hId || 0;
-                        let stime = datas[i].hStartTime || null;
-                        let etime = datas[i].hSendTime || null;
-                        let ntime = new Date().getTime();
-                        // let isable = datas[i].isable || 0;
-                        stime = that.checkTimeString(stime);
-                        etime = that.checkTimeString(etime);
-                        let _stime = new Date(that.checkTimeString(stime)).getTime();
-                        let _etime = new Date(that.checkTimeString(etime)).getTime();
-                        if(id > 0 && ntime > _stime && ntime < _etime) {
+                        let isUse = (datas[i].mhuse && datas[i].mhuse != '0') ? true : false;
+                        // let stime = datas[i].hStartTime || null;
+                        // let etime = datas[i].hSendTime || null;
+                        // let ntime = new Date().getTime();
+                        // stime = that.checkTimeString(stime);
+                        // etime = that.checkTimeString(etime);
+                        // let _stime = new Date(that.checkTimeString(stime)).getTime();
+                        // let _etime = new Date(that.checkTimeString(etime)).getTime();
+                        if(id > 0 && !isUse && ntime < _etime) {
                             coupons.push(id);
                         }
                     }

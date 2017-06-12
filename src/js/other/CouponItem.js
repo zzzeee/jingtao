@@ -19,11 +19,16 @@ import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
 export default class CouponItem extends Component {
+    // 默认参数
+    static defaultProps = {
+        canReceive: true,
+    };
     // 参数类型
     static propTypes = {
         type: React.PropTypes.number.isRequired,
         width: React.PropTypes.number.isRequired,
         coupon: React.PropTypes.object.isRequired,
+        canReceive: React.PropTypes.bool,
     };
     constructor(props) {
         super(props);
@@ -33,8 +38,8 @@ export default class CouponItem extends Component {
     }
 
     componentWillMount() {
-        let { coupon } = this.props;
-        if(coupon) {
+        let { coupon, canReceive } = this.props;
+        if(coupon && canReceive) {
             let id = coupon.hID || 0;
             let isReceive = this.isReceiveCoupon(id);
             this.setState({
@@ -57,8 +62,8 @@ export default class CouponItem extends Component {
     //点击领取优惠券
     clickCoupon = (id) => {
         let that = this;
-        let { userid, callback, back, backObj, navigation, hideCouponBox } = this.props;
-        if(userid) {
+        let { userid, callback, back, backObj, navigation, hideCouponBox, canReceive } = this.props;
+        if(userid && canReceive) {
             if(id && id > 0 && !this.state.receive) {
                 Utils.fetch(Urls.userGiveCoupon, 'POST', {
                     hID: id,
@@ -69,11 +74,17 @@ export default class CouponItem extends Component {
                         let ret = result.sTatus || 0;
                         let msg = result.sMessage || null;
                         if(ret == 1 || ret == 5) {
+                            //领取成功、已领取
                             that.setState({
                                 receive: true,
                             }, () => {
                                 callback && callback(id);
                             });
+                        }else if(ret == 4) {
+                            //token验证失败
+                            if(navigation) {
+                                navigation.navigate('Login', {back: back, backObj: backObj,});
+                            }
                         }else if(msg) {
                             alert(msg);
                         }
@@ -89,7 +100,7 @@ export default class CouponItem extends Component {
         }else {
             hideCouponBox && hideCouponBox();
             if(navigation) {
-                navigation.navigate('Login', {back: back, backObj: backObj, });
+                navigation.navigate('Login', {back: back, backObj: backObj,});
             }
         }
     };
@@ -111,10 +122,10 @@ export default class CouponItem extends Component {
     };
 
     render() {
-        let { type, width, style, coupon, backgroundColor } = this.props;
+        let { type, width, style, coupon, backgroundColor, canReceive } = this.props;
         if(!coupon || !type) return null;
         let leftRatio = 0.345; // 优惠券左边比率
-        let id = coupon.hID || 0;
+        let id = coupon.hID || coupon.hId;
         let sid = coupon.sId || 0;
         let stime = coupon.hStartTime || null;
         let etime = coupon.hSendTime || null;
@@ -129,34 +140,46 @@ export default class CouponItem extends Component {
         let color = sid > 0 ? Color.orange : Color.mainColor;
         let sname = sid > 0 ? Lang[Lang.default].shopCurrency : Lang[Lang.default].appCurrency;
         let hname = coupon.hName || null;
+        let isUse = (coupon.mhuse && coupon.mhuse != '0') ? true : false;
         let bgColor = backgroundColor ? backgroundColor : '#fff';
         let couponBg = null, height = null;
         let isReceive = (this.state.receive || this.isReceiveCoupon(id)) ? true : false;
+        let overImg = null;
         if(type == 1) {
             height = 120;
             couponBg = sid > 0 ?
                 require('../../images/find/coupons_bg_shop.png') :
                 require('../../images/find/coupons_bg_self.png');
-            if(isReceive) {
-                color = Color.gray;
-                couponBg = require('../../images/find/coupons_bg_out.png');
+            if(canReceive) {
+                if(isReceive) {
+                    color = Color.gray;
+                    couponBg = require('../../images/find/coupons_bg_out.png');
+                    overImg = require('../../images/car/receive.png');
+                }
             }
+            if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
+            if(isUse) overImg = require('../../images/personal/coupon_used.png');
         }else if(type == 2) {
             height = 116;
             couponBg = sid > 0 ?
                 require('../../images/car/coupons_bg_shop.png') :
                 require('../../images/car/coupons_bg_self.png');
-            if(isReceive) {
-                color = Color.gray;
-                couponBg = require('../../images/car/coupons_bg_out.png');
+            if(canReceive) {
+                if(isReceive) {
+                    color = Color.gray;
+                    couponBg = require('../../images/car/coupons_bg_out.png');
+                    overImg = require('../../images/car/receive.png');
+                }
             }
+            if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
+            if(isUse) overImg = require('../../images/personal/coupon_used.png');
         }
-        if(id > 0 && ntime > _stime && ntime < _etime) {
+        if(id && id > 0) {
             return (
                 <View style={style}>
                     <TouchableOpacity 
                         activeOpacity={1}
-                        disabled={isReceive}
+                        disabled={isReceive || !canReceive}
                         style={{backgroundColor: bgColor}}
                         onPress={()=>{
                             this.clickCoupon(id);
@@ -183,8 +206,8 @@ export default class CouponItem extends Component {
                                     </Text>
                                 </View>
                             </View>
-                            {isReceive ?
-                                <Image source={require('../../images/car/receive.png')} style={{
+                            {overImg ?
+                                <Image source={overImg} style={{
                                     width: height, 
                                     height: height,
                                     position: 'absolute',

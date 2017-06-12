@@ -114,7 +114,7 @@ export default class PersonalScreen extends Component {
                         {this.btnRow(
                             require('../../images/personal/coupon.png'), 
                             Lang[Lang.default].coupon, 
-                            null, 
+                            'CouponList', 
                             str_replace(Lang[Lang.default].couponBeOverdue, 3)
                         )}
                         {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}

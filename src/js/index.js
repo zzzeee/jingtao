@@ -200,6 +200,9 @@ const AppNavigator = StackNavigator({
     AddOrder: {
         screen: AddOrderScreen,
     },
+    CouponList: {
+        screen: CouponListScreen,
+    },
     Coupon: {
         screen: CouponScreen,
     },
