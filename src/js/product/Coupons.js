@@ -40,7 +40,7 @@ export default class Coupons extends Component {
             datas: [],
             userCoupons: null,  //已领取过的优惠券
         };
-        this._userCoupons = null;
+        this._userCoupons = [];
     }
 
     componentWillMount() {
@@ -59,20 +59,20 @@ export default class Coupons extends Component {
                 mToken: userid,
                 cUse: 1,
                 cStatus: 1,
-            }, (result)=>{
+            }, (result) => {
                 if(result && result.sTatus && result.couponAry) {
                     let datas = result.couponAry || [];
                     let coupons = [];
                     for(let i in datas) {
                         let id = datas[i].hId || 0;
                         let isUse = (datas[i].mhuse && datas[i].mhuse != '0') ? true : false;
-                        // let stime = datas[i].hStartTime || null;
-                        // let etime = datas[i].hSendTime || null;
-                        // let ntime = new Date().getTime();
-                        // stime = that.checkTimeString(stime);
-                        // etime = that.checkTimeString(etime);
-                        // let _stime = new Date(that.checkTimeString(stime)).getTime();
-                        // let _etime = new Date(that.checkTimeString(etime)).getTime();
+                        let stime = datas[i].hStartTime || null;
+                        let etime = datas[i].hSendTime || null;
+                        let ntime = new Date().getTime();
+                        stime = that.checkTimeString(stime);
+                        etime = that.checkTimeString(etime);
+                        let _stime = new Date(that.checkTimeString(stime)).getTime();
+                        let _etime = new Date(that.checkTimeString(etime)).getTime();
                         if(id > 0 && !isUse && ntime < _etime) {
                             coupons.push(id);
                         }
@@ -101,7 +101,7 @@ export default class Coupons extends Component {
     addCoupon = (id) => {
         let _id = parseInt(id) || 0;
         if(_id > 0) {
-            let list = this._userCoupons;
+            let list = this._userCoupons || [];
             let isok = true;
             for(let i in list) {
                 if(_id == list[i]) {
@@ -119,7 +119,6 @@ export default class Coupons extends Component {
     render() {
         let { isShow, hideCouponBox, userid, navigation, back, backObj } = this.props;
         if(!isShow) return null;
-        console.log(this.state.datas);
         let that = this;
         return (
             <Modal

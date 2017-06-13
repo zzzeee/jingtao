@@ -136,19 +136,21 @@ export default class Login extends Component {
         let pword = this.state.password || null;
         if(mobile && pword) {
             if(!this.showInputIsAble()) return;
-            Utils.fetch(Urls.checkUser, 'post', {
-                uPhone: mobile,
-                uPassword: pword,
-            }, (result) => {
-                console.log(result);
-                that.clickNumber++;
-                if(result) {
-                    let ret = result.sTatus || 0;
-                    let msg = result.sMessage || null;
-                    let token = result.mToken || null;
-                    if(ret == 1 && token) {
-                        _User.getUserID(_User.keyMember)
-                        .then((user) => {
+            _User.getUserID(_User.keyTourist)
+            .then((value) => {
+                let obj = {
+                    uPhone: mobile,
+                    uPassword: pword,
+                    tTourist: value ? value : '',
+                };
+                Utils.fetch(Urls.checkUser, 'post', obj, (result) => {
+                    console.log(result);
+                    that.clickNumber++;
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        let msg = result.sMessage || null;
+                        let token = result.mToken || null;
+                        if(ret == 1 && token) {
                             _User.saveUserID(_User.keyMember, token)
                             .then(() => {
                                 if(navigation) {
@@ -158,11 +160,12 @@ export default class Login extends Component {
                                     navigation.navigate(back, backObj);
                                 }
                             });
-                        });
-                    }else if(msg) {
-                        that.showAutoModal(result.sMessage);
+                            _User.delUserID(_User.keyTourist);
+                        }else if(msg) {
+                            that.showAutoModal(result.sMessage);
+                        }
                     }
-                }
+                });
             });
         }else {
             this.showAutoModal(Lang[Lang.default].mobilePhoneEmpty);

@@ -40,7 +40,7 @@ export default class CouponItem extends Component {
     componentWillMount() {
         let { coupon, canReceive } = this.props;
         if(coupon && canReceive) {
-            let id = coupon.hID || 0;
+            let id = coupon.hID || coupon.hId;
             let isReceive = this.isReceiveCoupon(id);
             this.setState({
                 receive: isReceive,
@@ -68,7 +68,7 @@ export default class CouponItem extends Component {
                 Utils.fetch(Urls.userGiveCoupon, 'POST', {
                     hID: id,
                     mToken: userid,
-                }, (result)=>{
+                }, (result) => {
                     console.log(result);
                     if(result) {
                         let ret = result.sTatus || 0;
@@ -152,7 +152,6 @@ export default class CouponItem extends Component {
                 require('../../images/find/coupons_bg_self.png');
             if(canReceive) {
                 if(isReceive) {
-                    color = Color.gray;
                     couponBg = require('../../images/find/coupons_bg_out.png');
                     overImg = require('../../images/car/receive.png');
                 }
@@ -166,7 +165,6 @@ export default class CouponItem extends Component {
                 require('../../images/car/coupons_bg_self.png');
             if(canReceive) {
                 if(isReceive) {
-                    color = Color.gray;
                     couponBg = require('../../images/car/coupons_bg_out.png');
                     overImg = require('../../images/car/receive.png');
                 }
@@ -174,6 +172,7 @@ export default class CouponItem extends Component {
             if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
             if(isUse) overImg = require('../../images/personal/coupon_used.png');
         }
+        if(overImg) color = Color.gray;
         if(id && id > 0) {
             return (
                 <View style={style}>

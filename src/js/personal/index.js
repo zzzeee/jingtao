@@ -16,18 +16,20 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import User from '../public/user';
 import Urls from '../public/apiUrl';
 import BtnIcon from '../public/BtnIcon';
 import { Size, PX, pixel, Color, FontSize } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 import AppHead from '../public/AppHead';
-import { StackNavigator } from 'react-navigation';
 
 /**
  * 显示头部背景的高度
  * 以超出个人头像背景的高度时，显示不透明背景
  */
 var showHeadBgHeight = PX.userTopHeight - PX.headHeight;
+var _User = new User();
+
 export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
@@ -36,8 +38,23 @@ export default class PersonalScreen extends Component {
             opacityVal: new Animated.Value(0),
         };
 
+        this.mToken = null;
         this.ref_scrollview = null;
     }
+
+    componentDidMount() {
+        _User.getUserID(_User.keyMember)
+        .then((value) => {
+            if(value) {
+                this.mToken = value;
+                this.initDatas();
+            }
+        });
+    }
+
+    initDatas = () => {
+
+    };
 
     render() {
         const { navigation } = this.props;
@@ -162,7 +179,7 @@ export default class PersonalScreen extends Component {
         return (
             <TouchableOpacity onPress={()=>{
                 if(name) {
-                    this.props.navigation.navigate(name);
+                    this.props.navigation.navigate(name, {'mToken': this.mToken});
                 }
             }}>
                 <View style={styles.btnRowStyle}>

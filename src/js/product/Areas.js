@@ -79,6 +79,7 @@ export default class Areas extends Component {
             }else {
                 this.setState({
                     selectIndex: 1,
+                    city: null,
                     province: {
                         index: index,
                         id: id,

@@ -56,6 +56,12 @@ var urls = {
     getUserCoupons: host + '/api/CouponNController/getMemberCouponListByMID',
     //获取商家的优惠券列表
     getShopCoupons: host + '/api/CouponNController/getShopProductCouponList',
+    //获取用户的地址列表
+    getUserAddressList: host + '/api/AddressNController/getMemberShopAddressListByMID',
+    //获取所有的省市区
+    getAllAreas: host + '/api/RegionNController/getMemberAddressAreaList',
+    //添加用户地址
+    addUserAddress: host + '/api/AddressNController/memberAddressAdd',
 };
 
 export default urls;

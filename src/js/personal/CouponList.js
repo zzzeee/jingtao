@@ -12,9 +12,9 @@ import {
     Image,
     FlatList,
     TouchableOpacity,
+    Animated,
 } from 'react-native';
 
-import User from '../public/user';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -23,15 +23,22 @@ import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import CouponItem from '../other/CouponItem';
 
-var _User = new User();
-
 export default class CouponList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             coupons: [],
+            leftValue: new Animated.Value(0),
         };
         this.mToken = null;
+    }
+
+    componentWillMount() {
+        this.mToken = (this.props.navigation && 
+            this.props.navigation.state &&
+            this.props.navigation.state.params && 
+            this.props.navigation.state.params.mToken) ?
+            this.props.navigation.state.params.mToken : null;
     }
 
     componentDidMount() {
@@ -39,40 +46,18 @@ export default class CouponList extends Component {
     }
 
     initDatas = (use = null, expire = null) => {
-        // if(!this.mToken) {
-        //     this.mToken = await _User.getUserID(_User.keyMember);
-        // }
-        // let uCoupons = await this.getUserCoupons(use, expire);
-        // // console.log(uCoupons);
-        // this.setCouponList(uCoupons);
-        let that = this;
-        Utils.fetch(Urls.getUserCoupons, 'post', {
-            mToken: '6AFDA0482920705B99742B9683E6F3DB',
-        }, (result)=>{
-            console.log(result);
-            if(result && result.sTatus && result.couponAry) {
-                let coupons = result.couponAry || [];
-                that.setState({ coupons });
-            }
-        });
-    };
-
-    //获取用户的优惠券
-    getUserCoupons = (use, expire) => {
         if(this.mToken) {
+            let that = this;
             let obj = {mToken: this.mToken};
             if(use) obj.cUse = use;
             if(expire) obj.cStatus = expire;
-            return Utils.async_fetch(Urls.getUserCoupons, 'post', obj);
-        }else {
-            return null;
-        }
-    };
-
-    setCouponList = (datas) => {
-        if(datas && datas.sTatus && datas.couponAry) {
-            let coupons = datas.couponAry || [];
-            this.setState({ coupons });
+            Utils.fetch(Urls.getUserCoupons, 'post', obj, (result)=>{
+                console.log(result);
+                if(result && result.sTatus && result.couponAry) {
+                    let coupons = result.couponAry || [];
+                    that.setState({ coupons });
+                }
+            });
         }
     };
 
@@ -89,7 +74,7 @@ export default class CouponList extends Component {
                         this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
                     }}
                 />
-                {this.state.coupons?
+                {this.mToken && this.state.coupons ?
                     <FlatList
                         ref={(_ref)=>this.ref_flatList=_ref} 
                         data={this.state.coupons}
@@ -105,14 +90,60 @@ export default class CouponList extends Component {
         );
     }
 
+    changeSelect = (index) => {
+        let left, use, expire;
+        if(index == 0) {
+            left = 0;
+            use = 1;
+            expire = 1;
+        }else if(index == 1) {
+            left = Size.width / 3;
+            use = 2;
+            expire = null;
+        }else if(index == 2) {
+            left = (Size.width / 3) * 2;
+            use = 1;
+            expire = 2;
+        }
+        Animated.timing(this.state.leftValue, {
+            toValue: left,
+            duration: 250,
+        }).start();
+        this.initDatas(use, expire);
+    };
+
+    pageHead = () => {
+        return (
+            <View style={styles.btnRowBg}>
+                <View style={styles.btnRowTopBg}></View>
+                <View style={styles.btnRowBottomBg}></View>
+                <Animated.View style={[styles.animatedBg, {
+                    left: this.state.leftValue,
+                }]}>
+                    <View  style={styles.animatedTopBg}></View>
+                    <View  style={styles.animatedBottomBg}></View>
+                </Animated.View>
+                <TouchableOpacity onPress={()=>this.changeSelect(0)} style={[styles.btnItemBox, {left: 0}]}>
+                    <Text style={styles.btnItemText}>{Lang[Lang.default].notUsed}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>this.changeSelect(1)} style={[styles.btnItemBox, {left: Size.width / 3}]}>
+                    <Text style={styles.btnItemText}>{Lang[Lang.default].alreadyInUse}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>this.changeSelect(2)} style={[styles.btnItemBox, {right: 0}]}>
+                    <Text style={styles.btnItemText}>{Lang[Lang.default].expired}</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
     _renderItem = ({item, index}) => {
         return (
             <View style={styles.couponRow}>
-            <CouponItem
-                type={2}
-                width={Size.width * 0.907}
-                coupon={item}
-            />
+                <CouponItem
+                    type={2}
+                    width={Size.width * 0.907}
+                    coupon={item}
+                />
             </View>
         );
     };
@@ -124,14 +155,58 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: '#fff',
     },
     flatListStyle: {
         backgroundColor: '#fff',
     },
+    btnRowBg: {
+        width: Size.width,
+        height: PX.rowHeight1,
+        marginBottom: PX.marginLR,
+    },
+    btnRowTopBg: {
+        width: Size.width,
+        height: PX.rowHeight2,
+        backgroundColor: Color.lightGrey,
+    },
+    btnRowBottomBg: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    animatedBg: {
+        position: 'absolute',
+        top: 0,
+        height: PX.rowHeight2 + 5,
+        alignItems: 'center',
+    },
+    animatedTopBg: {
+        width: Size.width / 3,
+        height: PX.rowHeight2,
+        backgroundColor: Color.mainColor,
+    },
+    animatedBottomBg: {
+        width: 0,
+        height: 0,
+        borderWidth: 5,
+        borderColor: 'transparent',
+        borderTopColor: Color.mainColor,
+    },
+    btnItemBox: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: Size.width / 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    btnItemText: {
+        color: '#fff',
+        fontSize: 14,
+    },
     couponRow: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: PX.marginLR,
+        marginBottom: 20,
     },
 });

@@ -46,6 +46,7 @@ export default class InputText extends Component {
             keyType, 
             disEdit,
             onFocus,
+            multiline,
          } = this.props;
 	    return (
             <TextInput
@@ -61,7 +62,7 @@ export default class InputText extends Component {
                 autoFocus={focus ? true : false}
                 keyboardType={keyType ? keyType : 'default'}
                 editable={disEdit ? false : true}
-                multiline={true}
+                multiline={multiline ? true : false}
                 onEndEditing={endEditing}
                 onFocus={onFocus}
             />
