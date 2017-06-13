@@ -62,6 +62,8 @@ var urls = {
     getAllAreas: host + '/api/RegionNController/getMemberAddressAreaList',
     //添加用户地址
     addUserAddress: host + '/api/AddressNController/memberAddressAdd',
+    //编辑用户地址
+    editUserAddress: host + '/api/AddressNController/memberShopAddressEdit',
 };
 
 export default urls;

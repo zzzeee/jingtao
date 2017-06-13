@@ -15,6 +15,7 @@ import {
     Animated,
 } from 'react-native';
 
+import Toast from 'react-native-root-toast';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -68,8 +69,39 @@ export default class AddressList extends Component {
         }
     };
 
+    setDefaultAddress = (index, said) => {
+        if(said && this.mToken) {
+            let addresss = this.state.addresss;
+            Utils.fetch(Urls.editUserAddress, 'post', {
+                mToken: this.mToken,
+                saID: said,
+                saSelected: 1,
+            }, (result) => {
+                console.log(result);
+                if(result && result.sMessage) {
+                    Toast.show(result.sMessage, {
+                        duration: Toast.durations.SHORT,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+                }
+                if(result && result.sTatus == 1) {
+                    for(let i in addresss) {
+                        if(i == index) {
+                            addresss[i].saSelected = 1;
+                        }else {
+                            addresss[i].saSelected = 0;
+                        }
+                    }
+                    this.setState({ addresss });
+                }
+            });
+        }
+    };
+
     render() {
         let { navigation } = this.props;
+        let that = this;
         let scrollref = null;
         return (
             <View style={styles.container}>
@@ -85,6 +117,7 @@ export default class AddressList extends Component {
                 <View style={styles.flex}>
                     <ScrollView contentContainerStyle={styles.scrollStyle} ref={(_ref)=>scrollref=_ref}>
                         {this.state.addresss.map((item, index) => {
+                            let said = item.saID || null;
                             let name = item.saName || '';
                             let phone = item.saPhone || '';
                             let province = item.saProvince || '';
@@ -92,6 +125,10 @@ export default class AddressList extends Component {
                             let regoin = item.saDistinct || '';
                             let address = item.saAddress || '';
                             let fullAddress = province + city + regoin + address;
+                            let isSelect = (item.saSelected && item.saSelected != '0') ? 1 : 0;
+                            let img = isSelect ? 
+                                require("../../images/car/select.png") :
+                                require("../../images/car/no_select.png");
                             return (
                                 <View key={index} style={styles.addressItem}>
                                     <View style={styles.addressFristRow}>
@@ -106,7 +143,10 @@ export default class AddressList extends Component {
                                             <BtnIcon 
                                                 width={20}
                                                 text={Lang[Lang.default].setDefault}
-                                                src={require("../../images/car/no_select.png")} 
+                                                src={img}
+                                                press={()=>{
+                                                    if(!isSelect && said) that.setDefaultAddress(index, said);
+                                                }}
                                             />
                                         </View>
                                         <View style={styles.rowStyle}>

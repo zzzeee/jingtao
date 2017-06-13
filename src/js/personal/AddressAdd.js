@@ -38,12 +38,12 @@ export default class AddressAdd extends Component {
             onFocusHomeAddress: false,
             showAreas: false,
             showAlert: false,
+            setDefault: true,
         };
         this.mToken = null;
         this.province = null;
         this.city = null;
         this.region = null;
-        this.setDefault = true;
         this.addressNum = 0;
         this.alertMsg = null;
     }
@@ -176,6 +176,7 @@ export default class AddressAdd extends Component {
                 saProvinceID: provinceID,
                 saCityID: cityID,
                 saAreaID: regionID,
+                saSelected: this.state.setDefault ? 1 : 0,
             }, (result) => {
                 if(result) {
                     if(result.sTatus == 1) {
@@ -267,10 +268,10 @@ export default class AddressAdd extends Component {
                                     <Text style={styles.defaultFont}>{Lang[Lang.default].homeAddress}</Text>
                                 </View>
                                 <TouchableOpacity onPress={this.showAreasBox} style={[styles.rowRight, {
+                                    flex: 1,
                                     justifyContent: 'flex-end',
                                     paddingRight: PX.marginLR,
                                     alignItems: 'center',
-                                    height: 30,
                                 }]}>
                                     {selectNames ?
                                         <Text style={styles.defaultFont}>{selectNames}</Text> :
@@ -305,9 +306,9 @@ export default class AddressAdd extends Component {
                         <View style={styles.setDefaultRow}>
                             <Text style={styles.defaultFont}>{Lang[Lang.default].setDefaultAddress}</Text>
                             <Switch 
-                                onValueChange={(value)=>this.setDefault=value} 
+                                onValueChange={(setDefault)=>this.setState({ setDefault })} 
                                 disabled={this.addressNum > 0 ? false : true}
-                                value={this.setDefault} 
+                                value={this.state.setDefault} 
                             />
                         </View>
                     </ScrollView>
