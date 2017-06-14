@@ -62,7 +62,6 @@ export default class AddressAdd extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            console.log(params);
             let { mToken, addressInfo, addressNum } = params;
             this.mToken = mToken;
             this.addressNum = addressNum || 0;

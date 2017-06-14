@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
@@ -29,10 +30,51 @@ export default class AddOrder extends Component {
         this.state = {
             selectSwapIntegral: 0,
             showPayModal: false,
+            tmpOrderInfo: [],
+            integral: null,
         };
-
+        this.mToken = null;
+        this.carIDs = null;
         this.ref_scroll = null;
     }
+
+    componentWillMount() {
+        this.initDatas();
+    }
+
+    componentDidMount() {
+        this.getTmpOrderInfo();
+    }
+
+    //初始化数据
+    initDatas = () => {
+        let { navigation } = this.props;
+        if(navigation && navigation.state && navigation.state.params) {
+            let params = navigation.state.params;
+            let { mToken, carIDs } = params;
+            this.mToken = mToken || null;
+            this.carIDs = carIDs || null;
+        }
+    };
+
+    getTmpOrderInfo = () => {
+        if(this.mToken && this.carIDs && this.carIDs.length) {
+            Utils.fetch(Urls.confirmOrder, 'post', {
+                mToken: this.mToken,
+                cartID: this.carIDs.join(','),
+            }, (result) => {
+                console.log(result);
+                if(result && result.sTatus == 1 && result.oOrder) {
+                    let list = result.oOrder || [];
+                    let mIntegral = parseInt(result.mIntegral) || 0;
+                    this.setState({
+                        tmpOrderInfo: list,
+                        integral: mIntegral,
+                    })
+                }
+            });
+        }
+    };
 
     render() {
         let that = this;
@@ -71,7 +113,7 @@ export default class AddOrder extends Component {
                             </View>
                         </Image>
                     </View>
-                    {Order.orderInfo.map((item, index) => this.storeSession(item, index))}
+                    {this.state.tmpOrderInfo.map((item, index)=>this.storeSession(item, index))}
                     <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate('Coupon')}>
                         <View style={styles.couponBox}>
                             <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
@@ -156,10 +198,10 @@ export default class AddOrder extends Component {
 
     //订单内的商家
     storeSession = (item, index) => {
-        let name = item.name || '';
-        let productList = item.productList || [];
+        let shopname = item.sShopName || '';
+        let productList = item.cPro || [];
         let expressType = item.expressType || '';
-        let expressMoney = item.expressMoney || '';
+        let expressMoney = item.expressMoney || 0;
         let totalNum = 0;
         let totalMoney = parseFloat(expressMoney) || 0;
 
@@ -167,17 +209,17 @@ export default class AddOrder extends Component {
             <View key={index} style={styles.storeSessionStyle}>
                 <View style={styles.storeNameBox}>
                     <Image source={require('../../images/car/shophead.png')} style={styles.headImgStyle} />
-                    <Text style={styles.goodNameStyle}>{name}</Text>
+                    <Text style={styles.goodNameStyle}>{shopname}</Text>
                 </View>
                 <View>
                     {productList.map(function(good, i) {
-                        let goodImgUrl = good.imgurl || null;
+                        let goodImgUrl = good.gPicture || null;
                         let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.png');
-                        let goodName = good.name || null;
-                        let goodAttr = good.attr || null;
-                        let goodPrice = good.price || null;
-                        let martPrice = good.martPrice || null;
-                        let goodNumber = good.number || '';
+                        let goodName = good.gName || null;
+                        let goodAttr = good.mcAttr || null;
+                        let goodPrice = good.gPrice || null;
+                        let martPrice = good.gShopPrice || null;
+                        let goodNumber = good.gNum || 0;
                         let goodType = good.type || 0;
                         totalNum++;
                         totalMoney += parseFloat(goodPrice);

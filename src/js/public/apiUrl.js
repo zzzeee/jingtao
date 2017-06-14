@@ -38,6 +38,10 @@ var urls = {
     addCarProduct: host + '/api/ShoppingCartController/productShoppingCartInsert',
     //获取购物车信息
     getCarInfo: host + '/api/ShoppingCartController/getMemberShopCartProductList',
+    //更新购物车商品数量
+    addCarProductNumber: host + '/api/ShoppingCartController/memberShopCartProductNumEditByCartID',
+    //删除购物车商品
+    delCarProductNumber: host + '/api/ShoppingCartController/memberShopCartProductDeleteByCartID',
     //登录验证
     checkUser: host + '/api/MemberNController/checkMemberLoginStatus',
     //发送验证码
@@ -68,6 +72,8 @@ var urls = {
     deleteUserAddress: host + '/api/AddressNController/memberShopAddressDeleteBySaID',
     //获取会员基本信息
     getUserInfo: host + '/api/MemberNController/getMemberInfoByToken',
+    //结算购物车商品
+    confirmOrder: host + '/api/OrderNController/getConfirmOrderListByCartID',
 };
 
 export default urls;

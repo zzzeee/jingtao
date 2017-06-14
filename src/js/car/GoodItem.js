@@ -17,6 +17,7 @@ import {
 import CtrlNumber from '../other/CtrlNumber';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import { Size, PX, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
@@ -117,10 +118,10 @@ export default class GoodItem extends Component {
                                 : null
                             }
                         </View>
-                        <CtrlNumber 
-                            num={this.number} 
-                            callBack={this.callBack} 
-                            checkFunc={this.checkFunc} 
+                        <CtrlNumber
+                            num={this.number}
+                            callBack={this.callBack}
+                            checkFunc={this.checkFunc}
                             addFailFunc={this.addFailFunc}
                         />
                     </View>
@@ -130,8 +131,13 @@ export default class GoodItem extends Component {
     }
 
     //数量检查
-    checkFunc = (num) => {
-        if(isNaN(num)) {
+    checkFunc = async (num) => {
+        let { good, userinfo, } = this.props;
+        let carid = good.mcID || null;
+        if(!userinfo || !carid) {
+            this.error = 5;
+            this.message = Lang[Lang.default].notUserToken;
+        }else if(isNaN(num)) {
             this.error = 1;
             this.message = Lang[Lang.default].missParam;
         }else if(num < 0) {
@@ -142,9 +148,19 @@ export default class GoodItem extends Component {
             this.message = Lang[Lang.default].shopNumberLessOne;
         }else if(num > this.maxNum) {
             this.error = 4;
-            this.message = Lang[Lang.default].insufficientStock ;
+            this.message = Lang[Lang.default].insufficientStock;
         }else {
-            return true;
+            let obj = Object.assign({
+                cartID: carid,
+                proNum: num,
+            }, userinfo);
+            let ret = await Utils.async_fetch(Urls.addCarProductNumber, 'post', obj);
+            if(ret && ret.sTatus == 1) {
+                return true;
+            }else if(ret && ret.sMessage) {
+                this.message = ret.sMessage
+            }
+            this.error = 6;
         }
         return false;
     };

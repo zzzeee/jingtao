@@ -36,7 +36,7 @@ export default class CarsScreen extends Component {
         super(props);
         this.state = {
             carDatas: null,     //购物车商品
-            invalidList: null,  //购物车失效商品
+            invalidList: [],    //购物车失效商品
             goodList: null,     //猜你喜欢的商品列表
             tmpDatas: [],       //猜你喜欢商品的数据缓存
             isSelect: false,    //当前全选状态
@@ -120,6 +120,19 @@ export default class CarsScreen extends Component {
         });
     };
 
+    //获取会员信息
+    getToken = () => {
+        return (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
+    };
+
+    //跳转至登录
+    goToLogin = () => {
+        let { navigation } = this.props;
+        if(navigation) {
+            navigation.navigate('Login', {back: 'Car'});
+        }
+    };
+
     // 加载更多
     loadMore = () => {
         if(!this.loadMoreLock) {
@@ -193,7 +206,7 @@ export default class CarsScreen extends Component {
                 {this.state.editing ? Lang[Lang.default].done : Lang[Lang.default].edit}
             </Text> 
             : null;
-        let mToken = this.userinfo && this.userinfo[_User.keyMember] ? this.userinfo[_User.keyMember] : null;
+        let mToken = this.getToken();
         return (
             <View style={styles.flex}>
                 <AppHead 
@@ -255,10 +268,10 @@ export default class CarsScreen extends Component {
                         </View>
                         {this.state.editing ?
                             <View style={styles.rowStyle}>
-                                <TouchableOpacity style={styles.btnCollection} onPress={this.clickCollection}>
+                                <TouchableOpacity style={styles.btnCollection} onPress={this.selectCollection}>
                                     <Text style={styles.settlementText}>{Lang[Lang.default].collection}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.btnDelete} onPress={this.clickDelete}>
+                                <TouchableOpacity style={styles.btnDelete} onPress={this.selectDelete}>
                                     <Text style={styles.settlementText}>{Lang[Lang.default].delete}</Text>
                                 </TouchableOpacity>
                             </View> :
@@ -293,33 +306,39 @@ export default class CarsScreen extends Component {
         let cars = this.state.carDatas ? 
             <View style={{backgroundColor: Color.lightGrey}}>
                 {this.state.carDatas.map((item, index) => {
-                    return (
-                        <ShopItem 
-                            key={index} 
-                            key1={index}
-                            shop={item} 
-                            keyword={'cPro'}
-                            carDatas={that.state.carDatas}
-                            ctrlSelect={that.state.ctrlSelect} 
-                            updateCarDatas={that.updateCarDatas}
-                            changeKEY1={that.state.changeKEY1}
-                            changeKEY2={that.state.changeKEY2}
-                            showAutoModal={that.showAutoModal}
-                            showCouponBox={this.showCouponBox}
-                        />
-                    );
+                    let _keyword = 'cPro';
+                    if(item && item[_keyword] && item[_keyword].length) {
+                        return (
+                            <ShopItem 
+                                key={index} 
+                                key1={index}
+                                shop={item} 
+                                keyword={_keyword}
+                                carDatas={that.state.carDatas}
+                                ctrlSelect={that.state.ctrlSelect} 
+                                updateCarDatas={that.updateCarDatas}
+                                changeKEY1={that.state.changeKEY1}
+                                changeKEY2={that.state.changeKEY2}
+                                showAutoModal={that.showAutoModal}
+                                showCouponBox={this.showCouponBox}
+                                userinfo={that.userinfo}
+                            />
+                        );
+                    }else {
+                        return null;
+                    }
                 })}
                 {this.state.invalidList ?
                     <View style={styles.invalidListBox}>
                         {this.state.invalidList.map(this.invalidProduct)}
-                        {this.state.editing ? 
+                        {this.state.editing && this.state.invalidList.length ? 
                             <View style={styles.invalidClearBox}>
                                 <Text style={styles.invalidClearText} onPress={()=>{
                                     this.showAlertMoudle(
-                                        '确定要删除失效的商品吗？',
-                                        '确定', 
-                                        '取消',
-                                        () => this.setState({deleteAlert: false,}),
+                                        Lang[Lang.default].deleteInvalidProduct,
+                                        Lang[Lang.default].determine, 
+                                        Lang[Lang.default].cancel,
+                                        this.deleteInvalidProduct,
                                         () => this.setState({deleteAlert: false,}),
                                     );
                                 }}>{Lang[Lang.default].clearInvalidProduct}</Text>
@@ -463,24 +482,30 @@ export default class CarsScreen extends Component {
         }
     };
 
-    //过滤出选中的商品
+    //过滤出选中的商品(购物车ID)
     selectProducts = () => {
-        let products = [];
+        let obj = {
+            'carIDs': [],
+            'goodIDs': [],
+        };
         let _cars = this.cars;
         for(let i in _cars) {
             for(let j in _cars[i]['cPro']) {
-                let id = _cars[i]['cPro'][j].gID || 0;
+                let cid = _cars[i]['cPro'][j].mcID || 0;
+                let gid = _cars[i]['cPro'][j].gID || 0;
                 let num = _cars[i]['cPro'][j].gNum || 0;
                 let select = _cars[i]['cPro'][j].select;
-                if(id > 0 && num > 0 && select !== false) products.push(id);
+                if(cid > 0 && gid > 0 && num > 0 && select !== false) {
+                     obj.carIDs.push(cid);
+                     obj.goodIDs.push(gid);
+                }
             }
         }
-        
-        if(products.length > 0) {
-            return products;
+        if(obj.carIDs.length > 0 && obj.goodIDs.length > 0) {
+            return obj;
         }else {
             this.showAutoModal(Lang[Lang.default].youNotSelectProduct);
-            return false;
+            return null;
         }
     };
 
@@ -523,51 +548,123 @@ export default class CarsScreen extends Component {
         });
     };
 
-    //点击结算
-    goSettlement = () => {
-        let products = this.selectProducts();
-        if(products) {
-            let { navigation } = this.props;
-            console.log(this.cars);
-            navigation.navigate('AddOrder');
+    //删除失效商品
+    deleteInvalidProduct = () => {
+        let ids = [];
+        let list = this.state.invalidList;
+        for(let i in list) {
+            let carid = list[i].mcID || null;
+            if(carid && carid > 0) ids.push(carid);
+        }
+        this.deleteCarProduct(ids, 1, Lang[Lang.default].successClearInvalidProduct);
+    };
+
+    /**
+     * 删除指定购物车商品
+     * @param array  carIDs     购物车ID集合
+     * @param number type       1：删除失效, 2：非失效
+     * @param string successMsg 删除成功后的提示消息
+     */
+    deleteCarProduct = (carIDs, type, successMsg = null) => {
+        if(typeof(carIDs) == 'object' && carIDs.length && this.userinfo) {
+            let that = this;
+            let obj = Object.assign({cartID: carIDs.join(',')}, this.userinfo);
+            Utils.fetch(Urls.delCarProductNumber, 'post', obj, (result) => {
+                if(result) {
+                    console.log(result);
+                    let obj = {deleteAlert : false,};
+                    if(result.sMessage) {
+                        obj.operateMsg = result.sMessage;
+                    }
+                    if(result.sTatus == 1) {
+                        if(successMsg) obj.operateMsg = successMsg;
+                    }
+                    if(type == 1) {
+                        obj.invalidList = [];
+                    }else if(type == 2) {
+                        let cars = that.state.carDatas || [];
+                        for(let i in cars) {
+                            for(let i2 in cars[i]['cPro']) {
+                                for(let i3 in carIDs) {
+                                    if(cars[i]['cPro'][i2].mcID == carIDs[i3]) {
+                                        cars[i]['cPro'].splice(i2, 1);
+                                    }
+                                }
+                            }
+                        }
+                        console.log(cars);
+                        obj.carDatas = cars;
+                    }
+                    that.setState(obj, that.resultMsgAnimated);
+                }
+            });
         }
     };
 
-    //点击收藏
-    clickCollection = () => {
-        let products = this.selectProducts();
+    /**
+     * 收藏指定购物车商品
+     * @param array  goodIDs  商品ID集合
+     * @param string success  收藏成功后的提示消息
+     */
+    collectionCarProduct = (goodIDs, success = null) => {
+        let token = this.getToken();
+        if(typeof(goodIDs) == 'object' && goodIDs.length) {
+            if(token) {
+                // Utils.fetch(Urls.collection, 'post', {
+                //     flID: goodIDs.join(','),
+                //     fType: 1,
+                //     mToken: token,
+                // }, (result) => {
+                //     if(result) {
+                //     }
+                // });
+            }else {
+                this.setState({deleteAlert: false,}, this.goToLogin)
+            }
+        }
+    };
+
+    //点击结算
+    goSettlement = () => {
+        let ids = this.selectProducts();
+        if(ids && ids.carIDs) {
+            // console.log(this.cars);
+            let token = this.getToken();
+            if(!token) {
+                this.goToLogin();
+            }else if(token && ids.carIDs.length) {
+                this.props.navigation.navigate('AddOrder', {
+                    mToken: token,
+                    carIDs: ids.carIDs,
+                });
+            }
+        }
+    };
+
+    //选中商品收藏
+    selectCollection = () => {
+        let ids = this.selectProducts();
         let that = this;
-        if(products) {
+        if(ids && ids.goodIDs) {
             this.showAlertMoudle(
-                '确定要收藏选中商品吗？',
-                '确定', 
-                '取消',
-                () => {
-                    that.setState({
-                        deleteAlert: false,
-                        operateMsg: '收藏成功!',
-                    }, that.resultMsgAnimated);
-                },
+                Lang[Lang.default].collectionSelectProduct,
+                Lang[Lang.default].determine, 
+                Lang[Lang.default].cancel,
+                () => this.collectionCarProduct(ids.goodIDs),
                 () => this.setState({deleteAlert: false,}),
             );
         }
     };
 
-    //点击删除
-    clickDelete = () => {
-        let products = this.selectProducts();
-        let that = this;
-        if(products) {
+    //选中商品删除
+    selectDelete = () => {
+        let ids = this.selectProducts();
+        if(ids && ids.carIDs) {
             this.showAlertMoudle(
-                '确定要删除选中商品吗？',
-                '确定', 
-                '取消',
-                () => {
-                    that.setState({
-                        deleteAlert: false,
-                        operateMsg: '删除成功!',
-                    }, that.resultMsgAnimated);
-                },
+                Lang[Lang.default].deleteSelectProduct,
+                Lang[Lang.default].determine, 
+                Lang[Lang.default].cancel,
+                () => this.deleteCarProduct(ids.carIDs, 2),
                 () => this.setState({deleteAlert: false,}),
             );
         }
