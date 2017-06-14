@@ -79,6 +79,7 @@ export default class AddOrder extends Component {
     render() {
         let that = this;
         let { navigation } = this.props;
+        console.log(navigation);
         let list1 = <Text style={styles.defaultFont}>{Lang[Lang.default].fullSwap}</Text>;
         let list2 = <Text style={styles.defaultFont}>{Lang[Lang.default].noUseSwap}</Text>;
         let list3 = 
@@ -100,7 +101,11 @@ export default class AddOrder extends Component {
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
                     <View style={styles.addressSession}>
                         <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
-                            <View style={styles.addressBox}>
+                            <TouchableOpacity onPress={()=>{
+                                navigation.navigate('AddressList', {
+                                    mToken: this.mToken,
+                                });
+                            }} style={styles.addressBox}>
                                 <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
                                 <View style={styles.centerTextBox}>
                                     <View style={styles.rowViewStyle}>
@@ -110,7 +115,7 @@ export default class AddOrder extends Component {
                                     <Text style={[styles.addressTextStyle, styles.addressStyle]}>{Order.addressInfo.adress}</Text>
                                 </View>
                                 <Image style={styles.addressRightImage} source={require('../../images/list_more.png')} />
-                            </View>
+                            </TouchableOpacity>
                         </Image>
                     </View>
                     {this.state.tmpOrderInfo.map((item, index)=>this.storeSession(item, index))}
@@ -313,6 +318,7 @@ const styles = StyleSheet.create({
         height: 100,
     },
     addressBox: {
+        width: Size.width,
         height: 90,
         flexDirection: 'row',
         justifyContent: 'center',

@@ -34,6 +34,7 @@ export default class AddressList extends Component {
         };
         this.mToken = null;
         this.alertObject = {};
+        this.selectAddress = null;
     }
 
     componentWillMount() {
@@ -121,6 +122,7 @@ export default class AddressList extends Component {
 
     setDefaultAddress = (index, said) => {
         if(said && this.mToken) {
+            let that = this;
             let addresss = this.state.addresss;
             Utils.fetch(Urls.editUserAddress, 'post', {
                 mToken: this.mToken,
@@ -139,11 +141,12 @@ export default class AddressList extends Component {
                     for(let i in addresss) {
                         if(i == index) {
                             addresss[i].saSelected = 1;
+                            that.selectAddress = addresss[i];
                         }else {
                             addresss[i].saSelected = 0;
                         }
                     }
-                    this.setState({ addresss });
+                    that.setState({ addresss });
                 }
             });
         }
@@ -158,7 +161,9 @@ export default class AddressList extends Component {
                 <AppHead
                     title={Lang[Lang.default].addressList}
                     left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
+                         navigation.goBack({
+                             selAddress: this.selectAddress,
+                         });
                     }} src={require("../../images/back.png")} />}
                     onPress={() => {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
@@ -178,6 +183,7 @@ export default class AddressList extends Component {
                         let img = isSelect ? 
                             require("../../images/car/select.png") :
                             require("../../images/car/no_select.png");
+                        if(isSelect) that.selectAddress = item;
                         return (
                             <View key={index} style={styles.addressItem}>
                                 <View style={styles.addressFristRow}>

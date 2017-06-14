@@ -112,7 +112,7 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let that = this;
-        Utils.fetch('http://api.ub33.cn/api/PayTest/getWeiXinPayInfo', 'post', {}, function(result){
+        Utils.fetch('http://api.jingtaomart.com/api/PayTest/getWeiXinPayInfo', 'post', {}, function(result){
             // console.log('weixin_payinfo :');
             // console.log(JSON.parse(result));
             that.weixin_pay(JSON.parse(result));
@@ -169,7 +169,7 @@ export default class PayOrder extends Component {
     //支付宝支付
     ali_pay = () => {
         let that = this;
-        fetch('http://api.ub33.cn/api/PayTest/getAlipayInfo')
+        fetch('http://api.jingtaomart.com/api/PayTest/getAlipayInfo')
         .then((response) => response.text())
         .then((responseText) => {
             if(responseText) {

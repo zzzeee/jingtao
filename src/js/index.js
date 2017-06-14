@@ -73,6 +73,19 @@ class MyNavScren extends Component {
 
     render() {
         let { navigation, NavScreen } = this.props;
+        let { router } = TabNavScreen;
+        /**
+         * console.log(router);
+         * router = {
+         *   getActionForPathAndParams: function getActionForPathAndParams(path, params),
+         *   getComponentForRouteName: function getComponentForRouteName(routeName),
+         *   getComponentForState: function getComponentForState(state),
+         *   getPathAndParamsForState:f unction getPathAndParamsForState(state),
+         *   getScreenConfig: function (),
+         *   getScreenOptions: function (navigation, screenProps),
+         *   getStateForAction: function getStateForAction(action, inputState),
+         * }
+         */
         return (
             <View style={styles.flex}>
                 <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
