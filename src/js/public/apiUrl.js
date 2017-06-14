@@ -64,6 +64,10 @@ var urls = {
     addUserAddress: host + '/api/AddressNController/memberAddressAdd',
     //编辑用户地址
     editUserAddress: host + '/api/AddressNController/memberShopAddressEdit',
+    //删除用户地址
+    deleteUserAddress: host + '/api/AddressNController/memberShopAddressDeleteBySaID',
+    //获取会员基本信息
+    getUserInfo: host + '/api/MemberNController/getMemberInfoByToken',
 };
 
 export default urls;

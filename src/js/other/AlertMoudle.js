@@ -20,6 +20,10 @@ export default class AlertMoudle extends Component {
     // 默认参数
     static defaultProps = {
         visiable: false,
+        leftColor: '#fff',
+        rightColor: Color.lightBack,
+        leftBgColor: Color.mainColor,
+        rightBgColor: '#ddd',
     };
     // 参数类型
     static propTypes = {
@@ -27,8 +31,12 @@ export default class AlertMoudle extends Component {
         text: React.PropTypes.string,
         leftText: React.PropTypes.string,
         leftClick: React.PropTypes.func,
+        leftColor: React.PropTypes.string,
+        leftBgColor: React.PropTypes.string,
         rightText: React.PropTypes.string,
         rightClick: React.PropTypes.func,
+        rightColor: React.PropTypes.string,
+        rightBgColor: React.PropTypes.string,
     };
     // 构造函数
     constructor(props) {
@@ -38,7 +46,18 @@ export default class AlertMoudle extends Component {
     }
 
     render() {
-        let { visiable, text, leftText, leftClick, rightText, rightClick } = this.props;
+        let { 
+            visiable, 
+            text, 
+            leftText, 
+            leftClick,
+            leftColor,
+            leftBgColor,
+            rightText, 
+            rightClick,
+            rightColor,
+            rightBgColor,
+         } = this.props;
         return (
             <Modal
                 animationType={"none"}
@@ -53,11 +72,15 @@ export default class AlertMoudle extends Component {
                             <Text style={styles.alertText}>{text}</Text>
                         </View>
                         <View style={styles.bottonsBox}>
-                            <TouchableOpacity style={styles.leftBottonStyle} onPress={leftClick} activeOpacity={1}>
-                                <Text style={styles.leftBottonText}>{leftText}</Text>
+                            <TouchableOpacity style={[styles.leftBottonStyle, {
+                                backgroundColor: leftBgColor,
+                            }]} onPress={leftClick} activeOpacity={1}>
+                                <Text style={[styles.leftBottonText, {color: leftColor}]}>{leftText}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.rightBottonStyle} onPress={rightClick} activeOpacity={1}>
-                                <Text style={styles.rightBottonText}>{rightText}</Text>
+                            <TouchableOpacity style={[styles.rightBottonStyle, {
+                                backgroundColor: rightBgColor,
+                            }]} onPress={rightClick} activeOpacity={1}>
+                                <Text style={[styles.rightBottonText, {color: rightColor}]}>{rightText}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -93,27 +116,27 @@ var styles = StyleSheet.create({
     bottonsBox: {
         height: 50,
         flexDirection : 'row',
+        borderTopWidth: pixel,
+        borderTopColor: Color.lavender,
     },
     leftBottonStyle: {
         flex: 1,
-        backgroundColor: Color.mainColor,
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomLeftRadius: 5,
     },
     leftBottonText: {
         fontSize: 16,
-        color: '#fff',
     },
     rightBottonStyle: {
         flex: 1,
-        backgroundColor: '#ddd',
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomRightRadius: 5,
+        borderLeftWidth: pixel,
+        borderLeftColor: Color.lavender,
     },
     rightBottonText: {
         fontSize: 16,
-        color: Color.lightBack,
     },
 });

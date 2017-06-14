@@ -203,6 +203,7 @@ const language = {
         notUserToken: '读取不到会员信息',
         inputConsigneeName: '请输入收货人姓名',
         selectAddressArea: '请选择所在地区',
+        deleteThisAddress: '确定删除该地址？',
     },
 };
 

@@ -16,6 +16,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import Utils from '../public/utils';
 import User from '../public/user';
 import Urls from '../public/apiUrl';
 import BtnIcon from '../public/BtnIcon';
@@ -34,7 +35,8 @@ export default class PersonalScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            islogo: false,
+            islogin: false,
+            userInfo: null,
             opacityVal: new Animated.Value(0),
         };
 
@@ -53,11 +55,30 @@ export default class PersonalScreen extends Component {
     }
 
     initDatas = () => {
-
+        if(this.mToken) {
+            Utils.fetch(Urls.getUserInfo, 'post', {
+                mToken: this.mToken,
+            }, (result) => {
+                console.log(result);
+                if(result && result.sTatus == 1) {
+                    let info = result.mInfo || null;
+                    this.setState({
+                        islogin: true,
+                        userInfo: info,
+                    })
+                }
+            });
+        }
     };
 
     render() {
         const { navigation } = this.props;
+        let { islogin, userInfo, } = this.state;
+        let name = '', integral = 0;
+        if(islogin && userInfo) {
+            name = userInfo.mNickName || userInfo.mPhone;
+            integral = userInfo.mIntegral || 0;
+        }
         return (
             <View style={styles.flex}>
                 <ScrollView 
@@ -66,14 +87,14 @@ export default class PersonalScreen extends Component {
                     onScroll={this._onScroll}
                 >
                     <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
-                        {this.state.islogo ?
+                        {islogin ?
                             <View style={styles.headMainBox}>
                                 <View style={styles.headBox}>
                                     <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
-                                    <Text style={styles.userNameText}>{'这里是名字'}</Text>
+                                    <Text style={styles.userNameText}>{name}</Text>
                                 </View>
                                 <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
-                                    <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, 5000)}</Text>
+                                    <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, integral)}</Text>
                                     <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
                                 </Image>
                             </View> :
@@ -176,10 +197,13 @@ export default class PersonalScreen extends Component {
 
     //按钮栏
     btnRow = (img, txt, name, rightTxt) => {
+        let navigation = this.props.navigation;
         return (
             <TouchableOpacity onPress={()=>{
-                if(name) {
-                    this.props.navigation.navigate(name, {'mToken': this.mToken});
+                if(!this.state.islogin) {
+                    navigation.navigate('Login');
+                }else if(name) {
+                    navigation.navigate(name, {'mToken': this.mToken});
                 }
             }}>
                 <View style={styles.btnRowStyle}>

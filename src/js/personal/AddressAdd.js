@@ -40,6 +40,7 @@ export default class AddressAdd extends Component {
             showAlert: false,
             setDefault: true,
         };
+        this.addressID = null;
         this.mToken = null;
         this.province = null;
         this.city = null;
@@ -49,16 +50,45 @@ export default class AddressAdd extends Component {
     }
 
     componentWillMount() {
-        let { navigation } = this.props;
-        if(navigation && navigation.state && navigation.state.params) {
-            this.mToken = navigation.state.params.mToken || null;
-            this.addressNum = navigation.state.params.addressNum || 0;
-        }
+        this.initDatas();
     }
 
     componentDidMount() {
         this.getAreaList();
     }
+
+    //初始化数据
+    initDatas = () => {
+        let { navigation } = this.props;
+        if(navigation && navigation.state && navigation.state.params) {
+            let params = navigation.state.params;
+            console.log(params);
+            let { mToken, addressInfo, addressNum } = params;
+            this.mToken = mToken;
+            this.addressNum = addressNum || 0;
+            if(addressInfo) {
+                this.addressID = addressInfo.saID || null;
+                this.province = {
+                    id: addressInfo.saProvinceID || null,
+                    name: addressInfo.saProvince || null,
+                };
+                this.city = {
+                    id: addressInfo.saCityID || null,
+                    name: addressInfo.saCity || null,
+                };
+                this.region = {
+                    id: addressInfo.saAreaID || null,
+                    name: addressInfo.saDistinct || null,
+                };
+                this.setState({
+                    consignee: addressInfo.saName || '',
+                    mobile: addressInfo.saPhone || '',
+                    homeAddress: addressInfo.saAddress || '',
+                    setDefault: addressInfo.saSelected == 1 ? true : false,
+                });
+            }
+        }
+    };
 
     //获取地区列表
     getAreaList = () => {
@@ -141,7 +171,7 @@ export default class AddressAdd extends Component {
         }
     };
 
-    //点击新增地址
+    //点击新增/修改地址
     clickAddAddress = () => {
         let name = this.state.consignee || null;
         let phone = this.state.mobile || null;
@@ -165,7 +195,8 @@ export default class AddressAdd extends Component {
             let provinceName = this.province.name || '';
             let cityName = this.city.name || '';
             let regionName = this.region.name || '';
-            Utils.fetch(Urls.addUserAddress, 'post', {
+            let url = Urls.addUserAddress;
+            let obj = {
                 mToken: this.mToken,
                 saName: Utils.trim(name),
                 saProvince: provinceName,
@@ -177,7 +208,12 @@ export default class AddressAdd extends Component {
                 saCityID: cityID,
                 saAreaID: regionID,
                 saSelected: this.state.setDefault ? 1 : 0,
-            }, (result) => {
+            };
+            if(this.addressID && this.addressID > 0) {
+                obj.saID = this.addressID;
+                url = Urls.editUserAddress;
+            } 
+            Utils.fetch(url, 'post', obj, (result) => {
                 if(result) {
                     if(result.sTatus == 1) {
                         this.props.navigation.navigate('AddressList', {
@@ -346,6 +382,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Color.lightGrey,
+        justifyContent: 'space-between',
     },
     defaultFont: {
         color: Color.lightBack,
@@ -436,6 +473,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginLeft: PX.marginLR,
         marginBottom: PX.marginTB,
+        marginTop: PX.marginTB,
     },
     saveAddressText: {
         fontSize: 13,

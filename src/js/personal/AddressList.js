@@ -13,6 +13,7 @@ import {
     ScrollView,
     TouchableOpacity,
     Animated,
+    Alert,
 } from 'react-native';
 
 import Toast from 'react-native-root-toast';
@@ -22,14 +23,17 @@ import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
+import AlertMoudle from '../other/AlertMoudle';
 
 export default class AddressList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             addresss: [],
+            deleteAlert: false,
         };
         this.mToken = null;
+        this.alertObject = {};
     }
 
     componentWillMount() {
@@ -41,10 +45,10 @@ export default class AddressList extends Component {
     }
 
     componentDidMount() {
-        this.initDatas();
+        this.getAddressList();
     }
 
-    initDatas = () => {
+    getAddressList = () => {
         if(this.mToken) {
             let that = this;
             Utils.fetch(Urls.getUserAddressList, 'post', {
@@ -53,7 +57,10 @@ export default class AddressList extends Component {
                 console.log(result);
                 if(result && result.sTatus && result.addressAry) {
                     let addresss = result.addressAry || [];
-                    that.setState({ addresss });
+                    that.setState({ 
+                        addresss: addresss,
+                        deleteAlert: false,
+                     });
                 }
             });
         }
@@ -64,7 +71,50 @@ export default class AddressList extends Component {
         if(this.mToken && navigation) {
             navigation.navigate('AddressAdd', {
                 mToken: this.mToken,
+                addressInfo: null,
                 addressNum: this.state.addresss.length,
+            });
+        }
+    };
+
+    //隐藏删除提示框
+    hideAlertMoudle = () => {
+        this.setState({deleteAlert: false,});
+    };
+
+    //显示删除提示框
+    showAlertMoudle = (said) => {
+        this.alertObject = {
+            text: Lang[Lang.default].deleteThisAddress,
+            leftText: Lang[Lang.default].cancel,
+            rightText: Lang[Lang.default].determine,
+            leftColor: Color.lightBack,
+            leftBgColor: '#fff',
+            leftClick: this.hideAlertMoudle,
+            rightClick: ()=>this.delUserAddress(said),
+            rightColor: Color.lightBack,
+            rightBgColor: '#fff',
+        };
+        this.setState({deleteAlert: true,});
+    };
+
+    delUserAddress = (said) => {
+        if(said && this.mToken) {
+            Utils.fetch(Urls.deleteUserAddress, 'post', {
+                mToken: this.mToken,
+                saID: said,
+            }, (result) => {
+                console.log(result);
+                if(result && result.sMessage) {
+                    Toast.show(result.sMessage, {
+                        duration: Toast.durations.SHORT,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+                }
+                if(result && result.sTatus == 1) {
+                    this.getAddressList();
+                }
             });
         }
     };
@@ -114,63 +164,74 @@ export default class AddressList extends Component {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
                     }}
                 />
-                <View style={styles.flex}>
-                    <ScrollView contentContainerStyle={styles.scrollStyle} ref={(_ref)=>scrollref=_ref}>
-                        {this.state.addresss.map((item, index) => {
-                            let said = item.saID || null;
-                            let name = item.saName || '';
-                            let phone = item.saPhone || '';
-                            let province = item.saProvince || '';
-                            let city = item.saCity || '';
-                            let regoin = item.saDistinct || '';
-                            let address = item.saAddress || '';
-                            let fullAddress = province + city + regoin + address;
-                            let isSelect = (item.saSelected && item.saSelected != '0') ? 1 : 0;
-                            let img = isSelect ? 
-                                require("../../images/car/select.png") :
-                                require("../../images/car/no_select.png");
-                            return (
-                                <View key={index} style={styles.addressItem}>
-                                    <View style={styles.addressFristRow}>
-                                        <Text numberOfLines={1} style={styles.defaultFont}>{name}</Text>
-                                        <Text numberOfLines={1} style={styles.defaultFont}>{phone}</Text>
+                <ScrollView contentContainerStyle={styles.scrollStyle} ref={(_ref)=>scrollref=_ref}>
+                    {this.state.addresss.map((item, index) => {
+                        let said = item.saID || null;
+                        let name = item.saName || '';
+                        let phone = item.saPhone || '';
+                        let province = item.saProvince || '';
+                        let city = item.saCity || '';
+                        let regoin = item.saDistinct || '';
+                        let address = item.saAddress || '';
+                        let fullAddress = province + city + regoin + address;
+                        let isSelect = (item.saSelected && item.saSelected != '0') ? 1 : 0;
+                        let img = isSelect ? 
+                            require("../../images/car/select.png") :
+                            require("../../images/car/no_select.png");
+                        return (
+                            <View key={index} style={styles.addressItem}>
+                                <View style={styles.addressFristRow}>
+                                    <Text numberOfLines={1} style={styles.defaultFont}>{name}</Text>
+                                    <Text numberOfLines={1} style={styles.defaultFont}>{phone}</Text>
+                                </View>
+                                <View style={styles.addressMiddleRow}>
+                                    <Text style={styles.defaultFont}>{fullAddress}</Text>
+                                </View>
+                                <View style={styles.addressFootRow}>
+                                    <View>
+                                        <BtnIcon 
+                                            width={20}
+                                            text={Lang[Lang.default].setDefault}
+                                            src={img}
+                                            press={()=>{
+                                                if(!isSelect && said) that.setDefaultAddress(index, said);
+                                            }}
+                                        />
                                     </View>
-                                    <View style={styles.addressMiddleRow}>
-                                        <Text style={styles.defaultFont}>{fullAddress}</Text>
-                                    </View>
-                                    <View style={styles.addressFootRow}>
-                                        <View>
-                                            <BtnIcon 
-                                                width={20}
-                                                text={Lang[Lang.default].setDefault}
-                                                src={img}
-                                                press={()=>{
-                                                    if(!isSelect && said) that.setDefaultAddress(index, said);
-                                                }}
-                                            />
-                                        </View>
-                                        <View style={styles.rowStyle}>
-                                            <BtnIcon 
-                                                width={20}
-                                                text={Lang[Lang.default].edit}
-                                                src={require("../../images/edit.png")} 
-                                            />
-                                            <BtnIcon 
-                                                width={20}
-                                                text={Lang[Lang.default].delete}
-                                                src={require("../../images/login/close.png")} 
-                                            />
-                                        </View>
+                                    <View style={styles.rowStyle}>
+                                        <BtnIcon 
+                                            width={20}
+                                            text={Lang[Lang.default].edit}
+                                            src={require("../../images/edit.png")} 
+                                            press={()=>{
+                                                navigation.navigate('AddressAdd', {
+                                                    mToken: that.mToken,
+                                                    addressInfo: item,
+                                                    addressNum: that.state.addresss.length,
+                                                });
+                                            }}
+                                        />
+                                        <BtnIcon 
+                                            width={20}
+                                            text={Lang[Lang.default].delete}
+                                            src={require("../../images/delete.png")}
+                                            press={()=>that.showAlertMoudle(said)}
+                                            style={{marginLeft: 20,}}
+                                        />
                                     </View>
                                 </View>
-                            );
-                        })}
-                    </ScrollView>
-                </View>
-                <TouchableOpacity onPress={this.addNewAddress} style={styles.btnAddAddress}>
-                    <Image source={require('../../images/personal/add.png')} style={styles.addAddressImg} />
-                    <Text style={styles.addAddressText}>{Lang[Lang.default].addAddress}</Text>
-                </TouchableOpacity>
+                            </View>
+                        );
+                    })}
+                    <TouchableOpacity onPress={this.addNewAddress} style={styles.btnAddAddress}>
+                        <Image source={require('../../images/personal/add.png')} style={styles.addAddressImg} />
+                        <Text style={styles.addAddressText}>{Lang[Lang.default].addAddress}</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+                {this.state.deleteAlert ?
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                    : null
+                }
             </View>
         );
     }
@@ -191,6 +252,9 @@ const styles = StyleSheet.create({
     },
     rowStyle: {
         flexDirection: 'row',
+    },
+    scrollStyle: {
+        // minHeight: Size.height - PX.statusHeight - PX.headHeight - 5,
     },
     addressItem: {
         backgroundColor: '#fff',
@@ -226,6 +290,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginLeft: PX.marginLR,
         marginBottom: PX.marginTB,
+        marginTop: 87,
     },
     addAddressImg: {
         width: 20,
