@@ -15,6 +15,7 @@ import {
     FlatList,
 } from 'react-native';
 
+import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
@@ -26,21 +27,52 @@ export default class MyIntegral extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            point: 800,
+            mIntegral: null,
+            mUserIntegral: null,
             rotation: new Animated.Value(0),
             datas: null,
         };
+        this.mToken = null;
+        this.page = 1;
+        this.number = 10;
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.initDatas();
+    };
+
+    componentDidMount() {
+        this.getIntegralData();
         this.startAnimation();
     }
 
+    //初始化数据
     initDatas = () => {
-        this.setState({
-            datas: list,
-        });
+        let { navigation } = this.props;
+        if(navigation && navigation.state && navigation.state.params) {
+            let params = navigation.state.params;
+            let { mToken, } = params;
+            this.mToken = mToken || null;
+        }
+    };
+
+    getIntegralData = () => {
+        if(this.mToken) {
+            Utils.fetch(Urls.getIntegralData, 'post', {
+                page: this.page,
+                perNum: this.number,
+                mToken: this.mToken,
+            }, (result)=>{
+                console.log(result);
+                if(result && result.sTatus == 1 && result.integralAry) {
+                    let info = result.integralAry || {};
+                    let mIntegral = info.mIntegral || null;
+                    let mUserIntegral = info.mUserIntegral || null;
+                    let datas = info.integralAry || [];
+                    this.setState({ mIntegral, mUserIntegral, datas });
+                }
+            });
+        }
     };
 
     startAnimation = () => {
@@ -87,6 +119,7 @@ export default class MyIntegral extends Component {
     // 页面头部
     listHead = () => {
         let { navigation } = this.props;
+        let { mIntegral, mUserIntegral, datas } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.topBox}>
@@ -108,19 +141,19 @@ export default class MyIntegral extends Component {
                                 resizeMode={Image.resizeMode.contain}
                             />
                             <View style={styles.integralNumberView1}>
-                                <Text style={styles.integralNumberText1}>{this.state.point}</Text>
+                                <Text style={styles.integralNumberText1}>{mUserIntegral}</Text>
                             </View>
                         </Image>
                         <View style={styles.topRightView}>
                             <Text style={styles.topRightText1}>{Lang[Lang.default].untilToday}</Text>
                             <Text style={styles.topRightText2}>{Lang[Lang.default].saveYou}</Text>
-                            <Text style={styles.topRightText3}>8000元</Text>
+                            <Text style={styles.topRightText3}>{mUserIntegral}</Text>
                         </View>
                     </Image>
                     <Image source={require('../../images/personal/integral_top_bg2.png')} style={styles.integral_top_bg2} />
                     <View style={styles.integralNumberView2}>
                         <Text style={styles.topTxt}>{Lang[Lang.default].youHave}</Text>
-                        <Text style={styles.integralNumberText2}>{this.state.point}</Text>
+                        <Text style={styles.integralNumberText2}>{mIntegral}</Text>
                         <Text style={styles.topTxt}>{Lang[Lang.default].point}</Text>
                     </View>
                     <View style={styles.footGroupView}>
@@ -137,33 +170,50 @@ export default class MyIntegral extends Component {
 
     //积分使用明细
     _renderItem = ({item, index}) => {
-        let name = item.sName || null;
-        let used = item.used || null;
-        let useTime = item.useTime || null;
-        let number = parseInt(item.number) || 0;
-        let headImg = item.headImg || null;
+        let name = item.sShopName || null;
+        let used = item.iDescribe || null;
+        let useTime = item.iAddTime || null;
+        let number = parseInt(item.payPoints) || 0;
+        let headImg = item.sLogo || null;
         let img = headImg ? {uri: headImg} : require('../../images/empty.png');
-        let color = Color.gainsboro;
-        if(number > 0) {
+        let isAdd = item.iPayType == 1 ? true : false;
+        let useType = item.iType || 0;
+        let numberColor = Color.gainsboro;
+        let color = '#fff';
+        let bgColor = Color.mainColor;
+        let bdColor = Color.mainColor;
+        if(isAdd) {
             number = '+' + number;
+            numberColor = Color.mainColor;
+        }else {
+            number = '-' + number;
+        }
+        if(useType == 0) {
+            bgColor = Color.gainsboro;
+            bdColor = Color.gainsboro;
+        }else if(useType == 2) {
             color = Color.mainColor;
+            bgColor = '#fff';
+            bdColor = Color.mainColor;
         }
         return (
             <View style={styles.rowStyle}>
                 <Image source={img} style={styles.headImgStyle} />
                 <View style={styles.rowRightStyle}>
                     <View style={styles.rowBetweenStyle}>
-                        <Text style={styles.nameText}>{name}</Text>
+                        <Text numberOfLines={1} style={styles.nameText}>{name}</Text>
                         <Text style={styles.useTimeText}>{useTime}</Text>
                     </View>
                     <View style={[styles.rowBetweenStyle, {alignItems: 'center'}]}>
                         <View>
                         <Text style={[styles.usedStyle, {
-                            backgroundColor: color,
+                            color: color,
+                            borderColor: bdColor,
+                            backgroundColor: bgColor,
                         }]}>{used}</Text>
                         </View>
                         <Text style={[styles.numberStyle, {
-                            color: color,
+                            color: numberColor,
                         }]}>{number}</Text>
                     </View>
                 </View>
@@ -337,6 +387,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         borderRadius: 3,
+        borderWidth: 1,
     },
     numberStyle: {
         fontSize: 25,

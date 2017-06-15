@@ -73,14 +73,20 @@ class MyNavScren extends Component {
 
     render() {
         let { navigation, NavScreen } = this.props;
-        let { router } = TabNavScreen;
+        // let { router, screen } = NavScreen;      //不可用
+        // let { router, screen } = Login;          //不可用
+        // let { router, screen } = TabNavScreen;   //可用
+        // console.log(TabNavScreen);
+        // console.log(router);
+        // console.log(screen);
+        // console.log(router2);
+        // console.log(screen2);
         /**
-         * console.log(router);
          * router = {
          *   getActionForPathAndParams: function getActionForPathAndParams(path, params),
          *   getComponentForRouteName: function getComponentForRouteName(routeName),
          *   getComponentForState: function getComponentForState(state),
-         *   getPathAndParamsForState:f unction getPathAndParamsForState(state),
+         *   getPathAndParamsForState: function getPathAndParamsForState(state),
          *   getScreenConfig: function (),
          *   getScreenOptions: function (navigation, screenProps),
          *   getStateForAction: function getStateForAction(action, inputState),

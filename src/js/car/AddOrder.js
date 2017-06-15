@@ -21,7 +21,6 @@ import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
-import Order from '../datas/order.json';
 import PayOrder from './PayOrder';
 
 export default class AddOrder extends Component {
@@ -31,11 +30,19 @@ export default class AddOrder extends Component {
             selectSwapIntegral: 0,
             showPayModal: false,
             tmpOrderInfo: [],
+            addressInfo: null,
             integral: null,
+            inputIntegral: 0,
         };
         this.mToken = null;
         this.carIDs = null;
+        this.addressID = null;
         this.ref_scroll = null;
+        this.useIntegral = 0;
+        this.productTotal = 0;
+        this.freightTotal = 0;
+        this.couponDiscount = 0;
+        this.actualTotal = 0;
     }
 
     componentWillMount() {
@@ -51,26 +58,43 @@ export default class AddOrder extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, carIDs } = params;
+            let { mToken, carIDs, addressID } = params;
             this.mToken = mToken || null;
             this.carIDs = carIDs || null;
+            this.addressID = addressID || null;
         }
     };
 
     getTmpOrderInfo = () => {
         if(this.mToken && this.carIDs && this.carIDs.length) {
-            Utils.fetch(Urls.confirmOrder, 'post', {
+            let that = this;
+            let obj = {
                 mToken: this.mToken,
                 cartID: this.carIDs.join(','),
-            }, (result) => {
+                addressID: this.addressID ? this.addressID : '',
+            };
+            console.log(obj);
+            Utils.fetch(Urls.confirmOrder, 'post', obj, (result) => {
                 console.log(result);
                 if(result && result.sTatus == 1 && result.oOrder) {
                     let list = result.oOrder || [];
+                    let addressList = result.addressAry || [];
                     let mIntegral = parseInt(result.mIntegral) || 0;
+                    for(let i in list) {
+                        let gPrice = parseFloat(list[i].soPrice) || 0;
+                        let fPrice = parseFloat(list[i].expressMoney) || 0;
+                        that.productTotal += gPrice;
+                        that.freightTotal += fPrice;
+                    }
                     this.setState({
                         tmpOrderInfo: list,
-                        integral: mIntegral,
+                        integral: mIntegral = parseInt(mIntegral / 100),
+                        addressInfo: addressList,
                     })
+                }
+            }, null , {
+                catchFunc: (err)=>{
+                    console.log(err);
                 }
             });
         }
@@ -79,19 +103,23 @@ export default class AddOrder extends Component {
     render() {
         let that = this;
         let { navigation } = this.props;
-        console.log(navigation);
-        let list1 = <Text style={styles.defaultFont}>{Lang[Lang.default].fullSwap}</Text>;
-        let list2 = <Text style={styles.defaultFont}>{Lang[Lang.default].noUseSwap}</Text>;
-        let list3 = 
-            (<View style={styles.rowViewStyle}>
-                <Text style={styles.defaultFont}>{Lang[Lang.default].diySwapIntegral + ': '}</Text>
-                <InputText style={styles.integralInput} keyType="numeric" onChange={(txt)=>this.useIntegral = txt} />
-            </View>);
-        let integralList = [list1, list2, list3];
-
+        let name = mobile = address = '';
+        if(this.state.addressInfo) {
+            name = this.state.addressInfo.saName || '';
+            mobile = this.state.addressInfo.saPhone || '';
+            let province = this.state.addressInfo.saProvince || '';
+            let city = this.state.addressInfo.saCity || '';
+            let regoin = this.state.addressInfo.saDistinct || '';
+            address = this.state.addressInfo.saAddress || '';
+            address = province + city + regoin + address;
+            name = name ? (Lang[Lang.default].consignee + name) : '';
+        }
+        this.actualTotal = this.productTotal + this.freightTotal - this.couponDiscount;
+        this.useIntegral = this.getIntegralSession()[this.state.selectSwapIntegral].integral || 0;
+        this.actualTotal = (this.actualTotal - this.useIntegral).toFixed(2);
         return (
             <View style={styles.flex}>
-                <AppHead 
+                <AppHead
                     title={Lang[Lang.default].updateOrder}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                          navigation.goBack(null);
@@ -104,15 +132,17 @@ export default class AddOrder extends Component {
                             <TouchableOpacity onPress={()=>{
                                 navigation.navigate('AddressList', {
                                     mToken: this.mToken,
+                                    previou: 'AddOrder',
+                                    carIDs: this.carIDs,
                                 });
                             }} style={styles.addressBox}>
                                 <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
                                 <View style={styles.centerTextBox}>
                                     <View style={styles.rowViewStyle}>
-                                        <Text style={styles.addressTextStyle}>{Lang[Lang.default].consignee + ': ' + Order.addressInfo.name}</Text>
-                                        <Text style={[styles.addressTextStyle, styles.mobileStyle]}>{Order.addressInfo.mobile}</Text>
+                                        <Text style={styles.addressTextStyle}>{name}</Text>
+                                        <Text style={[styles.addressTextStyle, styles.mobileStyle]}>{mobile}</Text>
                                     </View>
-                                    <Text style={[styles.addressTextStyle, styles.addressStyle]}>{Order.addressInfo.adress}</Text>
+                                    <Text numberOfLines={3} style={[styles.addressTextStyle, styles.addressStyle]}>{address}</Text>
                                 </View>
                                 <Image style={styles.addressRightImage} source={require('../../images/list_more.png')} />
                             </TouchableOpacity>
@@ -133,23 +163,11 @@ export default class AddOrder extends Component {
                             <Text style={styles.defaultFont}>{Lang[Lang.default].integralSwap}</Text>
                             <Text style={styles.defaultFont}>
                                 {Lang[Lang.default].canUseIntegral + ' '}
-                                <Text style={styles.redColor}>1500</Text>
+                                <Text style={styles.redColor}>{this.state.integral}</Text>
                             </Text>
                         </View>
                         <View>
-                            {integralList.map(function(item, index) {
-                                let img = that.state.selectSwapIntegral == index ? 
-                                            require('../../images/car/select.png') : 
-                                            require('../../images/car/no_select.png');
-                                return (
-                                    <TouchableOpacity key={index} style={styles.integralSelectItem} onPress={()=>{
-                                        that.setState({selectSwapIntegral: index});
-                                    }}>
-                                        <Image source={img} style={styles.selectBeforeImage} />
-                                        {item}
-                                    </TouchableOpacity>
-                                );
-                            })}
+                            {this.getIntegralSession().map(this.changeIntegral)}
                         </View>
                         <View style={styles.integralSelectItem}>
                             <Image source={require('../../images/car/careful.png')} style={styles.carefulImage} />
@@ -158,17 +176,17 @@ export default class AddOrder extends Component {
                         <View style={styles.integralBoxFoot}>
                             <Text>
                                 {Lang[Lang.default].used}
-                                <Text style={styles.redColor}>300</Text>
+                                <Text style={styles.redColor}>{this.useIntegral}</Text>
                                 {Lang[Lang.default].integral + ', ' + Lang[Lang.default].swap}
-                                <Text style={styles.redColor}>{Lang[Lang.default].RMB + 30}</Text>
+                                <Text style={styles.redColor}>{Lang[Lang.default].RMB + this.useIntegral}</Text>
                             </Text>
                         </View>
                     </View>
                     <View style={styles.priceListBox}>
-                        {this.priceRow(Lang[Lang.default].productTotalPrice, Lang[Lang.default].RMB + '128.00', false)}
-                        {this.priceRow(Lang[Lang.default].freightTotal, Lang[Lang.default].RMB + '15.00', false)}
-                        {this.priceRow(Lang[Lang.default].couponReduction, '-' + Lang[Lang.default].RMB + '15.00', true)}
-                        {this.priceRow(Lang[Lang.default].integralSwap, '-' + Lang[Lang.default].RMB + '128.00', true)}
+                        {this.priceRow(Lang[Lang.default].productTotalPrice, Lang[Lang.default].RMB + this.productTotal, false)}
+                        {this.priceRow(Lang[Lang.default].freightTotal, Lang[Lang.default].RMB + this.freightTotal, false)}
+                        {this.priceRow(Lang[Lang.default].couponReduction, '-' + Lang[Lang.default].RMB + this.couponDiscount, true)}
+                        {this.priceRow(Lang[Lang.default].integralSwap, '-' + Lang[Lang.default].RMB + this.useIntegral, true)}
                     </View>
                 </ScrollView>
                 </View>
@@ -176,7 +194,7 @@ export default class AddOrder extends Component {
                     <View style={styles.footRowLeft}>
                         <Text style={styles.footRowLeftText}>
                             {Lang[Lang.default].actualMoney + ': '}
-                            <Text style={styles.redColor}>{Lang[Lang.default].RMB + '98.00'}</Text>
+                            <Text style={styles.redColor}>{Lang[Lang.default].RMB + this.actualTotal}</Text>
                         </Text>
                     </View>
                     <TouchableOpacity style={styles.footRowRight} onPress={()=>this.setState({showPayModal: true})}>
@@ -187,6 +205,63 @@ export default class AddOrder extends Component {
             </View>
         );
     }
+
+    //积分块
+    getIntegralSession = () => {
+        let { inputIntegral, integral } = this.state;
+        let input = inputIntegral ? (inputIntegral + '') : '';
+        let content1 = <Text style={styles.defaultFont}>{Lang[Lang.default].fullSwap}</Text>;
+        let content2 = <Text style={styles.defaultFont}>{Lang[Lang.default].noUseSwap}</Text>;
+        let content3 = (
+            <View style={styles.rowViewStyle}>
+                <Text style={styles.defaultFont}>{Lang[Lang.default].diySwapIntegral + ': '}</Text>
+                <InputText
+                    style={styles.integralInput}
+                    keyType="numeric"
+                    vText={input}
+                    length={12}
+                    onChange={this._inputIntegral}
+                    disEdit={integral > 0 ? false : true}
+                />
+            </View>
+        );
+        return [{
+            content: content1,
+            integral: integral > this.actualTotal ? this.actualTotal : integral,
+        }, {
+            content: content2,
+            integral: 0,
+        }, {
+            content: content3,
+            integral: inputIntegral > this.actualTotal ? this.actualTotal : inputIntegral,
+        }];
+    };
+
+    //用户输入了多少积分
+    _inputIntegral = (value) => {
+        let integral = this.state.integral || 0;
+        let num = parseInt(value) || 0;
+        if(integral > 0 && num >= 0 && num <= integral) {
+            this.setState({inputIntegral: num});
+        }else {
+            this.setState({inputIntegral: this.state.inputIntegral, });
+        }
+    };
+
+    //使用、不使用、使用多少积分
+    changeIntegral = (item, index) => {
+        let img = this.state.selectSwapIntegral == index ?
+            require('../../images/car/select.png') : 
+            require('../../images/car/no_select.png');
+        return (
+            <TouchableOpacity key={index} style={styles.integralSelectItem} onPress={()=>{
+                this.setState({selectSwapIntegral: index});
+            }}>
+                <Image source={img} style={styles.selectBeforeImage} />
+                {item.content}
+            </TouchableOpacity>
+        );
+    };
 
     //价格明细
     priceRow = (title, price, isRed) => {

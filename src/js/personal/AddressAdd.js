@@ -47,6 +47,8 @@ export default class AddressAdd extends Component {
         this.region = null;
         this.addressNum = 0;
         this.alertMsg = null;
+        this.previou = null;
+        this.carIDs = null;
     }
 
     componentWillMount() {
@@ -62,8 +64,10 @@ export default class AddressAdd extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, addressInfo, addressNum } = params;
+            let { mToken, addressInfo, addressNum, previou, carIDs, } = params;
             this.mToken = mToken;
+            this.previou = previou;
+            this.carIDs = carIDs;
             this.addressNum = addressNum || 0;
             if(addressInfo) {
                 this.addressID = addressInfo.saID || null;
@@ -211,12 +215,14 @@ export default class AddressAdd extends Component {
             if(this.addressID && this.addressID > 0) {
                 obj.saID = this.addressID;
                 url = Urls.editUserAddress;
-            } 
+            }
             Utils.fetch(url, 'post', obj, (result) => {
                 if(result) {
                     if(result.sTatus == 1) {
                         this.props.navigation.navigate('AddressList', {
                             mToken: this.mToken,
+                            previou: this.previou,
+                            carIDs: this.carIDs,
                         });
                     }else if(result.sMessage) {
                         this.showAutoModal(result.sMessage);

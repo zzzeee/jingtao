@@ -61,10 +61,11 @@ export default class PersonalScreen extends Component {
             }, (result) => {
                 console.log(result);
                 if(result && result.sTatus == 1) {
-                    let info = result.mInfo || null;
                     this.setState({
                         islogin: true,
-                        userInfo: info,
+                        userInfo: result.mInfo || null,
+                        orderNum: result.orderNum || null,
+                        mCouponNum: result.mCouponNum || 0,
                     })
                 }
             });
@@ -73,8 +74,11 @@ export default class PersonalScreen extends Component {
 
     render() {
         const { navigation } = this.props;
-        let { islogin, userInfo, } = this.state;
+        let { islogin, userInfo, orderNum, mCouponNum } = this.state;
         let name = '', integral = 0;
+        let noPay = (orderNum && orderNum.noPay) ? (parseInt(orderNum.noPay) || 0) : 0;
+        let noSend = (orderNum && orderNum.noSend) ? (parseInt(orderNum.noSend) || 0) : 0;
+        let noReceipt = (orderNum && orderNum.noReceipt) ? (parseInt(orderNum.noReceipt) || 0) : 0;
         if(islogin && userInfo) {
             name = userInfo.mNickName || userInfo.mPhone;
             integral = userInfo.mIntegral || 0;
@@ -123,21 +127,42 @@ export default class PersonalScreen extends Component {
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daifukuan} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
-                            />
+                            >
+                                {noPay > 0 ?
+                                    <TouchableOpacity style={styles.numberStyle}>
+                                        <Text style={styles.numberTextStyle}>{noPay > 99 ? '99+' : noPay}</Text>
+                                    </TouchableOpacity>
+                                    : null
+                                }
+                            </BtnIcon>
                             <BtnIcon 
                                 src={require('../../images/personal/daifahuo.png')} 
                                 width={26} 
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daifahuo} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
-                            />
+                            >
+                                {noSend > 0 ?
+                                    <TouchableOpacity style={styles.numberStyle}>
+                                        <Text style={styles.numberTextStyle}>{noSend > 99 ? '99+' : noSend}</Text>
+                                    </TouchableOpacity>
+                                    : null
+                                }
+                            </BtnIcon>
                             <BtnIcon 
                                 src={require('../../images/personal/daishouhuo.png')} 
-                                width={26} 
+                                width={26}
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daishouhuo} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
-                            />
+                            >
+                                {noReceipt > 0 ?
+                                    <TouchableOpacity style={styles.numberStyle}>
+                                        <Text style={styles.numberTextStyle}>{noReceipt > 99 ? '99+' : noReceipt}</Text>
+                                    </TouchableOpacity>
+                                    : null
+                                }
+                            </BtnIcon>
                             <BtnIcon 
                                 src={require('../../images/personal/shouhou.png')} 
                                 width={26} 
@@ -324,6 +349,25 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    numberStyle: {
+        position: 'absolute',
+        left: Size.width / 8,
+        top: 22,
+        height: 13,
+        borderRadius: 6.5,
+        paddingLeft: 7,
+        paddingRight: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: Color.red,
+        borderWidth: 1,
+        backgroundColor: '#fff',
+    },
+    numberTextStyle: {
+        fontSize: 9,
+        color: Color.red,
+        paddingBottom: 1,
     },
     darkText: {
         color: Color.lightBack,

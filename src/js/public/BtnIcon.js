@@ -59,6 +59,7 @@ export default class BtnIcon extends Component {
                     </View>
                     : null
                 }
+                {React.Children.map(this.props.children, (child)=>child)}
             </TouchableOpacity>
         );
     }

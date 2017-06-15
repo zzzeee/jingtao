@@ -50,6 +50,8 @@ var urls = {
     userRegister: host + '/api/RegisterNController/registerMemberInfoAdd',
     //收藏、取消收藏
     collection: host + '/api/MemberNController/memberFollowStatusEditBymID',
+    //批量收藏商品
+    batchCollection: host + '/api/MemberNController/memberFollowProductListByPidAry',
     //修改用户登录密码
     updateUserPassword: host + '/api/MemberNController/memberPasswordEditByMID',
     //会员领取优惠券
@@ -72,6 +74,8 @@ var urls = {
     deleteUserAddress: host + '/api/AddressNController/memberShopAddressDeleteBySaID',
     //获取会员基本信息
     getUserInfo: host + '/api/MemberNController/getMemberInfoByToken',
+    //获取积分信息及消费记录
+    getIntegralData: host + '/api/MemberNController/getMemberIntegralRecord',
     //结算购物车商品
     confirmOrder: host + '/api/OrderNController/getConfirmOrderListByCartID',
 };

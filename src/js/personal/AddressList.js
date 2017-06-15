@@ -33,22 +33,32 @@ export default class AddressList extends Component {
             deleteAlert: false,
         };
         this.mToken = null;
+        this.previou = null;
+        this.carIDs = null;
         this.alertObject = {};
-        this.selectAddress = null;
     }
 
     componentWillMount() {
-        this.mToken = (this.props.navigation && 
-            this.props.navigation.state &&
-            this.props.navigation.state.params && 
-            this.props.navigation.state.params.mToken) ?
-            this.props.navigation.state.params.mToken : null;
+        this.initDatas();
     }
 
     componentDidMount() {
         this.getAddressList();
     }
 
+    //初始化数据
+    initDatas = () => {
+        let { navigation } = this.props;
+        if(navigation && navigation.state && navigation.state.params) {
+            let params = navigation.state.params;
+            let { mToken, previou, carIDs } = params;
+            this.mToken = mToken || null;
+            this.previou = previou || null;
+            this.carIDs = carIDs || null;
+        }
+    };
+
+    //获取地址列表
     getAddressList = () => {
         if(this.mToken) {
             let that = this;
@@ -74,6 +84,8 @@ export default class AddressList extends Component {
                 mToken: this.mToken,
                 addressInfo: null,
                 addressNum: this.state.addresss.length,
+                previou: this.previou,
+                carIDs: this.carIDs,
             });
         }
     };
@@ -141,7 +153,6 @@ export default class AddressList extends Component {
                     for(let i in addresss) {
                         if(i == index) {
                             addresss[i].saSelected = 1;
-                            that.selectAddress = addresss[i];
                         }else {
                             addresss[i].saSelected = 0;
                         }
@@ -154,16 +165,17 @@ export default class AddressList extends Component {
 
     render() {
         let { navigation } = this.props;
-        let that = this;
-        let scrollref = null;
+        let that = this, scrollref = null;
         return (
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].addressList}
                     left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack({
-                             selAddress: this.selectAddress,
-                         });
+                        if(that.previou) {
+                            navigation.goBack(null);
+                        }else {
+                            navigation.navigate('Personal');
+                        }
                     }} src={require("../../images/back.png")} />}
                     onPress={() => {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
@@ -183,15 +195,22 @@ export default class AddressList extends Component {
                         let img = isSelect ? 
                             require("../../images/car/select.png") :
                             require("../../images/car/no_select.png");
-                        if(isSelect) that.selectAddress = item;
                         return (
-                            <View key={index} style={styles.addressItem}>
+                            <TouchableOpacity key={index} onPress={()=>{
+                                if(that.previou && said && that.previou == 'AddOrder') {
+                                    navigation.navigate(that.previou, {
+                                        mToken: that.mToken,
+                                        carIDs: that.carIDs,
+                                        addressID: said,
+                                    });
+                                }
+                            }} style={styles.addressItem}>
                                 <View style={styles.addressFristRow}>
                                     <Text numberOfLines={1} style={styles.defaultFont}>{name}</Text>
                                     <Text numberOfLines={1} style={styles.defaultFont}>{phone}</Text>
                                 </View>
                                 <View style={styles.addressMiddleRow}>
-                                    <Text style={styles.defaultFont}>{fullAddress}</Text>
+                                    <Text numberOfLines={3} style={styles.defaultFont}>{fullAddress}</Text>
                                 </View>
                                 <View style={styles.addressFootRow}>
                                     <View>
@@ -214,6 +233,8 @@ export default class AddressList extends Component {
                                                     mToken: that.mToken,
                                                     addressInfo: item,
                                                     addressNum: that.state.addresss.length,
+                                                    previou: that.previou,
+                                                    carIDs: that.carIDs,
                                                 });
                                             }}
                                         />
@@ -226,7 +247,7 @@ export default class AddressList extends Component {
                                         />
                                     </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         );
                     })}
                     <TouchableOpacity onPress={this.addNewAddress} style={styles.btnAddAddress}>
@@ -263,6 +284,7 @@ const styles = StyleSheet.create({
         // minHeight: Size.height - PX.statusHeight - PX.headHeight - 5,
     },
     addressItem: {
+        width: Size.width,
         backgroundColor: '#fff',
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,

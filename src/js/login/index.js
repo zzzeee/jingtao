@@ -157,6 +157,7 @@ export default class Login extends Component {
                                     let params = navigation.state.params || null;
                                     let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
                                     let backObj = params ? (params.backObj ? params.backObj : {}) : {};
+                                    backObj.mToken = token;
                                     navigation.navigate(back, backObj);
                                 }
                             });

@@ -115,6 +115,7 @@ export default class CityGoodShopList extends Component {
         Util.fetch(Urls.getCityImgBanner, 'post', {
             cityID: this.cid,
         }, (result) => {
+            // console.log(result);
             if(result && result.sTatus == 1 && result.adData) {
                 let datas = result.adData || {};
                 let areaInfo = datas.areaInfo || [];
@@ -727,7 +728,7 @@ class ModalContent extends Component {
         let {cityInfo, visiable} = this.props;
         if(!cityInfo) return null;
         let name = cityInfo.region_name || '';
-        let pingying = cityInfo.pingying || '';
+        let pingying = cityInfo.griSpell || '';
         let content = cityInfo.griInfo || '';
         let details = [content]
         return (

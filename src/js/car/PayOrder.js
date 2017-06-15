@@ -144,6 +144,7 @@ export default class PayOrder extends Component {
                         console.log(result);
                         if(result && result.errCode === 0) {
                             this._toast(Lang[Lang.default].paySuccess);
+                            that.props.navigation.navigate('PayFinish');
                         }
                         that.hideModal();
                     })

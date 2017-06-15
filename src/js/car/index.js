@@ -65,6 +65,13 @@ export default class CarsScreen extends Component {
 
     componentDidMount() {
         this.initDatas();
+        _User.getUserInfo().then((user) => {
+            console.log(user);
+            if(user) {
+                this.userinfo = user;
+                this.initDatas();
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -76,48 +83,44 @@ export default class CarsScreen extends Component {
     //初始化数据
     initDatas = () => {
         let that = this;
-        _User.getUserInfo().then((user) => {
-            console.log(user);
-            if(user) {
-                that.userinfo = user;
-                Utils.fetch(Urls.getCarInfo, 'post', user, (car) => {
-                    console.log(car);
-                    if(car && car.sTatus && car.cartAry) {
-                        let orders_ok = car.cartAry.normalAry || [];
-                        let invalidList = car.cartAry.abnormalAry || [];
-                        that.setState({
-                            carDatas: orders_ok,
-                            invalidList: invalidList,
-                            isRefreshing: false,
-                        });
+        if(this.userinfo) {
+            Utils.fetch(Urls.getCarInfo, 'post', this.userinfo, (car) => {
+                // console.log(car);
+                if(car && car.sTatus && car.cartAry) {
+                    let orders_ok = car.cartAry.normalAry || [];
+                    let invalidList = car.cartAry.abnormalAry || [];
+                    that.setState({
+                        carDatas: orders_ok,
+                        invalidList: invalidList,
+                        isRefreshing: false,
+                    });
 
-                        if(!that.state.goodList) {
-                            Utils.fetch(Urls.getRecommendList, 'get', user, (ret) => {
-                                // console.log(ret);
-                                if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
-                                    that.page++;
-                                    let list = ret.proAry || [];
-                                    that.setState({
-                                        goodList: list,
-                                        isRefreshing: false,
-                                    });
-                                }
-                            });
-                        }
-                    }else {
-                        that.setState({isRefreshing: false, });
+                    if(!that.state.goodList) {
+                        Utils.fetch(Urls.getRecommendList, 'get', this.userinfo, (ret) => {
+                            // console.log(ret);
+                            if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
+                                that.page++;
+                                let list = ret.proAry || [];
+                                that.setState({
+                                    goodList: list,
+                                    isRefreshing: false,
+                                });
+                            }
+                        });
                     }
-                }, null, {
-                    catchFunc: (err) => {
-                        console.log('获取数据出错');
-                        console.log(err);
-                        that.setState({isRefreshing: false, });
-                    },
-                });
-            }else {
-                that.setState({isRefreshing: false, });
-            }
-        });
+                }else {
+                    that.setState({isRefreshing: false, });
+                }
+            }, null, {
+                catchFunc: (err) => {
+                    console.log('获取数据出错');
+                    console.log(err);
+                    that.setState({isRefreshing: false, });
+                },
+            });
+        }else {
+            that.setState({isRefreshing: false, });
+        }
     };
 
     //获取会员信息
@@ -126,10 +129,13 @@ export default class CarsScreen extends Component {
     };
 
     //跳转至登录
-    goToLogin = () => {
+    goToLogin = (_back = null, _backObj = null) => {
         let { navigation } = this.props;
         if(navigation) {
-            navigation.navigate('Login', {back: 'Car'});
+            navigation.navigate('Login', {
+                back: _back,
+                backObj: _backObj,
+            });
         }
     };
 
@@ -610,16 +616,27 @@ export default class CarsScreen extends Component {
         let token = this.getToken();
         if(typeof(goodIDs) == 'object' && goodIDs.length) {
             if(token) {
-                // Utils.fetch(Urls.collection, 'post', {
-                //     flID: goodIDs.join(','),
-                //     fType: 1,
-                //     mToken: token,
-                // }, (result) => {
-                //     if(result) {
-                //     }
-                // });
+                Utils.fetch(Urls.batchCollection, 'post', {
+                    paryID: goodIDs.join(','),
+                    mToken: token,
+                }, (result) => {
+                    if(result) {
+                        console.log(result);
+                        if(result.sTatus == 1) {
+                            //收藏成功。
+                        }
+                        if(result.sMessage) {
+                            this.setState({
+                                deleteAlert: false,
+                                operateMsg: result.sMessage,
+                            }, that.resultMsgAnimated);
+                        }
+                    }
+                });
             }else {
-                this.setState({deleteAlert: false,}, this.goToLogin)
+                this.setState({deleteAlert: false,}, ()=>{
+                    this.goToLogin('Car');
+                });
             }
         }
     };
@@ -631,7 +648,9 @@ export default class CarsScreen extends Component {
             // console.log(this.cars);
             let token = this.getToken();
             if(!token) {
-                this.goToLogin();
+                this.goToLogin('AddOrder', {
+                    carIDs: ids.carIDs,
+                });
             }else if(token && ids.carIDs.length) {
                 this.props.navigation.navigate('AddOrder', {
                     mToken: token,
