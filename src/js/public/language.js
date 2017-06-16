@@ -132,6 +132,7 @@ const language = {
         price: '价格',
         newGood: '新品',
         popularity: '人气',
+        goodOrigin: '产地',
         stock: '库存',
         howMuch: '满%s元',
         usePeriod: '使用期限',
@@ -212,6 +213,7 @@ const language = {
         inputSearchProductName: '请输入您要找的商品名称',
         searchLog: '搜索历史',
         hotSearch: '热门搜索',
+        deleteAllSearchLog: '确定删除全部历史记录？',
     },
 };
 

@@ -24,6 +24,7 @@ import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
+import AlertMoudle from '../other/AlertMoudle';
 
 var _Search = new SearchData();
 
@@ -37,6 +38,8 @@ export default class Search extends Component {
             areas: [],
             searchtext: null,
             load_or_error: null,
+            deleteAlert: false,
+            sortIndex: 0,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -44,22 +47,25 @@ export default class Search extends Component {
         this.citys = '';
         this.search_name = '';
         this.searchLock = false;
+        this.btnDisable = false;
+        this.isEnScroll = true;
+        this.loadMoreLock = false;
         this.btnSortList = [{
             'text': Lang[Lang.default].comprehensive,
             'isRepeat': false,
-            'press': ()=>{},
+            'press': null,
         }, {
             'text': Lang[Lang.default].price,
             'isRepeat': true,
-            'press': ()=>{},
+            'press': null,
         }, {
             'text': Lang[Lang.default].newGood,
             'isRepeat': false,
-            'press': ()=>{},
+            'press': null,
         }, {
-            'text': Lang[Lang.default].popularity,
+            'text': Lang[Lang.default].goodOrigin,
             'isRepeat': true,
-            'press': ()=>{},
+            'press': null,
         }];
     }
 
@@ -99,8 +105,32 @@ export default class Search extends Component {
     //清空搜索历史
     clearSearchLog = () => {
         _Search.delDatas().then(() => {
-            this.setState({log: []});
+            this.setState({
+                log: [],
+                deleteAlert: false,
+            });
         });
+    };
+
+    //隐藏删除提示框
+    hideAlertMoudle = () => {
+        this.setState({deleteAlert: false,});
+    };
+
+    //显示删除提示框
+    showAlertMoudle = (said) => {
+        this.alertObject = {
+            text: Lang[Lang.default].deleteAllSearchLog,
+            leftText: Lang[Lang.default].cancel,
+            rightText: Lang[Lang.default].determine,
+            leftColor: Color.lightBack,
+            leftBgColor: '#fff',
+            leftClick: this.hideAlertMoudle,
+            rightClick: this.clearSearchLog,
+            rightColor: Color.lightBack,
+            rightBgColor: '#fff',
+        };
+        this.setState({deleteAlert: true,});
     };
 
     //点击搜索
@@ -110,49 +140,64 @@ export default class Search extends Component {
             Keyboard.dismiss();
             if(txt) {
                 if(txt == this.search_name) return;
+                this.page = 1;
+                this.sort = 1;
+                this.isEnScroll = true;
+                this.btnDisable = false;
+                this.loadMoreLock = false;
                 this.search_name = txt;
-                this.searchLock = true;
                 _Search.saveDatas(txt).then((result)=>{
                     let log = result || [];
                     this.setState({
                         log: result,
+                        sortIndex: 0,
                         load_or_error: '正在加载',
                     }, this.getProductList);
                 });
-            }else {
-                this.setState({sdatas: null});
             }
         }
     };
 
     //获取产品列表
     getProductList = () => {
-        let obj = {
-            poType: this.sort,
-            pCity: this.citys,
-            gName: this.search_name,
-            pPage: this.page,
-            pPerNum: this.pageNumber,
-        };
-        console.log(obj);
-        Utils.fetch(Urls.getProductList, 'get', obj, (result) => {
-            console.log(result);
-            this.searchLock = false;
-            if(result && result.sTatus == 1 && result.proAry) {
-                let sdatas = result.proAry || [];
-                this.setState({ 
-                    sdatas: sdatas,
-                    load_or_error: null,
-                });
-            }else {
-                this.setState({load_or_error: '结果不可用',});
-            }
-        }, null, {
-            catchFunc: (err) => {
-                console.log(err);
-                this.setState({load_or_error: '加载出错',});
-            },
-        });
+        if(this.isEnScroll && !this.loadMoreLock && !this.searchLock) {
+            let obj = {
+                poType: this.sort,
+                pCity: this.citys,
+                gName: this.search_name,
+                pPage: this.page,
+                pPerNum: this.pageNumber,
+            };
+            console.log(obj);
+            this.searchLock = true;
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getProductList, 'get', obj, (result) => {
+                console.log(result);
+                if(result && result.sTatus == 1 && result.proAry) {
+                    let list = result.proAry || [];
+                    let datas = this.state.sdatas ? this.state.sdatas.concat(list) : list;
+                    this.btnDisable = false;
+                    this.searchLock = false;
+                    if(list.length < this.pageNumber) {
+                        this.isEnScroll = false;
+                    }else {
+                        this.page++;
+                        this.loadMoreLock = false;
+                    }
+                    this.setState({ 
+                        sdatas: datas,
+                        load_or_error: null,
+                    });
+                }else {
+                    this.setState({load_or_error: '结果不可用',});
+                }
+            }, null, {
+                catchFunc: (err) => {
+                    console.log(err);
+                    this.setState({load_or_error: '加载出错',});
+                },
+            });
+        }
     };
 
     //点击搜索历史、热门搜索
@@ -160,9 +205,13 @@ export default class Search extends Component {
         this.sort = 1;
         this.citys = '';
         this.page = 1;
-        this.searchLock = true;
         this.search_name = str;
+        this.isEnScroll = true;
+        this.btnDisable = false;
+        this.loadMoreLock = false;
         this.setState({
+            sdatas: [],
+            sortIndex: 0,
             searchtext: str,
             load_or_error: '正在加载',
         }, this.getProductList);
@@ -198,6 +247,10 @@ export default class Search extends Component {
                     }
                 />
                 {this.pageContent()}
+                {this.state.deleteAlert ?
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                    : null
+                }
             </View>
         );
     }
@@ -227,7 +280,7 @@ export default class Search extends Component {
             <View style={styles.sessionBox}>
                 <View style={styles.sessionTitle}>
                     <Text style={styles.sessionText}>{Lang[Lang.default].searchLog}</Text>
-                    <TouchableOpacity onPress={this.clearSearchLog}>
+                    <TouchableOpacity onPress={this.showAlertMoudle}>
                         <Image source={require('../../images/delete.png')} style={styles.clearSearchLog} />
                     </TouchableOpacity>
                 </View>
@@ -279,19 +332,12 @@ export default class Search extends Component {
                 enableEmptySections={true}
                 renderItem={this._renderItem}
                 ListHeaderComponent={this.listHead}
-                // refreshing={this.state.isRefreshing}
-                // onRefresh={()=>{
-                //     this.setState({isRefreshing: true});
-                //     this.initDatas();
-                // }}
-                // onEndReached={()=>{
-                //     if(!this.loadMoreLock) {
-                //         console.log('正在加载更多 ..');
-                //         // this.loadMore();
-                //     }else {
-                //         console.log('加载更多已被锁住。');
-                //     }
-                // }}
+                onEndReached={()=>{
+                    if(!this.loadMoreLock) {
+                        console.log('正在加载更多 ..');
+                        this.getProductList();
+                    }
+                }}
             />
         );
     };
@@ -310,9 +356,11 @@ export default class Search extends Component {
             require('../../images/more_up.png') : 
             require('../../images/more_down.png');
         return (
-            <TouchableOpacity disabled={this.state.btnDisable} key={index} onPress={()=>{
+            <TouchableOpacity disabled={this.btnDisable} key={index} onPress={()=>{
                 if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
+                    this.btnDisable = true;
+                    this.isEnScroll = true;
                     this.loadMoreLock = false;
                     if(item.isRepeat) {
                         if(this.state.sortIndex == index) {
@@ -333,10 +381,8 @@ export default class Search extends Component {
                     }
                     this.setState({
                         sortIndex: index,
-                        datas: null,
-                        dataNum: null,
-                        btnDisable: true,
-                    }, this.getProudctList);
+                        sdatas: [],
+                    }, this.getProductList);
                 }
             }} style={styles.flex}>
                 <View style={styles.topBtnView}>
