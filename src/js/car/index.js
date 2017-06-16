@@ -381,7 +381,7 @@ export default class CarsScreen extends Component {
         let goodName = item.gName || '';
         let goodAttr = item.mcAttr || '';
         let goodPrice = item.gPrice || null;
-        let goodType = item.type || 0;
+        let goodType = item.aStatus == 1 ? true : false;
         return (
             <View key={index} style={styles.invalidGoodBox}>
                 <View style={styles.invalidView}>
@@ -403,10 +403,10 @@ export default class CarsScreen extends Component {
                     <Text style={styles.invalidText1}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
                     <View style={styles.invalidItemRightFoot}>
                         <Text style={styles.invalidText3}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                        {/*goodType == 1 ?
+                        {goodType == 1 ?
                             <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
                             : null
-                        */}
+                        }
                     </View>
                 </View>
             </View>

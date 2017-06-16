@@ -26,7 +26,7 @@ export default class AppHead extends Component {
 		
 	    return (
 			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
-				<View style={[styles.sideBox, {left: 0}]}>
+				<View style={[styles.sideBox, {left: 10}]}>
 					{left ? left : null}
 				</View>
 				<View style={styles.middleBox}>
@@ -35,7 +35,7 @@ export default class AppHead extends Component {
 						<Text style={[styles.title, textStyle]} onPress={onPress}>{title}</Text>
 					}
 				</View>
-				<View style={[styles.sideBox, {right: 0}]}>
+				<View style={[styles.sideBox, {right: 10}]}>
 					{right ? right : null}
 				</View>
 			</View>

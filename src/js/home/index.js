@@ -66,6 +66,7 @@ export default class HomeScreen extends Component {
     }
 
     render() {
+        let { navigation } = this.props;
         let _scrollview = null;
         return (
             <View style={styles.flex}>
@@ -81,6 +82,7 @@ export default class HomeScreen extends Component {
                         style={styles.btnRight} 
                         width={PX.headIconSize} 
                         src={require("../../images/search.png")}
+                        press={()=>navigation.navigate('Search')}
                     />
                 </View>
                 <Animated.View style={[styles.hideHead, {
@@ -97,7 +99,12 @@ export default class HomeScreen extends Component {
                         <Text style={styles.headTitle2}>{this.state.provinceName + Lang[Lang.default].guan}</Text>
                         <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={this.scrollStart} />
                     </TouchableOpacity>
-                    <BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />
+                    <BtnIcon 
+                        style={styles.btnRight} 
+                        width={PX.headIconSize} 
+                        src={require("../../images/search.png")}
+                        press={()=>navigation.navigate('Search')}
+                    />
                 </Animated.View>
                 <ScrollView 
                     ref={(_ref)=>this.ref_scrollview=_ref} 
@@ -123,7 +130,7 @@ export default class HomeScreen extends Component {
                             showFloatMenu={this.showFloatMenu} 
                             pid={this.state.provinceID} 
                             datas={this.state.datas} 
-                            navigation={this.props.navigation}
+                            navigation={navigation}
                         />
                     }
                 </ScrollView>
@@ -318,9 +325,9 @@ var styles = StyleSheet.create({
         fontSize: 13,
     },
     btnLeft: {
-        paddingLeft: 12,
+        paddingLeft: 15,
     },
     btnRight: {
-        paddingRight: 12,
+        paddingRight: 15,
     },
 });

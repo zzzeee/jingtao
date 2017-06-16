@@ -58,8 +58,10 @@ export default class CityGoodShopList extends Component {
             showSort: true,
             cityInfo: null,
             cityImgs: [],
+            sortIndex: 0,
+            btnDisable: false,
         };
-
+        this.sort = 1;
         this.page = 1;
         this.number = 10;
         this.page2 = 1;
@@ -69,6 +71,23 @@ export default class CityGoodShopList extends Component {
         this.loadMoreLock = false;
         this.topValue = new Animated.Value(startTop);
         this.lastOffsetY = 0;
+        this.btnSortList = [{
+            'text': Lang[Lang.default].comprehensive,
+            'isRepeat': false,
+            'press': ()=>{},
+        }, {
+            'text': Lang[Lang.default].price,
+            'isRepeat': true,
+            'press': ()=>{},
+        }, {
+            'text': Lang[Lang.default].newGood,
+            'isRepeat': false,
+            'press': ()=>{},
+        }, {
+            'text': Lang[Lang.default].popularity,
+            'isRepeat': true,
+            'press': ()=>{},
+        }];
     }
 
     componentWillMount() {
@@ -156,10 +175,12 @@ export default class CityGoodShopList extends Component {
             let that = this;
             this.loadMoreLock = true;
             Util.fetch(Urls.getProductList, 'get', {
+                poType: this.sort,
                 pCity: this.cid,
-                pPage: that.page,
-                pPerNum: that.number,
+                pPage: this.page,
+                pPerNum: this.number,
             }, function(result) {
+                // console.log(result);
                 if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let ret = result.proAry || [];
                     let num = parseInt(result.proNum) || 0;
@@ -173,15 +194,20 @@ export default class CityGoodShopList extends Component {
                             totalNum: num,
                             dataSource: that.state.dataSource.cloneWithRows(_datas),
                             load_or_error: null,
+                            btnDisable: false,
                         });
                         return;
                     }
                 }
-                that.setState({load_or_error: null});
+                that.setState({
+                    load_or_error: null,
+                    btnDisable: false,
+                });
             }, function(view) {
                 that.setState({load_or_error: view});
             }, {
                 hideLoad: true,
+                catchFunc: (err)=>console.log(err),
             });
         }
     };
@@ -337,28 +363,7 @@ export default class CityGoodShopList extends Component {
                 </View>
                 {(this.state.showSort && this.index === 0) ?
                     <View style={styles.topBtnRow}>
-                        <TouchableOpacity style={styles.flex}>
-                            <View style={styles.topBtnView}>
-                                <Text style={styles.defaultFont}>{Lang[Lang.default].comprehensive}</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.flex}>
-                            <View style={styles.topBtnView}>
-                                <Text style={styles.defaultFont}>{Lang[Lang.default].price}</Text>
-                                <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.flex}>
-                            <View style={styles.topBtnView}>
-                                <Text style={styles.defaultFont}>{Lang[Lang.default].newGood}</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.flex}>
-                            <View style={styles.topBtnView}>
-                                <Text style={styles.defaultFont}>{Lang[Lang.default].popularity}</Text>
-                                <Image source={require('../../images/down.png')} style={styles.btnRightIcon} />
-                            </View>
-                        </TouchableOpacity>
+                        {this.btnSortList.map(this.rendSortItem)}
                     </View>
                     : null
                 }
@@ -458,6 +463,52 @@ export default class CityGoodShopList extends Component {
             </View>
         );
     }
+
+    rendSortItem = (item, index) => {
+        let color = this.state.sortIndex == index ? Color.mainColor : Color.lightBack;
+        let icon = (this.state.sortIndex == index && this.sort != (index + 1)) ?
+            require('../../images/more_up.png') : 
+            require('../../images/more_down.png');
+        return (
+            <TouchableOpacity disabled={this.state.btnDisable} key={index} onPress={()=>{
+                if(item.isRepeat || this.state.sortIndex != index) {
+                    this.page = 1;
+                    this.loadMoreLock = false;
+                    if(item.isRepeat) {
+                        if(this.state.sortIndex == index) {
+                            if(this.sort == 2) {
+                                this.sort = 5;
+                            }else if(this.sort == 4) {
+                                this.sort = 6;
+                            }else if(this.sort == 5) {
+                                this.sort = 2;
+                            }else if(this.sort == 6) {
+                                this.sort = 4;
+                            }
+                        }else {
+                            this.sort = index + 1;
+                        }
+                    }else {
+                        this.sort = index + 1;
+                    }
+                    this.setState({
+                        sortIndex: index,
+                        datas: null,
+                        dataNum: null,
+                        btnDisable: true,
+                    }, this.getProudctList);
+                }
+            }} style={styles.flex}>
+                <View style={styles.topBtnView}>
+                    <Text style={[styles.defaultFont, {color: color}]}>{item.text}</Text>
+                    {item.isRepeat ?
+                        <Image source={icon} style={styles.btnRightIcon} />
+                        : null
+                    }
+                </View>
+            </TouchableOpacity>
+        )
+    };
 
     isEmptyList = () => {
         let datas = this.index ? this.state.datas2 : this.state.datas;

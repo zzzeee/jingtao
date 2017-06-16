@@ -208,6 +208,10 @@ const language = {
         inputConsigneeName: '请输入收货人姓名',
         selectAddressArea: '请选择所在地区',
         deleteThisAddress: '确定删除该地址？',
+        search: '搜索',
+        inputSearchProductName: '请输入您要找的商品名称',
+        searchLog: '搜索历史',
+        hotSearch: '热门搜索',
     },
 };
 

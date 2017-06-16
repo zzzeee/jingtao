@@ -23,6 +23,7 @@ import LoginWord from './login/LoginWord';
 import Register from './login/register';
 import FrogetPass from './login/FrogetPass';
 import Product from './product';
+import Search from './home/search';
 import CityGoodShopList from './home/CityGoodShopList';
 import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
@@ -128,6 +129,11 @@ const FrogetPassScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={FrogetPass} />
 );
 
+//首页 - 搜索页
+const SearchScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Search} />
+);
+
 //首页 - 城市的商品、店铺列表
 const CityGoodShopListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={CityGoodShopList} />
@@ -206,6 +212,9 @@ const AppNavigator = StackNavigator({
     },
     Product: {
         screen: ProductScreen,
+    },
+    Search: {
+        screen: SearchScreen,
     },
     CityGoodShopList: {
         screen: CityGoodShopListScreen,
