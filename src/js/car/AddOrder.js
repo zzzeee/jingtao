@@ -197,11 +197,14 @@ export default class AddOrder extends Component {
                             <Text style={styles.redColor}>{Lang[Lang.default].RMB + this.actualTotal}</Text>
                         </Text>
                     </View>
-                    <TouchableOpacity style={styles.footRowRight} onPress={()=>this.setState({showPayModal: true})}>
+                    <TouchableOpacity style={styles.footRowRight} onPress={this.updateOrder}>
                         <Text style={styles.footRowRightText}>{Lang[Lang.default].updateOrder}</Text>
                     </TouchableOpacity>
                 </View>
-                <PayOrder visible={this.state.showPayModal} navigation={navigation} />
+                {this.state.showPayModal?
+                    <PayOrder visible={this.state.showPayModal} navigation={navigation} />
+                    : null
+                }
             </View>
         );
     }
@@ -353,6 +356,11 @@ export default class AddOrder extends Component {
                 </View>
             </View>
         );
+    };
+
+    //点击提交订单按钮
+    updateOrder = () => {
+        
     };
 }
 

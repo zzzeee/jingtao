@@ -50,6 +50,8 @@ var urls = {
     userRegister: host + '/api/RegisterNController/registerMemberInfoAdd',
     //收藏、取消收藏
     collection: host + '/api/MemberNController/memberFollowStatusEditBymID',
+    //获取收藏列表
+    getCollection: host + '/api/MemberNController/getMemberFollowListBymID',
     //批量收藏商品
     batchCollection: host + '/api/MemberNController/memberFollowProductListByPidAry',
     //修改用户登录密码

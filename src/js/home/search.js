@@ -25,6 +25,7 @@ import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import AlertMoudle from '../other/AlertMoudle';
+import Areas from './searchArea';
 
 var _Search = new SearchData();
 
@@ -40,11 +41,12 @@ export default class Search extends Component {
             load_or_error: null,
             deleteAlert: false,
             sortIndex: 0,
+            showArea: false,
         };
         this.page = 1;
         this.pageNumber = 10;
         this.sort = 1;
-        this.citys = '';
+        this.citys = [];
         this.search_name = '';
         this.searchLock = false;
         this.btnDisable = false;
@@ -133,15 +135,25 @@ export default class Search extends Component {
         this.setState({deleteAlert: true,});
     };
 
+    //隐藏地区选择框
+    hideAreaMoudle = () => {
+        this.setState({showArea: false});
+    };
+
+    //已选的地区数据
+    selectCity = (datas) => {
+        this.citys = datas;
+        this.hideAreaMoudle();
+    };
+
     //点击搜索
     clickSearch = () => {
         let txt = this.state.searchtext || null;
         if(!this.searchLock) {
             Keyboard.dismiss();
             if(txt) {
-                if(txt == this.search_name) return;
+                // if(txt == this.search_name) return;
                 this.page = 1;
-                this.sort = 1;
                 this.isEnScroll = true;
                 this.btnDisable = false;
                 this.loadMoreLock = false;
@@ -150,8 +162,8 @@ export default class Search extends Component {
                     let log = result || [];
                     this.setState({
                         log: result,
-                        sortIndex: 0,
-                        load_or_error: '正在加载',
+                        sdatas: [],
+                        load_or_error: this.getLoadView(),
                     }, this.getProductList);
                 });
             }
@@ -163,47 +175,54 @@ export default class Search extends Component {
         if(this.isEnScroll && !this.loadMoreLock && !this.searchLock) {
             let obj = {
                 poType: this.sort,
-                pCity: this.citys,
+                pProvince: this.citys.join(','),
                 gName: this.search_name,
                 pPage: this.page,
                 pPerNum: this.pageNumber,
             };
-            console.log(obj);
+            // console.log(obj);
+            // console.log(Urls.getProductList);
             this.searchLock = true;
             this.loadMoreLock = true;
             Utils.fetch(Urls.getProductList, 'get', obj, (result) => {
-                console.log(result);
+                // console.log(result);
+                let _sdata = this.state.sdatas || [];
                 if(result && result.sTatus == 1 && result.proAry) {
-                    let list = result.proAry || [];
-                    let datas = this.state.sdatas ? this.state.sdatas.concat(list) : list;
                     this.btnDisable = false;
                     this.searchLock = false;
-                    if(list.length < this.pageNumber) {
-                        this.isEnScroll = false;
+                    this.loadMoreLock = false;
+                    if(result.proAry.length == 0 && _sdata.length == 0) {
+                        this.setState({
+                            load_or_error: this.getNoResult(),
+                        });
                     }else {
-                        this.page++;
-                        this.loadMoreLock = false;
+                        let list = result.proAry || [];
+                        let datas = _sdata ? _sdata.concat(list) : list;
+                        if(list.length < this.pageNumber) {
+                            this.isEnScroll = false;
+                            this.loadMoreLock = true;
+                        }else {
+                            this.page++;
+                        }
+                        this.setState({ 
+                            sdatas: datas,
+                            load_or_error: null,
+                        });
                     }
-                    this.setState({ 
-                        sdatas: datas,
-                        load_or_error: null,
-                    });
-                }else {
-                    this.setState({load_or_error: '结果不可用',});
                 }
             }, null, {
                 catchFunc: (err) => {
                     console.log(err);
-                    this.setState({load_or_error: '加载出错',});
+                    this.setState({load_or_error: this.getErrorView(),});
                 },
             });
         }
     };
+    
 
     //点击搜索历史、热门搜索
     clickSearchItemText = (str) => {
         this.sort = 1;
-        this.citys = '';
         this.page = 1;
         this.search_name = str;
         this.isEnScroll = true;
@@ -213,7 +232,7 @@ export default class Search extends Component {
             sdatas: [],
             sortIndex: 0,
             searchtext: str,
-            load_or_error: '正在加载',
+            load_or_error: this.getLoadView(),
         }, this.getProductList);
     };
 
@@ -246,7 +265,14 @@ export default class Search extends Component {
                         </View>
                     }
                 />
+                {this.state.sdatas ? this.listHead() : null}
                 {this.pageContent()}
+                <Areas
+                    visiable={this.state.showArea}
+                    areas={this.state.areas}
+                    leftClick={this.hideAreaMoudle}
+                    rightClick={this.selectCity}
+                />
                 {this.state.deleteAlert ?
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                     : null
@@ -255,13 +281,28 @@ export default class Search extends Component {
         );
     }
 
+    getLoadView = () => {
+        return <Text>正在加载</Text>;
+    };
+
+    getErrorView = () => {
+        return <Text>加载出错</Text>;
+    };
+
+    //无结果内容
+    getNoResult = () => {
+        return (
+            <Image style={styles.noResultImg} source={require('../../images/home/no_result.png')}>
+                <Text style={styles.noResultTxt}>{Lang[Lang.default].notSearchResult}</Text>
+            </Image>
+        );
+    };
+
     pageContent = () => {
         if(this.state.load_or_error) {
             return (
                 <View style={styles.container2}>
-                    <Text style={styles.loaderrorStyle}>
-                        {this.state.load_or_error}
-                    </Text>
+                    {this.state.load_or_error}
                 </View>
             );
         }else if(this.state.sdatas) {
@@ -331,7 +372,6 @@ export default class Search extends Component {
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
-                ListHeaderComponent={this.listHead}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
                         console.log('正在加载更多 ..');
@@ -357,7 +397,13 @@ export default class Search extends Component {
             require('../../images/more_down.png');
         return (
             <TouchableOpacity disabled={this.btnDisable} key={index} onPress={()=>{
-                if(item.isRepeat || this.state.sortIndex != index) {
+                if(index == 3) {
+                    this.searchLock = false;
+                    this.setState({
+                        sortIndex: index,
+                        showArea: true,
+                    });
+                }else if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
                     this.btnDisable = true;
                     this.isEnScroll = true;
@@ -366,12 +412,8 @@ export default class Search extends Component {
                         if(this.state.sortIndex == index) {
                             if(this.sort == 2) {
                                 this.sort = 5;
-                            }else if(this.sort == 4) {
-                                this.sort = 6;
                             }else if(this.sort == 5) {
                                 this.sort = 2;
-                            }else if(this.sort == 6) {
-                                this.sort = 4;
                             }
                         }else {
                             this.sort = index + 1;
@@ -387,7 +429,7 @@ export default class Search extends Component {
             }} style={styles.flex}>
                 <View style={styles.topBtnView}>
                     <Text style={[styles.defaultFont, {color: color}]}>{item.text}</Text>
-                    {item.isRepeat ?
+                    {(item.isRepeat && index != 3) ?
                         <Image source={icon} style={styles.btnRightIcon} />
                         : null
                     }
@@ -397,6 +439,8 @@ export default class Search extends Component {
     };
 
     _renderItem = ({item, index}) => {
+        let { navigation } = this.props;
+        let gid = item.gID || 0;
         let name = item.gName || null;
         let price = item.gDiscountPrice || null;
         let martPrice = item.gPrices || null;
@@ -404,7 +448,11 @@ export default class Search extends Component {
         let isActivity = item.aStatus == 1 ? true : false;
         headImg = headImg ? {uri: headImg} : require('../../images/empty.png');
         return (
-            <View style={styles.rowStyle}>
+            <TouchableOpacity style={styles.btnProductItem} onPress={()=>{
+                if(navigation && gid > 0) {
+                    navigation.navigate('Product', {gid: gid,});
+                }
+            }}>
                 <View style={styles.itemLeft}>
                     <Image style={styles.goodImg} source={headImg} />
                 </View>
@@ -421,7 +469,7 @@ export default class Search extends Component {
                         }
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 }
@@ -489,6 +537,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         padding: 5,
     },
+    noResultImg: {
+        width: 185,
+        height: 97,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    noResultTxt: {
+        color: Color.gainsboro2,
+        fontSize: 14,
+    },
     topBtnRow: {
         height: PX.rowHeight2,
         flexDirection: 'row',
@@ -541,8 +599,12 @@ const styles = StyleSheet.create({
         fontSize: 11,
         borderColor: Color.lightGrey,
         borderWidth: 1,
-        borderRadius: 8,
+        borderRadius: 3,
         margin: 10,
+    },
+    btnProductItem: {
+        width: Size.width,
+        flexDirection: 'row',
     },
     itemLeft: {
         borderWidth: 1,

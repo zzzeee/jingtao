@@ -181,7 +181,7 @@ export default class PersonalScreen extends Component {
                             str_replace(Lang[Lang.default].couponBeOverdue, 3)
                         )}
                         {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
-                        {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, null, null)}
+                        {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, 'Collection', null)}
                         {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, 'AddressList', null)}
                     </View>
                     <View style={styles.btnsListBox}>

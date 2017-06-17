@@ -33,6 +33,7 @@ import PayFinish from './car/PayFinish';
 import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
 import CouponList from './personal/CouponList';
+import Collection from './personal/Collection';
 import TestPage from './personal/TestPage';
 
 //显示格式
@@ -169,6 +170,11 @@ const CouponListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={CouponList} />
 );
 
+//个人中心 - 我的收藏
+const CollectionScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Collection} />
+);
+
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -233,6 +239,9 @@ const AppNavigator = StackNavigator({
     },
     Coupon: {
         screen: CouponScreen,
+    },
+    Collection: {
+        screen: CollectionScreen,
     },
     PayFinish: {
         screen: PayFinishScreen,

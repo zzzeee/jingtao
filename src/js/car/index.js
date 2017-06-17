@@ -85,7 +85,7 @@ export default class CarsScreen extends Component {
         let that = this;
         if(this.userinfo) {
             Utils.fetch(Urls.getCarInfo, 'post', this.userinfo, (car) => {
-                // console.log(car);
+                console.log(car);
                 if(car && car.sTatus && car.cartAry) {
                     let orders_ok = car.cartAry.normalAry || [];
                     let invalidList = car.cartAry.abnormalAry || [];

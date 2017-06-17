@@ -156,6 +156,7 @@ const language = {
         determine: '确定',
         deleteInvalidProduct: '确定要清除失效的商品吗？',
         successClearInvalidProduct: '已成功清除失效商品!',
+        deleteProduct: '确定要删除商品吗？',
         deleteSelectProduct: '确定要删除选中商品吗？',
         collectionSelectProduct: '确定要收藏选中商品吗？',
         shopNumber: '购买数量',
@@ -214,6 +215,7 @@ const language = {
         searchLog: '搜索历史',
         hotSearch: '热门搜索',
         deleteAllSearchLog: '确定删除全部历史记录？',
+        notSearchResult: '没有搜索结果',
     },
 };
 
