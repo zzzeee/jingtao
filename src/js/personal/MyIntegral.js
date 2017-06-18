@@ -22,6 +22,7 @@ import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import list from '../datas/detailedList.json';
+import { EndView } from '../other/publicEment';
 
 export default class MyIntegral extends Component {
     constructor(props) {
@@ -101,13 +102,7 @@ export default class MyIntegral extends Component {
                     enableEmptySections={true}
                     renderItem={this._renderItem}
                     ListHeaderComponent={this.listHead}
-                    ListFooterComponent={()=>{
-                        return (
-                            <View style={styles.listFootView}>
-                                <Text style={styles.listFootText}>{Lang[Lang.default].inTheEnd}</Text>
-                            </View>
-                        );
-                    }}
+                    ListFooterComponent={EndView}
                     onEndReached={()=>{
                         // this.loadMore();
                     }}

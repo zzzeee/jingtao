@@ -48,6 +48,7 @@ export default class PayFinishScreen extends Component {
                 <AppHead 
                     title={Lang[Lang.default].payFinish}
                     left={<BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />}
+                    onPress={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
                 />
                 <View style={styles.flex}>
                     <FlatList
@@ -126,10 +127,11 @@ export default class PayFinishScreen extends Component {
                 key={index}
                 showDiscount={true}
                 width={(Size.width - 5) / 2}
+                navigation={this.props.navigation}
                 boxStyle={{
                     marginRight: 5,
                     marginBottom: 5,
-                }} 
+                }}
             />
         );
     };

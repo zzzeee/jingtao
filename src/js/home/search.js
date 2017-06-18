@@ -26,6 +26,7 @@ import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import AlertMoudle from '../other/AlertMoudle';
 import Areas from './searchArea';
+import { EndView } from '../other/publicEment';
 
 var _Search = new SearchData();
 
@@ -372,6 +373,7 @@ export default class Search extends Component {
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
+                ListFooterComponent={EndView}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
                         console.log('正在加载更多 ..');

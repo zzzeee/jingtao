@@ -34,6 +34,7 @@ import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
 import CouponList from './personal/CouponList';
 import Collection from './personal/Collection';
+import ProductList from './class/ProductList';
 import TestPage from './personal/TestPage';
 
 //显示格式
@@ -190,6 +191,11 @@ const PayFinishScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={PayFinish} />
 );
 
+//特产分类
+const ProductListScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={ProductList} />
+);
+
 //个人中心 - 测试集合
 const TestPageScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={TestPage} />
@@ -251,6 +257,9 @@ const AppNavigator = StackNavigator({
     },
     AddressAdd: {
         screen: AddressAddScreen,
+    },
+    ProductList: {
+        screen: ProductListScreen,
     },
     TestPage: {
         screen: TestPageScreen,

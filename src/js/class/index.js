@@ -95,7 +95,7 @@ export default class ClassScreen extends Component {
                 contentContainerStyle={styles.scrollStyle2}
                 onScroll={this.onScroll_List}
             >
-                {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRight(obj, i, this.state.selectListID))}
+                {this.state.datas && this.state.datas.map(this.renderScrollRight)}
             </ScrollView>
         );
 
@@ -117,7 +117,12 @@ export default class ClassScreen extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].tab_class}
-                    right={(<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />)}
+                    right={(<BtnIcon 
+                        style={styles.btnRight} 
+                        width={PX.headIconSize} 
+                        src={require("../../images/search.png")}
+                        press={()=>this.props.navigation.navigate('Search')}
+                    />)}
                 />
                 {this.state.load_or_error ? 
                     this.state.load_or_error : 
@@ -128,7 +133,7 @@ export default class ClassScreen extends Component {
                                 showsVerticalScrollIndicator={false}
                                 contentContainerStyle={styles.scrollStyle}
                             >
-                                {this.state.datas && this.state.datas.map((obj, i) => this.renderScrollRow(obj, i, this.state.selectListID))}
+                                {this.state.datas && this.state.datas.map(this.renderScrollRow)}
                             </ScrollView>
                         </View>
                         <View style={styles.flex}>
@@ -140,7 +145,8 @@ export default class ClassScreen extends Component {
         );
     }
 
-    renderScrollRow = (obj, i, selectId) => {
+    renderScrollRow = (obj, i) => {
+        let selectId = this.state.selectListID;
         let name = obj.cName || '';
         return (
             <TouchableOpacity key={i} onPress={()=>{
@@ -166,7 +172,9 @@ export default class ClassScreen extends Component {
         );
     };
 
-    renderScrollRight = (obj, i, selectId) => {
+    renderScrollRight = (obj, i) => {
+        let { navigation } = this.props;
+        let selectId = this.state.selectListID;
         let cID = obj.cID || 0;
         let title = obj.cName || '';
         let child = obj.child || [];
@@ -189,12 +197,19 @@ export default class ClassScreen extends Component {
                     let imgurl = item.cdImg || null;
                     let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
                     return (
-                        <View key={i + '-' + index} style={styles.classifyItem}>
+                        <TouchableOpacity key={i + '-' + index} onPress={()=>{
+                            if(navigation && id) {
+                                navigation.navigate('ProductList', {
+                                    cId: id,
+                                    cName: name,
+                                });
+                            }
+                        }} style={styles.classifyItem}>
                             <Image source={img} style={styles.classifyImg} />
                             <View style={styles.classifyNameView}>
                                 <Text style={styles.classifyNameText}>{name}</Text>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     );
                 })}
                 </View>
