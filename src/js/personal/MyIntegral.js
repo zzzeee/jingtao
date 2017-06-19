@@ -33,6 +33,7 @@ export default class MyIntegral extends Component {
             rotation: new Animated.Value(0),
             datas: null,
         };
+        this.offsetY = 0;
         this.mToken = null;
         this.page = 1;
         this.number = 10;
@@ -102,7 +103,13 @@ export default class MyIntegral extends Component {
                     enableEmptySections={true}
                     renderItem={this._renderItem}
                     ListHeaderComponent={this.listHead}
-                    ListFooterComponent={EndView}
+                    ListFooterComponent={()=>{
+                        if(this.offsetY > 10) {
+                            return <EndView />;
+                        }else {
+                            return <View />;
+                        }
+                    }}
                     onEndReached={()=>{
                         // this.loadMore();
                     }}
@@ -110,6 +117,10 @@ export default class MyIntegral extends Component {
             </View>
         );
     }
+
+    _onScroll = (e) => {
+        this.offsetY = e.nativeEvent.contentOffset.y || 0;
+    };
 
     // 页面头部
     listHead = () => {

@@ -37,7 +37,7 @@ export default class Search extends Component {
             sortIndex: 0,
             showArea: false,
         };
-
+        this.offsetY = 0;
         this.cID = null;
         this.cName = null;
         this.page = 1;
@@ -101,28 +101,31 @@ export default class Search extends Component {
 
     //已选的地区数据
     selectCity = (datas) => {
-        if(this.citys != datas.join(',')) {
+        let _data = datas.join(',');
+        if(this.citys != _data) {
+            this.citys = _data;
             this.page = 1;
+            this.offsetY = 0;
             this.isEnScroll = true;
             this.loadMoreLock = false;
-            this.getProductList();
+            this.getProductList(true);
         }
     };
 
-    //获取产品列表
-    getProductList = () => {
+    /**
+     * 获取产品列表
+     * @param bool isClear 是否清空原数据
+     */
+    getProductList = (isClear = false) => {
         if(this.cID && this.isEnScroll && !this.loadMoreLock) {
-            let obj = {
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getProductList, 'get', {
                 poType: this.sort,
                 pProvince: this.citys,
                 cID: this.cID,
                 pPage: this.page,
                 pPerNum: this.pageNumber,
-            };
-            console.log(obj);
-            console.log(Urls.getProductList);
-            this.loadMoreLock = true;
-            Utils.fetch(Urls.getProductList, 'get', obj, (result) => {
+            }, (result) => {
                 console.log(result);
                 let _sdata = this.state.sdatas || [];
                 if(result && result.sTatus == 1 && result.proAry) {
@@ -135,7 +138,7 @@ export default class Search extends Component {
                         });
                     }else {
                         let list = result.proAry || [];
-                        let datas = _sdata ? _sdata.concat(list) : list;
+                        let datas = (_sdata && !isClear) ? _sdata.concat(list) : list;
                         if(list.length < this.pageNumber) {
                             this.isEnScroll = false;
                             this.loadMoreLock = true;
@@ -223,10 +226,17 @@ export default class Search extends Component {
                 ref={(_ref)=>this.ref_flatList=_ref} 
                 data={this.state.sdatas}
                 numColumns={2}
+                onScroll={this._onScroll}
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
-                ListFooterComponent={EndView}
+                ListFooterComponent={()=>{
+                    if(this.offsetY > 10) {
+                        return <EndView />;
+                    }else {
+                        return <View />;
+                    }
+                }}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
                         console.log('正在加载更多 ..');
@@ -235,6 +245,10 @@ export default class Search extends Component {
                 }}
             />
         );
+    };
+
+    _onScroll = (e) => {
+        this.offsetY = e.nativeEvent.contentOffset.y || 0;
     };
 
     listHead = () => {
@@ -259,6 +273,7 @@ export default class Search extends Component {
                     });
                 }else if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
+                    this.offsetY = 0;
                     this.btnDisable = true;
                     this.isEnScroll = true;
                     this.loadMoreLock = false;

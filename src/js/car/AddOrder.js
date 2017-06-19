@@ -22,6 +22,7 @@ import Lang, {str_replace} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import PayOrder from './PayOrder';
+import Coupons from '../product/Coupons';
 
 export default class AddOrder extends Component {
     constructor(props) {
@@ -33,6 +34,8 @@ export default class AddOrder extends Component {
             addressInfo: null,
             integral: null,
             inputIntegral: 0,
+            showCouponList: false,
+            uCoupons: [],
         };
         this.mToken = null;
         this.carIDs = null;
@@ -43,6 +46,8 @@ export default class AddOrder extends Component {
         this.freightTotal = 0;
         this.couponDiscount = 0;
         this.actualTotal = 0;
+        this.messages = [];
+        this.selCoupon = null;
     }
 
     componentWillMount() {
@@ -68,28 +73,29 @@ export default class AddOrder extends Component {
     getTmpOrderInfo = () => {
         if(this.mToken && this.carIDs && this.carIDs.length) {
             let that = this;
-            let obj = {
+            Utils.fetch(Urls.confirmOrder, 'post', {
                 mToken: this.mToken,
                 cartID: this.carIDs.join(','),
                 addressID: this.addressID ? this.addressID : '',
-            };
-            console.log(obj);
-            Utils.fetch(Urls.confirmOrder, 'post', obj, (result) => {
+            }, (result) => {
                 console.log(result);
                 if(result && result.sTatus == 1 && result.oOrder) {
                     let list = result.oOrder || [];
                     let addressList = result.addressAry || [];
                     let mIntegral = parseInt(result.mIntegral) || 0;
+                    let mCoupon = result.mCoupon || [];
                     for(let i in list) {
                         let gPrice = parseFloat(list[i].soPrice) || 0;
                         let fPrice = parseFloat(list[i].expressMoney) || 0;
                         that.productTotal += gPrice;
                         that.freightTotal += fPrice;
                     }
+                    this.actualTotal = that.productTotal + that.freightTotal;
                     this.setState({
                         tmpOrderInfo: list,
                         integral: mIntegral = parseInt(mIntegral / 100),
                         addressInfo: addressList,
+                        uCoupons: mCoupon,
                     })
                 }
             }, null , {
@@ -97,6 +103,26 @@ export default class AddOrder extends Component {
                     console.log(err);
                 }
             });
+        }
+    };
+
+    //显示优惠券列表
+    showCouponBox = () => {
+        this.setState({showCouponList: true});
+    };
+
+    //隐藏优惠券列表
+    hideCouponBox = () => {
+        this.setState({showCouponList: false});
+    };
+
+    //选择优惠券
+    selectCoupon = (coupon) => {
+        console.log(coupon);
+        if(coupon && coupon.hMoney && coupon.hUseMoney) {
+            this.couponDiscount = this.productTotal > coupon.hUseMoney ? coupon.hMoney : 0;
+            this.selCoupon = coupon;
+            this.hideCouponBox();
         }
     };
 
@@ -114,7 +140,7 @@ export default class AddOrder extends Component {
             address = province + city + regoin + address;
             name = name ? (Lang[Lang.default].consignee + name) : '';
         }
-        this.actualTotal = this.productTotal + this.freightTotal - this.couponDiscount;
+        this.actualTotal = (this.actualTotal - this.couponDiscount > 0) ? this.actualTotal - this.couponDiscount : 0;
         this.useIntegral = this.getIntegralSession()[this.state.selectSwapIntegral].integral || 0;
         this.actualTotal = (this.actualTotal - this.useIntegral).toFixed(2);
         return (
@@ -149,15 +175,21 @@ export default class AddOrder extends Component {
                         </Image>
                     </View>
                     {this.state.tmpOrderInfo.map((item, index)=>this.storeSession(item, index))}
-                    <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate('Coupon')}>
-                        <View style={styles.couponBox}>
-                            <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
-                            <View style={styles.rowViewStyle}>
-                                <Text style={styles.couponExplainStyle}>{Lang[Lang.default].haveCoupon}</Text>
-                                <Image source={require('../../images/list_more.png')} style={styles.couponMoreImage} />
+                    {this.state.uCoupons.length ?
+                        <TouchableOpacity activeOpacity={1} onPress={this.showCouponBox}>
+                            <View style={styles.couponBox}>
+                                <Text style={styles.defaultFont}>{Lang[Lang.default].coupon}</Text>
+                                <View style={styles.rowViewStyle}>
+                                    {this.couponDiscount > 0 ?
+                                        <Text style={styles.redColor}>{this.couponDiscount}</Text> :
+                                        <Text style={styles.couponExplainStyle}>{Lang[Lang.default].haveCoupon}</Text>
+                                    }
+                                    <Image source={require('../../images/list_more.png')} style={styles.couponMoreImage} />
+                                </View>
                             </View>
-                        </View>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                        : null
+                    }
                     <View style={styles.integralBox}>
                         <View style={styles.integralBoxHead}>
                             <Text style={styles.defaultFont}>{Lang[Lang.default].integralSwap}</Text>
@@ -201,6 +233,18 @@ export default class AddOrder extends Component {
                         <Text style={styles.footRowRightText}>{Lang[Lang.default].updateOrder}</Text>
                     </TouchableOpacity>
                 </View>
+                {this.state.showCouponList ?
+                    <Coupons
+                        type={3}
+                        userid={this.mToken}
+                        coupons={this.state.uCoupons}
+                        isShow={this.state.showCouponList}
+                        hideCouponBox={this.hideCouponBox}
+                        navigation={navigation}
+                        callback={this.selectCoupon}
+                    />
+                    : null
+                }
                 {this.state.showPayModal?
                     <PayOrder visible={this.state.showPayModal} navigation={navigation} />
                     : null
@@ -300,13 +344,12 @@ export default class AddOrder extends Component {
                         let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.png');
                         let goodName = good.gName || null;
                         let goodAttr = good.mcAttr || null;
-                        let goodPrice = good.gPrice || null;
-                        let martPrice = good.gShopPrice || null;
+                        let goodPrice = parseFloat(good.gPrice) || 0;
+                        let martPrice = parseFloat(good.gShopPrice) || 0;
                         let goodNumber = good.gNum || 0;
                         let goodType = good.type || 0;
                         totalNum++;
-                        totalMoney += parseFloat(goodPrice);
-
+                        totalMoney += (goodPrice * goodNumber);
                         return (
                             <View key={i} style={styles.goodItemBox}>
                                 <Image source={goodImg} style={styles.goodImageStyle} />
@@ -343,8 +386,8 @@ export default class AddOrder extends Component {
                     <Text style={styles.buyerMessageText}>{Lang[Lang.default].buyerMessage}</Text>
                     <InputText
                         style={{flex: 1, borderWidth: 0}} 
-                        pText={Lang[Lang.default].buyerMessagePlaceholder} 
-                        onChange={(txt)=>this.message = txt} 
+                        pText={Lang[Lang.default].buyerMessagePlaceholder}
+                        onChange={(txt)=>this.messages[index]=txt}
                     />
                 </View>
                 <View style={styles.totalBox}>
@@ -358,9 +401,57 @@ export default class AddOrder extends Component {
         );
     };
 
+    //即将生成的订单信息
+    createOrderInfo = () => {
+        let that = this;
+        let shopOrder = [];
+        let { tmpOrderInfo, addressInfo } = this.state;
+        if(tmpOrderInfo) {
+            for(let i in tmpOrderInfo) {
+                if(tmpOrderInfo[i]) {
+                    let obj = {
+                        soPrice: tmpOrderInfo[i].soPrice,
+                        soNum: tmpOrderInfo[i].cPro.length,
+                        oExpressMoney: tmpOrderInfo[i].expressMoney || 0,
+                        oMessage: that.messages[i] || '',
+                        sId: tmpOrderInfo[i].sId,
+                    };
+                    shopOrder.push(obj);
+                }
+            }
+
+            let order = {
+                goodsOrder: {
+                    gPrice: this.actualTotal,
+                    oNum: tmpOrderInfo.length,
+                    saID: addressInfo.saID || '',
+                    hID: '',
+                    oIntegral: this.useIntegral || 0,
+                },
+                shopOrder: shopOrder,
+            }
+            console.log(order);
+            return JSON.stringify(order);
+        }
+        return null;
+    };
+
     //点击提交订单按钮
     updateOrder = () => {
-        
+        let orders = this.createOrderInfo();
+        let obj = {
+            mToken: this.mToken,
+            oAry: orders,
+            cAry: this.carIDs.join(','),
+        };
+        console.log(obj);
+        if(this.mToken && orders && this.carIDs) {
+            Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
+                console.log(result);
+            }, null, {catchFunc: (err)=>{
+                console.log(err);
+            }});
+        }
     };
 }
 

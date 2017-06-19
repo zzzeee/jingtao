@@ -52,9 +52,9 @@ export default class Coupons extends Component {
     }
 
     componentDidMount() {
-        let { userid } = this.props;
+        let { userid, type } = this.props;
         let that = this;
-        if(userid) {
+        if(userid && type != 3) {
             Utils.fetch(Urls.getUserCoupons, 'post', {
                 mToken: userid,
                 cUse: 1,
@@ -117,7 +117,16 @@ export default class Coupons extends Component {
     };
 
     render() {
-        let { isShow, hideCouponBox, userid, navigation, back, backObj } = this.props;
+        let {
+            type,
+            isShow, 
+            hideCouponBox, 
+            userid, 
+            navigation, 
+            back, 
+            backObj,
+            callback,
+        } = this.props;
         if(!isShow) return null;
         let that = this;
         return (
@@ -141,13 +150,13 @@ export default class Coupons extends Component {
                                 return (
                                     <CouponItem
                                         key={index}
-                                        type={2}
+                                        type={type ? type : 2}
                                         userid={userid}
                                         style={styles.couponRow}
                                         width={Size.width * 0.907}
                                         coupon={item}
                                         userCoupons={that.state.userCoupons}
-                                        callback={that.addCoupon}
+                                        callback={callback ? callback : that.addCoupon}
                                         back={back}
                                         backObj={backObj}
                                         navigation={navigation}

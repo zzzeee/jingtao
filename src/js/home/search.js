@@ -44,6 +44,7 @@ export default class Search extends Component {
             sortIndex: 0,
             showArea: false,
         };
+        this.offsetY = 0;
         this.page = 1;
         this.pageNumber = 10;
         this.sort = 1;
@@ -155,6 +156,7 @@ export default class Search extends Component {
             if(txt) {
                 // if(txt == this.search_name) return;
                 this.page = 1;
+                this.offsetY = 0;
                 this.isEnScroll = true;
                 this.btnDisable = false;
                 this.loadMoreLock = false;
@@ -225,6 +227,7 @@ export default class Search extends Component {
     clickSearchItemText = (str) => {
         this.sort = 1;
         this.page = 1;
+        this.offsetY = 0;
         this.search_name = str;
         this.isEnScroll = true;
         this.btnDisable = false;
@@ -373,7 +376,13 @@ export default class Search extends Component {
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
-                ListFooterComponent={EndView}
+                ListFooterComponent={()=>{
+                    if(this.offsetY > 10) {
+                        return <EndView />;
+                    }else {
+                        return <View />;
+                    }
+                }}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
                         console.log('正在加载更多 ..');
@@ -382,6 +391,10 @@ export default class Search extends Component {
                 }}
             />
         );
+    };
+
+    _onScroll = (e) => {
+        this.offsetY = e.nativeEvent.contentOffset.y || 0;
     };
 
     listHead = () => {
@@ -407,6 +420,7 @@ export default class Search extends Component {
                     });
                 }else if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
+                    this.offsetY = 0;
                     this.btnDisable = true;
                     this.isEnScroll = true;
                     this.loadMoreLock = false;

@@ -80,6 +80,8 @@ var urls = {
     getIntegralData: host + '/api/MemberNController/getMemberIntegralRecord',
     //结算购物车商品
     confirmOrder: host + '/api/OrderNController/getConfirmOrderListByCartID',
+    //提交订单
+    updateOrder: host + '/api/OrderNController/memberGenerateOrder',
 };
 
 export default urls;

@@ -223,6 +223,7 @@ export default class CarsScreen extends Component {
                 {this.pageBody()}
                 {this.state.showCouponList ?
                     <Coupons
+                        type={3}
                         userid={mToken}
                         coupons={this.state.uCoupons}
                         isShow={this.state.showCouponList}

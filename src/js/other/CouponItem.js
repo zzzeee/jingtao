@@ -107,10 +107,11 @@ export default class CouponItem extends Component {
 
     //判断优惠券是否被领取
     isReceiveCoupon = (id) => {
+        let { userCoupons, type, } = this.props;
         let isok = true;
         let _id = parseInt(id) || 0;
-        let list = this.props.userCoupons || [];
-        if(_id > 0 && list && list.length) {
+        let list = userCoupons || [];
+        if(_id > 0 && list && list.length && type != 3) {
             for(let i in list) {
                 if(_id == list[i]) {
                     isok = false;
@@ -122,7 +123,7 @@ export default class CouponItem extends Component {
     };
 
     render() {
-        let { type, width, style, coupon, backgroundColor, canReceive } = this.props;
+        let { type, width, style, coupon, clickCoupon, backgroundColor, canReceive, callback } = this.props;
         if(!coupon || !type) return null;
         let leftRatio = 0.345; // 优惠券左边比率
         let id = coupon.hID || coupon.hId;
@@ -145,6 +146,19 @@ export default class CouponItem extends Component {
         let couponBg = null, height = null;
         let isReceive = (this.state.receive || this.isReceiveCoupon(id)) ? true : false;
         let overImg = null;
+        let overImgStyle = type == 3 ? {
+            width: 50, 
+            height: 50,
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+        } : {
+            width: height, 
+            height: height,
+            position: 'absolute',
+            right: 0,
+            top: 0,
+        };
         if(type == 1) {
             height = 120;
             couponBg = sid > 0 ?
@@ -158,15 +172,19 @@ export default class CouponItem extends Component {
             }
             if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
             if(isUse) overImg = require('../../images/personal/coupon_used.png');
-        }else if(type == 2) {
+        }else if(type == 2 || type == 3) {
             height = 116;
             couponBg = sid > 0 ?
                 require('../../images/car/coupons_bg_shop.png') :
                 require('../../images/car/coupons_bg_self.png');
             if(canReceive) {
                 if(isReceive) {
-                    couponBg = require('../../images/car/coupons_bg_out.png');
-                    overImg = require('../../images/car/receive.png');
+                    if(type == 3) {
+                        overImg = require('../../images/car/select.png');
+                    }else {
+                        couponBg = require('../../images/car/coupons_bg_out.png');
+                        overImg = require('../../images/car/receive.png');
+                    }
                 }
             }
             if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
@@ -181,7 +199,13 @@ export default class CouponItem extends Component {
                         disabled={isReceive || !canReceive}
                         style={{backgroundColor: bgColor}}
                         onPress={()=>{
-                            this.clickCoupon(id);
+                            if(type == 3) {
+                                this.setState({receive: true, }, () => {
+                                    callback && callback(coupon);
+                                });
+                            }else {
+                                this.clickCoupon(id);
+                            }
                         }}
                     >
                         <Image source={couponBg} style={{width: width, height: height}} resizeMode="stretch">
@@ -206,13 +230,7 @@ export default class CouponItem extends Component {
                                 </View>
                             </View>
                             {overImg ?
-                                <Image source={overImg} style={{
-                                    width: height, 
-                                    height: height,
-                                    position: 'absolute',
-                                    right: 0,
-                                    top: 0,
-                                }} />
+                                <Image source={overImg} style={overImgStyle} />
                                 : null
                             }
                         </Image>
