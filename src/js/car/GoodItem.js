@@ -77,8 +77,8 @@ export default class GoodItem extends Component {
     }
 
     render() {
-        if(!this.props.good) return null;
-        let good = this.props.good;
+        let { good, navigation, } = this.props;
+        if(!good) return null;
         this.maxNum = good.whNum || null;
         let gid = good.gID || 0;
         let selectIcon = this.state.isSelect ? 
@@ -106,26 +106,30 @@ export default class GoodItem extends Component {
                         }} 
                     />
                 </View>
-                <Image source={goodImg} style={styles.goodImg} />
-                <View style={styles.gItemRight}>
-                    <Text style={styles.goodName}>{goodName}</Text>
-                    <Text style={styles.goodAttr}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
-                    <View style={styles.gItemRightFoot}>
-                        <View style={styles.goodPriceBox}>
-                            <Text style={styles.goodPrice}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                            {goodType == 1 ?
-                                <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
-                                : null
-                            }
+                <TouchableOpacity style={styles.goodItem} onPress={()=>{
+                    if(gid > 0) navigation.navigate('Product', {gid: gid});
+                }}>
+                    <Image source={goodImg} style={styles.goodImg} />
+                    <View style={styles.gItemRight}>
+                        <Text style={styles.goodName}>{goodName}</Text>
+                        <Text style={styles.goodAttr}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
+                        <View style={styles.gItemRightFoot}>
+                            <View style={styles.goodPriceBox}>
+                                <Text style={styles.goodPrice}>{Lang[Lang.default].RMB + goodPrice}</Text>
+                                {goodType == 1 ?
+                                    <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
+                                    : null
+                                }
+                            </View>
+                            <CtrlNumber
+                                num={this.number}
+                                callBack={this.callBack}
+                                checkFunc={this.checkFunc}
+                                addFailFunc={this.addFailFunc}
+                            />
                         </View>
-                        <CtrlNumber
-                            num={this.number}
-                            callBack={this.callBack}
-                            checkFunc={this.checkFunc}
-                            addFailFunc={this.addFailFunc}
-                        />
                     </View>
-                </View>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -211,6 +215,10 @@ var styles = StyleSheet.create({
     selectIconView: {
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    goodItem: {
+        flex: 1,
+        flexDirection: 'row',
     },
     goodImg: {
         width: 90,

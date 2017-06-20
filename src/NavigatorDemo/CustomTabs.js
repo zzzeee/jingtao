@@ -23,12 +23,18 @@ import SampleText from './SampleText';
 const MyNavScreen = ({ navigation, banner }) => (
   <ScrollView>
     <SampleText>{banner}</SampleText>
-    <Button
-      onPress={() => {
-        navigation.goBack(null);
-      }}
-      title="Go back"
-    />
+    <View style={{
+      height: 800, 
+      backgroundColor: 'green',
+      justifyContent: 'center',
+    }}>
+      <Button
+        onPress={() => {
+          navigation.goBack(null);
+        }}
+        title="Go back"
+      />
+    </View>
   </ScrollView>
 );
 
@@ -56,13 +62,16 @@ const MySettingsScreen = ({ navigation }) => (
 const CustomTabBar = ({
   navigation,
 }) => {
-  const { routes } = navigation.state;
+  console.log(navigation);
+  const { routes, index } = navigation.state;
   return (
     <View style={styles.tabContainer}>
-      {routes.map(route => (
+      {routes.map((route, i) => (
         <TouchableOpacity
           onPress={() => navigation.navigate(route.routeName)}
-          style={styles.tab}
+          style={[styles.tab, {
+            backgroundColor: index == i ? 'red' : '#ddd',
+          }]}
           key={route.routeName}
         >
           <Text>{route.routeName}</Text>
@@ -114,8 +123,13 @@ const CustomTabs = createNavigationContainer(createNavigator(CustomTabRouter)(Cu
 const styles = StyleSheet.create({
   container: {
     marginTop: Platform.OS === 'ios' ? 20 : 0,
+    marginBottom: 48,
   },
   tabContainer: {
+    position: 'absolute',
+    bottom: -48,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     height: 48,
   },

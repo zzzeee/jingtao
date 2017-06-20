@@ -34,8 +34,11 @@ import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
 import CouponList from './personal/CouponList';
 import Collection from './personal/Collection';
+import About from './personal/About';
+import Help from './personal/Help/';
+import HelpPrivacy from './personal/Help/privacy';
+import HelpTransaction from './personal/Help/transaction';
 import ProductList from './class/ProductList';
-import TestPage from './personal/TestPage';
 
 //显示格式
 class MyNavScren extends Component {
@@ -176,6 +179,27 @@ const CollectionScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Collection} />
 );
 
+//个人中心 - 联系方式
+const AboutScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={About} />
+);
+
+//个人中心 - 帮助中心
+const HelpScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Help} />
+);
+
+//个人中心 - 帮助中心 - 个人隐私保护
+const PrivacyScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={HelpPrivacy} />
+);
+
+//个人中心 - 帮助中心 - 交易条款
+const TransactionScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={HelpTransaction} />
+);
+
+
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -195,16 +219,6 @@ const PayFinishScreen = ({ navigation }) => (
 const ProductListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={ProductList} />
 );
-
-//个人中心 - 测试集合
-const TestPageScreen = ({ navigation }) => (
-    <MyNavScren navigation={navigation} NavScreen={TestPage} />
-);
-
-// //首页 - 获取定位 - 测试
-// const LocationInfoScreen = ({ navigation }) => (
-//     <MyNavScren navigation={navigation} NavScreen={LocationInfo} />
-// );
 
 const AppNavigator = StackNavigator({
     TabNav: {
@@ -258,11 +272,20 @@ const AppNavigator = StackNavigator({
     AddressAdd: {
         screen: AddressAddScreen,
     },
+    About: {
+        screen: AboutScreen,
+    },
+    Help: {
+        screen: HelpScreen,
+    },
+    Privacy: {
+        screen: PrivacyScreen,
+    },
+    Transaction: {
+        screen: TransactionScreen,
+    },
     ProductList: {
         screen: ProductListScreen,
-    },
-    TestPage: {
-        screen: TestPageScreen,
     },
 }, {
     initialRouteName: 'TabNav',

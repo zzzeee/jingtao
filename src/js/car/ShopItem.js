@@ -89,6 +89,7 @@ export default class ShopItem extends Component {
             showAutoModal,
             showCouponBox,
             userinfo,
+            navigation,
         } = this.props;
         if(!shop) return null;
         let that = this;
@@ -148,6 +149,7 @@ export default class ShopItem extends Component {
                             changeKEY2={changeKEY2}
                             showAutoModal={showAutoModal}
                             userinfo={userinfo}
+                            navigation={navigation}
                         />
                     );
                 })}

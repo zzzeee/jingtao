@@ -38,6 +38,7 @@ export default class PersonalScreen extends Component {
             islogin: false,
             userInfo: null,
             opacityVal: new Animated.Value(0),
+            mCouponNum: 0,
         };
 
         this.mToken = null;
@@ -83,6 +84,8 @@ export default class PersonalScreen extends Component {
             name = userInfo.mNickName || userInfo.mPhone;
             integral = userInfo.mIntegral || 0;
         }
+        let couponOverdue = (mCouponNum && mCouponNum > 0) ? 
+            str_replace(Lang[Lang.default].couponBeOverdue, mCouponNum) : '';
         return (
             <View style={styles.flex}>
                 <ScrollView 
@@ -178,16 +181,15 @@ export default class PersonalScreen extends Component {
                             require('../../images/personal/coupon.png'), 
                             Lang[Lang.default].coupon, 
                             'CouponList', 
-                            str_replace(Lang[Lang.default].couponBeOverdue, 3)
+                            couponOverdue
                         )}
                         {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
                         {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, 'Collection', null)}
                         {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, 'AddressList', null)}
                     </View>
                     <View style={styles.btnsListBox}>
-                        {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, null, null)}
-                        {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, null, null)}
-                        {this.btnRow(require('../../images/personal/helpNote.png'), '测试专用', 'TestPage', '这里为测试链接')}
+                        {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, 'About', null, false)}
+                        {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, 'Help', null, false)}
                     </View>
                 </ScrollView>
                 <Animated.View style={[styles.topHeadBg, {
@@ -221,11 +223,11 @@ export default class PersonalScreen extends Component {
     };
 
     //按钮栏
-    btnRow = (img, txt, name, rightTxt) => {
+    btnRow = (img, txt, name, rightTxt, needLogin = true) => {
         let navigation = this.props.navigation;
         return (
             <TouchableOpacity onPress={()=>{
-                if(!this.state.islogin) {
+                if(!this.state.islogin && needLogin) {
                     navigation.navigate('Login');
                 }else if(name) {
                     navigation.navigate(name, {'mToken': this.mToken});

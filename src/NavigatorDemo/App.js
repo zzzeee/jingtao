@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   View,
+  Button,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
@@ -19,6 +20,17 @@ import ModalStack from './ModalStack';
 import StacksInTabs from './StacksInTabs';
 import SimpleStack from './SimpleStack';
 import SimpleTabs from './SimpleTabs';
+
+const CustomTabsSreen = ({navigation}) => (
+  <View style={{flex: 1}}>
+    <View>
+      <Button title='标题' onPress={()=>navigation.goBack(null)} />
+    </View>
+    <View style={{flex: 1}}>
+      <CustomTabs />
+    </View>
+  </View>
+);
 
 const ExampleRoutes = {
   SimpleStack: {
@@ -39,7 +51,7 @@ const ExampleRoutes = {
   CustomTabs: {
     name: 'Custom Tabs',
     description: 'Custom tabs with tab router',
-    screen: CustomTabs,
+    screen: CustomTabsSreen,
   },
   ModalStack: {
     name: Platform.OS === 'ios' ? 'Modal Stack Example' : 'Stack with Dynamic Header',

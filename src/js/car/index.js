@@ -310,7 +310,8 @@ export default class CarsScreen extends Component {
     //购物车内容
     carsBox = () => {
         let that = this;
-        let cars = this.state.carDatas ? 
+        let { navigation } = this.props;
+        let cars = this.state.carDatas ?
             <View style={{backgroundColor: Color.lightGrey}}>
                 {this.state.carDatas.map((item, index) => {
                     let _keyword = 'cPro';
@@ -329,6 +330,7 @@ export default class CarsScreen extends Component {
                                 showAutoModal={that.showAutoModal}
                                 showCouponBox={this.showCouponBox}
                                 userinfo={that.userinfo}
+                                navigation={navigation}
                             />
                         );
                     }else {
