@@ -242,6 +242,7 @@ export default class AddOrder extends Component {
                         hideCouponBox={this.hideCouponBox}
                         navigation={navigation}
                         callback={this.selectCoupon}
+                        userCoupons={this.selCoupon ? this.selCoupon.hId || null : null}
                     />
                     : null
                 }

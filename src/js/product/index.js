@@ -33,6 +33,8 @@ import ReturnAlert from './returnAlert';
 import Areas from './Areas';
 import Coupons from './Coupons';
 
+var isCanChat = false;
+var isCanShare = false;
 var _User = new User();
 var footHeight = 50;
 var moreHeight = 45;
@@ -323,7 +325,14 @@ export default class ProductScreen extends Component {
                         require("../../images/product/favorite.png")
                     } 
                 />
-                <BtnIcon width={PX.headIconSize} style={{marginLeft: 5}} src={require("../../images/product/share_orange.png")} />
+                {isCanShare ?
+                    <BtnIcon 
+                        width={PX.headIconSize} 
+                        style={{marginLeft: 5}} 
+                        src={require("../../images/product/share_orange.png")} 
+                    />
+                    : null
+                }
             </View>
         );
         return (
@@ -352,14 +361,17 @@ export default class ProductScreen extends Component {
                 </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
-                        <BtnIcon 
-                            src={require('../../images/product/custem_center.png')} 
-                            width={22} 
-                            style={[styles.productContactImg, {marginLeft: 10,}]} 
-                            text={Lang[Lang.default].customer}
-                            txtStyle={styles.productContactTxt}
-                            txtViewStyle={{minHeight: 12}}
-                        />
+                        {isCanChat ?
+                            <BtnIcon 
+                                src={require('../../images/product/custem_center.png')} 
+                                width={22} 
+                                style={[styles.productContactImg, {marginLeft: 10,}]} 
+                                text={Lang[Lang.default].customer}
+                                txtStyle={styles.productContactTxt}
+                                txtViewStyle={{minHeight: 12}}
+                            />
+                            : null
+                        }
                         <View style={styles.btnCarBox}>
                             <BtnIcon 
                                 src={require('../../images/navs/carSelect.png')} 

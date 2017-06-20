@@ -22,6 +22,7 @@ export default class CouponItem extends Component {
     // 默认参数
     static defaultProps = {
         canReceive: true,
+        clearOverImg: false,
     };
     // 参数类型
     static propTypes = {
@@ -29,6 +30,7 @@ export default class CouponItem extends Component {
         width: React.PropTypes.number.isRequired,
         coupon: React.PropTypes.object.isRequired,
         canReceive: React.PropTypes.bool,
+        clearOverImg: React.PropTypes.bool,
     };
     constructor(props) {
         super(props);
@@ -111,7 +113,9 @@ export default class CouponItem extends Component {
         let isok = true;
         let _id = parseInt(id) || 0;
         let list = userCoupons || [];
-        if(_id > 0 && list && list.length && type != 3) {
+        if(type == 3) {
+            if(userCoupons && userCoupons == _id) return true;
+        } else if(_id > 0 && list && list.length) {
             for(let i in list) {
                 if(_id == list[i]) {
                     isok = false;
@@ -123,7 +127,17 @@ export default class CouponItem extends Component {
     };
 
     render() {
-        let { type, width, style, coupon, clickCoupon, backgroundColor, canReceive, callback } = this.props;
+        let { 
+            type, 
+            width, 
+            style, 
+            coupon, 
+            clickCoupon, 
+            backgroundColor, 
+            canReceive, 
+            callback,
+            clearOverImg,
+         } = this.props;
         if(!coupon || !type) return null;
         let leftRatio = 0.345; // 优惠券左边比率
         let id = coupon.hID || coupon.hId;
@@ -146,25 +160,12 @@ export default class CouponItem extends Component {
         let couponBg = null, height = null;
         let isReceive = (this.state.receive || this.isReceiveCoupon(id)) ? true : false;
         let overImg = null;
-        let overImgStyle = type == 3 ? {
-            width: 50, 
-            height: 50,
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-        } : {
-            width: height, 
-            height: height,
-            position: 'absolute',
-            right: 0,
-            top: 0,
-        };
         if(type == 1) {
             height = 120;
             couponBg = sid > 0 ?
                 require('../../images/find/coupons_bg_shop.png') :
                 require('../../images/find/coupons_bg_self.png');
-            if(canReceive) {
+            if(canReceive && !clearOverImg) {
                 if(isReceive) {
                     couponBg = require('../../images/find/coupons_bg_out.png');
                     overImg = require('../../images/car/receive.png');
@@ -177,10 +178,10 @@ export default class CouponItem extends Component {
             couponBg = sid > 0 ?
                 require('../../images/car/coupons_bg_shop.png') :
                 require('../../images/car/coupons_bg_self.png');
-            if(canReceive) {
+            if(canReceive && !clearOverImg) {
                 if(isReceive) {
                     if(type == 3) {
-                        overImg = require('../../images/car/select.png');
+                        overImg = require('../../images/car/use_coupon.png');
                     }else {
                         couponBg = require('../../images/car/coupons_bg_out.png');
                         overImg = require('../../images/car/receive.png');
@@ -190,7 +191,20 @@ export default class CouponItem extends Component {
             if(ntime >= _etime) overImg = require('../../images/personal/coupon_overdue.png');
             if(isUse) overImg = require('../../images/personal/coupon_used.png');
         }
-        if(overImg) color = Color.gray;
+        if(overImg && type != 3) color = Color.gray;
+        let overImgStyle = type == 3 ? {
+            width: 50, 
+            height: 50,
+            position: 'absolute',
+            right: 5,
+            bottom: 3,
+        } : {
+            width: height, 
+            height: height,
+            position: 'absolute',
+            right: 0,
+            top: 0,
+        };
         if(id && id > 0) {
             return (
                 <View style={style}>
@@ -200,9 +214,7 @@ export default class CouponItem extends Component {
                         style={{backgroundColor: bgColor}}
                         onPress={()=>{
                             if(type == 3) {
-                                this.setState({receive: true, }, () => {
-                                    callback && callback(coupon);
-                                });
+                                callback(coupon);
                             }else {
                                 this.clickCoupon(id);
                             }

@@ -30,7 +30,9 @@ export default class CouponList extends Component {
             coupons: [],
             leftValue: new Animated.Value(0),
         };
+        this.selectIndex = 0;
         this.mToken = null;
+        this.uCouponsIDs = [];
     }
 
     componentWillMount() {
@@ -55,6 +57,7 @@ export default class CouponList extends Component {
                 console.log(result);
                 if(result && result.sTatus && result.couponAry) {
                     let coupons = result.couponAry || [];
+                    for(let i in coupons) that.uCouponsIDs.push(coupons[i].hId);
                     that.setState({ coupons });
                 }
             });
@@ -105,6 +108,7 @@ export default class CouponList extends Component {
             use = 1;
             expire = 2;
         }
+        this.selectIndex = index;
         Animated.timing(this.state.leftValue, {
             toValue: left,
             duration: 250,
@@ -143,6 +147,8 @@ export default class CouponList extends Component {
                     type={2}
                     width={Size.width * 0.907}
                     coupon={item}
+                    userCoupons={this.uCouponsIDs}
+                    clearOverImg={this.selectIndex == 0 ? true : false}
                 />
             </View>
         );

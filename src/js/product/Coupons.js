@@ -126,6 +126,7 @@ export default class Coupons extends Component {
             back, 
             backObj,
             callback,
+            userCoupons,
         } = this.props;
         if(!isShow) return null;
         let that = this;
@@ -155,7 +156,7 @@ export default class Coupons extends Component {
                                         style={styles.couponRow}
                                         width={Size.width * 0.907}
                                         coupon={item}
-                                        userCoupons={that.state.userCoupons}
+                                        userCoupons={userCoupons ? userCoupons : that.state.userCoupons}
                                         callback={callback ? callback : that.addCoupon}
                                         back={back}
                                         backObj={backObj}
