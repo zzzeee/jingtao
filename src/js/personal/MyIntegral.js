@@ -32,8 +32,8 @@ export default class MyIntegral extends Component {
             mUserIntegral: null,
             rotation: new Animated.Value(0),
             datas: null,
+            showFootView: false,
         };
-        this.offsetY = 0;
         this.mToken = null;
         this.page = 1;
         this.number = 10;
@@ -105,7 +105,7 @@ export default class MyIntegral extends Component {
                     ListHeaderComponent={this.listHead}
                     onScroll={this._onScroll}
                     ListFooterComponent={()=>{
-                        if(this.offsetY > 10) {
+                        if(this.state.showFootView) {
                             return <EndView />;
                         }else {
                             return <View />;
@@ -120,7 +120,13 @@ export default class MyIntegral extends Component {
     }
 
     _onScroll = (e) => {
-        this.offsetY = e.nativeEvent.contentOffset.y || 0;
+        let value = 20;
+        let offsetY = e.nativeEvent.contentOffset.y || 0;
+        if(offsetY > value && !this.state.showFootView) {
+            this.setState({ showFootView: true, });
+        }else if(offsetY < value && this.state.showFootView) {
+            this.setState({ showFootView: false, });
+        }
     };
 
     // 页面头部

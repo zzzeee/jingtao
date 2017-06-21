@@ -43,8 +43,8 @@ export default class Search extends Component {
             deleteAlert: false,
             sortIndex: 0,
             showArea: false,
+            showFootView: false,
         };
-        this.offsetY = 0;
         this.page = 1;
         this.pageNumber = 10;
         this.sort = 1;
@@ -82,7 +82,6 @@ export default class Search extends Component {
         let log = await _Search.getDatas() || [];
         let hot = await this.getHotWord() || [];
         let areas = await this.getAearList() || null;
-        console.log(areas);
         if(areas && areas.sTatus == 1 && areas.regionAry) {
             areas = areas.regionAry;
         }
@@ -156,7 +155,6 @@ export default class Search extends Component {
             if(txt) {
                 // if(txt == this.search_name) return;
                 this.page = 1;
-                this.offsetY = 0;
                 this.isEnScroll = true;
                 this.btnDisable = false;
                 this.loadMoreLock = false;
@@ -188,7 +186,7 @@ export default class Search extends Component {
             this.searchLock = true;
             this.loadMoreLock = true;
             Utils.fetch(Urls.getProductList, 'get', obj, (result) => {
-                // console.log(result);
+                console.log(result);
                 let _sdata = this.state.sdatas || [];
                 if(result && result.sTatus == 1 && result.proAry) {
                     this.btnDisable = false;
@@ -227,7 +225,6 @@ export default class Search extends Component {
     clickSearchItemText = (str) => {
         this.sort = 1;
         this.page = 1;
-        this.offsetY = 0;
         this.search_name = str;
         this.isEnScroll = true;
         this.btnDisable = false;
@@ -378,7 +375,7 @@ export default class Search extends Component {
                 renderItem={this._renderItem}
                 onScroll={this._onScroll}
                 ListFooterComponent={()=>{
-                    if(this.offsetY > 10) {
+                    if(this.state.showFootView) {
                         return <EndView />;
                     }else {
                         return <View />;
@@ -395,7 +392,13 @@ export default class Search extends Component {
     };
 
     _onScroll = (e) => {
-        this.offsetY = e.nativeEvent.contentOffset.y || 0;
+        let value = 20;
+        let offsetY = e.nativeEvent.contentOffset.y || 0;
+        if(offsetY > value && !this.state.showFootView) {
+            this.setState({ showFootView: true, });
+        }else if(offsetY < value && this.state.showFootView) {
+            this.setState({ showFootView: false, });
+        }
     };
 
     listHead = () => {
@@ -421,7 +424,6 @@ export default class Search extends Component {
                     });
                 }else if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
-                    this.offsetY = 0;
                     this.btnDisable = true;
                     this.isEnScroll = true;
                     this.loadMoreLock = false;

@@ -30,7 +30,7 @@ import ProductItem from '../other/ProductItem';
 import { EndView } from '../other/publicEment';
 
 var _User = new User();
-
+var showHeadBgHeight = 150 - PX.headHeight;
 export default class Shop extends Component {
     constructor(props) {
         super(props);
@@ -39,7 +39,8 @@ export default class Shop extends Component {
             isCollection: false,
             mCoupon: null,
             proRecom: null,
-            showFloat: false,
+            productList: [],
+            opacityVal: new Animated.Value(0),
         };
         this.shopID = null;
         this.mToken = null;
@@ -47,6 +48,7 @@ export default class Shop extends Component {
         this.page = 1;
         this.pageNumber = 10;
         this.loadMoreLock = false;
+        this.offsetY = 0;
     }
 
     componentWillMount() {
@@ -114,54 +116,46 @@ export default class Shop extends Component {
                     onScroll={this._onScroll}
                     ListHeaderComponent={this.listHeadPage}
                     ListFooterComponent={()=>{
-                        if(this.state.showFloat) {
-                            return <EndView />;
-                        }else {
-                            return <View />;
-                        }
+                        console.log(this.offsetY);
+                        return <EndView />;
                     }}
                     onEndReached={()=>{
                         !this.loadMoreLock && this.loadMore();
                     }}
                 />
-                {this.state.showFloat ?
-                    <View style={styles.inputRow2}>
-                        <TouchableOpacity onPress={()=>{
-                            this.props.navigation.goBack(null);
-                        }}>
-                            <Image source={require('../../images/back.png')} style={styles.backImage} />
-                        </TouchableOpacity>
-                        <View style={styles.flex}>
-                            <InputText
-                                vText={this.state.searchtext}
-                                pText={Lang[Lang.default].shopSearch}
-                                onChange={this.setSearchtext}
-                                length={20}
-                                style={styles.inputStyle2}
-                            />
-                            <Image style={styles.inputBeforeImg} source={require('../../images/search_gary.png')} />
-                        </View>
+                <Animated.View style={[styles.inputRow2, {
+                    opacity: this.state.opacityVal.interpolate({
+                        inputRange: [0, showHeadBgHeight],
+                        outputRange: [0, 1]
+                    }),
+                }]}>
+                    <TouchableOpacity onPress={()=>{
+                        this.props.navigation.goBack(null);
+                    }}>
+                        <Image source={require('../../images/back.png')} style={styles.backImage} />
+                    </TouchableOpacity>
+                    <View style={styles.flex}>
+                        <InputText
+                            vText={this.state.searchtext}
+                            pText={Lang[Lang.default].shopSearch}
+                            onChange={this.setSearchtext}
+                            length={20}
+                            style={styles.inputStyle2}
+                        />
+                        <Image style={styles.inputBeforeImg} source={require('../../images/search_gary.png')} />
                     </View>
-                    : null
-                }
+                </Animated.View>
             </View>
         );
     }
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
-        if(offsetY > (150 - PX.rowHeight2)) {
-            if(!this.state.showFloat) {
-                this.setState({
-                    showFloat: true,
-                });
-            }
+        this.offsetY = offsetY;
+        if(offsetY < showHeadBgHeight) {
+            this.state.opacityVal.setValue(offsetY);
         }else {
-            if(this.state.showFloat) {
-                this.setState({
-                    showFloat: false,
-                });
-            }
+            this.state.opacityVal.setValue(showHeadBgHeight);
         }
     };
 

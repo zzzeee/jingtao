@@ -36,8 +36,8 @@ export default class Search extends Component {
             load_or_error: null,
             sortIndex: 0,
             showArea: false,
+            showFootView: false,
         };
-        this.offsetY = 0;
         this.cID = null;
         this.cName = null;
         this.page = 1;
@@ -105,7 +105,6 @@ export default class Search extends Component {
         if(this.citys != _data) {
             this.citys = _data;
             this.page = 1;
-            this.offsetY = 0;
             this.isEnScroll = true;
             this.loadMoreLock = false;
             this.getProductList(true);
@@ -231,7 +230,7 @@ export default class Search extends Component {
                 enableEmptySections={true}
                 renderItem={this._renderItem}
                 ListFooterComponent={()=>{
-                    if(this.offsetY > 10) {
+                    if(this.state.showFootView) {
                         return <EndView />;
                     }else {
                         return <View />;
@@ -248,7 +247,13 @@ export default class Search extends Component {
     };
 
     _onScroll = (e) => {
-        this.offsetY = e.nativeEvent.contentOffset.y || 0;
+        let value = 20;
+        let offsetY = e.nativeEvent.contentOffset.y || 0;
+        if(offsetY > value && !this.state.showFootView) {
+            this.setState({ showFootView: true, });
+        }else if(offsetY < value && this.state.showFootView) {
+            this.setState({ showFootView: false, });
+        }
     };
 
     listHead = () => {
@@ -273,7 +278,6 @@ export default class Search extends Component {
                     });
                 }else if(item.isRepeat || this.state.sortIndex != index) {
                     this.page = 1;
-                    this.offsetY = 0;
                     this.btnDisable = true;
                     this.isEnScroll = true;
                     this.loadMoreLock = false;
