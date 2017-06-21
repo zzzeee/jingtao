@@ -166,8 +166,6 @@ export default class FindScreen extends Component {
                 let etime = coupons[i].hSendTime || null;
                 let ntime = new Date().getTime();
                 // let isable = coupons[i].isable || 0;
-                stime = that.checkTimeString(stime);
-                etime = that.checkTimeString(etime);
                 let _stime = new Date(that.checkTimeString(stime)).getTime();
                 let _etime = new Date(that.checkTimeString(etime)).getTime();
                 if(id > 0 && ntime > _stime && ntime < _etime) {
@@ -324,13 +322,6 @@ export default class FindScreen extends Component {
                 <View>
                     <AppHead
                         title={Lang[Lang.default].tab_find}
-                        center={<BtnIcon 
-                            width={100} 
-                            height={PX.headHeight - 10}
-                            src={require("../../images/logoTitle.png")}
-                            press={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
-                        />}
-                        right={<BtnIcon style={styles.btnRight} width={PX.headIconSize} src={require("../../images/search.png")} />}
                     />
                 </View>
                 <View style={styles.bodyStyle}>
@@ -399,6 +390,7 @@ export default class FindScreen extends Component {
     // 名店优品列表的行内容
     mdyp_renderItem = ({item}) => {
         let navigation = this.props.navigation || null;
+        let sid = item.sId || null;
         let name = item.sShopName || null;
         let plist = item.proAry || [];
         let img = item.sLogo || '';
@@ -430,7 +422,9 @@ export default class FindScreen extends Component {
                             <Text style={styles.defalutFont}>{name}</Text>
                         </View>
                         <View style={styles.gotoShopView}>
-                            <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
+                            <Text style={styles.btnGoToShop} onPress={()=>{
+                                navigation.navigate('Shop', {shopID: sid,})
+                            }}>{Lang[Lang.default].gotoShop}</Text>
                         </View>
                     </View>
                     <View style={styles.shopProductBox}>
@@ -463,7 +457,6 @@ export default class FindScreen extends Component {
         }else {
             return null;
         }
-        
     };
 }
 
@@ -530,7 +523,6 @@ var styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     wrapper: {
-        backgroundColor: 'red',
     },
     paginationStyle: {
         position: 'absolute',

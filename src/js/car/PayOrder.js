@@ -112,7 +112,7 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let that = this;
-        Utils.fetch('http://api.jingtaomart.com/api/PayTest/getWeiXinPayInfo', 'post', {}, function(result){
+        Utils.fetch('http://api.jingtaomart.com/api/AplipayNController/getWeiXinPayInfo', 'post', {}, function(result){
             // console.log('weixin_payinfo :');
             // console.log(JSON.parse(result));
             that.weixin_pay(JSON.parse(result));

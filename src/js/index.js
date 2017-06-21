@@ -39,6 +39,7 @@ import Help from './personal/Help/';
 import HelpPrivacy from './personal/Help/privacy';
 import HelpTransaction from './personal/Help/transaction';
 import ProductList from './class/ProductList';
+import Shop from './shop';
 
 //显示格式
 class MyNavScren extends Component {
@@ -98,10 +99,13 @@ class MyNavScren extends Component {
          *   getStateForAction: function getStateForAction(action, inputState),
          * }
          */
+        let isShowStatu = NavScreen.name == 'Shop' ? false : true;
         return (
             <View style={styles.flex}>
-                <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
-                <View style={styles.container}>
+                <StatusBar hidden={!isShowStatu} backgroundColor={Color.mainColor} barStyle="light-content" />
+                <View style={[styles.container, {
+                    marginTop: (isShowStatu && Platform.OS === 'ios') ? PX.statusHeight : 0,
+                }]}>
                     <NavScreen navigation={navigation} />
                 </View>
             </View>
@@ -220,6 +224,11 @@ const ProductListScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={ProductList} />
 );
 
+//店铺页
+const ShopScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Shop} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
@@ -287,6 +296,9 @@ const AppNavigator = StackNavigator({
     ProductList: {
         screen: ProductListScreen,
     },
+    Shop: {
+        screen: ShopScreen,
+    },
 }, {
     initialRouteName: 'TabNav',
     headerMode: 'none',
@@ -299,7 +311,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        marginTop: Platform.OS === 'ios' ? PX.statusHeight : 0,
         backgroundColor: '#FFF',
     },
 });

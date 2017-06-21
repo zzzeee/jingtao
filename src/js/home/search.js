@@ -376,6 +376,7 @@ export default class Search extends Component {
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
+                onScroll={this._onScroll}
                 ListFooterComponent={()=>{
                     if(this.offsetY > 10) {
                         return <EndView />;

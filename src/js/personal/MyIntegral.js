@@ -103,6 +103,7 @@ export default class MyIntegral extends Component {
                     enableEmptySections={true}
                     renderItem={this._renderItem}
                     ListHeaderComponent={this.listHead}
+                    onScroll={this._onScroll}
                     ListFooterComponent={()=>{
                         if(this.offsetY > 10) {
                             return <EndView />;

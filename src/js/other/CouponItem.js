@@ -224,7 +224,7 @@ export default class CouponItem extends Component {
                             <View style={[styles.rowStyle, {flex: 1, height: height}]}>
                                 <View style={[styles.couponsLeft, {height: height, width: width * leftRatio}]}>
                                     <View style={styles.rowStyle}>
-                                        <Text style={{color: color, fontSize: 14, paddingTop: 10}}>{Lang[Lang.default].RMB}</Text>
+                                        <Text style={{color: color, fontSize: 14, paddingTop: 9}}>{Lang[Lang.default].RMB}</Text>
                                         <Text style={{color: color, fontSize: 27, paddingLeft: 3}}>{money}</Text>
                                     </View>
                                     <Text numberOfLines={1} style={styles.maxMoneyText}>

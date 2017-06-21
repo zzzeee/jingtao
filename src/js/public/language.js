@@ -218,6 +218,8 @@ const language = {
         notSearchResult: '没有搜索结果',
         transactionTerms: '交易条款',
         privacyProtection: '个人隐私保护',
+        shopSearch: '店内搜索',
+        notCollection: '未收藏',
     },
 };
 
