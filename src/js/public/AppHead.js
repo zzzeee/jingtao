@@ -69,8 +69,9 @@ var styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	title : {
+		padding: 5,		//增大点击面积
 		color: Color.mainColor,
-        fontSize: FontSize.headFontSize,
-        fontWeight: FontSize.headFontWeight,
+		fontSize: FontSize.headFontSize,
+		fontWeight: FontSize.headFontWeight,
 	},
 });

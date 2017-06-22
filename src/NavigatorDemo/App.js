@@ -21,16 +21,26 @@ import StacksInTabs from './StacksInTabs';
 import SimpleStack from './SimpleStack';
 import SimpleTabs from './SimpleTabs';
 
-const CustomTabsSreen = ({navigation}) => (
-  <View style={{flex: 1}}>
-    <View>
-      <Button title='标题' onPress={()=>navigation.goBack(null)} />
-    </View>
+const CustomTabsSreen = ({navigation}) => {
+  // const { router } = CustomTabs;
+  // let action = router.getActionForPathAndParams('notifications', null);
+  // console.log(action);
+  // navigation.navigate('CustomTabs', {}, action);
+  const { router } = CustomTabs;
+  console.log(router);
+  let SelComponent = router.getComponentForRouteName('Notifications');
+  // console.log(SelComponent)
+  return (
     <View style={{flex: 1}}>
-      <CustomTabs />
+      <View>
+        <Button title='标题' onPress={()=>navigation.goBack(null)} />
+      </View>
+      <View style={{flex: 1}}>
+        <SelComponent abc={'ABC'} />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const ExampleRoutes = {
   SimpleStack: {
@@ -87,6 +97,8 @@ const MainScreen = ({ navigation }) => (
           const { path, params, screen } = ExampleRoutes[routeName];
           const { router } = screen;
           const action = path && router.getActionForPathAndParams(path, params);
+          console.log(routeName);
+          console.log(action);
           navigation.navigate(routeName, {}, action);
         }}
       >

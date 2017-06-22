@@ -34,6 +34,7 @@ import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
 import CouponList from './personal/CouponList';
 import Collection from './personal/Collection';
+import MyOrder from './personal/Order';
 import About from './personal/About';
 import Help from './personal/Help/';
 import HelpPrivacy from './personal/Help/privacy';
@@ -184,6 +185,11 @@ const CollectionScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Collection} />
 );
 
+//个人中心 - 我的订单
+const MyOrderScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={MyOrder} />
+);
+
 //个人中心 - 联系方式
 const AboutScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={About} />
@@ -277,6 +283,9 @@ const AppNavigator = StackNavigator({
     },
     Collection: {
         screen: CollectionScreen,
+    },
+    MyOrder: {
+        screen: MyOrderScreen,
     },
     PayFinish: {
         screen: PayFinishScreen,

@@ -76,7 +76,7 @@ export default class HomeScreen extends Component {
                         width={100} 
                         height={PX.headHeight - 10} 
                         imageStyle={{marginTop: 8}} 
-                        src={require("../../images/logoTitle.png")} 
+                        src={require("../../images/logoTitle.png")}
                     />
                     <BtnIcon 
                         style={styles.btnRight} 

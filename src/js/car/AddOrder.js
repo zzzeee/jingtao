@@ -247,7 +247,11 @@ export default class AddOrder extends Component {
                     : null
                 }
                 {this.state.showPayModal?
-                    <PayOrder visible={this.state.showPayModal} navigation={navigation} />
+                    <PayOrder 
+                        mToken={this.mToken}
+                        visible={this.state.showPayModal} 
+                        navigation={navigation} 
+                    />
                     : null
                 }
             </View>
@@ -439,21 +443,21 @@ export default class AddOrder extends Component {
 
     //点击提交订单按钮
     updateOrder = () => {
-        // let orders = this.createOrderInfo();
-        // let obj = {
-        //     mToken: this.mToken,
-        //     oAry: orders,
-        //     cAry: this.carIDs.join(','),
-        // };
-        // console.log(obj);
-        // if(this.mToken && orders && this.carIDs) {
-        //     Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-        //         console.log(result);
-        //     }, null, {catchFunc: (err)=>{
-        //         console.log(err);
-        //     }});
-        // }
-        this.setState({showPayModal: true, });
+        let orders = this.createOrderInfo();
+        let obj = {
+            mToken: this.mToken,
+            oAry: orders,
+            cAry: this.carIDs.join(','),
+        };
+        console.log(obj);
+        if(this.mToken && orders && this.carIDs) {
+            Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
+                console.log(result);
+            }, null, {catchFunc: (err)=>{
+                console.log(err);
+            }});
+        }
+        // this.setState({showPayModal: true, });
     };
 }
 

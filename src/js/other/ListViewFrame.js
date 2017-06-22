@@ -1,0 +1,147 @@
+/**
+ * 带有推荐商品的列表框架
+ * @auther linzeyong
+ * @date   2017.06.22
+ */
+
+import React , { Component } from 'react';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    FlatList,
+} from 'react-native';
+
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
+import { Size, PX, pixel, Color } from '../public/globalStyle';
+import Lang, {str_replace} from '../public/language';
+import ProductItem from './ProductItem';
+
+export default class ListViewFrame extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            goodList: null,     //猜你喜欢的商品列表
+        };
+        this.page = 1;
+        this.pageNumber = 10;
+        this.ref_flatList = null;
+        this.loadMoreLock = false;
+    }
+
+    componentDidMount() {
+        this.getProductList();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        let { getListEment, } = this.props;
+        getListEment && getListEment(this);
+    }
+
+    // 加载商品列表
+    getProductList = () => {
+        if(!this.loadMoreLock) {
+            let that = this;
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getRecommendList, 'get', {
+                pPage: this.page, 
+                pPerNum: this.pageNumber,
+            }, (result) => {
+                console.log(result);
+                if(result && result.sTatus && result.proAry && result.proAry.length) {
+                    let oldList = that.state.goodList || [];
+                    let goodList = oldList.concat(result.proAry);
+                    that.page++;
+                    that.loadMoreLock = false;
+                    that.setState({ goodList });
+                }
+            }, null, {
+                catchFunc: (err)=>{console.log(err)}
+            });
+        }
+    };
+
+    render() {
+        let { listStyle, } = this.props;
+        return (
+            <FlatList
+                ref={(_ref)=>this.ref_flatList=_ref}
+                data={this.state.goodList}
+                numColumns={2}
+                contentContainerStyle={[styles.flatlist, listStyle]}
+                keyExtractor={(item, index)=>(index)}
+                enableEmptySections={true}
+                renderItem={this._renderItem}
+                ListHeaderComponent={this.pageHead}
+                onEndReached={this.getProductList}
+            />
+        );
+    }
+
+    //页面头部
+    pageHead = () => {
+        let { headStyle, listHead } = this.props;
+        return (
+            <View style={headStyle}>
+                {listHead}
+                <View style={styles.goodlistTop}>
+                    <View style={styles.goodTopLine}></View>
+                    <View>
+                        <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                    </View>
+                    <View style={styles.goodTopLine}></View>
+                </View>
+            </View>
+        );
+    };
+
+    //猜你喜欢商品
+    _renderItem = ({item, index}) => {
+        return (
+            <ProductItem 
+                product={item} 
+                key={index}
+                showDiscount={true}
+                width={(Size.width - 5) / 2}
+                navigation={this.props.navigation}
+                boxStyle={{
+                    marginRight: 5,
+                    marginBottom: 5,
+                }}
+            />
+        );
+    };
+}
+
+var styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
+    flatlist: {
+        backgroundColor: Color.lightGrey,
+    },
+    goodlistTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: PX.rowHeight1,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        backgroundColor: '#fff',
+        marginBottom: PX.marginTB,
+    },
+    goodTopLine: {
+        flex: 1,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.mainColor,
+    },
+    goodlistTopText: {
+        fontSize: 16,
+        color: Color.mainColor,
+        paddingLeft: 25,
+        paddingRight: 25,
+    },
+});

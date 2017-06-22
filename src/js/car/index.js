@@ -28,6 +28,7 @@ import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
 import ErrorAlert from '../other/ErrorAlert';
 import Coupons from '../product/Coupons';
+import Nothing from '../other/ListNothing';
 
 var _User = new User();
 
@@ -61,6 +62,7 @@ export default class CarsScreen extends Component {
         this.ref_flatList = null;
         this.alertObject = {};
         this.userinfo = null;
+        this.ref_nothing = null;
     }
 
     componentDidMount() {
@@ -219,6 +221,11 @@ export default class CarsScreen extends Component {
                     title={Lang[Lang.default].tab_car}
                     left={left}
                     right={right}
+                    onPress={()=>{
+                        if(this.ref_nothing && this.ref_nothing.ref_flatList) {
+                            this.ref_nothing.ref_flatList.scrollToOffset({offset: 0, animated: true})
+                        }
+                    }}
                 />
                 {this.pageBody()}
                 {this.state.showCouponList ?
@@ -301,7 +308,11 @@ export default class CarsScreen extends Component {
         }else {
             return (
                 <View style={styles.flex}>
-                    {this.bodyContent()}
+                    <Nothing 
+                        navigation={this.props.navigation}
+                        text={Lang[Lang.default].yourCarIsEmpty}
+                        getListEment={(ement)=>this.ref_nothing=ement}
+                    />
                 </View>
             );
         }

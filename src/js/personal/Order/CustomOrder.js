@@ -1,5 +1,5 @@
 /**
- * 个人中心 - 我的订单 - 各订单切换
+ * 个人中心 - 我的订单 - 各订单集合
  * @auther linzeyong
  * @date   2017.06.20
  */
@@ -86,4 +86,4 @@ const CustomTabs = createNavigationContainer(createNavigator(CustomTabRouter)(Cu
 const styles = StyleSheet.create({
 });
 
-export default CustomOrder;
+export default CustomTabs;

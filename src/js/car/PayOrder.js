@@ -112,10 +112,17 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let that = this;
-        Utils.fetch('http://api.jingtaomart.com/api/AplipayNController/getWeiXinPayInfo', 'post', {}, function(result){
+        Utils.fetch('http://api.jingtaomart.com/api/AplipayNController/getWeiXinPayInfo', 'post', {
+            orderNum: '6666jt7777jt8888',
+            mToken: this.props.mToken,
+        }, function(result){
+            if(result && result.sTatus == 1 && result.wxInfo) {
+                that.weixin_pay(result.wxInfo);
+            }
+            console.log(result);
             // console.log('weixin_payinfo :');
             // console.log(JSON.parse(result));
-            that.weixin_pay(JSON.parse(result));
+            
         });
     };
 
@@ -203,7 +210,7 @@ export default class PayOrder extends Component {
 
     //处理支付宝中时间格式中的空格
     handleAlipayTimeStamp = (str) => {
-        let timestamp = str.match(/timestamp=(\S*)&/) || null;
+        let timestamp = str.match(/timestamp=(\S*?)&/) || null;
         if(str && timestamp && timestamp[1]) {
             let start = str.indexOf(timestamp[1]);
             let length = timestamp[1].length;

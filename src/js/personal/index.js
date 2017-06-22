@@ -118,7 +118,7 @@ export default class PersonalScreen extends Component {
                     <View style={styles.btnsListBox}>
                         <View style={styles.orderRow}>
                             <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
-                            <TouchableOpacity style={styles.lightTextBox}>
+                            <TouchableOpacity style={styles.lightTextBox} onPress={()=>this.linkPage(true, 'MyOrder')}>
                                 <Text style={styles.lightText}>{Lang[Lang.default].viewAllOrder}</Text>
                                 <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
                             </TouchableOpacity>
@@ -222,17 +222,20 @@ export default class PersonalScreen extends Component {
         }
     };
 
+    // 跳转页面
+    linkPage = (needLogin, nav) => {
+        let navigation = this.props.navigation;
+        if(!this.state.islogin && needLogin) {
+            navigation.navigate('Login');
+        }else if(nav) {
+            navigation.navigate(nav, {'mToken': this.mToken});
+        }
+    };
+
     //按钮栏
     btnRow = (img, txt, name, rightTxt, needLogin = true) => {
-        let navigation = this.props.navigation;
         return (
-            <TouchableOpacity onPress={()=>{
-                if(!this.state.islogin && needLogin) {
-                    navigation.navigate('Login');
-                }else if(name) {
-                    navigation.navigate(name, {'mToken': this.mToken});
-                }
-            }}>
+            <TouchableOpacity onPress={()=>this.linkPage(needLogin, name)}>
                 <View style={styles.btnRowStyle}>
                     <Image style={styles.bigIcon} source={img} style={styles.bigIcon} />
                     <View style={styles.btnRowRightBox}>
