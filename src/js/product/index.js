@@ -45,6 +45,7 @@ export default class ProductScreen extends Component {
         super(props);
         this.state = {
             isFavorite: false,
+            shopFavorite: false,
             goodList: [],     //猜你喜欢的商品列表
             goodIofo: {},
             webViewHeight: 0,
@@ -114,6 +115,7 @@ export default class ProductScreen extends Component {
                 state.goodIofo = info.proInfo;
                 // state.goodIofo.gDel = 1;
                 state.isFavorite = info.proInfo.fStatus == 1 ? true : false;
+                state.shopFavorite = info.proInfo.fShopStatus == 1 ? true : false;
                 if(list && list.sTatus && list.proAry && list.proAry.length) {
                     state.goodList = list.proAry;
                     this.page++;
@@ -275,32 +277,43 @@ export default class ProductScreen extends Component {
     };
 
     //收藏、取消收藏
-    toggleCollection = () => {
+    toggleCollection = (type = 1, sid = 0) => {
+        if(type == 2 && !sid) return;
         let that = this;
         let goodid = this.state.goodIofo.gID;
         let obj = {
-            fType: 1,
-            flID: goodid,
+            fType: type,
+            flID: type == 1 ? goodid : sid,
         };
-        console.log(obj);
         if(this.userinfo && this.userinfo[_User.keyMember]) {
-            obj = Object.assign(obj, this.userinfo);
-            console.log(obj);
-            Utils.fetch(Urls.collection, 'post', obj, (result) => {
-                console.log(result);
-                if(result) {
-                    let ret = result.sTatus || 0;
-                    let msg = result.sMessage || null;
-                    if(msg) {
-                        that.resultMsgAnimated(msg);
+            if(type == 2 && this.state.shopFavorite) {
+                this.error = 11;
+                this.message = Lang[Lang.default].shopCollectioned;
+                this.showReturnBox({
+                    showReturnMsg: true,
+                });
+            }else {
+                obj = Object.assign(obj, this.userinfo);
+                Utils.fetch(Urls.collection, 'post', obj, (result) => {
+                    console.log(result);
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        let msg = result.sMessage || null;
+                        if(type == 1) {
+                            msg && that.resultMsgAnimated(msg);
+                            if(ret == 1) {
+                                that.setState({isFavorite: true,});
+                            }else if(ret == 2) {
+                                that.setState({isFavorite: false,});
+                            }
+                        }
+                        if(type == 2 && ret == 1) {
+                            msg && that.resultMsgAnimated(msg);
+                            that.setState({shopFavorite: true,});
+                        }
                     }
-                    if(ret == 1) {
-                        that.setState({isFavorite: true,});
-                    }else if(ret == 2) {
-                        that.setState({isFavorite: false,});
-                    }
-                }
-            });
+                });
+            }
         }else {
             this.error = 11;
             this.message = Lang[Lang.default].notLoggedIn;
@@ -498,12 +511,14 @@ export default class ProductScreen extends Component {
     //商品主要信息
     productInfo = () => {
         if(!this.state.goodIofo) return null;
+        let { navigation } = this.props;
         let good = this.state.goodIofo || {};
         let gid = good.gID;
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;
+        let shopId = good.sId || null;
         let shopName = good.sName || null;
         let shopHead = good.sLogo || null;
         shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
@@ -707,8 +722,16 @@ export default class ProductScreen extends Component {
                         </View>
                     </View>
                     <View style={styles.shopBtnBox}>
-                        <Text style={[styles.shopBtn, {marginRight: 55}]}>{Lang[Lang.default].shopStroll}</Text>
-                        <Text style={styles.shopBtn}>{Lang[Lang.default].shopCollection}</Text>
+                        <Text style={[styles.shopBtn, {marginRight: 55}]} onPress={()=>{
+                            if(navigation && shopId) {
+                                navigation.navigate('Shop', {shopID: shopId});
+                            }
+                        }}>{Lang[Lang.default].shopStroll}</Text>
+                        <Text style={styles.shopBtn} onPress={()=>{
+                            if(navigation && shopId) {
+                                this.toggleCollection(2, shopId)
+                            }
+                        }}>{Lang[Lang.default].shopCollection}</Text>
                     </View>
                 </View>
             </View>

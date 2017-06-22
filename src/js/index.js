@@ -40,6 +40,7 @@ import HelpPrivacy from './personal/Help/privacy';
 import HelpTransaction from './personal/Help/transaction';
 import ProductList from './class/ProductList';
 import Shop from './shop';
+import ShopSearch from './shop/ShopSearch';
 
 //显示格式
 class MyNavScren extends Component {
@@ -229,6 +230,11 @@ const ShopScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Shop} />
 );
 
+//店铺页 - 搜索
+const ShopSearchScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={ShopSearch} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
@@ -298,6 +304,9 @@ const AppNavigator = StackNavigator({
     },
     Shop: {
         screen: ShopScreen,
+    },
+    ShopSearch: {
+        screen: ShopSearchScreen,
     },
 }, {
     initialRouteName: 'TabNav',

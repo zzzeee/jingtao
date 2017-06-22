@@ -220,6 +220,8 @@ const language = {
         privacyProtection: '个人隐私保护',
         shopSearch: '店内搜索',
         notCollection: '未收藏',
+        collectioned: '已收藏',
+        shopCollectioned: '该店铺已收藏',
     },
 };
 

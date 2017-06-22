@@ -46,7 +46,7 @@ export default class Shop extends Component {
         this.mToken = null;
         this.uCouponsIDs = [];
         this.page = 1;
-        this.pageNumber = 10;
+        this.pageNumber = 4;
         this.loadMoreLock = false;
         this.offsetY = 0;
     }
@@ -78,14 +78,22 @@ export default class Shop extends Component {
                 mToken: this.mToken,
                 sID: this.shopID,
             });
+            console.log(shop);
             let products = await Utils.async_fetch(Urls.getProductList, 'get', {
                 sID: this.shopID,
+                pPage: this.page,
+                pPerNum: this.pageNumber,
             });
+            console.log(products);
             if(products && products.sTatus == 1 && products.proAry) {
                 obj.productList = products.proAry || [];
                 if(obj.productList.length < this.pageNumber) {
                     this.loadMoreLock = true;
+                }else {
+                    this.page++;
                 }
+            }else {
+                this.loadMoreLock = true;
             }
             if(shop && shop.shopAry && shop.sTatus == 1) {
                 obj.shopInfo = shop.shopAry
@@ -97,8 +105,39 @@ export default class Shop extends Component {
         }
     };
 
+    //加载更多
     loadMore = () => {
+        if(!this.loadMoreLock && this.shopID) {
+            this.loadMoreLock = true;
+            Utils.fetch(Urls.getProductList, 'get', {
+                sID: this.shopID,
+                pPage: this.page,
+                pPerNum: this.pageNumber,
+            }, (result)=>{
+                console.log(result);
+                if(result && result.sTatus == 1 && result.proAry) {
+                    let list = result.proAry || [];
+                    let oldList = this.state.productList || [];
+                    if(list.length < this.pageNumber) {
+                        this.loadMoreLock = true;
+                    }else {
+                        this.page++;
+                        this.loadMoreLock = false;
+                    }
+                    let productList = oldList.concat(list);
+                    this.setState({ productList });
+                }else {
+                    this.loadMoreLock = true;
+                }
+            })
+        }
+    };
 
+    linkShopSearch = () => {
+        let { navigation } = this.props;
+        if(this.shopID && navigation) {
+            navigation.navigate('ShopSearch', {shopID: this.shopID, });
+        }
     };
 
     render() {
@@ -116,12 +155,13 @@ export default class Shop extends Component {
                     onScroll={this._onScroll}
                     ListHeaderComponent={this.listHeadPage}
                     ListFooterComponent={()=>{
-                        console.log(this.offsetY);
-                        return <EndView />;
+                        if(this.state.productList && this.state.productList.length > 1) {
+                            return <EndView />;
+                        }else {
+                            return null;
+                        }
                     }}
-                    onEndReached={()=>{
-                        !this.loadMoreLock && this.loadMore();
-                    }}
+                    onEndReached={this.loadMore}
                 />
                 <Animated.View style={[styles.inputRow2, {
                     opacity: this.state.opacityVal.interpolate({
@@ -141,6 +181,7 @@ export default class Shop extends Component {
                             onChange={this.setSearchtext}
                             length={20}
                             style={styles.inputStyle2}
+                            onFocus={this.linkShopSearch}
                         />
                         <Image style={styles.inputBeforeImg} source={require('../../images/search_gary.png')} />
                     </View>
@@ -197,10 +238,11 @@ export default class Shop extends Component {
         let sid = shopInfo.sId || 0;
         let sLogo = shopInfo.sLogo || null;
         let logo = sLogo ? {uri: sLogo} : require('../../images/empty.png');
+        let areaImg = shopInfo.regionImg ? {uri: shopInfo.regionImg} : require('../../images/empty.png');
         let sName = shopInfo.sShopName || null;
         let sArea = shopInfo.sAttribution || null;
         return (
-            <Image style={styles.areaImgBg} source={{uri: 'http://oh0xc3p8t.bkt.clouddn.com/region/id_53/2017/01/11/5875be8cea38a.png'}}>
+            <Image style={styles.areaImgBg} source={areaImg}>
                 <View style={styles.areaImgBgOver}>
                     <View style={styles.inputRow}>
                         <TouchableOpacity onPress={()=>{
@@ -215,6 +257,7 @@ export default class Shop extends Component {
                                 onChange={this.setSearchtext}
                                 length={20}
                                 style={styles.inputStyle}
+                                onFocus={this.linkShopSearch}
                             />
                             <Image style={styles.inputBeforeImg} source={require('../../images/home/search_white.png')} />
                         </View>
@@ -238,7 +281,7 @@ export default class Shop extends Component {
                                 <Text style={{
                                     fontSize: 11,
                                     color: isCollection ? '#fff' : Color.gainsboro2,
-                                }}>{isCollection ? Lang[Lang.default].collection : Lang[Lang.default].notCollection}</Text>
+                                }}>{isCollection ? Lang[Lang.default].collectioned : Lang[Lang.default].notCollection}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
