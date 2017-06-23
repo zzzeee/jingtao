@@ -31,13 +31,14 @@ export default class ListNothing extends Component {
     };
 
     render() {
-        let { navigation, getListEment, } = this.props;
+        let { navigation, getListEment, get_list_ref, } = this.props;
         return (
             <ListFrame
                 listStyle={{backgroundColor: '#fff',}}
                 listHead={this.listHeadView()}
                 navigation={navigation}
                 getListEment={getListEment}
+                get_list_ref={get_list_ref}
             />
         );
     }

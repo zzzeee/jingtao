@@ -18,16 +18,30 @@ import Lang, {str_replace} from '../../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../../public/globalStyle';
 import AppHead from '../../public/AppHead';
 import BtnIcon from '../../public/BtnIcon';
+import OrderPage from './OrderPage';
 
 export default class MyOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            mIntegral: null,
-            mUserIntegral: null,
-            datas: null,
+            selIndex: 0,
         };
+        
+        this.tabs = [{
+            title: Lang[Lang.default].comprehensive,
+            value: null,
+        }, {
+            title: Lang[Lang.default].daifukuan,
+            value: -1,
+        }, {
+            title: Lang[Lang.default].daifahuo,
+            value: 1,
+        }, {
+            title: Lang[Lang.default].daishouhuo,
+            value: 3,
+        }];
         this.mToken = null;
+        this.listRefs = new Array(this.tabs.length);
     }
 
     componentWillMount() {
@@ -42,8 +56,11 @@ export default class MyOrder extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, } = params;
+            let { mToken, index } = params;
             this.mToken = mToken || null;
+            this.setState({
+                selIndex: index ? index : 0,
+            });
         }
     };
 
@@ -56,6 +73,11 @@ export default class MyOrder extends Component {
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                             navigation.goBack(null);
                     }} src={require("../../../images/back.png")} />)}
+                    onPress={()=>{
+                        if(this.listRefs[this.state.selIndex]) {
+                            this.listRefs[this.state.selIndex].scrollToOffset({offset: 0, animated: true});
+                        }
+                    }}
                 />
                 <View style={styles.flex}>
                     <ScrollableTabView
@@ -66,7 +88,7 @@ export default class MyOrder extends Component {
                         // 默认打开第几个（0为第一个）
                         initialPage={this.state.selIndex}
                         //"top", "bottom", "overlayTop", "overlayBottom"
-                        tabBarPosition='overlayTop'
+                        tabBarPosition='top'
                         // 选中的下划线颜色
                         tabBarUnderlineStyle={styles.tabUnderLine}
                         // 选中的文字颜色
@@ -74,22 +96,53 @@ export default class MyOrder extends Component {
                         // 未选中的文字颜色
                         tabBarInactiveTextColor={Color.lightBack}
                         tabBarTextStyle={styles.tabTextStyle}
+                        onChangeTab={(obj)=>{
+                            this.setState({
+                                selIndex: obj.i,
+                            });
+                        }}
                     >
-                        <View style={styles.flex} tabLabel={Lang[Lang.default].comprehensive}>
-                        </View>
-                        <View style={styles.flex} tabLabel={Lang[Lang.default].daifukuan}>
-                        </View>
-                        <View style={styles.flex}  tabLabel={Lang[Lang.default].daifahuo}>
-                        </View>
-                        <View style={styles.flex}  tabLabel={Lang[Lang.default].daishouhuo}>
-                        </View>
-                        <View style={styles.flex}  tabLabel={Lang[Lang.default].daipingjia}>
-                        </View>
+                        {this.tabs.map((item, index)=>{
+                            return (
+                                <View key={index} style={styles.flex} tabLabel={item.title}>
+                                    {this.getComponent(index, item.value)}
+                                </View>
+                            );
+                        })}
                     </ScrollableTabView>
                 </View>
             </View>
         );
     }
+
+    getComponent = (id, val = null) => {
+        if(this.state.selIndex == id) {
+            let str = '';
+            switch(id) {
+                case 0:
+                    str = Lang[Lang.default].yourNotShopping;
+                    break;
+                case 1:
+                    str = Lang[Lang.default].yourNotDFKgood;
+                    break;
+                case 2:
+                    str = Lang[Lang.default].yourNotDFHgood;
+                    break;
+                case 3:
+                    str = Lang[Lang.default].yourNotDSHgood;
+                    break;
+            }
+            return <OrderPage 
+                mToken={this.mToken}
+                navigation={this.props.navigation} 
+                orderType={val}
+                notingString={str}
+                get_list_ref={(ement)=>this.listRefs[this.state.selIndex]=ement}
+            />;
+        }else {
+            return null;
+        }
+    };
 }
 
 const styles = StyleSheet.create({

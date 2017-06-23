@@ -84,6 +84,8 @@ var urls = {
     updateOrder: host + '/api/OrderNController/memberGenerateOrder',
     //获取店铺信息
     getShopInfo: host + '/api/ShopNController/getShopDetailInfoByShopID',
+    //获取订单列表
+    getOrderList: host + '/api/OrderNController/getMemberOrderList',
 };
 
 export default urls;

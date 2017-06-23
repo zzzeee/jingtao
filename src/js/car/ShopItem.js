@@ -125,6 +125,7 @@ export default class ShopItem extends Component {
                             text={name} 
                             style={{marginLeft: 20, padding: 0}} 
                             txtStyle={{marginLeft: 6}}
+                            press={()=>navigation.navigate('Shop', {shopID: sid})}
                         />
                     </View>
                     <TouchableOpacity onPress={()=>{

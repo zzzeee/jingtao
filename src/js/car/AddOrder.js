@@ -23,6 +23,7 @@ import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import PayOrder from './PayOrder';
 import Coupons from '../product/Coupons';
+import OrderGood from './OrderGood';
 
 export default class AddOrder extends Component {
     constructor(props) {
@@ -215,10 +216,10 @@ export default class AddOrder extends Component {
                         </View>
                     </View>
                     <View style={styles.priceListBox}>
-                        {this.priceRow(Lang[Lang.default].productTotalPrice, Lang[Lang.default].RMB + this.productTotal, false)}
-                        {this.priceRow(Lang[Lang.default].freightTotal, Lang[Lang.default].RMB + this.freightTotal, false)}
-                        {this.priceRow(Lang[Lang.default].couponReduction, '-' + Lang[Lang.default].RMB + this.couponDiscount, true)}
-                        {this.priceRow(Lang[Lang.default].integralSwap, '-' + Lang[Lang.default].RMB + this.useIntegral, true)}
+                        {this.priceRow(Lang[Lang.default].productTotalPrice, this.productTotal,false, false)}
+                        {this.priceRow(Lang[Lang.default].freightTotal, this.freightTotal, false, false)}
+                        {this.priceRow(Lang[Lang.default].couponReduction, this.couponDiscount, true, true)}
+                        {this.priceRow(Lang[Lang.default].integralSwap, this.useIntegral, true, true)}
                     </View>
                 </ScrollView>
                 </View>
@@ -316,16 +317,21 @@ export default class AddOrder extends Component {
     };
 
     //价格明细
-    priceRow = (title, price, isRed) => {
-        return (
-            <View style={styles.priceRowBox}>
-                <Text style={styles.defaultFont2}>{title}</Text>
-                {isRed ?
-                    <Text style={[styles.defaultFont2, styles.redColor]}>{price}</Text>
-                    : <Text style={styles.defaultFont2}>{price}</Text>
-                }
-            </View>
-        );
+    priceRow = (title, price, isDiscount, isRed) => {
+        if(price > 0) {
+            let money = isDiscount ? '- ' + Lang[Lang.default].RMB + price : Lang[Lang.default].RMB + price;
+            return (
+                <View style={styles.priceRowBox}>
+                    <Text style={styles.defaultFont2}>{title}</Text>
+                    {isRed ?
+                        <Text style={[styles.defaultFont2, styles.redColor]}>{money}</Text>
+                        : <Text style={styles.defaultFont2}>{money}</Text>
+                    }
+                </View>
+            );
+        }else {
+            return null;
+        }
     };
 
     //订单内的商家
@@ -333,10 +339,10 @@ export default class AddOrder extends Component {
         let shopname = item.sShopName || '';
         let productList = item.cPro || [];
         let expressType = item.expressType || '';
-        let expressMoney = item.expressMoney || 0;
-        let totalNum = 0;
-        let totalMoney = parseFloat(expressMoney) || 0;
-
+        let expressMoney = parseFloat(item.expressMoney) || 0;
+        let productMoney = parseFloat(item.soPrice) || 0;
+        let totalNum = item.soNum || 0;
+        let totalMoney = expressMoney + productMoney;
         return (
             <View key={index} style={styles.storeSessionStyle}>
                 <View style={styles.storeNameBox}>
@@ -344,38 +350,7 @@ export default class AddOrder extends Component {
                     <Text style={styles.goodNameStyle}>{shopname}</Text>
                 </View>
                 <View>
-                    {productList.map(function(good, i) {
-                        let goodImgUrl = good.gPicture || null;
-                        let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.png');
-                        let goodName = good.gName || null;
-                        let goodAttr = good.mcAttr || null;
-                        let goodPrice = parseFloat(good.gPrice) || 0;
-                        let martPrice = parseFloat(good.gShopPrice) || 0;
-                        let goodNumber = good.gNum || 0;
-                        let goodType = good.type || 0;
-                        totalNum++;
-                        totalMoney += (goodPrice * goodNumber);
-                        return (
-                            <View key={i} style={styles.goodItemBox}>
-                                <Image source={goodImg} style={styles.goodImageStyle} />
-                                <View style={styles.goodRightBox}>
-                                    <Text style={styles.goodNameStyle}>{goodName}</Text>
-                                    <Text style={styles.goodAttrStyle}>{Lang[Lang.default].specification + ': ' + goodAttr}</Text>
-                                    <View style={[styles.rowViewStyle, {justifyContent: 'space-between'}]}>
-                                        <View style={styles.rowViewStyle}>
-                                            <Text style={styles.goodPriceStyle}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                                            <Text style={[styles.goodAttrStyle, {paddingRight: 10}]}>{martPrice}</Text>
-                                            {goodType == 1 ?
-                                                <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
-                                                : null
-                                            }
-                                        </View>
-                                        <Text style={styles.goodNameStyle}>{'× ' + goodNumber}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        );
-                    })}
+                    {productList.map((good, i)=>(<OrderGood good={good} key={i} />))}
                 </View>
                 <View style={styles.expressBox}>
                     <View style={styles.rowViewStyle}>
@@ -557,26 +532,6 @@ const styles = StyleSheet.create({
         height: 20,
         marginRight: 5,
     },
-    goodItemBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: PX.marginLR,
-        marginBottom: 3,
-        backgroundColor: Color.floralWhite,
-    },
-    goodImageStyle: {
-        width: 90,
-        height: 90,
-    },
-    goodRightBox: {
-        flex: 1,
-        height: 90,
-        marginLeft: 10,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        paddingTop: 3,
-        paddingBottom: 3,
-    },
     goodNameStyle: {
         fontSize: 14,
         color: Color.lightBack,
@@ -584,21 +539,6 @@ const styles = StyleSheet.create({
     goodAttrStyle: {
         fontSize: 12,
         color: Color.gainsboro,
-    },
-    goodPriceStyle: {
-        fontSize: 16,
-        color: Color.red,
-        paddingRight: 10,
-    },
-    timeLimit: {
-        paddingLeft: 7,
-        paddingRight: 7,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderRadius: 2,
-        color: '#fff',
-        fontSize: 12,
-        backgroundColor: Color.red,
     },
     expressBox: {
         height: 50,

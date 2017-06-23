@@ -130,6 +130,7 @@ export default class PersonalScreen extends Component {
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daifukuan} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
+                                press={()=>this.linkPage(true, 'MyOrder', {index: 1})}
                             >
                                 {noPay > 0 ?
                                     <TouchableOpacity style={styles.numberStyle}>
@@ -144,6 +145,7 @@ export default class PersonalScreen extends Component {
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daifahuo} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
+                                press={()=>this.linkPage(true, 'MyOrder', {index: 2})}
                             >
                                 {noSend > 0 ?
                                     <TouchableOpacity style={styles.numberStyle}>
@@ -158,6 +160,7 @@ export default class PersonalScreen extends Component {
                                 style={styles.btnCtrlOrder} 
                                 text={Lang[Lang.default].daishouhuo} 
                                 txtStyle={[styles.normalText, {paddingTop: 5}]}
+                                press={()=>this.linkPage(true, 'MyOrder', {index: 3})}
                             >
                                 {noReceipt > 0 ?
                                     <TouchableOpacity style={styles.numberStyle}>
@@ -223,12 +226,13 @@ export default class PersonalScreen extends Component {
     };
 
     // 跳转页面
-    linkPage = (needLogin, nav) => {
+    linkPage = (needLogin, nav, navParam = null) => {
         let navigation = this.props.navigation;
+        let param = Object.assign({'mToken': this.mToken}, navParam);
         if(!this.state.islogin && needLogin) {
             navigation.navigate('Login');
         }else if(nav) {
-            navigation.navigate(nav, {'mToken': this.mToken});
+            navigation.navigate(nav, param);
         }
     };
 

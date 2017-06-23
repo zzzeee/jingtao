@@ -18,7 +18,7 @@ import CtrlNumber from '../other/CtrlNumber';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
-import { Size, PX, Color } from '../public/globalStyle';
+import { Size, PX, Color, pixel } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
 export default class GoodItem extends Component {
@@ -209,7 +209,7 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         padding: PX.marginLR,
         paddingLeft: 0,
-        borderTopWidth: 1,
+        borderTopWidth: pixel,
         borderTopColor: Color.lavender,
     },
     selectIconView: {

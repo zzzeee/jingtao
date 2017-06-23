@@ -17,15 +17,20 @@ import Lang, {str_replace} from './language';
 import { Size, pixel, PX, Color, errorStyles } from './globalStyle';
 
 //加载中
-const Loading = ({bgStyle, loadText, loadColor, loadStyle, load_textStyle}) => {
+const Loading = ({ loadType, bgStyle, loadText, loadColor, loadStyle, load_textStyle }) => {
+    let _loadType = loadType || 1;
     let txt = loadText || Lang[Lang.default].loading;
-    let color = loadColor || '#fff';
+    let color = loadColor || (_loadType == 1 ? '#fff' : Color.mainColor);
+    let loadEment = _loadType == 1 ?
+        <View style={[styles.modalBody, loadStyle]}>
+            <ActivityIndicator animating={true} color={color} size="small" />
+            <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
+        </View> :
+        <ActivityIndicator animating={true} color={color} size="small" />;
+
     return (
         <View style={[styles.bodyView, bgStyle]}>
-            <View style={[styles.modalBody, loadStyle]}>
-                <ActivityIndicator animating={true} color={color} size="small" />
-                <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
-            </View>
+            {loadEment}
         </View>
     );
 };
@@ -110,15 +115,16 @@ var Util = {
                 // load_error && load_error(null);
                 callback(responseText);
             })
-            .catch((error) => {
+            .catch((error1) => {
+                console.log(error1)
                 if(load_error) {
                     load_error(ErrorView(load_error_config, fetchFunc));
                 }else if(load_error_config.catchFunc) {
-                    load_error_config.catchFunc(error);
+                    load_error_config.catchFunc(error1);
                 }
             });
-        } catch(error) {
-            console.error(error);
+        } catch(error2) {
+            console.error(error2);
             load_error_config.errText2 = Lang[Lang.default].programError;
             load_error && load_error(ErrorView(load_error_config, fetchFunc));
         }

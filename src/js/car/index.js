@@ -36,6 +36,7 @@ export default class CarsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            requestOk: false,
             carDatas: null,     //购物车商品
             invalidList: [],    //购物车失效商品
             goodList: null,     //猜你喜欢的商品列表
@@ -95,10 +96,13 @@ export default class CarsScreen extends Component {
                         carDatas: orders_ok,
                         invalidList: invalidList,
                         isRefreshing: false,
+                        requestOk: true,
                     });
-
                     if(!that.state.goodList) {
-                        Utils.fetch(Urls.getRecommendList, 'get', this.userinfo, (ret) => {
+                        Utils.fetch(Urls.getRecommendList, 'get', {
+                            pPage: this.page, 
+                            pPerNum: this.pageNumber,
+                        }, (ret) => {
                             // console.log(ret);
                             if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
                                 that.page++;
@@ -111,7 +115,10 @@ export default class CarsScreen extends Component {
                         });
                     }
                 }else {
-                    that.setState({isRefreshing: false, });
+                    that.setState({
+                        isRefreshing: false,
+                        requestOk: true,
+                    });
                 }
             }, null, {
                 catchFunc: (err) => {
@@ -223,7 +230,7 @@ export default class CarsScreen extends Component {
                     right={right}
                     onPress={()=>{
                         if(this.ref_nothing && this.ref_nothing.ref_flatList) {
-                            this.ref_nothing.ref_flatList.scrollToOffset({offset: 0, animated: true})
+                            this.ref_nothing.ref_flatList.scrollToOffset({offset: 0, animated: true});
                         }
                     }}
                 />
@@ -248,7 +255,9 @@ export default class CarsScreen extends Component {
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
-        if(this.state.carDatas) {
+        if(!this.state.requestOk) {
+            return null;
+        }else if(this.state.carDatas) {
             return (
                 <View style={styles.flex}>
                     <View style={styles.flex}>

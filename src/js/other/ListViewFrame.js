@@ -36,9 +36,7 @@ export default class ListViewFrame extends Component {
         this.getProductList();
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        let { getListEment, } = this.props;
-        getListEment && getListEment(this);
+    componentWillUnmount() {
     }
 
     // 加载商品列表
@@ -50,7 +48,6 @@ export default class ListViewFrame extends Component {
                 pPage: this.page, 
                 pPerNum: this.pageNumber,
             }, (result) => {
-                console.log(result);
                 if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let oldList = that.state.goodList || [];
                     let goodList = oldList.concat(result.proAry);
@@ -65,10 +62,17 @@ export default class ListViewFrame extends Component {
     };
 
     render() {
-        let { listStyle, } = this.props;
+        if(!this.state.goodList) return null;
+        let { listStyle, getListEment, get_list_ref, } = this.props;
         return (
             <FlatList
-                ref={(_ref)=>this.ref_flatList=_ref}
+                ref={(_ref)=>{
+                    if(_ref) {
+                        this.ref_flatList=_ref;
+                        get_list_ref && get_list_ref(_ref);
+                        getListEment && getListEment(this);
+                    }
+                }}
                 data={this.state.goodList}
                 numColumns={2}
                 contentContainerStyle={[styles.flatlist, listStyle]}
