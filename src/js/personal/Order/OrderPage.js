@@ -20,6 +20,7 @@ import { Size, PX, pixel, Color } from '../../public/globalStyle';
 import Lang, {str_replace} from '../../public/language';
 import Nothing from '../../other/ListNothing';
 import OrderItem from './OrderItem';
+import { EndView } from '../../other/publicEment';
 
 export default class OrderComponent extends Component {
     // 默认参数
@@ -50,7 +51,7 @@ export default class OrderComponent extends Component {
     }
 
     //加载订单列表
-    loadOrderList = () => {
+    loadOrderList = (isHideLoad = false) => {
         let { mToken, orderType, } = this.props;
         if(mToken && !this.loadMoreLock) {
             this.loadMoreLock = true;
@@ -65,11 +66,13 @@ export default class OrderComponent extends Component {
                     load_or_error: false,
                 };
                 if(result && result.sTatus == 1 && result.orderAry) {
-                    let orders = result.orderAry || [];
-                    if(orders.length) {
+                    let newOrders = result.orderAry || [];
+                    let oldOrders = this.state.orders;
+                    if(newOrders.length) {
                         this.page++;
                         this.loadMoreLock = false;
-                        obj.orders = orders;
+                        obj.orders = oldOrders ? oldOrders.concat(newOrders) : newOrders;
+                        console.log(obj.orders);
                     }
                 }
                 this.setState(obj);
@@ -79,6 +82,7 @@ export default class OrderComponent extends Component {
                 });
             }, {
                 loadType: 2,
+                hideLoad: isHideLoad,
             });
         }
     };
@@ -99,7 +103,14 @@ export default class OrderComponent extends Component {
                                 contentContainerStyle={styles.flatListStyle}
                                 keyExtractor={(item, index)=>(index)}
                                 renderItem={this._renderItem}
-                                // onEndReached={this.loadOrderList}
+                                onEndReached={()=>this.loadOrderList(true)}
+                                ListFooterComponent={()=>{
+                                    if(orders.length > 1) {
+                                        return <EndView />;
+                                    }else {
+                                        return <View />;
+                                    }
+                                }}
                             /> :
                             <Nothing
                                 navigation={navigation}
@@ -132,6 +143,5 @@ var styles = StyleSheet.create({
     },
     flatListStyle: {
         backgroundColor: Color.lightGrey,
-        paddingBottom: 20,
     },
 });

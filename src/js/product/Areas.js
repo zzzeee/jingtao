@@ -114,6 +114,9 @@ export default class Areas extends Component {
                 }}
             >
                 <View style={styles.modalHtml}>
+                    <View style={styles.flex}>
+                        <TouchableOpacity style={styles.flex} activeOpacity={1} onPress={hideAreasBox} />
+                    </View>
                     <View style={styles.modalBody}>
                         <View style={styles.fristRow}>
                             <Text style={styles.txtStyle1}>{Lang[Lang.default].selectDistributionArea}</Text>
@@ -154,6 +157,9 @@ export default class Areas extends Component {
 }
 
 var styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',

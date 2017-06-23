@@ -152,19 +152,13 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Color.lightGrey,
     },
-    topBox: {
-        backgroundColor: '#fff',
-        marginTop: 10,
-        paddingBottom: 30,
-        marginBottom: 10,
-    },
     tabBarStyle: {
         height: PX.rowHeight2,
     },
     tabBarItemStyle: {
         paddingBottom: 0,
         borderBottomWidth: pixel,
-        borderBottomColor: 'red',
+        borderBottomColor: Color.lavender,
     },
     tabUnderLine: {
         height: 2,

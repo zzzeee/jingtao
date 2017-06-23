@@ -42,7 +42,7 @@ export default class OrderComponent extends Component {
         let { navigation, orderInfo } = this.props;
         if(!orderInfo || this.state.isDelete) return null;
         let sid = orderInfo.sId || 0;
-        let sName = orderInfo.sName || null;
+        let sName = orderInfo.sShopName || null;
         let totalNum = orderInfo.soNum || 0;
         let freight = parseFloat(orderInfo.oExpressMoney) || 0;
         let price = parseFloat(orderInfo.soPrice) || 0;
@@ -58,8 +58,9 @@ export default class OrderComponent extends Component {
                         text={sName}
                         src={require('../../../images/car/shophead.png')}
                         width={26}
+                        press={()=>navigation.navigate('Shop', {shopID: sid})}
                     />
-                    <Text>{this.getStatuStr(payid, statuid)}</Text>
+                    <Text style={styles.fontStyle3}>{this.getStatuStr(payid, statuid)}</Text>
                 </View>
                 <View>
                     {goods.map((item, index)=>{
@@ -77,7 +78,18 @@ export default class OrderComponent extends Component {
                     </Text>
                 </View>
                 <View style={styles.rowStyle2}>
-                    {this.getOrderBtns(payid, statuid)}
+                    {this.getOrderBtns(payid, statuid).map((item, index)=>{
+                        return (
+                            <TouchableOpacity key={index} style={[styles.btnStyle, {
+                                borderColor: item.red ? Color.mainColor : Color.lightBack,
+                            }]}>
+                                <Text style={{
+                                    fontSize: 11,
+                                    color: item.red ? Color.mainColor : Color.lightBack,
+                                }}>{item.val}</Text>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
             </View>
         );
@@ -105,6 +117,8 @@ export default class OrderComponent extends Component {
                 case 5:
                     //待收货
                     return Lang[Lang.default].daishouhuo;
+                case 4:
+                    return '交易成功';
                 case 6:
                     return '申请退换货';
                 case 7:
@@ -127,7 +141,55 @@ export default class OrderComponent extends Component {
      * @param status number 订单状态
      */
     getOrderBtns = (payid, status) => {
-        return null;
+        let statuid = parseInt(status) || 0;
+        let btns = [{
+            val: '联系客服',
+            red: false,
+        }];
+        if(payid == 1) {
+            switch(statuid) {
+                case 0:
+                case 1:
+                    //待发货
+                    btns.push({
+                        val: '申请退换',
+                        red: false,
+                    });
+                    break;
+                case 3:
+                case 5:
+                    //待收货
+                    btns.push({
+                        val: '申请退换',
+                        red: false,
+                    }, {
+                        val: '查看物流',
+                        red: false,
+                    }, {
+                        val: '确认收货',
+                        red: true,
+                    });
+                    break;
+                case 4:
+                    //交易完成
+                    btns.push({
+                        val: '申请售后',
+                        red: false,
+                    });
+                    break;
+            }
+        }else if(payid == 2) {
+            //已退款
+        }else {
+            btns.push({
+                val: '取消订单',
+                red: false,
+            }, {
+                val: '立即付款',
+                red: true,
+            });
+        }
+        return btns;
     };
 }
 
@@ -154,6 +216,8 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
+        borderBottomWidth: 1,
+        borderBottomColor: Color.lavender,
     },
     fontStyle1: {
         fontSize: 13,
@@ -162,5 +226,19 @@ var styles = StyleSheet.create({
     fontStyle2: {
         fontSize: 14,
         color: Color.red,
+    },
+    fontStyle3: {
+        fontSize: 12,
+        color: Color.mainColor,
+    },
+    btnStyle: {
+        paddingLeft: 15,
+        paddingRight: 15,
+        height: 27,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 3,
+        borderWidth: 1,
+        marginLeft: 20,
     },
 });

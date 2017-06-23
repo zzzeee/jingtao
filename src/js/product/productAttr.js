@@ -259,6 +259,9 @@ export default class ProductAttr extends Component {
                 }}
             >
                 <View style={styles.modalHtml}>
+                    <View style={styles.flex}>
+                        <TouchableOpacity style={styles.flex} activeOpacity={1} onPress={hideModal} />
+                    </View>
                     <View style={styles.modalBody}>
                         <View style={styles.priceStockRow}>
                             <View style={styles.priceStockBox}>
@@ -371,6 +374,9 @@ export default class ProductAttr extends Component {
 }
 
 var styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',
