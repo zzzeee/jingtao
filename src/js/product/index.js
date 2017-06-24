@@ -58,6 +58,7 @@ export default class ProductScreen extends Component {
             showCouponList: false,
             msgPositon: new Animated.Value(0),  //收藏显示位置
         };
+        this.goodid = 0;
         this.carNumber = 0;
         this.page = 1;
         this.pageNumber = 10;
@@ -89,13 +90,13 @@ export default class ProductScreen extends Component {
 
     //初始化数据
     initDatas = async () => {
-        let gid = this.props.navigation && 
+        this.goodid = this.props.navigation && 
             this.props.navigation.state &&
             this.props.navigation.state.params && 
             this.props.navigation.state.params.gid ?
             this.props.navigation.state.params.gid : 0;
-        if(gid > 0) {
-            let obj = Object.assign({gID: gid}, this.userinfo);
+        if(this.goodid > 0) {
+            let obj = Object.assign({gID: this.goodid}, this.userinfo);
             let info = await Utils.async_fetch(Urls.getProductInfo, 'post', obj);
             let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
                 pPage: this.page, 
@@ -179,6 +180,36 @@ export default class ProductScreen extends Component {
             showReturnMsg: true,
         });
     };
+
+    //点击立即购买
+    clickBuyNow = () => {
+        let { navigation } = this.props;
+        if(this.goodid > 0) {
+            if(this.userinfo && this.userinfo[_User.keyMember]) {
+                let order = this.state.lastSelected;
+                if(order.gID && order.gAttr && order.gNum) {
+                    navigation.navigate('AddOrder', {
+                        orderParam: {
+                            gID: order.gID,
+                            mcAttr: order.gAttr,
+                            mcAttrSub: order.gAttrSub,
+                            gNum: order.gNum,
+                        },
+                        mToken: this.userinfo[_User.keyMember],
+                    });
+                }else {
+                    this.showAttr(2);
+                }
+            }else {
+                navigation.navigate('Login', {
+                    back: 'Product',
+                    backObj: {
+                        gid: this.goodid,
+                    },
+                });
+            }
+        }
+    }
 
     //获取新增的购物车数量
     getCarNumber = () => {
@@ -409,6 +440,7 @@ export default class ProductScreen extends Component {
                             style={[styles.btnProductShopping, {
                                 backgroundColor: gdel ? Color.lightGrey : Color.orange,
                             }]}
+                            onPress={this.clickBuyNow}
                         >
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].buyNow}</Text>
                         </TouchableOpacity>
@@ -417,7 +449,7 @@ export default class ProductScreen extends Component {
                             style={[styles.btnProductShopping, {
                                 backgroundColor: gdel ? Color.gray : Color.mainColor,
                             }]}
-                            onPress={() => {this.showAttr(0)}}
+                            onPress={()=>{this.showAttr(0)}}
                         >
                             <Text style={styles.txtStyle8}>{Lang[Lang.default].joinCar}</Text>
                         </TouchableOpacity>
@@ -446,7 +478,7 @@ export default class ProductScreen extends Component {
             let pWarehouse = good.pWarehouse || [];
             let areas = good.areas || [];
             let mCoupon = good.mCoupon || [];
-            let userid = (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
+            let mToken = (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
             return (
                 <View>
                     <FlatList
@@ -483,6 +515,7 @@ export default class ProductScreen extends Component {
                         productPrice={good.gDiscountPrice}
                         priceAtrrs={priceAtrrs}
                         pWarehouse={good.pWarehouse}
+                        navigation={this.props.navigation}
                     />
                     <Areas
                         gid={gid}
@@ -493,7 +526,7 @@ export default class ProductScreen extends Component {
                     />
                     <Coupons
                         gid={gid}
-                        userid={userid}
+                        userid={mToken}
                         coupons={mCoupon}
                         isShow={this.state.showCouponList} 
                         hideCouponBox={this.hideCouponBox}

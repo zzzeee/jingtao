@@ -11,6 +11,7 @@ import {
     Text,
     Image,
     TouchableOpacity,
+    Linking,
 } from 'react-native';
 
 import Utils from '../../public/utils';
@@ -42,15 +43,16 @@ export default class OrderComponent extends Component {
         let { navigation, orderInfo } = this.props;
         if(!orderInfo || this.state.isDelete) return null;
         let sid = orderInfo.sId || 0;
+        let orderID = orderInfo.soID || null;
         let sName = orderInfo.sShopName || null;
         let totalNum = orderInfo.soNum || 0;
         let freight = parseFloat(orderInfo.oExpressMoney) || 0;
         let price = parseFloat(orderInfo.soPrice) || 0;
         let totalMoney = freight + price;
         let goods = orderInfo.oProduct || [];
-
         let payid = parseInt(orderInfo.oPay) || 0;
         let statuid = parseInt(orderInfo.oStatus) || 0;
+        let orderTitleBtns = this.getOrderBtns(payid, statuid);
         return (
             <View style={styles.boxStyle}>
                 <View style={styles.rowStyle1}>
@@ -60,7 +62,7 @@ export default class OrderComponent extends Component {
                         width={26}
                         press={()=>navigation.navigate('Shop', {shopID: sid})}
                     />
-                    <Text style={styles.fontStyle3}>{this.getStatuStr(payid, statuid)}</Text>
+                    <Text style={styles.fontStyle3}>{orderTitleBtns.text}</Text>
                 </View>
                 <View>
                     {goods.map((item, index)=>{
@@ -78,9 +80,13 @@ export default class OrderComponent extends Component {
                     </Text>
                 </View>
                 <View style={styles.rowStyle2}>
-                    {this.getOrderBtns(payid, statuid).map((item, index)=>{
+                    {orderTitleBtns.btns.map((item, index)=>{
                         return (
-                            <TouchableOpacity key={index} style={[styles.btnStyle, {
+                            <TouchableOpacity key={index} onPress={()=>{
+                                if(item.fun && orderID) {
+                                    item.fun(orderID);
+                                }
+                            }} style={[styles.btnStyle, {
                                 borderColor: item.red ? Color.mainColor : Color.lightBack,
                             }]}>
                                 <Text style={{
@@ -96,70 +102,45 @@ export default class OrderComponent extends Component {
     }
 
     /**
-     * 获取订单标识符
+     * 获取订单标识符和操作按钮等信息
      * @param payid  number 付款状态
      * 注：0 未付款, 1 已付款, 2 已退款
      * @param status number 订单状态
      * 0 确认中, 1 已确认, 2 取消订单, 3 已发货, 4 收货成功, 5 收货失败, 6 申请退换货, 7 申请失败, 8 申请完成
      */
-    getStatuStr = (payid, statuid) => {
-        let _statuid = parseInt(statuid) || 0;
-        if(payid == 1) {
-            switch(_statuid) {
-                case 0:
-                case 1:
-                    //待发货
-                    return Lang[Lang.default].daifahuo;
-                case 2:
-                    //订单关闭
-                    return Lang[Lang.default].shopClose;
-                case 3:
-                case 5:
-                    //待收货
-                    return Lang[Lang.default].daishouhuo;
-                case 4:
-                    return '交易成功';
-                case 6:
-                    return '申请退换货';
-                case 7:
-                    return '申请失败';
-                case 8:
-                    return '申请完成';
-                default:
-                    return '未知状态';
-            }
-        }else if(payid == 2) {
-            return '已退款';
-        }else {
-            return Lang[Lang.default].noFuKuan;
-        }
-    };
-
-    /**
-     * 获取操作订单的按钮
-     * @param payid  number 付款状态
-     * @param status number 订单状态
-     */
-    getOrderBtns = (payid, status) => {
-        let statuid = parseInt(status) || 0;
-        let btns = [{
-            val: '联系客服',
-            red: false,
-        }];
-        if(payid == 1) {
+    getOrderBtns = (payid, _statuid,) => {
+        let { showCancel } = this.props;
+        let statuid = parseInt(_statuid) || 0;
+        let obj = {
+            text: '',
+            btns: [{
+                val: '联系客服',
+                red: false,
+                fun: ()=>{
+                    Linking.openURL('tel: 4000237333')
+                    .catch(err => console.error('调用电话失败！', err));
+                }
+            }],
+        };
+        if(statuid == 2) {
+            obj.text = Lang[Lang.default].shopClose;
+        }else if(payid == 1) {
+            //已付款
+            obj.text = success;
             switch(statuid) {
                 case 0:
                 case 1:
                     //待发货
-                    btns.push({
+                    obj.btns.push({
                         val: '申请退换',
                         red: false,
                     });
+                    obj.text = Lang[Lang.default].daifahuo;
                     break;
                 case 3:
                 case 5:
                     //待收货
-                    btns.push({
+                    obj.btns.push({
                         val: '申请退换',
                         red: false,
                     }, {
@@ -169,27 +150,45 @@ export default class OrderComponent extends Component {
                         val: '确认收货',
                         red: true,
                     });
+                    obj.text = Lang[Lang.default].daishouhuo;
                     break;
                 case 4:
                     //交易完成
-                    btns.push({
+                    obj.btns.push({
                         val: '申请售后',
                         red: false,
                     });
+                    obj.text = Lang[Lang.default].transactionOk;
+                    break;
+                case 6:
+                    obj.text = '申请退换货';
+                    break;
+                case 7:
+                    obj.text = '申请失败';
+                    break;
+                case 8:
+                    obj.text = '申请完成';
+                    break;
+                default:
+                    obj.text = '未知状态';
                     break;
             }
         }else if(payid == 2) {
             //已退款
+            obj.text = Lang[Lang.default].isTuiKuan;
         }else {
-            btns.push({
+            //未付款
+            obj.text = Lang[Lang.default].noFuKuan;
+            obj.btns.push({
                 val: '取消订单',
                 red: false,
+                fun: showCancel,
             }, {
                 val: '立即付款',
                 red: true,
             });
         }
-        return btns;
+        return obj;
     };
 }
 
@@ -232,13 +231,13 @@ var styles = StyleSheet.create({
         color: Color.mainColor,
     },
     btnStyle: {
-        paddingLeft: 15,
-        paddingRight: 15,
+        paddingLeft: 10,
+        paddingRight: 10,
         height: 27,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 3,
         borderWidth: 1,
-        marginLeft: 20,
+        marginLeft: 15,
     },
 });

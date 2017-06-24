@@ -37,7 +37,7 @@ export default class ProductAttr extends Component {
         isShow: React.PropTypes.bool.isRequired,
         attrs: React.PropTypes.array,
         chlidAtrrs: React.PropTypes.array,
-        type: React.PropTypes.oneOf([0, 1]),
+        type: React.PropTypes.oneOf([0, 1, 2]),
         attrCallBack: React.PropTypes.func,
         priceAtrrs: React.PropTypes.array,
         pWarehouse: React.PropTypes.array,
@@ -116,7 +116,7 @@ export default class ProductAttr extends Component {
         // console.log('已选数量：' + this.number);
     };
 
-    //获取所有规格
+    //获取所选规格
     getAllChildAttr = () => {
         let datas = {
             index: [],
@@ -237,6 +237,37 @@ export default class ProductAttr extends Component {
         }
     };
 
+    //立即购买
+    buyNowFunc = () => {
+        let { gid, navigation, userid, hideModal, } = this.props;
+        if(userid && userid[_User.keyMember]) {
+            let order = this.getAllChildAttr();
+            let gAttr = order.index.join(',') || null;
+            let gAttrSub = order.names.join(',') || null;
+            let number = order.number || 0;
+            if(order && gid && gAttr && number) {
+                hideModal();
+                navigation.navigate('AddOrder', {
+                    orderParam: {
+                        gID: gid,
+                        mcAttr: gAttrSub,
+                        mcAttrSub: gAttr,
+                        gNum: number,
+                    },
+                    mToken: userid[_User.keyMember],
+                });
+            }
+        }else {
+            hideModal();
+            navigation.navigate('Login', {
+                back: 'Product',
+                backObj: {
+                    gid: gid,
+                },
+            });
+        }
+    };
+
     render() {
         let { gid, isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
         if(!gid || !isShow) return null;
@@ -296,9 +327,7 @@ export default class ProductAttr extends Component {
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
-                                    if(!this.btnLock) {
-                                        this.joinCarFunc();
-                                    }
+                                    !this.btnLock && this.joinCarFunc();
                                 }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].joinCar}</Text>
@@ -306,6 +335,9 @@ export default class ProductAttr extends Component {
                             <TouchableOpacity 
                                 activeOpacity ={1} 
                                 style={[styles.btnProductShopping, {backgroundColor: Color.orange}]}
+                                onPress={()=>{
+                                    !this.btnLock && this.buyNowFunc();
+                                }}
                             >
                                 <Text style={styles.btnShopText}>{Lang[Lang.default].buyNow}</Text>
                             </TouchableOpacity>
@@ -316,7 +348,11 @@ export default class ProductAttr extends Component {
                                 style={[styles.btnProductShopping, {backgroundColor: Color.mainColor}]}
                                 onPress={()=>{
                                     if(!this.btnLock) {
-                                        this.joinCarFunc();
+                                        if(type == 2) {
+                                            this.buyNowFunc();
+                                        }else {
+                                            this.joinCarFunc();
+                                        }
                                     }
                                 }}
                             >

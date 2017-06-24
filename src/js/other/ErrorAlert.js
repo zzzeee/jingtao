@@ -48,21 +48,22 @@ export default class ErrorAlert extends Component {
     }
 
     render() {
-        if(this.props.visiable) {
-            this.timer = setTimeout(this.props.hideModal, 2500);
+        let {visiable, hideModal, message, type} = this.props;
+        if(visiable && hideModal) {
+            this.timer = setTimeout(hideModal, 2500);
         }
         let img = {};
-        let type = this.props.type || 1;
-        if(type == 1) {
+        let _type = type || 1;
+        if(_type == 1) {
             img = require('../../images/careful_big.png');
-        }else if(type == 2) {
+        }else if(_type == 2) {
             img = require('../../images/success.png');
         }
         return (
             <Modal
                 animationType={"none"}
                 transparent={true}
-                visible={this.props.visiable}
+                visible={visiable}
                 onRequestClose={() => {
                     this.timer && clearTimeout(this.timer);
                 }}
@@ -70,14 +71,14 @@ export default class ErrorAlert extends Component {
                 <TouchableOpacity 
                     style={modalStyle.modalBody} 
                     activeOpacity={1} 
-                    onPress={this.props.hideModal} 
-                    onLongPress={this.props.hideModal} 
+                    onPress={hideModal} 
+                    onLongPress={hideModal} 
                 >
                     <View style={modalStyle.alertBody}>
                         <View style={modalStyle.alertIconView}>
                             <Image source={img} style={modalStyle.alertIcon} />
                         </View>
-                        <Text style={modalStyle.alertMssage}>{this.props.message}</Text>
+                        <Text style={modalStyle.alertMssage}>{message}</Text>
                     </View>
                 </TouchableOpacity>
             </Modal>

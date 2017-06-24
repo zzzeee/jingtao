@@ -35,6 +35,7 @@ export default class AddressList extends Component {
         this.mToken = null;
         this.previou = null;
         this.carIDs = null;
+        this.orderParam = null;
         this.alertObject = {};
     }
 
@@ -51,10 +52,11 @@ export default class AddressList extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, previou, carIDs } = params;
+            let { mToken, previou, carIDs, orderParam } = params;
             this.mToken = mToken || null;
             this.previou = previou || null;
             this.carIDs = carIDs || null;
+            this.orderParam = orderParam || null;
         }
     };
 

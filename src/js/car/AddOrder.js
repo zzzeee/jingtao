@@ -49,6 +49,7 @@ export default class AddOrder extends Component {
         this.actualTotal = 0;
         this.messages = [];
         this.selCoupon = null;
+        this.orderParam = null;
     }
 
     componentWillMount() {
@@ -56,7 +57,11 @@ export default class AddOrder extends Component {
     }
 
     componentDidMount() {
-        this.getTmpOrderInfo();
+        if(this.orderParam) {
+            this.getTmpOrderInfo2();
+        }else {
+            this.getTmpOrderInfo();
+        }
     }
 
     //初始化数据
@@ -64,46 +69,62 @@ export default class AddOrder extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, carIDs, addressID } = params;
+            let { mToken, carIDs, addressID, orderParam } = params;
             this.mToken = mToken || null;
             this.carIDs = carIDs || null;
             this.addressID = addressID || null;
+            this.orderParam = orderParam || null;
         }
     };
 
+    //从购物车跳转过来
     getTmpOrderInfo = () => {
         if(this.mToken && this.carIDs && this.carIDs.length) {
-            let that = this;
             Utils.fetch(Urls.confirmOrder, 'post', {
                 mToken: this.mToken,
                 cartID: this.carIDs.join(','),
                 addressID: this.addressID ? this.addressID : '',
-            }, (result) => {
-                console.log(result);
-                if(result && result.sTatus == 1 && result.oOrder) {
-                    let list = result.oOrder || [];
-                    let addressList = result.addressAry || [];
-                    let mIntegral = parseInt(result.mIntegral) || 0;
-                    let mCoupon = result.mCoupon || [];
-                    for(let i in list) {
-                        let gPrice = parseFloat(list[i].soPrice) || 0;
-                        let fPrice = parseFloat(list[i].expressMoney) || 0;
-                        that.productTotal += gPrice;
-                        that.freightTotal += fPrice;
-                    }
-                    this.actualTotal = that.productTotal + that.freightTotal;
-                    this.setState({
-                        tmpOrderInfo: list,
-                        integral: mIntegral = parseInt(mIntegral / 100),
-                        addressInfo: addressList,
-                        uCoupons: mCoupon,
-                    })
-                }
-            }, null , {
+            }, this.orderInfoCallBack, null , {
                 catchFunc: (err)=>{
                     console.log(err);
                 }
             });
+        }
+    };
+
+    //商品详情直接购买
+    getTmpOrderInfo2 = () => {
+        if(this.orderParam && this.mToken) {
+            let obj = Object.assign({mToken: this.mToken}, this.orderParam);
+            this.orderParam.mToken = this.mToken;
+            Utils.fetch(Urls.buyNowAPI, 'post', obj, this.orderInfoCallBack, null, {
+                catchFunc: (err)=>console.log(err),
+            });
+        }
+    };
+
+    //处理订单数据
+    orderInfoCallBack = (result) => {
+        console.log(result);
+        if(result && result.sTatus == 1 && result.oOrder) {
+            let that = this;
+            let list = result.oOrder || [];
+            let addressList = result.addressAry || [];
+            let mIntegral = parseInt(result.mIntegral) || 0;
+            let mCoupon = result.mCoupon || [];
+            for(let i in list) {
+                let gPrice = parseFloat(list[i].soPrice) || 0;
+                let fPrice = parseFloat(list[i].expressMoney) || 0;
+                that.productTotal += gPrice;
+                that.freightTotal += fPrice;
+            }
+            this.actualTotal = that.productTotal + that.freightTotal;
+            this.setState({
+                tmpOrderInfo: list,
+                integral: mIntegral = parseInt(mIntegral / 100),
+                addressInfo: addressList,
+                uCoupons: mCoupon,
+            })
         }
     };
 
@@ -161,6 +182,7 @@ export default class AddOrder extends Component {
                                     mToken: this.mToken,
                                     previou: 'AddOrder',
                                     carIDs: this.carIDs,
+                                    orderParam: this.orderParam,
                                 });
                             }} style={styles.addressBox}>
                                 <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
