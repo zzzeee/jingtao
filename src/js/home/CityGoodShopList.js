@@ -27,6 +27,7 @@ import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
 import CityTopImgs from './CityTopImgs';
+import { EndView } from '../other/publicEment';
 
 /**
  * 拉线总长         70
@@ -225,7 +226,7 @@ export default class CityGoodShopList extends Component {
                 // console.log(result);
                 if(result && result.sTatus && result.shopAry && result.shopAry.length) {
                     // console.log('查询结果可用');
-                    let ret = result.shopAry || [];
+                    let ret = that.getNoEmptyData(result.shopAry);
                     let num = result.shopNum || 0;
                     if(that.index == 1) {
                         that.page2++;
@@ -249,6 +250,18 @@ export default class CityGoodShopList extends Component {
                 hideLoad: true,
             });
         }
+    };
+
+    //过滤店铺下无商品的数据
+    getNoEmptyData = (data) => {
+        let list = [];
+        if(data) {
+            for(let i in data) {
+                let goods = data[i].recomdProduct || [];
+                if(goods.length) list.push(data[i]);
+            }
+        }
+        return list;
     };
 
     //切换列表
@@ -393,6 +406,14 @@ export default class CityGoodShopList extends Component {
                         }}
                         enableEmptySections={true}  //允许空数据
                         renderHeader={()=>this.pageTop(this.state.isFloat ? null : btnBox)}
+                        renderFooter={()=>{
+                            let list = this.state.dataSource || null;
+                            if(this.index == 1 && list && list._cachedRowCount > 1) {
+                                return <EndView style={{width: Size.width, }} />;
+                            }else {
+                                return <View />;
+                            }
+                        }}
                         onEndReached={()=>{
                             if(!this.loadMoreLock) {
                                 this.initDatas();

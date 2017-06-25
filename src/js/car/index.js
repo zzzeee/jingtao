@@ -63,7 +63,6 @@ export default class CarsScreen extends Component {
         this.ref_flatList = null;
         this.alertObject = {};
         this.userinfo = null;
-        this.ref_nothing = null;
     }
 
     componentDidMount() {
@@ -229,9 +228,7 @@ export default class CarsScreen extends Component {
                     left={left}
                     right={right}
                     onPress={()=>{
-                        if(this.ref_nothing && this.ref_nothing.ref_flatList) {
-                            this.ref_nothing.ref_flatList.scrollToOffset({offset: 0, animated: true});
-                        }
+                        this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
                     }}
                 />
                 {this.pageBody()}
@@ -320,7 +317,7 @@ export default class CarsScreen extends Component {
                     <Nothing 
                         navigation={this.props.navigation}
                         text={Lang[Lang.default].yourCarIsEmpty}
-                        getListEment={(ement)=>this.ref_nothing=ement}
+                        get_list_ref={(ref)=>this.ref_flatList=ref}
                     />
                 </View>
             );

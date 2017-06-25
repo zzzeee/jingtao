@@ -17,6 +17,7 @@ import Util from '../public/utils';
 import Urls from '../public/apiUrl';
 import HeadBox from './HeadBox';
 import CityItem from './CityItem';
+import { EndView } from '../other/publicEment';
 
 export default class CityList extends Component {
     // 默认参数
@@ -94,7 +95,17 @@ export default class CityList extends Component {
                 enableEmptySections={true}
                 dataSource={this.state.dataSource}
                 renderRow={this.renderItem.bind(this)}
-                renderHeader ={(props)=><HeadBox datas={this.state.datas} navigation={this.props.navigation} />}
+                renderHeader ={(props)=>(
+                    <HeadBox datas={this.state.datas} navigation={this.props.navigation} />
+                )}
+                renderFooter={()=>{
+                    let list = this.state.dataSource || null;
+                    if(list && list._cachedRowCount) {
+                        return <EndView />;
+                    }else {
+                        return <View />;
+                    }
+                }}
             />
         );
     }

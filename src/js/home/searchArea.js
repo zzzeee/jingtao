@@ -27,8 +27,8 @@ export default class AlertMoudle extends Component {
     static propTypes = {
         visiable: React.PropTypes.bool.isRequired,
         areas: React.PropTypes.array,
-        leftClick: React.PropTypes.func,
-        rightClick: React.PropTypes.func,
+        hideAreaBox: React.PropTypes.func,
+        setSelectArea: React.PropTypes.func,
     };
     // 构造函数
     constructor(props) {
@@ -42,8 +42,8 @@ export default class AlertMoudle extends Component {
         let { 
             visiable,
             areas,
-            leftClick,
-            rightClick,
+            hideAreaBox,
+            setSelectArea,
          } = this.props;
          if(!areas) return null;
         return (
@@ -62,11 +62,18 @@ export default class AlertMoudle extends Component {
                             </ScrollView>
                         </View>
                         <View style={styles.bottonsBox}>
-                            <TouchableOpacity style={styles.leftBottonStyle} onPress={leftClick} activeOpacity={1}>
-                                <Text style={styles.leftBottonText}>{Lang[Lang.default].cancel}</Text>
+                            <TouchableOpacity style={styles.leftBottonStyle} onPress={()=>{
+                                this.setState({
+                                    selects: new Set(),
+                                }, ()=>{
+                                    setSelectArea([]);
+                                });
+                            }} activeOpacity={1}>
+                                <Text style={styles.leftBottonText}>{Lang[Lang.default].clear}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.rightBottonStyle} onPress={()=>{
-                                rightClick(Array.from(this.state.selects));
+                                setSelectArea(Array.from(this.state.selects));
+                                hideAreaBox();
                             }} activeOpacity={1}>
                                 <Text style={styles.rightBottonText}>{Lang[Lang.default].determine}</Text>
                             </TouchableOpacity>

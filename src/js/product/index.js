@@ -57,6 +57,7 @@ export default class ProductScreen extends Component {
             showAreas: false,
             showCouponList: false,
             msgPositon: new Animated.Value(0),  //收藏显示位置
+            collectionMsg: null,                //收藏结果
         };
         this.goodid = 0;
         this.carNumber = 0;
@@ -70,7 +71,6 @@ export default class ProductScreen extends Component {
         this.city = null;
         this.freight = null;
         this.userinfo = null;
-        this.collectionMsg = null;      //收藏结果
     }
 
     componentDidMount() {
@@ -292,8 +292,7 @@ export default class ProductScreen extends Component {
     };
 
     //收藏等操作结果通知
-    resultMsgAnimated = (msg) => {
-        this.collectionMsg = msg;
+    resultMsgAnimated = () => {
         Animated.timing(this.state.msgPositon, {
             toValue: PX.rowHeight1,
             duration: 450,
@@ -324,24 +323,31 @@ export default class ProductScreen extends Component {
                     showReturnMsg: true,
                 });
             }else {
-                obj = Object.assign(obj, this.userinfo);
+                // obj = Object.assign(obj, this.userinfo);
+                obj.mToken = this.userinfo[_User.keyMember];
                 Utils.fetch(Urls.collection, 'post', obj, (result) => {
                     console.log(result);
                     if(result) {
                         let ret = result.sTatus || 0;
                         let msg = result.sMessage || null;
+                        let obj = {
+                            collectionMsg: msg,
+                        };
                         if(type == 1) {
-                            msg && that.resultMsgAnimated(msg);
                             if(ret == 1) {
-                                that.setState({isFavorite: true,});
+                                obj.isFavorite = true;
+                                obj.collectionMsg = Lang[Lang.default].productCollectionSuccess;
                             }else if(ret == 2) {
-                                that.setState({isFavorite: false,});
+                                obj.isFavorite = false;
+                                obj.collectionMsg = Lang[Lang.default].cancelProductCollection;
                             }
                         }
                         if(type == 2 && ret == 1) {
-                            msg && that.resultMsgAnimated(msg);
-                            that.setState({shopFavorite: true,});
+                            obj.shopFavorite = true;
+                            obj.collectionMsg = Lang[Lang.default].shopCollectionSuccess;
                         }
+                        that.resultMsgAnimated();
+                        that.setState(obj);
                     }
                 });
             }
@@ -358,12 +364,14 @@ export default class ProductScreen extends Component {
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
         let gdel = good.gDel && good.gDel != '0' ? true : false;
-        let left = <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />;
+        let left = <BtnIcon width={PX.headIconSize} press={()=>{
+            navigation.goBack(null);
+        }} src={require("../../images/back.png")} />;
         let right = (
             <View style={styles.rowStyle}>
                 <BtnIcon 
                     width={PX.headIconSize}
-                    press={this.toggleCollection}
+                    press={()=>this.toggleCollection(1, 0)}
                     src={this.state.isFavorite ? 
                         require("../../images/product/favorite_on.png") :
                         require("../../images/product/favorite.png")
@@ -393,7 +401,9 @@ export default class ProductScreen extends Component {
                     {this.state.fetchError === null ?
                         null : (this.state.fetchError ?
                             <View style={errorStyles.bodyView}>
-                                <Text style={errorStyles.refaceBtn} onPress={this.initDatas}>{Lang[Lang.default].reconnect}</Text>
+                                <Text style={errorStyles.refaceBtn} onPress={this.initDatas}>
+                                    {Lang[Lang.default].reconnect}
+                                </Text>
                                 <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
                             </View>
                             : this.pageBody()
@@ -401,7 +411,7 @@ export default class ProductScreen extends Component {
                     }
                 </View>
                 <Animated.View style={[styles.ctrlResultView, {bottom: this.state.msgPositon}]}>
-                    <Text style={styles.ctrlResultText}>{this.collectionMsg}</Text>
+                    <Text style={styles.ctrlResultText}>{this.state.collectionMsg}</Text>
                 </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>

@@ -67,6 +67,7 @@ const language = {
         shareText: '等老子有了钱，买光这个城市的土特产给你看。',
         shareErrorAlert: '没有安装微信软件，请您安装微信之后再试',
         cancel: '取消',
+        clear: '清空',
         circleOfFriends: '朋友圈',
         wxFriends: '微信好友',
         missParam: '缺少参数',
@@ -235,6 +236,9 @@ const language = {
         notCollection: '未收藏',
         collectioned: '已收藏',
         shopCollectioned: '该店铺已收藏',
+        productCollectionSuccess: '产品收藏成功!',
+        cancelProductCollection: '取消产品收藏!',
+        shopCollectionSuccess: '店铺收藏成功!',
     },
 };
 

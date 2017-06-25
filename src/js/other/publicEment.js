@@ -18,8 +18,8 @@ import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 
 //列表到底
-export const EndView = () => (
-    <View style={styles.endBox}>
+export const EndView = ({style,}) => (
+    <View style={[styles.endBox, style]}>
         <Text style={styles.grayText}>{Lang[Lang.default].inTheEnd + 'O(∩_∩)O'}</Text>
     </View>
 );

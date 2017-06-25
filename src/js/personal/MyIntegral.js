@@ -95,6 +95,9 @@ export default class MyIntegral extends Component {
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
                             navigation.goBack(null);
                     }} src={require("../../images/back.png")} />)}
+                    onPress={()=>{
+                        this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
+                    }}
                 />
                 <FlatList
                     ref={(_ref)=>this.ref_flatList=_ref} 

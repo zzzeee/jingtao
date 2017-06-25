@@ -57,10 +57,10 @@ export default class AddOrder extends Component {
     }
 
     componentDidMount() {
-        if(this.orderParam) {
-            this.getTmpOrderInfo2();
-        }else {
+        if(this.carIDs) {
             this.getTmpOrderInfo();
+        }else {
+            this.getTmpOrderInfo2();
         }
     }
 
@@ -95,7 +95,10 @@ export default class AddOrder extends Component {
     //商品详情直接购买
     getTmpOrderInfo2 = () => {
         if(this.orderParam && this.mToken) {
-            let obj = Object.assign({mToken: this.mToken}, this.orderParam);
+            let obj = Object.assign({
+                mToken: this.mToken,
+                addressID: this.addressID,
+            }, this.orderParam);
             this.orderParam.mToken = this.mToken;
             Utils.fetch(Urls.buyNowAPI, 'post', obj, this.orderInfoCallBack, null, {
                 catchFunc: (err)=>console.log(err),
@@ -441,13 +444,13 @@ export default class AddOrder extends Component {
     //点击提交订单按钮
     updateOrder = () => {
         let orders = this.createOrderInfo();
-        let obj = {
-            mToken: this.mToken,
-            oAry: orders,
-            cAry: this.carIDs.join(','),
-        };
-        console.log(obj);
         if(this.mToken && orders && this.carIDs) {
+            let obj = {
+                mToken: this.mToken,
+                oAry: orders,
+                cAry: this.carIDs.join(','),
+            };
+            console.log(obj);
             Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
                 console.log(result);
             }, null, {catchFunc: (err)=>{

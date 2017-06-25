@@ -144,7 +144,6 @@ export default class Search extends Component {
     //已选的地区数据
     selectCity = (datas) => {
         this.citys = datas;
-        this.hideAreaMoudle();
     };
 
     //点击搜索
@@ -220,7 +219,6 @@ export default class Search extends Component {
         }
     };
     
-
     //点击搜索历史、热门搜索
     clickSearchItemText = (str) => {
         this.sort = 1;
@@ -271,8 +269,8 @@ export default class Search extends Component {
                 <Areas
                     visiable={this.state.showArea}
                     areas={this.state.areas}
-                    leftClick={this.hideAreaMoudle}
-                    rightClick={this.selectCity}
+                    hideAreaBox={this.hideAreaMoudle}
+                    setSelectArea={this.selectCity}
                 />
                 {this.state.deleteAlert ?
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />

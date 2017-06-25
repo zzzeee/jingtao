@@ -16,7 +16,6 @@ import {
     Alert,
 } from 'react-native';
 
-import Toast from 'react-native-root-toast';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -88,6 +87,7 @@ export default class AddressList extends Component {
                 addressNum: this.state.addresss.length,
                 previou: this.previou,
                 carIDs: this.carIDs,
+                orderParam: this.orderParam,
             });
         }
     };
@@ -120,13 +120,6 @@ export default class AddressList extends Component {
                 saID: said,
             }, (result) => {
                 console.log(result);
-                if(result && result.sMessage) {
-                    Toast.show(result.sMessage, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    });
-                }
                 if(result && result.sTatus == 1) {
                     this.getAddressList();
                 }
@@ -144,13 +137,6 @@ export default class AddressList extends Component {
                 saSelected: 1,
             }, (result) => {
                 console.log(result);
-                if(result && result.sMessage) {
-                    Toast.show(result.sMessage, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    });
-                }
                 if(result && result.sTatus == 1) {
                     for(let i in addresss) {
                         if(i == index) {
@@ -203,6 +189,7 @@ export default class AddressList extends Component {
                                     navigation.navigate(that.previou, {
                                         mToken: that.mToken,
                                         carIDs: that.carIDs,
+                                        orderParam: that.orderParam,
                                         addressID: said,
                                     });
                                 }
@@ -237,6 +224,7 @@ export default class AddressList extends Component {
                                                     addressNum: that.state.addresss.length,
                                                     previou: that.previou,
                                                     carIDs: that.carIDs,
+                                                    orderParam: that.orderParam,
                                                 });
                                             }}
                                         />

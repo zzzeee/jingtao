@@ -49,6 +49,7 @@ export default class AddressAdd extends Component {
         this.alertMsg = null;
         this.previou = null;
         this.carIDs = null;
+        this.orderParam = null;
     }
 
     componentWillMount() {
@@ -64,10 +65,11 @@ export default class AddressAdd extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, addressInfo, addressNum, previou, carIDs, } = params;
+            let { mToken, addressInfo, addressNum, previou, carIDs, orderParam, } = params;
             this.mToken = mToken;
             this.previou = previou;
             this.carIDs = carIDs;
+            this.orderParam = orderParam;
             this.addressNum = addressNum || 0;
             if(addressInfo) {
                 this.addressID = addressInfo.saID || null;
@@ -223,6 +225,7 @@ export default class AddressAdd extends Component {
                             mToken: this.mToken,
                             previou: this.previou,
                             carIDs: this.carIDs,
+                            orderParam: this.orderParam,
                         });
                     }else if(result.sMessage) {
                         this.showAutoModal(result.sMessage);

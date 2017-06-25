@@ -322,6 +322,9 @@ export default class FindScreen extends Component {
                 <View>
                     <AppHead
                         title={Lang[Lang.default].tab_find}
+                        onPress={()=>{
+                            this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
+                        }}
                     />
                 </View>
                 <View style={styles.bodyStyle}>

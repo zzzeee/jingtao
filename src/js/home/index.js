@@ -108,8 +108,7 @@ export default class HomeScreen extends Component {
                 </Animated.View>
                 <ScrollView 
                     ref={(_ref)=>this.ref_scrollview=_ref} 
-                    onScroll={this._onScroll} 
-                    contentContainerStyle={styles.scrollViewBox}
+                    onScroll={this._onScroll}
                 >
                     <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
                         <WebView
@@ -278,9 +277,6 @@ var styles = StyleSheet.create({
     webViewSize: {
         width: Size.width,
         height: PX.mapHeight,
-    },
-    scrollViewBox: {
-        paddingBottom: 10,
     },
     headShadow: {
         shadowColor: "#000",
