@@ -68,11 +68,11 @@ export default class ErrorAlert extends Component {
                     this.timer && clearTimeout(this.timer);
                 }}
             >
-                <TouchableOpacity 
-                    style={modalStyle.modalBody} 
-                    activeOpacity={1} 
-                    onPress={hideModal} 
-                    onLongPress={hideModal} 
+                <TouchableOpacity
+                    style={modalStyle.modalBody}
+                    activeOpacity={1}
+                    onPress={hideModal}
+                    onLongPress={hideModal}
                 >
                     <View style={modalStyle.alertBody}>
                         <View style={modalStyle.alertIconView}>

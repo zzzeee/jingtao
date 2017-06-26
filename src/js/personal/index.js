@@ -68,6 +68,9 @@ export default class PersonalScreen extends Component {
                         orderNum: result.orderNum || null,
                         mCouponNum: result.mCouponNum || 0,
                     })
+                }else if(result && result.sTatus == 4) {
+                    this.mToken = null;
+                    _User.delUserID(_User.keyMember);
                 }
             });
         }

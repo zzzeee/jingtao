@@ -109,15 +109,15 @@ export default class OrderComponent extends Component {
      * 0 确认中, 1 已确认, 2 取消订单, 3 已发货, 4 收货成功, 5 收货失败, 6 申请退换货, 7 申请失败, 8 申请完成
      */
     getOrderBtns = (payid, _statuid,) => {
-        let { showCancel } = this.props;
+        let { showCancel, showAlert, changeOrderStatu, clickPay, } = this.props;
         let statuid = parseInt(_statuid) || 0;
         let obj = {
             text: '',
             btns: [{
-                val: '联系客服',
+                val: Lang[Lang.default].contactWaiter,
                 red: false,
                 fun: ()=>{
-                    Linking.openURL('tel: 4000237333')
+                    Linking.openURL('tel: ' + Lang.telephone)
                     .catch(err => console.error('调用电话失败！', err));
                 }
             }],
@@ -126,13 +126,13 @@ export default class OrderComponent extends Component {
             obj.text = Lang[Lang.default].shopClose;
         }else if(payid == 1) {
             //已付款
-            obj.text = success;
+            obj.text = Lang[Lang.default].daishouhuo;
             switch(statuid) {
                 case 0:
                 case 1:
                     //待发货
                     obj.btns.push({
-                        val: '申请退换',
+                        val: Lang[Lang.default].applyReturn,
                         red: false,
                     });
                     obj.text = Lang[Lang.default].daifahuo;
@@ -141,36 +141,42 @@ export default class OrderComponent extends Component {
                 case 5:
                     //待收货
                     obj.btns.push({
-                        val: '申请退换',
+                        val: Lang[Lang.default].applyReturn,
                         red: false,
                     }, {
-                        val: '查看物流',
+                        val: Lang[Lang.default].viewLogistics,
                         red: false,
                     }, {
-                        val: '确认收货',
+                        val: Lang[Lang.default].confirmReceipt,
                         red: true,
+                        fun: (soid)=>{
+                            showAlert(
+                                Lang[Lang.default].confirmReceipt2,
+                                ()=>changeOrderStatu(soid, 4, Lang[Lang.default].successfulReceipt)
+                            );
+                        }
                     });
                     obj.text = Lang[Lang.default].daishouhuo;
                     break;
                 case 4:
                     //交易完成
                     obj.btns.push({
-                        val: '申请售后',
+                        val: Lang[Lang.default].applySellAfter,
                         red: false,
                     });
                     obj.text = Lang[Lang.default].transactionOk;
                     break;
                 case 6:
-                    obj.text = '申请退换货';
+                    obj.text = Lang[Lang.default].applyReturning;
                     break;
                 case 7:
-                    obj.text = '申请失败';
+                    obj.text = Lang[Lang.default].applyFail;
                     break;
                 case 8:
-                    obj.text = '申请完成';
+                    obj.text = Lang[Lang.default].applySuccess;
                     break;
                 default:
-                    obj.text = '未知状态';
+                    obj.text = Lang[Lang.default].cnknownState;
                     break;
             }
         }else if(payid == 2) {
@@ -180,12 +186,13 @@ export default class OrderComponent extends Component {
             //未付款
             obj.text = Lang[Lang.default].noFuKuan;
             obj.btns.push({
-                val: '取消订单',
+                val: Lang[Lang.default].cancelOrder,
                 red: false,
                 fun: showCancel,
             }, {
-                val: '立即付款',
+                val: Lang[Lang.default].immediatePayment,
                 red: true,
+                fun: clickPay,
             });
         }
         return obj;

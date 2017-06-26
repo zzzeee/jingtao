@@ -182,11 +182,11 @@ export default class PayOrder extends Component {
         .then((responseText) => {
             if(responseText) {
                 //把HTML实体转换成字符串
-                responseText = responseText.replace(/&lt;/g, "<");
-                responseText = responseText.replace(/&gt;/g, ">");
-                responseText = responseText.replace(/&amp;/g, "&");
-                responseText = responseText.replace(/&quot;/g, "\"");
-                responseText = responseText.replace(/&apos;/g, "'");
+                // responseText = responseText.replace(/&lt;/g, "<");
+                // responseText = responseText.replace(/&gt;/g, ">");
+                // responseText = responseText.replace(/&amp;/g, "&");
+                // responseText = responseText.replace(/&quot;/g, "\"");
+                // responseText = responseText.replace(/&apos;/g, "'");
                 // console.log(responseText);
                 //开始支付
                 Alipay.pay(responseText).then(function(data){

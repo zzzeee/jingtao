@@ -6,6 +6,7 @@
 
 const language = {
     default: 'cn',
+    telephone: '4000237333',
     cn : {
         RMB: '¥',
         loading: '正在加载',
@@ -199,6 +200,9 @@ const language = {
         sendCode: '发送验证码',
         resendCode: '重新发送',
         notLoggedIn: '你还未登录!',
+        logInAgain: '请重新登录',
+        logInAgain2: '重新登录',
+        accountInvalidation: '您的账号因长期未登录或在其它手机登录导致下线',
         operationFrequentAlert: '您的操作过于频繁, 请进行验证',
         checkCode: '验证码',
         refreshVerificationCode: '看不清, 刷新一下',
@@ -239,6 +243,18 @@ const language = {
         productCollectionSuccess: '产品收藏成功!',
         cancelProductCollection: '取消产品收藏!',
         shopCollectionSuccess: '店铺收藏成功!',
+        contactWaiter: '联系客服',
+        applyReturn: '申请退换',
+        applyReturning: '申请退换中',
+        viewLogistics: '查看物流',
+        confirmReceipt: '确认收货',
+        confirmReceipt2: '确认收货吗？',
+        successfulReceipt: '收货成功',
+        applySellAfter: '申请售后',
+        immediatePayment: '立即付款',
+        applySuccess: '申请成功',
+        applyFail: '申请失败',
+        cnknownState: '未知状态',
     },
 };
 

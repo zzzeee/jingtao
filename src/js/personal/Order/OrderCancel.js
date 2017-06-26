@@ -63,7 +63,6 @@ export default class OrderCancel extends Component {
             hideWindow,
         } = this.props;
         if(!isShow) return null;
-        console.log(this.props);
         return (
             <Modal
                 animationType={"slide"}

@@ -212,21 +212,21 @@ export default class ProductAttr extends Component {
                 gNum: datas.number,
                 gPrice: that.money,
             }, userid);
+            console.log(obj);
             Utils.fetch(Urls.addCarProduct, 'post', obj, function(result) {
                 console.log(result);
                 that.btnLock = false;
                 if(result) {
-                    if(result.sTatus == 1) {
+                    if(result.sTatus == 1 || result.sTatus == 5) {
                         let cars = result.cars || [];
-                        if(!userid && result.Tourist) {
-                            console.log('存储新ID：' + result.Tourist);
-                            _User.saveUserID(_User.keyTourist, result.Tourist)
-                            .then(() => {
-                                that.props.attrCallBack(cars, obj, result.Tourist);
-                            });
-                        }else {
-                            that.props.attrCallBack(cars, obj, null);
+                        let tourist = result.Tourist || userid;
+                        if(result.Tourist) {
+                            _User.saveUserID(_User.keyTourist, result.Tourist);
+                            if(userid) {
+                                _User.delUserID(_User.keyMember);
+                            }
                         }
+                        that.props.attrCallBack(cars, obj, tourist);
                     }else if(result.sMessage) {
                         that.error = 501;
                         that.message = result.sMessage;

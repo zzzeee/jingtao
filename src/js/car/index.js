@@ -88,37 +88,59 @@ export default class CarsScreen extends Component {
         if(this.userinfo) {
             Utils.fetch(Urls.getCarInfo, 'post', this.userinfo, (car) => {
                 console.log(car);
-                if(car && car.sTatus && car.cartAry) {
-                    let orders_ok = car.cartAry.normalAry || [];
-                    let invalidList = car.cartAry.abnormalAry || [];
-                    that.setState({
-                        carDatas: orders_ok,
-                        invalidList: invalidList,
-                        isRefreshing: false,
-                        requestOk: true,
-                    });
-                    if(!that.state.goodList) {
-                        Utils.fetch(Urls.getRecommendList, 'get', {
-                            pPage: this.page, 
-                            pPerNum: this.pageNumber,
-                        }, (ret) => {
-                            // console.log(ret);
-                            if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
-                                that.page++;
-                                let list = ret.proAry || [];
-                                that.setState({
-                                    goodList: list,
-                                    isRefreshing: false,
+                if(car && car.sTatus) {
+                    if(car.sTatus == 4) {
+                        if(this.userinfo[_User.keyMember]) this.userinfo = null;
+                        _User.delUserID(_User.keyMember);
+                        this.alertObject = {
+                            text: Lang[Lang.default].accountInvalidation,
+                            leftText: Lang[Lang.default].logInAgain2,
+                            rightText: Lang[Lang.default].cancel,
+                            rightClick: ()=>this.setState({deleteAlert: false,}),
+                            leftClick: ()=>{
+                                this.setState({deleteAlert: false,}, ()=>{
+                                    this.props.navigation.navigate('Login', {back: 'Car'});
                                 });
-                            }
+                            },
+                        };
+                        this.setState({
+                            // deleteAlert: true,
+                            isRefreshing: false,
+                            requestOk: true,
                         });
+                        return;
+                    }else if(car.sTatus == 1 && car.cartAry) {
+                        let orders_ok = car.cartAry.normalAry || [];
+                        let invalidList = car.cartAry.abnormalAry || [];
+                        that.setState({
+                            carDatas: orders_ok,
+                            invalidList: invalidList,
+                            isRefreshing: false,
+                            requestOk: true,
+                        });
+                        if(!that.state.goodList) {
+                            Utils.fetch(Urls.getRecommendList, 'get', {
+                                pPage: this.page, 
+                                pPerNum: this.pageNumber,
+                            }, (ret) => {
+                                // console.log(ret);
+                                if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
+                                    that.page++;
+                                    let list = ret.proAry || [];
+                                    that.setState({
+                                        goodList: list,
+                                        isRefreshing: false,
+                                    });
+                                }
+                            });
+                        }
+                        return;
                     }
-                }else {
-                    that.setState({
-                        isRefreshing: false,
-                        requestOk: true,
-                    });
                 }
+                that.setState({
+                    isRefreshing: false,
+                    requestOk: true,
+                });
             }, null, {
                 catchFunc: (err) => {
                     console.log('获取数据出错');
@@ -244,6 +266,10 @@ export default class CarsScreen extends Component {
                     />
                     : null
                 }
+                {this.state.deleteAlert ?
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                    : null
+                }
             </View>
         );
     }
@@ -308,7 +334,6 @@ export default class CarsScreen extends Component {
                         }
                     </View>
                     <ErrorAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
-                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                 </View>
             );
         }else {

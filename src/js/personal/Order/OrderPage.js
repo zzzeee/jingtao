@@ -23,6 +23,8 @@ import OrderItem from './OrderItem';
 import { EndView } from '../../other/publicEment';
 import OrderCancel from './OrderCancel';
 import ErrorAlert from '../../other/ErrorAlert';
+import AlertMoudle from '../../other/AlertMoudle';
+import PayOrder from '../../car/PayOrder';
 
 export default class OrderComponent extends Component {
     // 默认参数
@@ -44,6 +46,8 @@ export default class OrderComponent extends Component {
             load_or_error: null,
             showCancelBox: false,
             showAlert: false,
+            deleteAlert: false,
+            showPayModal: false,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -51,6 +55,7 @@ export default class OrderComponent extends Component {
         this.orderID = null;
         this.type = 1;
         this.alertMsg = '';
+        this.alertObject = {};
     }
 
     componentDidMount() {
@@ -58,7 +63,7 @@ export default class OrderComponent extends Component {
     }
 
     //加载订单列表
-    loadOrderList = (isHideLoad = false) => {
+    loadOrderList = (isHideLoad = false, isConcat = true) => {
         let { mToken, orderType, } = this.props;
         if(mToken && !this.loadMoreLock) {
             this.loadMoreLock = true;
@@ -71,7 +76,6 @@ export default class OrderComponent extends Component {
                 console.log(result);
                 let obj = {
                     load_or_error: false,
-                    showAlert: false,
                 };
                 if(result && result.sTatus == 1 && result.orderAry) {
                     let newOrders = result.orderAry || [];
@@ -79,7 +83,7 @@ export default class OrderComponent extends Component {
                     if(newOrders.length) {
                         this.page++;
                         this.loadMoreLock = false;
-                        obj.orders = oldOrders ? oldOrders.concat(newOrders) : newOrders;
+                        obj.orders = (oldOrders && isConcat) ? oldOrders.concat(newOrders) : newOrders;
                     }
                 }
                 this.setState(obj);
@@ -105,18 +109,17 @@ export default class OrderComponent extends Component {
         this.setState({showCancelBox: false, });
     };
 
-    //取消订单后刷新页面
-    cancelRefresh = (_type, _msg) => {
+    //刷新页面
+    refreshList = (_type, _msg) => {
         this.page = 1;
         this.loadMoreLock = false;
         this.alertMsg = _msg;
         this.type = _type;
         this.setState({
             showCancelBox: false,
+            deleteAlert: false,
             showAlert: true,
-            orders: null,
-            load_or_error: null,
-        }, this.loadOrderList);
+        }, ()=>this.loadOrderList(true, false));
     };
 
     //显示提示框
@@ -130,6 +133,61 @@ export default class OrderComponent extends Component {
         this.setState({ showAlert: false });
     };
 
+    //显示删除提示框
+    showAlertMoudle = (msg, rclick) => {
+        this.alertObject = {
+            text: msg,
+            leftText: Lang[Lang.default].cancel,
+            rightText: Lang[Lang.default].determine,
+            leftClick: ()=>this.setState({deleteAlert: false,}),
+            rightClick: rclick,
+            leftColor: Color.lightBack,
+            leftBgColor: '#fff',
+            rightColor: Color.lightBack,
+            rightBgColor: '#fff',
+        };
+        this.setState({deleteAlert: true,});
+    };
+
+    //点击立即支付
+    clickPay = (soid) => {
+        if(soid) {
+            this.orderID = soid;
+            this.setState({showPayModal: true, });
+        }
+    };
+
+    /**
+     * 更改订单状态
+     * @param soid  number 订单号
+     * @param statu number 订单状态 2 取消订单, 4 确认收货
+     * @param successMsg string 操作成功后的提示信息
+     * @param param object 附加数据
+     */
+    changeOrderStatu = (soid, statu, successMsg, param = null) => {
+        let { mToken, navigation, } = this.props;
+        if(soid && mToken) {
+            let obj = Object.assign({
+                mToken: mToken,
+                oStatus: statu,
+                orderNum: soid,
+            }, param);
+            Utils.fetch(Urls.updateOrderStatu, 'post', obj, (result)=>{
+                console.log(result);
+                if(result) {
+                    let type = 1;
+                    let msg = result.sMessage || null;
+                    let ret = result.sTatus || 0;
+                    if(ret == 1) {
+                        type = 2;
+                        msg = successMsg;
+                    }
+                    this.refreshList(type, msg);
+                }
+            });
+        }
+    }
+
     render() {
         let { 
             navigation, 
@@ -138,7 +196,14 @@ export default class OrderComponent extends Component {
             notingString,
             mToken,
         } = this.props;
-        let { load_or_error, orders, showCancelBox, showAlert, } = this.state;
+        let { 
+            load_or_error, 
+            orders, 
+            showCancelBox, 
+            showAlert, 
+            deleteAlert, 
+            showPayModal,
+        } = this.state;
         return (
             <View style={styles.flex}>
                 {load_or_error === null ? 
@@ -168,7 +233,7 @@ export default class OrderComponent extends Component {
                                         mToken={mToken}
                                         orderID={this.orderID}
                                         hideWindow={this.hideCancelWindow}
-                                        cancelCallback={this.cancelRefresh}
+                                        cancelCallback={this.refreshList}
                                     />
                                     : null
                                 }
@@ -177,6 +242,19 @@ export default class OrderComponent extends Component {
                                         type={this.type}
                                         visiable={showAlert}
                                         message={this.alertMsg}
+                                        hideModal={this.hideAutoModal}
+                                    />
+                                    : null
+                                }
+                                {deleteAlert ?
+                                    <AlertMoudle visiable={deleteAlert} {...this.alertObject} />
+                                    : null
+                                }
+                                {showPayModal?
+                                    <PayOrder 
+                                        mToken={mToken}
+                                        visible={showPayModal}
+                                        navigation={navigation}
                                     />
                                     : null
                                 }
@@ -202,6 +280,9 @@ export default class OrderComponent extends Component {
                 navigation={navigation}
                 orderInfo={item}
                 showCancel={this.showCancelWindow}
+                showAlert={this.showAlertMoudle}
+                changeOrderStatu={this.changeOrderStatu}
+                clickPay={this.clickPay}
             />
         )
     };

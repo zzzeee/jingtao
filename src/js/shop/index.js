@@ -198,6 +198,7 @@ export default class Shop extends Component {
         }else {
             this.state.opacityVal.setValue(showHeadBgHeight);
         }
+        console.log(this.state.opacityVal);
     };
 
     listHeadPage = () => {
@@ -363,12 +364,13 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        height: PX.rowHeight2,
+        height: PX.rowHeight2 + PX.statusHeight,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
+        paddingTop: PX.statusHeight,
     },
     backImage: {
         width: PX.iconSize26,

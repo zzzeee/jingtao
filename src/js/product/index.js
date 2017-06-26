@@ -170,10 +170,7 @@ export default class ProductScreen extends Component {
             this.error = 9;
             this.message = Lang[Lang.default].paramError;
         }
-        if(tourist) {
-            this.userinfo = tourist;
-        }
-        console.log(obj);
+        this.userinfo = tourist;
         this.showReturnBox({
             lastSelected: obj,
             showAttrBox: false,
@@ -333,21 +330,29 @@ export default class ProductScreen extends Component {
                         let obj = {
                             collectionMsg: msg,
                         };
-                        if(type == 1) {
-                            if(ret == 1) {
-                                obj.isFavorite = true;
-                                obj.collectionMsg = Lang[Lang.default].productCollectionSuccess;
-                            }else if(ret == 2) {
-                                obj.isFavorite = false;
-                                obj.collectionMsg = Lang[Lang.default].cancelProductCollection;
+                        if(ret == 4) {
+                            this.error = 12;
+                            this.message = Lang[Lang.default].logInAgain;
+                            this.showReturnBox({
+                                showReturnMsg: true,
+                            });
+                        }else {
+                            if(type == 1) {
+                                if(ret == 1) {
+                                    obj.isFavorite = true;
+                                    obj.collectionMsg = Lang[Lang.default].productCollectionSuccess;
+                                }else if(ret == 2) {
+                                    obj.isFavorite = false;
+                                    obj.collectionMsg = Lang[Lang.default].cancelProductCollection;
+                                }
                             }
+                            if(type == 2 && ret == 1) {
+                                obj.shopFavorite = true;
+                                obj.collectionMsg = Lang[Lang.default].shopCollectionSuccess;
+                            }
+                            that.resultMsgAnimated();
+                            that.setState(obj);
                         }
-                        if(type == 2 && ret == 1) {
-                            obj.shopFavorite = true;
-                            obj.collectionMsg = Lang[Lang.default].shopCollectionSuccess;
-                        }
-                        that.resultMsgAnimated();
-                        that.setState(obj);
                     }
                 });
             }

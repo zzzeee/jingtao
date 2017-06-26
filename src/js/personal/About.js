@@ -19,7 +19,7 @@ import BtnIcon from '../public/BtnIcon';
 
 export default class About extends Component {
     rows = [
-        '联系方式:',
+        '联系方式',
         '联系客服QQ：1604693830',
         '400热线：400-023-7333',
         '商家合作联系',

@@ -444,20 +444,20 @@ export default class AddOrder extends Component {
     //点击提交订单按钮
     updateOrder = () => {
         let orders = this.createOrderInfo();
-        if(this.mToken && orders && this.carIDs) {
-            let obj = {
-                mToken: this.mToken,
-                oAry: orders,
-                cAry: this.carIDs.join(','),
-            };
-            console.log(obj);
-            Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-                console.log(result);
-            }, null, {catchFunc: (err)=>{
-                console.log(err);
-            }});
-        }
-        // this.setState({showPayModal: true, });
+        // if(this.mToken && orders && this.carIDs) {
+        //     let obj = {
+        //         mToken: this.mToken,
+        //         oAry: orders,
+        //         cAry: this.carIDs.join(','),
+        //     };
+        //     console.log(obj);
+        //     Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
+        //         console.log(result);
+        //     }, null, {catchFunc: (err)=>{
+        //         console.log(err);
+        //     }});
+        // }
+        this.setState({showPayModal: true, });
     };
 }
 

@@ -157,19 +157,24 @@ export default class FindScreen extends Component {
 
     //把用户领取过的优惠券ID放入数组
     setUserCoupons = (datas) => {
-        if(datas && datas.sTatus && datas.couponAry) {
-            let that = this;
-            let coupons = datas.couponAry || [];
-            for(let i in coupons) {
-                let id = coupons[i].hId || 0;
-                let stime = coupons[i].hStartTime || null;
-                let etime = coupons[i].hSendTime || null;
-                let ntime = new Date().getTime();
-                // let isable = coupons[i].isable || 0;
-                let _stime = new Date(that.checkTimeString(stime)).getTime();
-                let _etime = new Date(that.checkTimeString(etime)).getTime();
-                if(id > 0 && ntime > _stime && ntime < _etime) {
-                    that.userCoupons.push(id);
+        if(datas && datas.sTatus) {
+            if(datas.sTatus == 4) {
+                this.mToken = null;
+                _User.delUserID(_User.keyMember);
+            }else if(datas.sTatus == 1 && datas.couponAry) {
+                let that = this;
+                let coupons = datas.couponAry || [];
+                for(let i in coupons) {
+                    let id = coupons[i].hId || 0;
+                    let stime = coupons[i].hStartTime || null;
+                    let etime = coupons[i].hSendTime || null;
+                    let ntime = new Date().getTime();
+                    // let isable = coupons[i].isable || 0;
+                    let _stime = new Date(that.checkTimeString(stime)).getTime();
+                    let _etime = new Date(that.checkTimeString(etime)).getTime();
+                    if(id > 0 && ntime > _stime && ntime < _etime) {
+                        that.userCoupons.push(id);
+                    }
                 }
             }
         }

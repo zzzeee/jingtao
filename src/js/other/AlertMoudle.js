@@ -108,10 +108,12 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         borderTopLeftRadius: 5,
         borderTopRightRadius: 5,
+        padding: 15,
     },
     alertText: {
         fontSize: 16,
         color: Color.lightBack,
+        lineHeight: 24,
     },
     bottonsBox: {
         height: 50,
