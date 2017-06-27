@@ -124,13 +124,13 @@ export default class OrderDetail extends Component {
         );
     }
 
-
     orderComponent = () => {
         let orders = this.state.orders;
         if(!orders) return null;
         let { navigation } = this.props;
         let sOrderInfo = orders.shopOrderAry || {};
         let tOrderInfo = orders.totalOrder || {};
+        let expressData = orders.oExpress ? [].concat(orders.oExpress) : null;
         let sid = sOrderInfo.sId || 0;
         let orderID = sOrderInfo.soID || null;
         let sName = sOrderInfo.sShopName || null;
@@ -151,7 +151,6 @@ export default class OrderDetail extends Component {
         let oIntegral = parseInt(sOrderInfo.oIntegral) || 0;
         let oScoupon = parseInt(sOrderInfo.oScoupon) || 0;
         this.titleBtns = this.getOrderBtns(payid, statuid, addTime, fhTime);
-        console.log(this.titleBtns);
         return (
             <View style={styles.container}>
                 <View style={styles.sessionBox}>
@@ -170,6 +169,25 @@ export default class OrderDetail extends Component {
                             }
                         </View>
                     </Image>
+                    {expressData && expressData[0] ?
+                        <View style={styles.expressDataBox}>
+                            <View>
+                                <Text numberOfLines={2} style={styles.fontStyle5}>{expressData[0].context || ''}</Text>
+                                <Text numberOfLines={1} style={[styles.fontStyle6, {
+                                    paddingTop: 10,
+                                }]}>{expressData[0].time || ''}</Text>
+                            </View>
+                            <View>
+                                <Image source={require('../../../images/list_more.png')} style={styles.moreIcon} />
+                            </View>
+                        </View> :
+                        (statuid == 3 ?
+                            <View style={styles.rowStyle3}>
+                                <Text style={styles.fontStyle5}>暂无物流信息</Text>
+                            </View>
+                            : null
+                        )  
+                    }
                     <View style={styles.addressBox}>
                         <View style={styles.rowStyle}>
                             <Text style={[styles.fontStyle1, {paddingRight: 20}]}>{Lang[Lang.default].consignee + ': ' + name}</Text>
@@ -404,6 +422,13 @@ var styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: Color.lavender,
     },
+    rowStyle3: {
+        height: PX.rowHeight2,
+        justifyContent: 'center',
+        paddingLeft: PX.marginLR,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
+    },
     fontStyle1: {
         fontSize: 13,
         color: Color.lightBack,
@@ -420,6 +445,15 @@ var styles = StyleSheet.create({
     fontStyle4: {
         fontSize: 14,
         color: '#fff',
+    },
+    fontStyle5: {
+        fontSize: 14,
+        color: Color.lightBack,
+        lineHeight: 20,
+    },
+    fontStyle6: {
+        fontSize: 12,
+        color: Color.gainsboro,
     },
     btnStyle: {
         paddingLeft: 38,
@@ -469,6 +503,22 @@ var styles = StyleSheet.create({
         height: 86,
         marginRight: 20,
     },
+    expressDataBox: {
+        flexDirection : 'row',
+        minHeight: PX.rowHeight1,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        paddingTop: 10,
+        paddingBottom: 5,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    moreIcon: {
+        width: PX.iconSize26,
+        height: PX.iconSize26,
+    },
     addressBox: {
         minHeight: PX.rowHeight1,
         marginLeft: PX.marginLR,
@@ -476,7 +526,7 @@ var styles = StyleSheet.create({
         paddingTop: 12,
         paddingBottom: 12,
         borderBottomWidth: pixel,
-        borderBottomColor: Color.lavender,
+        borderBottomColor: Color.floralWhite,
     },
     rowStyle: {
         flexDirection : 'row',
@@ -486,6 +536,9 @@ var styles = StyleSheet.create({
         height: PX.rowHeight1,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: pixel,
+        borderTopColor: Color.lavender,
     },
     custemIcon: {
         width: 32,
