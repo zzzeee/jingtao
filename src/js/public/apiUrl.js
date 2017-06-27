@@ -86,6 +86,8 @@ var urls = {
     getShopInfo: host + '/api/ShopNController/getShopDetailInfoByShopID',
     //获取订单列表
     getOrderList: host + '/api/OrderNController/getMemberOrderList',
+    //获取订单详细信息
+    getOrderDetails: host + '/api/OrderNController/getOrderInfoByOrderNum',
     //更新订单状态
     updateOrderStatu: host + '/api/OrderNController/memberOrderStatusEditByOrderNum',
     //立即购买接口

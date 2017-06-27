@@ -40,12 +40,13 @@ export default class OrderComponent extends Component {
     }
 
     render() {
-        let { navigation, orderInfo } = this.props;
+        let { mToken, navigation, orderInfo } = this.props;
         if(!orderInfo || this.state.isDelete) return null;
         let sid = orderInfo.sId || 0;
         let orderID = orderInfo.soID || null;
         let sName = orderInfo.sShopName || null;
         let totalNum = orderInfo.soNum || 0;
+        let orderNum = orderInfo.orderNum || null;
         let freight = parseFloat(orderInfo.oExpressMoney) || 0;
         let price = parseFloat(orderInfo.soPrice) || 0;
         let totalMoney = freight + price;
@@ -66,7 +67,14 @@ export default class OrderComponent extends Component {
                 </View>
                 <View>
                     {goods.map((item, index)=>{
-                        return <OrderGood good={item} key={index} />;
+                        return <OrderGood good={item} onPress={()=>{
+                            navigation.navigate('OrderDetail', {
+                                mToken: mToken,
+                                orderNum: orderNum,
+                                shopID: sid,
+                                shopOrderNum: orderID,
+                            });
+                        }} key={index} />;
                     })}
                 </View>
                 <View style={styles.rowStyle2}>
@@ -126,7 +134,6 @@ export default class OrderComponent extends Component {
             obj.text = Lang[Lang.default].shopClose;
         }else if(payid == 1) {
             //已付款
-            obj.text = Lang[Lang.default].daishouhuo;
             switch(statuid) {
                 case 0:
                 case 1:

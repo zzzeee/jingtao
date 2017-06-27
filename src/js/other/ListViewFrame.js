@@ -131,11 +131,11 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: PX.rowHeight1,
+        height: PX.rowHeight1 + PX.marginTB,
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         backgroundColor: '#fff',
-        marginBottom: PX.marginTB,
+        paddingBottom: PX.marginTB,
     },
     goodTopLine: {
         flex: 1,

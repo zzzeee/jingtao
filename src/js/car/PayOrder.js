@@ -113,7 +113,7 @@ export default class PayOrder extends Component {
     get_weixin_payinfo = () => {
         let that = this;
         Utils.fetch('http://api.jingtaomart.com/api/AplipayNController/getWeiXinPayInfo', 'post', {
-            orderNum: '6666jt7777jt8888',
+            orderNum: '9sar2ew122',
             mToken: this.props.mToken,
         }, function(result){
             if(result && result.sTatus == 1 && result.wxInfo) {
