@@ -37,6 +37,7 @@ export default class OrderComponent extends Component {
         this.state = {
             isDelete: false,
         };
+        this.expressNum = null;
     }
 
     render() {
@@ -51,6 +52,7 @@ export default class OrderComponent extends Component {
         let price = parseFloat(orderInfo.soPrice) || 0;
         let totalMoney = freight + price;
         let goods = orderInfo.oProduct || [];
+        this.expressNum = orderInfo.oExpressNum || null;
         let payid = parseInt(orderInfo.oPay) || 0;
         let statuid = parseInt(orderInfo.oStatus) || 0;
         let orderTitleBtns = this.getOrderBtns(payid, statuid);
@@ -118,7 +120,15 @@ export default class OrderComponent extends Component {
      * 0 确认中, 1 已确认, 2 取消订单, 3 已发货, 4 收货成功, 5 收货失败, 6 申请退换货, 7 申请失败, 8 申请完成
      */
     getOrderBtns = (payid, _statuid,) => {
-        let { showCancel, showAlert, changeOrderStatu, clickPay, } = this.props;
+        let { 
+            mToken, 
+            navigation, 
+            showCancel, 
+            showAlert, 
+            changeOrderStatu, 
+            clickPay, 
+        } = this.props;
+        let that = this;
         let statuid = parseInt(_statuid) || 0;
         let obj = {
             text: '',
@@ -154,6 +164,12 @@ export default class OrderComponent extends Component {
                     }, {
                         val: Lang[Lang.default].viewLogistics,
                         red: false,
+                        fun: ()=>{
+                            navigation.navigate('OrderLogistics', {
+                                mToken: mToken,
+                                expressNum: that.expressNum,
+                            });
+                        },
                     }, {
                         val: Lang[Lang.default].confirmReceipt,
                         red: true,

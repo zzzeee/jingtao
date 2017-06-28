@@ -29,6 +29,7 @@ export default class OrderLogistics extends Component {
             logistics: null,
         };
         this.mToken = null;
+        this.expressNum = null;
         this.ref_flatList = null;
     }
 
@@ -37,7 +38,7 @@ export default class OrderLogistics extends Component {
     }
 
     componentDidMount() {
-        // this.getLogisticsData();
+        this.getLogisticsData();
     }
 
     //初始化数据
@@ -45,9 +46,10 @@ export default class OrderLogistics extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { Logistics, mToken } = params;
+            let { Logistics, mToken, expressNum, } = params;
             this.mToken = mToken;
-            if(Logistics && logistics.data) {
+            this.expressNum = expressNum;
+            if(Logistics && Logistics.data) {
                 this.setState({
                      logistics: Logistics,
                 });
@@ -56,7 +58,21 @@ export default class OrderLogistics extends Component {
     };
 
     getLogisticsData = () => {
-        // Utils.fetch(Urls.getLogisticsInfo, '')
+        if(!this.state.logistics && this.mToken && this.expressNum) {
+            Utils.fetch(Urls.getLogisticsInfo, 'post', {
+                mToken: this.mToken,
+                exPressNum: this.expressNum
+            }, (result)=>{
+                if(result && result.sTatus == 1) {
+                    let express = result.exPreAy || null;
+                    if(express && express.showapi_res_body) {
+                        this.setState({
+                            logistics: express.showapi_res_body,
+                        });
+                    }
+                }
+            });
+        }
     };
 
     render() {
