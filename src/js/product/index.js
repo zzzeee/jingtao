@@ -595,39 +595,41 @@ export default class ProductScreen extends Component {
                                     <Text style={styles.txtStyle6}>{Lang[Lang.default].productDelete}</Text>
                                 </Image> 
                             </View> :
-                            <Swiper
-                                width={Size.width}
-                                height={Size.width}
-                                style={styles.wrapper}
-                                horizontal={true}
-                                showsPagination={true}
-                                paginationStyle={styles.paginationStyle}
-                                dot={(<View 
-                                    style={{
-                                        backgroundColor:'rgba(0, 0, 0, .3)',
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: 3,
-                                        margin: 5,
-                                    }}
-                                />)}
-                                activeDot={(<View 
-                                    style={{
-                                        backgroundColor:'rgba(229, 86, 69, 1)',
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: 3,
-                                        margin: 5,
-                                    }}
-                                />)}
-                                autoplay={true}
-                                autoplayTimeout={3}
-                                showsButtons={false}
-                            >
-                                {img_arr.map((item, index)=>{
-                                    return <Image key={index} source={{uri: item}} style={styles.productImg} />;
-                                })}
-                            </Swiper>
+                            <View style={styles.wrapperBox}>
+                                <Swiper
+                                    width={Size.width}
+                                    height={Size.width}
+                                    style={styles.wrapper}
+                                    horizontal={true}
+                                    showsPagination={true}
+                                    paginationStyle={styles.paginationStyle}
+                                    dot={(<View 
+                                        style={{
+                                            backgroundColor:'rgba(0, 0, 0, .3)',
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            margin: 5,
+                                        }}
+                                    />)}
+                                    activeDot={(<View 
+                                        style={{
+                                            backgroundColor:'rgba(229, 86, 69, 1)',
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            margin: 5,
+                                        }}
+                                    />)}
+                                    autoplay={true}
+                                    autoplayTimeout={3}
+                                    showsButtons={false}
+                                >
+                                    {img_arr.map((item, index)=>{
+                                        return <Image key={index} source={{uri: item}} style={styles.productImg} />;
+                                    })}
+                                </Swiper>
+                            </View>
                         }
                         <View style={styles.areaStockView}>
                             <Text style={styles.txtStyle1}>{Lang[Lang.default].origin + ': ' + productArea}</Text>
@@ -980,9 +982,9 @@ var styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
     },
-    wrapper: {
-        // borderBottomWidth: pixel,
-        // borderBottomColor: Color.lavender,
+    wrapperBox: {
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
     },
     paginationStyle: {
         position: 'absolute',
@@ -1009,7 +1011,7 @@ var styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#fff',
         position: 'absolute',
-        bottom: 27,
+        bottom: 29,
         left: Size.width * (1 - 0.66) / 2,
     },
     namePriceBox: {

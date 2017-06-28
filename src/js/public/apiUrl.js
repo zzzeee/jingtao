@@ -92,6 +92,8 @@ var urls = {
     updateOrderStatu: host + '/api/OrderNController/memberOrderStatusEditByOrderNum',
     //立即购买接口
     buyNowAPI: host + '/api/OrderNController/productUnderstandingBuyingConfirm',
+    //获取物流信息
+    getLogisticsInfo: host + '/api/OrderNController/getExpressListByExpressNum',
 };
 
 export default urls;

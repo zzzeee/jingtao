@@ -40,7 +40,7 @@ export default class OrderComponent extends Component {
     }
 
     render() {
-        let { mToken, navigation, orderInfo } = this.props;
+        let { mToken, navigation, orderInfo, selectIndex } = this.props;
         if(!orderInfo || this.state.isDelete) return null;
         let sid = orderInfo.sId || 0;
         let orderID = orderInfo.soID || null;
@@ -73,6 +73,7 @@ export default class OrderComponent extends Component {
                                 orderNum: orderNum,
                                 shopID: sid,
                                 shopOrderNum: orderID,
+                                selectIndex: selectIndex,
                             });
                         }} key={index} />;
                     })}

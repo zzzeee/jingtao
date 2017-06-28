@@ -23,7 +23,7 @@ export default class About extends Component {
         '联系客服QQ：1604693830',
         '400热线：400-023-7333',
         '商家合作联系',
-        '联系QQ：11611772824',
+        '联系QQ：1161172824',
     ];
 
     render() {

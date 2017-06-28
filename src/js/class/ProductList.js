@@ -100,7 +100,7 @@ export default class Search extends Component {
     };
 
     //已选的地区数据
-    selectCity = (datas) => {
+    selectCity = (datas, getData) => {
         let _data = datas.join(',');
         if(this.citys != _data) {
             this.citys = _data;
@@ -179,8 +179,8 @@ export default class Search extends Component {
                 <Areas
                     visiable={this.state.showArea}
                     areas={this.state.areas}
-                    leftClick={this.hideAreaMoudle}
-                    rightClick={this.selectCity}
+                    hideAreaBox={this.hideAreaMoudle}
+                    setSelectArea={this.selectCity}
                 />
                 {this.state.deleteAlert ?
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />

@@ -40,6 +40,7 @@ const language = {
         Surplus: '还剩',
         jingtaoIntegral: '境淘积分 %s ',
         myOrder: '我的订单',
+        orderDetail: '订单详情',
         viewAllOrder: '查看所有订单',
         daifukuan: '待付款',
         noFuKuan: '未付款',
@@ -255,6 +256,10 @@ const language = {
         applySuccess: '申请成功',
         applyFail: '申请失败',
         cnknownState: '未知状态',
+        logisticsInfo: '物流详情',
+        expressNumber: '运单号码',
+        expressName: '物流公司',
+        notExpressData: '没有相关物流信息!',
     },
 };
 

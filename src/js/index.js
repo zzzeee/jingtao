@@ -29,13 +29,14 @@ import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
 import Coupon from './car/Coupon';
-import PayFinish from './car/PayFinish';
+import OrderNotify from './car/OrderNotify';
 import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
 import CouponList from './personal/CouponList';
 import Collection from './personal/Collection';
 import MyOrder from './personal/Order';
 import OrderDetail from './personal/Order/OrderDetail';
+import OrderLogistics from './personal/Order/OrderLogistics';
 import About from './personal/About';
 import Help from './personal/Help/';
 import HelpPrivacy from './personal/Help/privacy';
@@ -196,6 +197,11 @@ const OrderDetailScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={OrderDetail} />
 );
 
+//个人中心 - 我的订单 - 订单详情 - 物流信息
+const OrderLogisticsScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={OrderLogistics} />
+);
+
 //个人中心 - 联系方式
 const AboutScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={About} />
@@ -228,8 +234,8 @@ const CouponScreen = ({ navigation }) => (
 );
 
 //购物车 - 提交订单 - 支付完成
-const PayFinishScreen = ({ navigation }) => (
-    <MyNavScren navigation={navigation} NavScreen={PayFinish} />
+const OrderNotifyScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={OrderNotify} />
 );
 
 //特产分类
@@ -296,8 +302,11 @@ const AppNavigator = StackNavigator({
     OrderDetail: {
         screen: OrderDetailScreen,
     },
-    PayFinish: {
-        screen: PayFinishScreen,
+    OrderLogistics: {
+        screen: OrderLogisticsScreen,
+    },
+    OrderNotify: {
+        screen: OrderNotifyScreen,
     },
     AddressList: {
         screen: AddressListScreen,

@@ -56,6 +56,7 @@ export default class MyOrder extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
+            console.log(params);
             let { mToken, index } = params;
             this.mToken = mToken || null;
             this.setState({
@@ -71,7 +72,7 @@ export default class MyOrder extends Component {
                 <AppHead
                     title={Lang[Lang.default].myOrder}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
+                            navigation.navigate('Personal');
                     }} src={require("../../../images/back.png")} />)}
                     onPress={()=>{
                         if(this.listRefs[this.state.selIndex]) {
@@ -137,6 +138,7 @@ export default class MyOrder extends Component {
                 navigation={this.props.navigation} 
                 orderType={val}
                 notingString={str}
+                selectIndex={this.state.selIndex}
                 get_list_ref={(ement)=>this.listRefs[this.state.selIndex]=ement}
             />;
         }else {

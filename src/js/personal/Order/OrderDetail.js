@@ -22,23 +22,34 @@ import Lang, {str_replace} from '../../public/language';
 import ListFrame from '../../other/ListViewFrame';
 import OrderGood from '../../car/OrderGood';
 import AppHead from '../../public/AppHead';
+import OrderCancel from './OrderCancel';
+import ErrorAlert from '../../other/ErrorAlert';
+import AlertMoudle from '../../other/AlertMoudle';
 
 export default class OrderDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
             orders: null,
+            showAlert: false,
+            showCancelBox: false,
+            load_or_error: null,
+            deleteAlert: false,
         };
         this.mToken = null;
         this.orderNum = null;
         this.shopID = null;
         this.shopOrderNum = null;
+        this.selectIndex = 0;
         this.ref_flatList = null;
+        this.type = 1;
+        this.alertMsg = '';
+        this.isRefresh = false;   // 返回时是否刷新列表页
     }
 
     componentWillMount() {
         this.initDatas();
-    };
+    }
 
     componentDidMount() {
         this.getOrderInfo();
@@ -49,39 +60,136 @@ export default class OrderDetail extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { mToken, orderNum, shopID, shopOrderNum, } = params;
+            let { mToken, shopOrderNum, selectIndex, isRefresh, } = params;
             this.mToken = mToken || null;
-            this.orderNum = orderNum || null;
-            this.shopID = shopID || null;
             this.shopOrderNum = shopOrderNum || null;
+            this.selectIndex = selectIndex || 0;
+            this.isRefresh = isRefresh || false;
         }
     };
 
     //获取订单信息
     getOrderInfo = () => {
-        if(this.mToken && this.orderNum && this.shopID) {
+        if(this.mToken && this.shopOrderNum) {
             Utils.fetch(Urls.getOrderDetails, 'post', {
                 mToken: this.mToken,
-                orderNum: this.orderNum,
-                sID: this.shopID,
+                soID: this.shopOrderNum,
             }, (result)=>{
                 console.log(result);
                 if(result && result.sTatus == 1) {
-                    this.setState({orders: result.oAry, });
+                    this.setState({
+                        orders: result.oAry,
+                        load_or_error: null,
+                    });
+                }
+            }, (view)=>{
+                this.setState({
+                    load_or_error: view,
+                });
+            }, {
+                loadType: 2,
+            });
+        }
+    };
+
+    //显示取消订单
+    showCancelWindow = () => {
+        this.setState({showCancelBox: true, });
+    };
+
+    //隐藏取消订单
+    hideCancelWindow = () => {
+        this.setState({showCancelBox: false, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
+    };
+
+    //显示删除提示框(确认收货)
+    showAlertMoudle = () => {
+        this.alertObject = {
+            text: Lang[Lang.default].confirmReceipt2,
+            leftText: Lang[Lang.default].cancel,
+            rightText: Lang[Lang.default].determine,
+            leftClick: ()=>this.setState({deleteAlert: false,}),
+            rightClick: this.goodsReceipt,
+            leftColor: Color.lightBack,
+            leftBgColor: '#fff',
+            rightColor: Color.lightBack,
+            rightBgColor: '#fff',
+        };
+        this.setState({deleteAlert: true,});
+    };
+
+    //点击确认收货
+    goodsReceipt = () => {
+        let { navigation } = this.props;
+        if(this.shopOrderNum && this.mToken) {
+            Utils.fetch(Urls.updateOrderStatu, 'post', {
+                mToken: this.mToken,
+                oStatus: 4,
+                orderNum: this.shopOrderNum,
+            }, (result)=>{
+                console.log(result);
+                if(result) {
+                    let type = 1;
+                    let msg = result.sMessage || null;
+                    let ret = result.sTatus || 0;
+                    if(ret == 1) {
+                        this.setState({
+                            deleteAlert: false,
+                        }, ()=>{
+                            navigation.navigate('OrderNotify', {
+                                mToken: this.mToken,
+                                shopOrderNum: this.shopOrderNum,
+                                pageType: 2,
+                            });
+                        });
+                    }else {
+                        this.alertMsg = msg;
+                        this.type = type;
+                        this.setState({
+                            deleteAlert: false,
+                            showAlert: true,
+                        });
+                    }
                 }
             });
         }
     };
 
+    //取消订单事件
+    cancelCallback = (type, msg) => {
+        this.alertMsg = msg;
+        this.type = type;
+        this.isRefresh = true;
+        this.setState({
+            showCancelBox: false,
+            deleteAlert: false,
+            showAlert: true,
+            orders: null,
+        }, this.getOrderInfo);
+    };
+
     render() {
         let { navigation } = this.props;
+        let { orders, showCancelBox, deleteAlert, showAlert, load_or_error, } = this.state;
         let listHeadComponent = this.orderComponent();
         return (
             <View style={styles.flex}>
                 <AppHead
-                    title={Lang[Lang.default].myOrder}
+                    title={Lang[Lang.default].orderDetail}
                     left={(<BtnIcon width={PX.headIconSize} press={()=>{
+                        if(this.isRefresh) {
+                            navigation.navigate('MyOrder', {
+                                mToken: this.mToken,
+                                index: this.selectIndex,
+                            });
+                        }else {
                             navigation.goBack(null);
+                        }
                     }} src={require("../../../images/back.png")} />)}
                     onPress={()=>{
                         if(this.ref_flatList) {
@@ -89,17 +197,25 @@ export default class OrderDetail extends Component {
                         }
                     }}
                 />
-                {this.state.orders ?
-                    <ListFrame
-                        listHead={listHeadComponent}
-                        navigation={navigation}
-                        get_list_ref={(ref)=>this.ref_flatList=ref}
-                    />
-                    : null
-                }
+                <View style={styles.flex}>
+                    {load_or_error ?
+                        load_or_error :
+                        (orders ?
+                            <ListFrame
+                                listHead={listHeadComponent}
+                                navigation={navigation}
+                                get_list_ref={(ref)=>this.ref_flatList=ref}
+                            />
+                            : null
+                        )
+                    }
+                </View>
                 {this.titleBtns ?
                     <View style={styles.footBox}>
-                        <TouchableOpacity style={styles.btnStyle2}>
+                        <TouchableOpacity onPress={()=>{
+                            Linking.openURL('tel: ' + Lang.telephone)
+                            .catch(err => console.error('调用电话失败！', err));
+                        }} style={styles.btnStyle2}>
                             <Image style={styles.custemIcon} source={require('../../../images/product/custem_center.png')} />
                             <Text style={styles.fontStyle3}>客服</Text>
                         </TouchableOpacity>
@@ -109,7 +225,7 @@ export default class OrderDetail extends Component {
                                     return (
                                         <TouchableOpacity key={index} style={[styles.btnStyle3, {
                                             backgroundColor: item.bgColor,
-                                        }]}>
+                                        }]} onPress={item.fun}>
                                             <Text style={styles.fontStyle4}>{item.val}</Text>
                                         </TouchableOpacity>
                                     );
@@ -118,6 +234,29 @@ export default class OrderDetail extends Component {
                             : null
                         }
                     </View>
+                    : null
+                }
+                {showCancelBox ?
+                    <OrderCancel
+                        isShow={showCancelBox}
+                        mToken={this.mToken}
+                        orderID={this.shopOrderNum}
+                        hideWindow={this.hideCancelWindow}
+                        cancelCallback={this.cancelCallback}
+                    />
+                    : null
+                }
+                {deleteAlert ?
+                    <AlertMoudle visiable={deleteAlert} {...this.alertObject} />
+                    : null
+                }
+                {showAlert ?
+                    <ErrorAlert 
+                        type={this.type}
+                        visiable={showAlert}
+                        message={this.alertMsg}
+                        hideModal={this.hideAutoModal}
+                    />
                     : null
                 }
             </View>
@@ -130,9 +269,11 @@ export default class OrderDetail extends Component {
         let { navigation } = this.props;
         let sOrderInfo = orders.shopOrderAry || {};
         let tOrderInfo = orders.totalOrder || {};
-        let expressData = orders.oExpress ? [].concat(orders.oExpress) : null;
+        let expressInfo = orders.oExpress ? orders.oExpress : {};
+        let expressData = expressInfo.showapi_res_body || {};
         let sid = sOrderInfo.sId || 0;
         let orderID = sOrderInfo.soID || null;
+        let orderNum = sOrderInfo.orderNum || null;
         let sName = sOrderInfo.sShopName || null;
         let totalNum = sOrderInfo.soNum || 0;
         let freight = parseFloat(sOrderInfo.oExpressMoney) || 0;
@@ -150,12 +291,16 @@ export default class OrderDetail extends Component {
         let address = tOrderInfo.oBuyAddress || '';
         let oIntegral = parseInt(sOrderInfo.oIntegral) || 0;
         let oScoupon = parseInt(sOrderInfo.oScoupon) || 0;
-        this.titleBtns = this.getOrderBtns(payid, statuid, addTime, fhTime);
+        this.titleBtns = this.getOrderBtns(payid, statuid, addTime, fhTime, expressData);
         return (
             <View style={styles.container}>
                 <View style={styles.sessionBox}>
-                    <Image source={require('../../../images/car/payok_bg.png')} resizeMode="stretch" style={styles.topBoxC1}>
-                        <View style={styles.topBoxC1Img}>
+                    <View style={styles.grayBox}>
+                        <Image 
+                            source={require('../../../images/car/payok_bg.png')} 
+                            resizeMode="stretch" 
+                            style={styles.topBoxC1Img}
+                        >
                             <View style={styles.topBoxC1ImgLeft}>
                                 <Text style={styles.topBoxC1Text1}>{this.titleBtns.text1}</Text>
                                 {this.titleBtns.text2 ?
@@ -167,20 +312,24 @@ export default class OrderDetail extends Component {
                                 <Image source={this.titleBtns.image} resizeMode="stretch" style={styles.topBoxC1ImgRight} />
                                 : null
                             }
-                        </View>
-                    </Image>
-                    {expressData && expressData[0] ?
-                        <View style={styles.expressDataBox}>
-                            <View>
-                                <Text numberOfLines={2} style={styles.fontStyle5}>{expressData[0].context || ''}</Text>
+                        </Image>
+                    </View>
+                    {expressData.data && expressData.data[0] ?
+                        <TouchableOpacity style={styles.expressDataBox} onPress={()=>{
+                            navigation.navigate('OrderLogistics', {
+                                Logistics: expressData,
+                            });
+                        }}>
+                            <View style={{width: Size.width - 30 - 26 - 10}}>
+                                <Text numberOfLines={2} style={styles.fontStyle5}>{expressData.data[0].context || ''}</Text>
                                 <Text numberOfLines={1} style={[styles.fontStyle6, {
                                     paddingTop: 10,
-                                }]}>{expressData[0].time || ''}</Text>
+                                }]}>{expressData.data[0].time || ''}</Text>
                             </View>
-                            <View>
+                            <View style={styles.moreIcon}>
                                 <Image source={require('../../../images/list_more.png')} style={styles.moreIcon} />
                             </View>
-                        </View> :
+                        </TouchableOpacity> :
                         (statuid == 3 ?
                             <View style={styles.rowStyle3}>
                                 <Text style={styles.fontStyle5}>暂无物流信息</Text>
@@ -209,7 +358,9 @@ export default class OrderDetail extends Component {
                     </View>
                     <View>
                         {goods.map((item, index)=>{
-                            return <OrderGood good={item} key={index} />;
+                            return <OrderGood onPress={()=>{
+                                navigation.navigate('Product', {gid: item.gID, })
+                            }} good={item} key={index} />;
                         })}
                     </View>
                     {this.getPriceRow('商品总金额(不含运费)', price)}
@@ -290,11 +441,19 @@ export default class OrderDetail extends Component {
      * 注：0 未付款, 1 已付款, 2 已退款
      * @param status number 订单状态
      * 0 确认中, 1 已确认, 2 取消订单, 3 已发货, 4 收货成功, 5 收货失败, 6 申请退换货, 7 申请失败, 8 申请完成
-     * @param addTime string 订单生成时间
-     * @param fhTime  string 发货时间
+     * @param addTime           string 订单生成时间
+     * @param fhTime            string 发货时间
+     * @param notExpressData    object 物流信息
      */
-    getOrderBtns = (payid, _statuid, addTime, fhTime) => {
-        let { showCancel, showAlert, changeOrderStatu, clickPay, } = this.props;
+    getOrderBtns = (payid, _statuid, addTime, fhTime, expressData = {}) => {
+        let { 
+            navigation, 
+            showCancel, 
+            showAlert, 
+            changeOrderStatu, 
+            clickPay, 
+        } = this.props;
+        let that = this;
         let statuid = parseInt(_statuid) || 0;
         let expirationDate = '';
         let obj = {
@@ -343,10 +502,16 @@ export default class OrderDetail extends Component {
                     obj.btns2.push({
                         val: '查看物流',
                         bgColor: Color.orange,
+                        fun: ()=>{
+                            navigation.navigate('OrderLogistics', {
+                                Logistics: expressData,
+                            });
+                        }
                     });
                     obj.btns2.push({
                         val: '确认收货',
                         bgColor: Color.mainColor,
+                        fun: that.showAlertMoudle,
                     });
                     obj.image = require('../../../images/car/order_yfh.png');
                     break;
@@ -381,6 +546,7 @@ export default class OrderDetail extends Component {
             obj.btns2.push({
                 val: '取消订单',
                 bgColor: Color.orange,
+                fun: that.showCancelWindow,
             });
             obj.btns2.push({
                 val: '立即付款',
@@ -478,6 +644,9 @@ var styles = StyleSheet.create({
         height: PX.rowHeight1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    grayBox: {
+        backgroundColor: Color.lightGrey,
     },
     topBoxC1Img: {
         height: 120,

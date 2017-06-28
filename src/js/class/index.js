@@ -23,7 +23,7 @@ import { Size, pixel, PX, Color } from '../public/globalStyle';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
 
-var scrollItemHeight = 40;
+var scrollItemHeight = 50;
 var sessionRowHeight = 40;
 var classItemHeight = 100;
 var classItemImgHeight = 60;
@@ -58,6 +58,7 @@ export default class ClassScreen extends Component {
         Utils.fetch(Urls.getProductClassify, 'get', {
             cType: 0,
         }, function(result) {
+            console.log(result);
             if(result && result.classAry && result.classAry[0] && result.classAry[0].child) {
                 let sessionArr = {}, 
                 ret = result.classAry[0].child, 
@@ -149,7 +150,9 @@ export default class ClassScreen extends Component {
         let selectId = this.state.selectListID;
         let name = obj.cName || '';
         return (
-            <TouchableOpacity key={i} onPress={()=>{
+            <TouchableOpacity key={i} style={{
+                backgroundColor: (selectId == i) ? '#fff' : 'transparent',
+            }} onPress={()=>{
                 if(this.ref_listview) {
                     let offsetY = this.minHeightList[i];
                     if(!this.isScrollEnd || offsetY < this.minHeightList[this.minHeightList.length - 1] - bodyHeight) {
@@ -161,10 +164,7 @@ export default class ClassScreen extends Component {
                 }
             }}>
                 <View style={[styles.scrollRowItem, {
-                    borderTopWidth: (selectId == i) ? pixel : 0,
-                    borderBottomWidth: (selectId == i) ? pixel : 0,
                     borderLeftColor: (selectId == i) ? Color.mainColor : 'transparent',
-                    backgroundColor: (selectId == i) ? '#fff' : 'transparent',
                 }]}>
                     <Text style={styles.leftClassifyText}>{name}</Text>
                 </View>
@@ -186,7 +186,16 @@ export default class ClassScreen extends Component {
                         borderLeftColor: selectId == i ? Color.mainColor : Color.floralWhite,
                     }]}>{title}</Text>
                     <View style={styles.rowRightBox}>
-                        <Text style={styles.smallText}>{Lang[Lang.default].viewAll}</Text>
+                        <Text style={styles.smallText} onPress={()=>{
+                            let cids = [];
+                            for(let c of child) {
+                                cids.push(c.cID);
+                            }
+                            navigation.navigate('ProductList', {
+                                cId: cids.join(','),
+                                cName: title,
+                            });
+                        }}>{Lang[Lang.default].viewAll}</Text>
                         <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
                     </View>
                 </View>
@@ -308,12 +317,14 @@ var styles = StyleSheet.create({
 		flexWrap: 'wrap',
     },
     scrollRowItem: {
-        height: scrollItemHeight,
+        height: scrollItemHeight - 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomColor: Color.lavender,
         borderTopColor : Color.lavender,
         borderLeftWidth: 4,
+        marginTop: 5,
+        marginBottom: 5,
     },
     leftClassifyText: {
         color: Color.lightBack,

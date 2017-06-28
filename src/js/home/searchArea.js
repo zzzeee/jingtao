@@ -18,7 +18,7 @@ import {
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 
-export default class AlertMoudle extends Component {
+export default class Area extends Component {
     // 默认参数
     static defaultProps = {
         visiable: false,
@@ -79,7 +79,7 @@ export default class AlertMoudle extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.footBox}></View>
+                    <TouchableOpacity activeOpacity={1} onPress={hideAreaBox} style={styles.footBox}></TouchableOpacity>
                 </View>
             </Modal>
         );

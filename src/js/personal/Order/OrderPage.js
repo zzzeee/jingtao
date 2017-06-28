@@ -37,6 +37,7 @@ export default class OrderComponent extends Component {
         mToken: React.PropTypes.string.isRequired,
         orderType: React.PropTypes.number,
         get_list_ref: React.PropTypes.func,
+        selectIndex: React.PropTypes.number.isRequired,
     };
 
     constructor(props) {
@@ -179,10 +180,19 @@ export default class OrderComponent extends Component {
                     let msg = result.sMessage || null;
                     let ret = result.sTatus || 0;
                     if(ret == 1) {
-                        type = 2;
-                        msg = successMsg;
+                        this.setState({
+                            deleteAlert: false,
+                        }, ()=>{
+                            navigation.navigate('PayFinish');
+                        });
+                    }else {
+                        this.alertMsg = msg;
+                        this.type = type;
+                        this.setState({
+                            deleteAlert: false,
+                            showAlert: true,
+                        });
                     }
-                    this.refreshList(type, msg);
                 }
             });
         }
@@ -273,7 +283,7 @@ export default class OrderComponent extends Component {
     }
 
     _renderItem = ({item, index}) => {
-        let { mToken, navigation, } = this.props;
+        let { mToken, navigation, selectIndex, } = this.props;
         return (
             <OrderItem
                 mToken={mToken}
@@ -283,6 +293,7 @@ export default class OrderComponent extends Component {
                 showAlert={this.showAlertMoudle}
                 changeOrderStatu={this.changeOrderStatu}
                 clickPay={this.clickPay}
+                selectIndex={selectIndex}
             />
         )
     };

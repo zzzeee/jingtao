@@ -36,7 +36,6 @@ export default class CarsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            requestOk: false,
             carDatas: null,     //购物车商品
             invalidList: [],    //购物车失效商品
             goodList: null,     //猜你喜欢的商品列表
@@ -66,7 +65,6 @@ export default class CarsScreen extends Component {
     }
 
     componentDidMount() {
-        this.initDatas();
         _User.getUserInfo().then((user) => {
             console.log(user);
             if(user) {
@@ -106,7 +104,6 @@ export default class CarsScreen extends Component {
                         this.setState({
                             // deleteAlert: true,
                             isRefreshing: false,
-                            requestOk: true,
                         });
                         return;
                     }else if(car.sTatus == 1 && car.cartAry) {
@@ -116,7 +113,6 @@ export default class CarsScreen extends Component {
                             carDatas: orders_ok,
                             invalidList: invalidList,
                             isRefreshing: false,
-                            requestOk: true,
                         });
                         if(!that.state.goodList) {
                             Utils.fetch(Urls.getRecommendList, 'get', {
@@ -139,7 +135,6 @@ export default class CarsScreen extends Component {
                 }
                 that.setState({
                     isRefreshing: false,
-                    requestOk: true,
                 });
             }, null, {
                 catchFunc: (err) => {
@@ -278,9 +273,7 @@ export default class CarsScreen extends Component {
         let selectIcon = this.state.isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
-        if(!this.state.requestOk) {
-            return null;
-        }else if(this.state.carDatas) {
+        if(this.state.carDatas) {
             return (
                 <View style={styles.flex}>
                     <View style={styles.flex}>

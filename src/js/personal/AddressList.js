@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     },
     btnAddAddress: {
         width: Size.width - (PX.marginLR * 2),
-        height: PX.rowHeight1,
+        height: PX.rowHeight2,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 3,
