@@ -621,8 +621,8 @@ export default class ProductScreen extends Component {
                                             margin: 5,
                                         }}
                                     />)}
-                                    autoplay={true}
-                                    autoplayTimeout={3}
+                                    autoplay={false}
+                                    autoplayTimeout={3000}
                                     showsButtons={false}
                                 >
                                     {img_arr.map((item, index)=>{

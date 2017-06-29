@@ -303,7 +303,8 @@ export default class AddOrder extends Component {
                     : null
                 }
                 {this.state.showPayModal?
-                    <PayOrder 
+                    <PayOrder
+                        isBack={true}
                         mToken={this.mToken}
                         payMoney={this.actualTotal}
                         orderNumber={this.orderNumber}
@@ -481,35 +482,33 @@ export default class AddOrder extends Component {
 
     //点击提交订单按钮
     updateOrder = () => {
-        this.orderNumber = 123;
-        this.setState({showPayModal: true, });
-        // let orders = this.createOrderInfo();
-        // if(this.mToken && orders && this.carIDs) {
-        //     let obj = {
-        //         mToken: this.mToken,
-        //         oAry: orders,
-        //         cAry: this.carIDs.join(','),
-        //     };
-        //     console.log(obj);
-        //     Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-        //         console.log(result)
-        //         if(result) {
-        //             let ret = result.sTatus || 0;
-        //             let msg = result.sMessage || null;
-        //             let orderNum = result.orderNum || null;
-        //             if(ret == 1) {
-        //                 if(orderNum) {
-        //                     this.orderNumber = orderNum;
-        //                     this.setState({showPayModal: true, });
-        //                 }
-        //             }else if(msg) {
-        //                 this._toast(msg);
-        //             }
-        //         }
-        //     }, null, {catchFunc: (err)=>{
-        //         console.log(err);
-        //     }});
-        // }
+        let orders = this.createOrderInfo();
+        if(this.mToken && orders && this.carIDs) {
+            let obj = {
+                mToken: this.mToken,
+                oAry: orders,
+                cAry: this.carIDs.join(','),
+            };
+            console.log(obj);
+            Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
+                console.log(result)
+                if(result) {
+                    let ret = result.sTatus || 0;
+                    let msg = result.sMessage || null;
+                    let orderNum = result.orderNum || null;
+                    if(ret == 1) {
+                        if(orderNum) {
+                            this.orderNumber = orderNum;
+                            this.setState({showPayModal: true, });
+                        }
+                    }else if(msg) {
+                        this._toast(msg);
+                    }
+                }
+            }, null, {catchFunc: (err)=>{
+                console.log(err);
+            }});
+        }
     };
 }
 

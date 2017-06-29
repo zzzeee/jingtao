@@ -57,6 +57,7 @@ export default class OrderComponent extends Component {
         this.type = 1;
         this.alertMsg = '';
         this.alertObject = {};
+        this.payMoney = 0;
     }
 
     componentDidMount() {
@@ -151,11 +152,21 @@ export default class OrderComponent extends Component {
     };
 
     //点击立即支付
-    clickPay = (soid) => {
+    clickPay = (soid, money) => {
         if(soid) {
             this.orderID = soid;
+            this.payMoney = money;
             this.setState({showPayModal: true, });
         }
+    };
+
+    //隐藏支付框
+    hidePaymentBox = (func = null) => {
+        this.setState({ 
+            showPayModal: false,
+        }, ()=>{
+            if(func) func();
+        });
     };
 
     /**
@@ -263,8 +274,11 @@ export default class OrderComponent extends Component {
                                 {showPayModal?
                                     <PayOrder 
                                         mToken={mToken}
+                                        payMoney={this.payMoney}
+                                        orderNumber={this.orderID}
                                         visible={showPayModal}
                                         navigation={navigation}
+                                        hidePayBox={this.hidePaymentBox}
                                     />
                                     : null
                                 }

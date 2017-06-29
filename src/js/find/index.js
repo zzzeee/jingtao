@@ -262,7 +262,7 @@ export default class FindScreen extends Component {
                             }}
                         />)}
                         autoplay={true}
-                        autoplayTimeout={3}
+                        autoplayTimeout={2500}
                         showsButtons={false}>
                         {this.state.coupons.map(function(item, index) {
                             return (

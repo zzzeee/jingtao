@@ -50,7 +50,7 @@ export default class OrderComponent extends Component {
         let orderNum = orderInfo.orderNum || null;
         let freight = parseFloat(orderInfo.oExpressMoney) || 0;
         let price = parseFloat(orderInfo.soPrice) || 0;
-        let totalMoney = freight + price;
+        this.totalMoney = freight + price;
         let goods = orderInfo.oProduct || [];
         this.expressNum = orderInfo.oExpressNum || null;
         let payid = parseInt(orderInfo.oPay) || 0;
@@ -86,7 +86,7 @@ export default class OrderComponent extends Component {
                     }]}>{str_replace(Lang[Lang.default].totalProductNumberL, totalNum)}</Text>
                     <Text style={styles.fontStyle1}>
                         {Lang[Lang.default].total2 + ': '}
-                        <Text style={styles.fontStyle2}>{Lang[Lang.default].RMB + totalMoney}</Text>
+                        <Text style={styles.fontStyle2}>{Lang[Lang.default].RMB + this.totalMoney}</Text>
                         {str_replace(Lang[Lang.default].containPostage, freight)}
                     </Text>
                 </View>
@@ -216,7 +216,7 @@ export default class OrderComponent extends Component {
             }, {
                 val: Lang[Lang.default].immediatePayment,
                 red: true,
-                fun: clickPay,
+                fun: (soid)=>clickPay(soid, that.totalMoney),
             });
         }
         return obj;

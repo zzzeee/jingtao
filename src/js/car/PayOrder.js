@@ -127,6 +127,7 @@ export default class PayOrder extends Component {
     //支付失败
     payFailed = () => {
         let { mToken, orderNumber, navigation, } = this.props;
+        console.log(this.props);
         navigation.navigate('OrderDetail', {
             mToken: mToken,
             isRefresh: true,
@@ -137,15 +138,13 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let { mToken, orderNumber, } = this.props;
+        console.log(this.props);
         if(mToken && orderNumber) {
-            let url = Urls.getWeiXinInfo;
-            url = 'http://api.jingtaomart.com/api/PayTest/getWeiXinPayInfo';
-            Utils.fetch(url, 'post', {
+            Utils.fetch(Urls.getWeiXinInfo, 'post', {
                 orderNum: orderNumber,
                 mToken: mToken,
             }, (result)=>{
                 console.log(result);
-                this.weixin_pay(JSON.parse(result));
                 if(result && result.sTatus == 1 && result.wxInfo) {
                     this.weixin_pay(result.wxInfo);
                 }
@@ -156,7 +155,7 @@ export default class PayOrder extends Component {
     //微信支付
     weixin_pay = (datas) => {
         console.log(datas);
-        let { mToken, navigation, payMoney, orderNumber, hidePayBox, } = this.props;
+        let { mToken, orderNumber, hidePayBox, } = this.props;
         let partnerId = datas.partnerid || null;
         let prepayId = datas.prepayid || null;
         let nonceStr = datas.noncestr || null;
@@ -196,36 +195,37 @@ export default class PayOrder extends Component {
     //支付宝支付
     ali_pay = () => {
         let that = this;
-        let { mToken, navigation, payMoney, orderNumber, hidePayBox, } = this.props;
-        console.log(this.props);
-        Utils.fetch(Urls.getAlipayInfo, 'post', {
-            orderNum: orderNumber,
-            mToken: mToken,
-        }, (result)=>{
-            console.log(result);
-            if(result && result.sTatus == 1 && result.zfbInfo) {
-                let responseText = result.zfbInfo;
-                //把HTML实体转换成字符串
-                result = responseText.replace(/&lt;/g, "<");
-                result = responseText.replace(/&gt;/g, ">");
-                result = responseText.replace(/&amp;/g, "&");
-                result = responseText.replace(/&quot;/g, "\"");
-                result = responseText.replace(/&apos;/g, "'");
-                console.log(responseText);
-                //开始支付
-                Alipay.pay(responseText).then(function(data){
-                    console.log(data);
-                    if(data.indexOf('"msg":"Success"') >= 0) {
-                        //支付成功
-                        hidePayBox(this.paySuccess);
-                    }
-                }, function (err) {
-                    //支付失败，包括取消的
-                    console.log(err);
-                    hidePayBox(this.payFailed);
-                });
-            }
-        });
+        let { mToken, orderNumber, hidePayBox, isBack, } = this.props;
+        let callback = isBack ? this.payFailed : null;
+        if(mToken && orderNumber) {
+            Utils.fetch(Urls.getAlipayInfo, 'post', {
+                orderNum: orderNumber,
+                mToken: mToken,
+            }, (result)=>{
+                if(result && result.sTatus == 1 && result.zfbInfo) {
+                    let responseText = result.zfbInfo;
+                    //把HTML实体转换成字符串
+                    result = responseText.replace(/&lt;/g, "<");
+                    result = responseText.replace(/&gt;/g, ">");
+                    result = responseText.replace(/&amp;/g, "&");
+                    result = responseText.replace(/&quot;/g, "\"");
+                    result = responseText.replace(/&apos;/g, "'");
+                    // console.log(responseText);
+                    //开始支付
+                    Alipay.pay(responseText).then(function(data){
+                        console.log(data);
+                        if(data.indexOf('"msg":"Success"') >= 0) {
+                            //支付成功
+                            hidePayBox(this.paySuccess);
+                        }
+                    }, (err)=> {
+                        //支付失败，包括取消的
+                        console.log(err);
+                        hidePayBox(callback);
+                    });
+                }
+            });
+        }
     }
 
     //处理支付宝中时间格式中的空格
