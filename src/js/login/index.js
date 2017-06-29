@@ -197,6 +197,7 @@ export default class Login extends Component {
                             </View>
                             <View style={styles.inputMiddleStyle}>
                                 <InputText
+                                    _ref_={(ref)=>this.inputtext1=ref}
                                     vText={this.state.mobile}
                                     pText={Lang[Lang.default].inputMobile} 
                                     onChange={this.setMobile} 
@@ -224,6 +225,7 @@ export default class Login extends Component {
                             </View>
                             <View style={styles.inputMiddleStyle}>
                                 <InputText
+                                    _ref_={(ref)=>this.inputtext2=ref}
                                     vText={this.state.password}
                                     pText={str_replace(Lang[Lang.default].inputPassword, this.minPword)}
                                     onChange={this.setPassword}
@@ -262,7 +264,11 @@ export default class Login extends Component {
                         </View>
                         <View></View>
                     </View>
-                    <TouchableOpacity disabled={disabled} onPress={this.startLogin} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={()=>{
+                        if(this.inputtext1) this.inputtext1.blur();
+                        if(this.inputtext2) this.inputtext2.blur();
+                        this.startLogin();
+                    }} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
                         <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].logo}</Text>

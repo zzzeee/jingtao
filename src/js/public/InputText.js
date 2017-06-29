@@ -33,6 +33,7 @@ export default class InputText extends Component {
 
 	render() {
 		let {
+            _ref_,
             vText, 
             defaultValue, 
             pText, 
@@ -50,6 +51,7 @@ export default class InputText extends Component {
          } = this.props;
 	    return (
             <TextInput
+                ref={_ref_}
                 style={[styles.inputStyle, style]}
                 onChangeText={onChange}
                 value={vText ? vText : null}

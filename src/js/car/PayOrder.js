@@ -138,11 +138,14 @@ export default class PayOrder extends Component {
     get_weixin_payinfo = () => {
         let { mToken, orderNumber, } = this.props;
         if(mToken && orderNumber) {
-            Utils.fetch(Urls.getWeiXinInfo, 'post', {
+            let url = Urls.getWeiXinInfo;
+            url = 'http://api.jingtaomart.com/api/PayTest/getWeiXinPayInfo';
+            Utils.fetch(url, 'post', {
                 orderNum: orderNumber,
                 mToken: mToken,
             }, (result)=>{
                 console.log(result);
+                this.weixin_pay(JSON.parse(result));
                 if(result && result.sTatus == 1 && result.wxInfo) {
                     this.weixin_pay(result.wxInfo);
                 }
@@ -152,6 +155,7 @@ export default class PayOrder extends Component {
 
     //微信支付
     weixin_pay = (datas) => {
+        console.log(datas);
         let { mToken, navigation, payMoney, orderNumber, hidePayBox, } = this.props;
         let partnerId = datas.partnerid || null;
         let prepayId = datas.prepayid || null;
@@ -159,18 +163,17 @@ export default class PayOrder extends Component {
         let timeStamp = datas.timestamp || null;
         let sign = datas.sign || null;
         if(partnerId && prepayId && nonceStr && timeStamp && sign) {
-            let obj = {
-                'partnerId': partnerId,
-                'prepayId': prepayId,
-                'nonceStr': nonceStr,
-                'timeStamp': timeStamp + '',
-                'package': 'Sign=WXpay',
-                'sign': sign
-            };
             WeChat.isWXAppInstalled()
             .then((isInstalled) => {
                 if (isInstalled) {
-                    WeChat.pay(obj)
+                    WeChat.pay({
+                        'partnerId': partnerId,
+                        'prepayId': prepayId,
+                        'nonceStr': nonceStr,
+                        'timeStamp': timeStamp + '',
+                        'package': 'Sign=WXpay',
+                        'sign': sign
+                    })
                     .then((result) => {
                         console.log(result);
                         if(result && result.errCode === 0) {
