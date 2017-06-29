@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import Toast from 'react-native-root-toast';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -50,6 +51,8 @@ export default class AddOrder extends Component {
         this.messages = [];
         this.selCoupon = null;
         this.orderParam = null;
+        this.orderNumber = null;
+        this.timer = [];
     }
 
     componentWillMount() {
@@ -64,6 +67,13 @@ export default class AddOrder extends Component {
         }
     }
 
+    componentWillUnmount() {
+        let timers = this.timer;
+        for(let t of timers) {
+            clearTimeout(t);
+        }
+    }
+
     //初始化数据
     initDatas = () => {
         let { navigation } = this.props;
@@ -75,6 +85,15 @@ export default class AddOrder extends Component {
             this.addressID = addressID || null;
             this.orderParam = orderParam || null;
         }
+    };
+
+    _toast = (str) => {
+        let _timer = Toast.show(str, {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.CENTER,
+            hideOnPress: true,
+        });
+        this.timer.push(_timer);
     };
 
     //从购物车跳转过来
@@ -113,7 +132,7 @@ export default class AddOrder extends Component {
             let that = this;
             let list = result.oOrder || [];
             let addressList = result.addressAry || [];
-            let mIntegral = parseInt(result.mIntegral) || 0;
+            let mIntegral = parseFloat(result.mIntegral) || 0;
             let mCoupon = result.mCoupon || [];
             for(let i in list) {
                 let gPrice = parseFloat(list[i].soPrice) || 0;
@@ -124,7 +143,7 @@ export default class AddOrder extends Component {
             this.actualTotal = that.productTotal + that.freightTotal;
             this.setState({
                 tmpOrderInfo: list,
-                integral: mIntegral = parseInt(mIntegral / 100),
+                integral: mIntegral,
                 addressInfo: addressList,
                 uCoupons: mCoupon,
             })
@@ -151,6 +170,15 @@ export default class AddOrder extends Component {
         }
     };
 
+    //隐藏支付框
+    hidePaymentBox = (func = null) => {
+        this.setState({ 
+            showPayModal: false,
+        }, ()=>{
+            if(func) func();
+        });
+    };
+
     render() {
         let that = this;
         let { navigation } = this.props;
@@ -165,8 +193,10 @@ export default class AddOrder extends Component {
             address = province + city + regoin + address;
             name = name ? (Lang[Lang.default].consignee + name) : '';
         }
-        this.actualTotal = (this.actualTotal - this.couponDiscount > 0) ? this.actualTotal - this.couponDiscount : 0;
-        this.useIntegral = this.getIntegralSession()[this.state.selectSwapIntegral].integral || 0;
+        let total = this.productTotal + this.freightTotal;
+        this.actualTotal = (total - this.couponDiscount > 0) ? (total - this.couponDiscount) : 0;
+        let integralInfo = this.getIntegralSession();
+        this.useIntegral = integralInfo[this.state.selectSwapIntegral].integral || 0;
         this.actualTotal = (this.actualTotal - this.useIntegral).toFixed(2);
         return (
             <View style={styles.flex}>
@@ -225,7 +255,7 @@ export default class AddOrder extends Component {
                             </Text>
                         </View>
                         <View>
-                            {this.getIntegralSession().map(this.changeIntegral)}
+                            {integralInfo.map(this.changeIntegral)}
                         </View>
                         <View style={styles.integralSelectItem}>
                             <Image source={require('../../images/car/careful.png')} style={styles.carefulImage} />
@@ -275,8 +305,11 @@ export default class AddOrder extends Component {
                 {this.state.showPayModal?
                     <PayOrder 
                         mToken={this.mToken}
-                        visible={this.state.showPayModal} 
-                        navigation={navigation} 
+                        payMoney={this.actualTotal}
+                        orderNumber={this.orderNumber}
+                        visible={this.state.showPayModal}
+                        hidePayBox={this.hidePaymentBox}
+                        navigation={navigation}
                     />
                     : null
                 }
@@ -303,15 +336,18 @@ export default class AddOrder extends Component {
                 />
             </View>
         );
+        let integral1 = integral > this.actualTotal ? this.actualTotal : integral;
+        let integral2 = 0;
+        let integral3 = inputIntegral > this.actualTotal ? this.actualTotal : inputIntegral;
         return [{
             content: content1,
-            integral: integral > this.actualTotal ? this.actualTotal : integral,
+            integral: parseInt(integral1),
         }, {
             content: content2,
-            integral: 0,
+            integral: parseInt(integral2),
         }, {
             content: content3,
-            integral: inputIntegral > this.actualTotal ? this.actualTotal : inputIntegral,
+            integral: parseInt(integral3),
         }];
     };
 
@@ -319,8 +355,10 @@ export default class AddOrder extends Component {
     _inputIntegral = (value) => {
         let integral = this.state.integral || 0;
         let num = parseInt(value) || 0;
+        let total = this.productTotal + this.freightTotal;
         if(integral > 0 && num >= 0 && num <= integral) {
-            this.setState({inputIntegral: num});
+            let useNum = num > total ? total : num;
+            this.setState({inputIntegral: parseInt(useNum), });
         }else {
             this.setState({inputIntegral: this.state.inputIntegral, });
         }
@@ -443,21 +481,33 @@ export default class AddOrder extends Component {
 
     //点击提交订单按钮
     updateOrder = () => {
-        // let orders = this.createOrderInfo();
-        // if(this.mToken && orders && this.carIDs) {
-        //     let obj = {
-        //         mToken: this.mToken,
-        //         oAry: orders,
-        //         cAry: this.carIDs.join(','),
-        //     };
-        //     console.log(obj);
-        //     Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-        //         console.log(result);
-        //     }, null, {catchFunc: (err)=>{
-        //         console.log(err);
-        //     }});
-        // }
-        this.setState({showPayModal: true, });
+        let orders = this.createOrderInfo();
+        if(this.mToken && orders && this.carIDs) {
+            let obj = {
+                mToken: this.mToken,
+                oAry: orders,
+                cAry: this.carIDs.join(','),
+            };
+            console.log(obj);
+            Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
+                console.log(result)
+                if(result) {
+                    let ret = result.sTatus || 0;
+                    let msg = result.sMessage || null;
+                    let orderNum = result.orderNum || null;
+                    if(ret == 1) {
+                        if(orderNum) {
+                            this.orderNumber = orderNum;
+                            this.setState({showPayModal: true, });
+                        }
+                    }else if(msg) {
+                        this._toast(msg);
+                    }
+                }
+            }, null, {catchFunc: (err)=>{
+                console.log(err);
+            }});
+        }
     };
 }
 

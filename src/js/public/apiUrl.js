@@ -94,6 +94,10 @@ var urls = {
     buyNowAPI: host + '/api/OrderNController/productUnderstandingBuyingConfirm',
     //获取物流信息
     getLogisticsInfo: host + '/api/OrderNController/getExpressListByExpressNum',
+    //获取支付宝支付信息
+    getAlipayInfo: host + '/api/AplipayNController/getAlipayInfo',
+    //获取微信支付信息
+    getWeiXinInfo: host + '/api/AplipayNController/getWeiXinPayInfo',
 };
 
 export default urls;

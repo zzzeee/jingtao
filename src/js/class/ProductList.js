@@ -130,13 +130,13 @@ export default class Search extends Component {
                 if(result && result.sTatus == 1 && result.proAry) {
                     this.btnDisable = false;
                     this.loadMoreLock = false;
-                    if(result.proAry.length == 0 && _sdata.length == 0) {
+                    let list = result.proAry || [];
+                    if(list.length == 0 && (isClear || _sdata.length == 0)) {
                         this.setState({
                             load_or_error: this.getNoResult(),
                             showArea: false,
                         });
                     }else {
-                        let list = result.proAry || [];
                         let datas = (_sdata && !isClear) ? _sdata.concat(list) : list;
                         if(list.length < this.pageNumber) {
                             this.isEnScroll = false;

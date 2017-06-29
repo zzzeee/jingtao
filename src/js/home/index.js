@@ -74,8 +74,7 @@ export default class HomeScreen extends Component {
                     <Text style={{width: 40}}>{null}</Text>
                     <BtnIcon 
                         width={100} 
-                        height={PX.headHeight - 10} 
-                        imageStyle={{marginTop: 8}} 
+                        height={PX.headHeight - 10}
                         src={require("../../images/logoTitle.png")}
                     />
                     <BtnIcon 
@@ -87,10 +86,14 @@ export default class HomeScreen extends Component {
                 </View>
                 <Animated.View style={[styles.hideHead, {
                     height: this.state.heightValue,
+                    opacity: this.state.heightValue.interpolate({
+                        inputRange: [0, PX.headHeight],
+                        outputRange: [0, 1]
+                    }),
                 }]}>
                     <BtnIcon 
-                        style={styles.btnLeft} 
-                        width={PX.headIconSize} 
+                        style={styles.btnLeft}
+                        width={PX.headIconSize}
                         src={require("../../images/logo.png")} 
                         press={this.scrollStart}
                     />

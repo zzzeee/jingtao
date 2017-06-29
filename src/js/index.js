@@ -16,6 +16,7 @@ import { StackNavigator } from 'react-navigation';
 import { Color, PX } from './public/globalStyle';
 import JPushModule from 'jpush-react-native';
 
+import Welcome from './welcome';
 import TabNavScreen from './tabNav';
 // import TabView from './tabView';
 import Login from './login';
@@ -116,6 +117,11 @@ class MyNavScren extends Component {
         );
     }
 }
+
+//欢迎页
+const WelcomeScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Welcome} />
+);
 
 // //首页主页
 // const TabNavScreen = ({ navigation }) => (
@@ -254,6 +260,9 @@ const ShopSearchScreen = ({ navigation }) => (
 );
 
 const AppNavigator = StackNavigator({
+    Welcome: {
+        screen: WelcomeScreen,
+    },
     TabNav: {
         screen: TabNavScreen,
     },
@@ -336,7 +345,7 @@ const AppNavigator = StackNavigator({
         screen: ShopSearchScreen,
     },
 }, {
-    initialRouteName: 'TabNav',
+    initialRouteName: 'Welcome',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
 });

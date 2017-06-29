@@ -53,6 +53,12 @@ fastlane/Preview.html
 fastlane/screenshots
 
 # linzeyong add
+android/.project
+android/.settings
+android/app/.classpath
+android/app/.project
+android/app/.settings
+
 android/gradle
 android/keystores
 android/gradle.properties
@@ -61,9 +67,11 @@ android/gradlew.bat
 android/app/BUCK
 android/app/src/main/res
 !android/app/src/main/res/values  ### 注：前面有个！, 除这个文件/文件夹以外
+!android/app/src/main/res/layout
 android/app/src/main/assets/fonts
 android/app/src/main/assets/index.android.bundle
 android/app/src/main/assets/index.android.bundle.meta
+
 
 ios/
 __tests__

@@ -5,6 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#E55645</item>
         <item name="colorPrimaryDark">#E55645</item>
+        <!--设置透明背景-->
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>

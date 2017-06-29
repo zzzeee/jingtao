@@ -56,7 +56,6 @@ export default class MyOrder extends Component {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            console.log(params);
             let { mToken, index } = params;
             this.mToken = mToken || null;
             this.setState({

@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
-// import {pay} from 'react-native-alipay';
 import Toast from 'react-native-root-toast';
 import Alipay from 'react-native-yunpeng-alipay'
 import Urls from '../public/apiUrl';
@@ -28,9 +27,10 @@ import { Size, pixel, Color, PX } from '../public/globalStyle';
 export default class PayOrder extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            visible: this.props.visible || false,
-        };
+        
+        this.mToken = null;
+        this.payMoney = null;
+        this.timer = [];
     }
 
     componentWillReceiveProps(nextProps) {
@@ -39,18 +39,25 @@ export default class PayOrder extends Component {
         }
     }
 
-    hideModal = () => {
-        this.setState({visible: false});
+    componentWillUnmount() {
+        let timers = this.timer;
+        for(let t of timers) {
+            clearTimeout(t);
+        }
+    }
+
+    hideModal = (func = null) => {
+        this.setState({visible: false}, func);
     };
 
     render() {
         let that = this;
-        let { navigation } = this.props;
+        let { navigation, visible, payMoney, hidePayBox, } = this.props;
         return (
             <Modal
                 animationType={"slide"}
                 transparent={true}
-                visible={this.state.visible}
+                visible={visible}
                 onRequestClose={() => {}}
             >
                 <View style={styles.bodyStyle}>
@@ -58,14 +65,14 @@ export default class PayOrder extends Component {
                         <View style={styles.rowBox1}>
                             <Text style={styles.titleText}>{Lang[Lang.default].selectPayMethod}</Text>
                             <View style={styles.cancelView}>
-                                <TouchableOpacity onPress={this.hideModal}>
+                                <TouchableOpacity onPress={()=>hidePayBox(null)}>
                                 <Image style={styles.iconStyle} source={require('../../images/close.png')} />
                                 </TouchableOpacity>
                             </View>
                         </View>
                         <View style={styles.rowBox2}>
                             <Text style={styles.defalutFont}>{Lang[Lang.default].totalPayment}</Text>
-                            <Text style={styles.redColor1}>{Lang[Lang.default].RMB + '120.00'}</Text>
+                            <Text style={styles.redColor1}>{Lang[Lang.default].RMB + payMoney}</Text>
                         </View>
                         <TouchableOpacity style={styles.rowBox3} onPress={this.ali_pay}>
                             <View style={styles.rowBox}>
@@ -81,7 +88,7 @@ export default class PayOrder extends Component {
                             </View>
                             <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.rowBox3}>
+                        {/*<TouchableOpacity style={styles.rowBox3}>
                             <View style={styles.rowBox}>
                                 <Image style={styles.iconStyle} source={require('../../images/car/pufa.png')} />
                                 <Text style={[styles.defalutFont, {paddingLeft: 8}]}>{Lang[Lang.default].pufapay}</Text>
@@ -90,11 +97,7 @@ export default class PayOrder extends Component {
                                 <Text style={[styles.redColor2, {paddingRight: 8}]}>首次支付赠送80积分</Text>
                                 <Image source={require('../../images/list_more.png')} style={styles.iconStyle} />
                             </View>
-                        </TouchableOpacity>
-                        <Button title="支付完成" onPress={()=>{
-                            this.hideModal();
-                            navigation.navigate('PayFinish');
-                        }} />
+                        </TouchableOpacity>*/}
                     </View>
                 </View>
             </Modal>
@@ -102,39 +105,59 @@ export default class PayOrder extends Component {
     }
 
     _toast = (str) => {
-        Toast.show(str, {
-            duration: Toast.durations.LONG,
+        let _timer = Toast.show(str, {
+            duration: Toast.durations.SHORT,
             position: Toast.positions.CENTER,
             hideOnPress: true,
+        });
+        this.timer.push(_timer);
+    };
+
+    //支付成功
+    paySuccess = (money = null) => {
+        let { mToken, orderNumber, payMoney, navigation, } = this.props;
+        navigation.navigate('OrderNotify', {
+            pageType: 1,
+            mToken: mToken,
+            payMoney: money || payMoney,
+            shopOrderNum: orderNumber,
+        });
+    };
+
+    //支付失败
+    payFailed = () => {
+        let { mToken, orderNumber, navigation, } = this.props;
+        navigation.navigate('OrderDetail', {
+            mToken: mToken,
+            isRefresh: true,
+            shopOrderNum: orderNumber,
         });
     };
 
     //获取微信支付信息
     get_weixin_payinfo = () => {
-        let that = this;
-        Utils.fetch('http://api.jingtaomart.com/api/AplipayNController/getWeiXinPayInfo', 'post', {
-            orderNum: '9sar2ew122',
-            mToken: this.props.mToken,
-        }, function(result){
-            if(result && result.sTatus == 1 && result.wxInfo) {
-                that.weixin_pay(result.wxInfo);
-            }
-            console.log(result);
-            // console.log('weixin_payinfo :');
-            // console.log(JSON.parse(result));
-            
-        });
+        let { mToken, orderNumber, } = this.props;
+        if(mToken && orderNumber) {
+            Utils.fetch(Urls.getWeiXinInfo, 'post', {
+                orderNum: orderNumber,
+                mToken: mToken,
+            }, (result)=>{
+                console.log(result);
+                if(result && result.sTatus == 1 && result.wxInfo) {
+                    this.weixin_pay(result.wxInfo);
+                }
+            });
+        }
     };
 
     //微信支付
     weixin_pay = (datas) => {
+        let { mToken, navigation, payMoney, orderNumber, hidePayBox, } = this.props;
         let partnerId = datas.partnerid || null;
         let prepayId = datas.prepayid || null;
         let nonceStr = datas.noncestr || null;
         let timeStamp = datas.timestamp || null;
         let sign = datas.sign || null;
-        let that = this;
-
         if(partnerId && prepayId && nonceStr && timeStamp && sign) {
             WeChat.isWXAppInstalled()
             .then((isInstalled) => {
@@ -150,61 +173,54 @@ export default class PayOrder extends Component {
                     .then((result) => {
                         console.log(result);
                         if(result && result.errCode === 0) {
-                            this._toast(Lang[Lang.default].paySuccess);
-                            that.props.navigation.navigate('PayFinish');
+                            hidePayBox(this.paySuccess);
                         }
-                        that.hideModal();
                     })
                     .catch((error) => {
                         console.log(error);
-                        if(error === -2) {
-                            this._toast(Lang[Lang.default].payCancel);
-                        }else {
-                            this._toast(Lang[Lang.default].payFail);
-                        }
-                        that.hideModal();
+                        hidePayBox(this.payFailed);
                     });
                 } else {
-                    this._toast(Lang[Lang.default].shareErrorAlert);
+                    hidePayBox(()=>this._toast(Lang[Lang.default].shareErrorAlert));
                 }
             });
         }else {
-            this._toast(Lang[Lang.default].paramError);
-            that.hideModal();
+            hidePayBox(()=>this._toast(Lang[Lang.default].paramError));
         }
     };
     
     //支付宝支付
     ali_pay = () => {
         let that = this;
-        fetch('http://api.jingtaomart.com/api/PayTest/getAlipayInfo')
-        .then((response) => response.text())
-        .then((responseText) => {
-            if(responseText) {
+        let { mToken, navigation, payMoney, orderNumber, hidePayBox, } = this.props;
+        console.log(this.props);
+        Utils.fetch(Urls.getAlipayInfo, 'post', {
+            orderNum: orderNumber,
+            mToken: mToken,
+        }, (result)=>{
+            console.log(result);
+            if(result && result.sTatus == 1 && result.zfbInfo) {
+                let responseText = result.zfbInfo;
                 //把HTML实体转换成字符串
-                responseText = responseText.replace(/&lt;/g, "<");
-                responseText = responseText.replace(/&gt;/g, ">");
-                responseText = responseText.replace(/&amp;/g, "&");
-                responseText = responseText.replace(/&quot;/g, "\"");
-                responseText = responseText.replace(/&apos;/g, "'");
-                // console.log(responseText);
+                result = responseText.replace(/&lt;/g, "<");
+                result = responseText.replace(/&gt;/g, ">");
+                result = responseText.replace(/&amp;/g, "&");
+                result = responseText.replace(/&quot;/g, "\"");
+                result = responseText.replace(/&apos;/g, "'");
+                console.log(responseText);
                 //开始支付
                 Alipay.pay(responseText).then(function(data){
                     console.log(data);
                     if(data.indexOf('"msg":"Success"') >= 0) {
                         //支付成功
-                        alert(Lang[Lang.default].paySuccess);
+                        hidePayBox(this.paySuccess);
                     }
-                    that.hideModal();
                 }, function (err) {
                     //支付失败，包括取消的
                     console.log(err);
-                    that.hideModal();
+                    hidePayBox(this.payFailed);
                 });
             }
-        })
-        .catch((error) => {
-            console.error(error);
         });
     }
 
