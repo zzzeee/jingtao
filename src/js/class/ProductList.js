@@ -125,7 +125,7 @@ export default class Search extends Component {
                 pPage: this.page,
                 pPerNum: this.pageNumber,
             }, (result) => {
-                console.log(result);
+                // console.log(result);
                 let _sdata = this.state.sdatas || [];
                 if(result && result.sTatus == 1 && result.proAry) {
                     this.btnDisable = false;

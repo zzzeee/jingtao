@@ -345,7 +345,7 @@ const AppNavigator = StackNavigator({
         screen: ShopSearchScreen,
     },
 }, {
-    initialRouteName: 'Welcome',
+    initialRouteName: 'TabNav',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
 });

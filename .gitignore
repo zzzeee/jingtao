@@ -65,12 +65,23 @@ android/gradle.properties
 android/gradlew
 android/gradlew.bat
 android/app/BUCK
-android/app/src/main/res
-!android/app/src/main/res/values  ### 注：前面有个！, 除这个文件/文件夹以外
-!android/app/src/main/res/layout
 android/app/src/main/assets/fonts
 android/app/src/main/assets/index.android.bundle
 android/app/src/main/assets/index.android.bundle.meta
+
+### 注：前面有个！, 除这个文件/文件夹以外
+#android/app/src/main/res
+#!android/app/src/main/res/values
+android/app/src/main/res/drawable-hdpi
+android/app/src/main/res/drawable-mdpi
+android/app/src/main/res/drawable-xhdpi
+android/app/src/main/res/drawable-xxhdpi
+android/app/src/main/res/drawable-xxxhdpi
+android/app/src/main/res/mipmap-hdpi
+android/app/src/main/res/mipmap-mdpi
+android/app/src/main/res/mipmap-xhdpi
+android/app/src/main/res/mipmap-xxhdpi
+android/app/src/main/res/mipmap-xxxhdpi
 
 
 ios/

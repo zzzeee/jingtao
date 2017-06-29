@@ -21,6 +21,7 @@ import { Size, PX, pixel, Color } from '../../public/globalStyle';
 import Lang, {str_replace} from '../../public/language';
 import ListFrame from '../../other/ListViewFrame';
 import OrderGood from '../../car/OrderGood';
+import PayOrder from '../../car/PayOrder';
 import AppHead from '../../public/AppHead';
 import OrderCancel from './OrderCancel';
 import ErrorAlert from '../../other/ErrorAlert';
@@ -35,6 +36,7 @@ export default class OrderDetail extends Component {
             showCancelBox: false,
             load_or_error: null,
             deleteAlert: false,
+            showPayModal: false,
         };
         this.mToken = null;
         this.orderNum = null;
@@ -45,6 +47,7 @@ export default class OrderDetail extends Component {
         this.type = 1;
         this.alertMsg = '';
         this.isRefresh = false;   // 返回时是否刷新列表页
+        this.actualTotal = 0;
     }
 
     componentWillMount() {
@@ -175,7 +178,14 @@ export default class OrderDetail extends Component {
 
     render() {
         let { navigation } = this.props;
-        let { orders, showCancelBox, deleteAlert, showAlert, load_or_error, } = this.state;
+        let { 
+            orders, 
+            showCancelBox, 
+            deleteAlert, 
+            showAlert, 
+            load_or_error, 
+            showPayModal,
+        } = this.state;
         let listHeadComponent = this.orderComponent();
         return (
             <View style={styles.flex}>
@@ -246,6 +256,17 @@ export default class OrderDetail extends Component {
                     />
                     : null
                 }
+                {showPayModal?
+                    <PayOrder 
+                        mToken={this.mToken}
+                        payMoney={this.actualTotal}
+                        orderNumber={this.shopOrderNum}
+                        visible={showPayModal}
+                        hidePayBox={this.hidePaymentBox}
+                        navigation={navigation}
+                    />
+                    : null
+                }
                 {deleteAlert ?
                     <AlertMoudle visiable={deleteAlert} {...this.alertObject} />
                     : null
@@ -262,6 +283,15 @@ export default class OrderDetail extends Component {
             </View>
         );
     }
+
+    //隐藏支付框
+    hidePaymentBox = (func = null) => {
+        this.setState({ 
+            showPayModal: false,
+        }, ()=>{
+            if(func) func();
+        });
+    };
 
     orderComponent = () => {
         let orders = this.state.orders;
@@ -292,6 +322,7 @@ export default class OrderDetail extends Component {
         let oIntegral = parseInt(sOrderInfo.oIntegral) || 0;
         let oScoupon = parseInt(sOrderInfo.oScoupon) || 0;
         this.titleBtns = this.getOrderBtns(payid, statuid, addTime, fhTime, expressData);
+        this.actualTotal = (totalMoney - oIntegral - oScoupon).toFixed(2);
         return (
             <View style={styles.container}>
                 <View style={styles.sessionBox}>
@@ -551,6 +582,7 @@ export default class OrderDetail extends Component {
             obj.btns2.push({
                 val: '立即付款',
                 bgColor: Color.mainColor,
+                fun: ()=>that.setState({showPayModal: true,}),
             });
             obj.image = require('../../../images/car/order_dfk.png');
         }

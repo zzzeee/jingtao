@@ -24,7 +24,6 @@ export default class Welcome extends Component {
     }
 
     componentDidMount() {
-        console.log(SplashScreen);
         const { navigation } = this.props;
         this.timer = setTimeout(() => {
             InteractionManager.runAfterInteractions(() => {
@@ -37,7 +36,7 @@ export default class Welcome extends Component {
                  });
                  navigation.dispatch(resetAction);
             });
-        }, 1200);
+        }, 1800);
     }
 
     componentWillUnmount() {

@@ -65,7 +65,7 @@ export default class PayOrder extends Component {
                         <View style={styles.rowBox1}>
                             <Text style={styles.titleText}>{Lang[Lang.default].selectPayMethod}</Text>
                             <View style={styles.cancelView}>
-                                <TouchableOpacity onPress={()=>hidePayBox(null)}>
+                                <TouchableOpacity onPress={()=>hidePayBox(this.payFailed)}>
                                 <Image style={styles.iconStyle} source={require('../../images/close.png')} />
                                 </TouchableOpacity>
                             </View>
@@ -159,17 +159,18 @@ export default class PayOrder extends Component {
         let timeStamp = datas.timestamp || null;
         let sign = datas.sign || null;
         if(partnerId && prepayId && nonceStr && timeStamp && sign) {
+            let obj = {
+                'partnerId': partnerId,
+                'prepayId': prepayId,
+                'nonceStr': nonceStr,
+                'timeStamp': timeStamp + '',
+                'package': 'Sign=WXpay',
+                'sign': sign
+            };
             WeChat.isWXAppInstalled()
             .then((isInstalled) => {
                 if (isInstalled) {
-                    WeChat.pay({
-                        'partnerId': partnerId,
-                        'prepayId': prepayId,
-                        'nonceStr': nonceStr,
-                        'timeStamp': timeStamp + '',
-                        'package': 'Sign=WXpay',
-                        'sign': sign
-                    })
+                    WeChat.pay(obj)
                     .then((result) => {
                         console.log(result);
                         if(result && result.errCode === 0) {
@@ -178,7 +179,7 @@ export default class PayOrder extends Component {
                     })
                     .catch((error) => {
                         console.log(error);
-                        hidePayBox(this.payFailed);
+                        // hidePayBox(this.payFailed);
                     });
                 } else {
                     hidePayBox(()=>this._toast(Lang[Lang.default].shareErrorAlert));
