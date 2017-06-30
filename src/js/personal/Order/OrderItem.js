@@ -96,8 +96,10 @@ export default class OrderComponent extends Component {
                     {orderTitleBtns.btns.map((item, index)=>{
                         return (
                             <TouchableOpacity key={index} onPress={()=>{
-                                if(item.fun && orderID) {
+                                if(item.fun) {
                                     item.fun(orderID);
+                                }else {
+                                    this.notFinished();
                                 }
                             }} style={[styles.btnStyle, {
                                 borderColor: item.red ? Color.mainColor : Color.lightBack,
@@ -114,6 +116,17 @@ export default class OrderComponent extends Component {
         );
     }
 
+    //联系客服/商家
+    sellTelphone = () => {
+        Linking.openURL('tel: ' + Lang.telephone)
+        .catch(err => console.error('调用电话失败！', err));
+    };
+
+    //未完成功能的提示
+    notFinished = ()=> {
+        this.props.showWarnMsg('正功能正在调整中...');
+    };
+
     /**
      * 获取订单标识符和操作按钮等信息
      * @param payid  number 付款状态
@@ -128,7 +141,8 @@ export default class OrderComponent extends Component {
             showCancel, 
             showAlert, 
             changeOrderStatu, 
-            clickPay, 
+            clickPay,
+            showWarnMsg,
         } = this.props;
         let that = this;
         let statuid = parseInt(_statuid) || 0;
@@ -137,9 +151,12 @@ export default class OrderComponent extends Component {
             btns: [{
                 val: Lang[Lang.default].contactWaiter,
                 red: false,
-                fun: ()=>{
-                    Linking.openURL('tel: ' + Lang.telephone)
-                    .catch(err => console.error('调用电话失败！', err));
+                fun: (soid)=>{
+                    showAlert(
+                        Lang.telephone2,
+                        that.sellTelphone,
+                        Lang[Lang.default].call
+                    );
                 }
             }],
         };

@@ -127,6 +127,9 @@ export default class AddOrder extends Component {
                 that.freightTotal += fPrice;
             }
             this.actualTotal = that.productTotal + that.freightTotal;
+            if(addressList && (addressList instanceof Array)) {
+                if(addressList.length == 0) addressList = null;
+            }
             this.setState({
                 tmpOrderInfo: list,
                 integral: mIntegral,
@@ -206,26 +209,46 @@ export default class AddOrder extends Component {
                 <View style={styles.body}>
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
                     <View style={styles.addressSession}>
-                        <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
-                            <TouchableOpacity onPress={()=>{
-                                navigation.navigate('AddressList', {
-                                    mToken: this.mToken,
-                                    previou: 'AddOrder',
-                                    carIDs: this.carIDs,
-                                    orderParam: this.orderParam,
-                                });
-                            }} style={styles.addressBox}>
-                                <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
-                                <View style={styles.centerTextBox}>
-                                    <View style={styles.rowViewStyle}>
-                                        <Text style={styles.addressTextStyle}>{name}</Text>
-                                        <Text style={[styles.addressTextStyle, styles.mobileStyle]}>{mobile}</Text>
+                        {this.state.addressInfo ?
+                            <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
+                                <TouchableOpacity onPress={()=>{
+                                    navigation.navigate('AddressList', {
+                                        mToken: this.mToken,
+                                        previou: 'AddOrder',
+                                        carIDs: this.carIDs,
+                                        orderParam: this.orderParam,
+                                    });
+                                }} style={styles.addressBox}>
+                                    <Image style={styles.addressLeftImage} source={require('../../images/car/address_nav.png')} />
+                                    <View style={styles.centerTextBox}>
+                                        <View style={styles.rowViewStyle}>
+                                            <Text style={styles.addressTextStyle}>{name}</Text>
+                                            <Text style={[styles.addressTextStyle, styles.mobileStyle]}>{mobile}</Text>
+                                        </View>
+                                        <Text numberOfLines={3} style={[styles.addressTextStyle, styles.addressStyle]}>{address}</Text>
                                     </View>
-                                    <Text numberOfLines={3} style={[styles.addressTextStyle, styles.addressStyle]}>{address}</Text>
-                                </View>
-                                <Image style={styles.addressRightImage} source={require('../../images/list_more.png')} />
-                            </TouchableOpacity>
-                        </Image>
+                                    <Image style={styles.addressRightImage} source={require('../../images/list_more.png')} />
+                                </TouchableOpacity>
+                            </Image> :
+                            <View style={styles.notAddressBox}>
+                                <BtnIcon
+                                    width={20}
+                                    size={13}
+                                    text={Lang[Lang.default].inputConsigneeAddress} 
+                                    src={require('../../images/car/careful_black.png')} 
+                                />
+                                <TouchableOpacity onPress={()=>{
+                                    navigation.navigate('AddressList', {
+                                        mToken: this.mToken,
+                                        previou: 'AddOrder',
+                                        carIDs: this.carIDs,
+                                        orderParam: this.orderParam,
+                                    });
+                                }}>
+                                    <Image source={require('../../images/car/add_red.png')} style={styles.addAressImg} />
+                                </TouchableOpacity>
+                            </View>
+                        }
                     </View>
                     {this.state.tmpOrderInfo.map((item, index)=>this.storeSession(item, index))}
                     {this.state.uCoupons.length ?
@@ -577,7 +600,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     addressSession: {
-        height: 100,
         marginTop: 10,
         marginBottom: 10,
     },
@@ -608,6 +630,19 @@ const styles = StyleSheet.create({
         marginRight: 10,
         width: 22,
         height: 22,
+    },
+    notAddressBox: {
+        height: PX.rowHeight2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 10,
+        paddingRight: PX.marginLR,
+        backgroundColor: '#fff',
+    },
+    addAressImg: {
+        width: 30,
+        height: 30,
     },
     carefulImage: {
         width: 14,

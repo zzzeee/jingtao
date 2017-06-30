@@ -333,7 +333,7 @@ export default class AddressAdd extends Component {
                                     onChange={this.setHomeAddress} 
                                     isPWD={false}
                                     multiline={true}
-                                    length={100}
+                                    length={80}
                                     style={styles.inputHomeAddress}
                                     onFocus={()=>this.setInputFocus('home')}
                                 />

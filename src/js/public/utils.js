@@ -162,6 +162,12 @@ var Util = {
         }
     },
 
+    //检查手机格式
+    checkMobile: function (mobile) {
+        let ret = /^1[34578]\d{9}$/.test(mobile);
+        return ret;
+    },
+
     //去除前后空格
     trim: function (str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");

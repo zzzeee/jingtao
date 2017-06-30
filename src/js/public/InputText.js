@@ -40,6 +40,7 @@ export default class InputText extends Component {
             pcolor, 
             onChange, 
             endEditing, 
+            submitEditing,
             style, 
             isPWD, 
             length, 
@@ -66,6 +67,7 @@ export default class InputText extends Component {
                 editable={disEdit ? false : true}
                 multiline={multiline ? true : false}
                 onEndEditing={endEditing}
+                onSubmitEditing={submitEditing}
                 onFocus={onFocus}
             />
 	    );
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         borderWidth: pixel,
         borderColor: Color.lavender,
-        borderRadius: 6,
+        borderRadius: 5,
         backgroundColor : '#fff'
     },
 });

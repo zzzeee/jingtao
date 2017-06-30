@@ -143,6 +143,7 @@ export default class HomeScreen extends Component {
                     shareObj={this.shareObj}
                     btnSize={20}
                     addHideCity={this.addHideCity}
+                    navigation={navigation}
                     hideMenu={()=>this.setState({
                         visible: false,
                         nativeEvent: null,
@@ -213,7 +214,7 @@ export default class HomeScreen extends Component {
             Utils.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id
             }, function(result) {
-                // console.log(result);
+                console.log(result);
                 if(result && result.provinceAry) {
                     let ret = that.removeHideCitys(result.provinceAry);
                     let name = ret.region_name || '';

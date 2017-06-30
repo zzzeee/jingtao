@@ -58,7 +58,6 @@ export default class ClassScreen extends Component {
         Utils.fetch(Urls.getProductClassify, 'get', {
             cType: 0,
         }, function(result) {
-            console.log(result);
             if(result && result.classAry && result.classAry[0] && result.classAry[0].child) {
                 let sessionArr = {}, 
                 ret = result.classAry[0].child, 

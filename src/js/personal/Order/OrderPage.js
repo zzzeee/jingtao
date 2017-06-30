@@ -136,11 +136,11 @@ export default class OrderComponent extends Component {
     };
 
     //显示删除提示框
-    showAlertMoudle = (msg, rclick) => {
+    showAlertMoudle = (msg, rclick, rText = null) => {
         this.alertObject = {
             text: msg,
             leftText: Lang[Lang.default].cancel,
-            rightText: Lang[Lang.default].determine,
+            rightText: rText || Lang[Lang.default].determine,
             leftClick: ()=>this.setState({deleteAlert: false,}),
             rightClick: rclick,
             leftColor: Color.lightBack,
@@ -305,6 +305,7 @@ export default class OrderComponent extends Component {
                 orderInfo={item}
                 showCancel={this.showCancelWindow}
                 showAlert={this.showAlertMoudle}
+                showWarnMsg={this.showAutoModal}
                 changeOrderStatu={this.changeOrderStatu}
                 clickPay={this.clickPay}
                 selectIndex={selectIndex}

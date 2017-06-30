@@ -105,17 +105,23 @@ export default class OrderDetail extends Component {
         this.setState({showCancelBox: false, });
     };
 
+    //显示提示框
+    showAutoModal = (msg) => {
+        this.alertMsg = msg;
+        this.setState({showAlert: true, });
+    };
+
     //隐藏提示框
     hideAutoModal = () => {
         this.setState({ showAlert: false });
     };
 
-    //显示删除提示框(确认收货)
-    showAlertMoudle = (msg, func, rText = Lang[Lang.default].determine) => {
+    //显示删除提示框
+    showAlertMoudle = (msg, func, rText = null) => {
         this.alertObject = {
             text: msg,
             leftText: Lang[Lang.default].cancel,
-            rightText: rText,
+            rightText: rText || Lang[Lang.default].determine,
             leftClick: ()=>this.setState({deleteAlert: false,}),
             rightClick: func,
             leftColor: Color.lightBack,
@@ -383,7 +389,7 @@ export default class OrderDetail extends Component {
                             <Text style={styles.fontStyle1}>{Lang[Lang.default].iphone + ': ' + phone}</Text>
                         </View>
                         <View>
-                            <Text style={styles.fontStyle1}>{Lang[Lang.default].address + ': ' + area + address}</Text>
+                            <Text numberOfLines={2} style={styles.fontStyle1}>{Lang[Lang.default].address + ': ' + area + address}</Text>
                         </View>
                     </View>
                 </View>
@@ -416,7 +422,13 @@ export default class OrderDetail extends Component {
                         <View style={[styles.rowStyle2, {justifyContent: 'center', }]}>
                             {this.titleBtns.btns1.map((item, index)=>{
                                 return (
-                                    <TouchableOpacity key={index} style={styles.btnStyle} onPress={item.fun}>
+                                    <TouchableOpacity key={index} style={styles.btnStyle} onPress={()=>{
+                                        if(item.fun) {
+                                            item.fun();
+                                        }else {
+                                            this.notFinished();
+                                        }
+                                    }}>
                                         <Text style={styles.fontStyle2}>{item.val}</Text>
                                     </TouchableOpacity>
                                 );
@@ -473,6 +485,11 @@ export default class OrderDetail extends Component {
             }
         }
         return _date;
+    };
+
+    //未完成功能的提示
+    notFinished = ()=> {
+        this.showAutoModal('正功能正在调整中...');
     };
 
     /**

@@ -194,6 +194,7 @@ export default class PersonalScreen extends Component {
                         {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, 'AddressList', null)}
                     </View>
                     <View style={styles.btnsListBox}>
+                        {this.btnRow(require('../../images/personal/join.png'), Lang[Lang.default].jtJoiner, 'Join', null, false)}
                         {this.btnRow(require('../../images/personal/contactUs.png'), Lang[Lang.default].contactUs, 'About', null, false)}
                         {this.btnRow(require('../../images/personal/helpNote.png'), Lang[Lang.default].helpNote, 'Help', null, false)}
                     </View>

@@ -98,6 +98,8 @@ var urls = {
     getAlipayInfo: host + '/api/AplipayNController/getAlipayInfo',
     //获取微信支付信息
     getWeiXinInfo: host + '/api/AplipayNController/getWeiXinPayInfo',
+    //录入商家入驻信息
+    updateSellerInfo: host + '/api/ApplyNController/applySettledMerchant',
 };
 
 export default urls;

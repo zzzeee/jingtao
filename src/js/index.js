@@ -37,6 +37,7 @@ import Collection from './personal/Collection';
 import MyOrder from './personal/Order';
 import OrderDetail from './personal/Order/OrderDetail';
 import OrderLogistics from './personal/Order/OrderLogistics';
+import Join from './personal/Join';
 import About from './personal/About';
 import Help from './personal/Help/';
 import HelpPrivacy from './personal/Help/privacy';
@@ -202,6 +203,11 @@ const OrderLogisticsScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={OrderLogistics} />
 );
 
+//个人中心 - 商家入驻
+const JoinScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Join} />
+);
+
 //个人中心 - 联系方式
 const AboutScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={About} />
@@ -313,6 +319,9 @@ const AppNavigator = StackNavigator({
     },
     AddressAdd: {
         screen: AddressAddScreen,
+    },
+    Join: {
+        screen: JoinScreen,
     },
     About: {
         screen: AboutScreen,

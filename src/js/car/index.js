@@ -377,7 +377,7 @@ export default class CarsScreen extends Component {
                         return null;
                     }
                 })}
-                {this.state.invalidList ?
+                {(this.state.invalidList && this.state.invalidList.length) ?
                     <View style={styles.invalidListBox}>
                         {this.state.invalidList.map(this.invalidProduct)}
                         {this.state.editing && this.state.invalidList.length ? 

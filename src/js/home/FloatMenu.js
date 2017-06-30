@@ -42,20 +42,26 @@ export default class FloatMenu extends Component {
             startShare: false,
         };
         this.renderObject = this.renderObject.bind(this);
-        this.buttons = [{
-            'title' : '',
+        /**
+         * {
+            'title' : Lang[Lang.default].shareCity,
             'icon' : require('../../images/home/share.png'),
             'detail' : '',
             'press' : this.showStartShare,
-        }, {
+            }, 
+         */
+        this.buttons = [{
             'title' : Lang[Lang.default].sellSpecialty,
             'icon' : require('../../images/home/partner.png'),
             'detail' : Lang[Lang.default].sellSpecialty_txt,
-            'press' : null,
+            'press' : ()=>{
+                this.props.hideMenu();
+                this.props.navigation.navigate('Join');
+            },
         }, {
-            'title' : '',
+            'title' : Lang[Lang.default].hide,
             'icon' : require('../../images/home/hide.png'),
-            'detail' : '',
+            'detail' : Lang[Lang.default].hide_txt,
             'press' : this.hideCity,
         }];
     }
@@ -135,11 +141,6 @@ export default class FloatMenu extends Component {
             },];
             return <ShareMoudle shares={shareInfo} visible={true} setStartShare={this.setStartShare} />;
         }
-
-        this.buttons[0]['title'] = str_replace(Lang[Lang.default].shareCity, this.props.cityName);
-        this.buttons[2]['title'] = str_replace(Lang[Lang.default].hide, this.props.cityName);
-        this.buttons[2]['detail'] = str_replace(Lang[Lang.default].hide_txt, this.props.cityName);
-
         let localY = this.props.nativeEvent.locationY || 0;
         let pageY = this.props.nativeEvent.pageY || 0;
         let btnSize = this.props.btnSize || 0;
@@ -164,8 +165,8 @@ export default class FloatMenu extends Component {
                 <TouchableOpacity 
                     style={styles.btnBody} 
                     activeOpacity={1} 
-                    onPress={this.props.hideMenu} 
-                    onLongPress={this.props.hideMenu} 
+                    onPress={this.props.hideMenu}
+                    onLongPress={this.props.hideMenu}
                 >
                     <View style={[styles.shareBox, {top : top}]}>
                         {this.buttons.map((tab, i) => this.renderObject(tab, i))}
@@ -176,24 +177,20 @@ export default class FloatMenu extends Component {
     }
 
     renderObject = (obj, i) => {
+        let { cityName } = this.props;
         let title = obj.title || null;
         let detail = obj.detail || null;
-
         return (
-            <TouchableOpacity key={i} onPress={()=>{
-                if(obj.press){
-                    obj.press();
-                }}} 
-            >
+            <TouchableOpacity key={i} onPress={obj.press}>
                 <View style={styles.shareRow}>
                     <Image source={obj.icon} style={styles.icon} />
                     <View style={styles.textBox}>
                         {title ?
-                            <Text numberOfLines={1} style={styles.bigText}>{title}</Text>
+                            <Text numberOfLines={1} style={styles.bigText}>{str_replace(title, cityName)}</Text>
                             : null
                         }
                         {detail ?
-                            <Text numberOfLines={1} style={styles.smallText}>{detail}</Text>
+                            <Text numberOfLines={1} style={styles.smallText}>{str_replace(detail, cityName)}</Text>
                             : null
                         }
                     </View>
