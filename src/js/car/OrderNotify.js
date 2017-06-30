@@ -76,14 +76,16 @@ export default class OrderNotify extends Component {
 
     gotoOrderList = () => {
         let { navigation } = this.props;
-        if(this.shopOrderNum.indexOf('jt') >= 0) {
-            navigation.navigate('MyOrder', {mToken: this.mToken});
-        }else {
-            navigation.navigate('OrderDetail', {
-                mToken: this.mToken,
-                isRefresh: true,
-                shopOrderNum: this.shopOrderNum,
-            });
+        if(this.shopOrderNum) {
+            if(String(this.shopOrderNum).indexOf('jt') >= 0) {
+                navigation.navigate('MyOrder', {mToken: this.mToken});
+            }else {
+                navigation.navigate('OrderDetail', {
+                    mToken: this.mToken,
+                    isRefresh: true,
+                    shopOrderNum: this.shopOrderNum,
+                });
+            }
         }
     };
 

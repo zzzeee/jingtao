@@ -111,13 +111,13 @@ export default class OrderDetail extends Component {
     };
 
     //显示删除提示框(确认收货)
-    showAlertMoudle = () => {
+    showAlertMoudle = (msg, func, rText = Lang[Lang.default].determine) => {
         this.alertObject = {
-            text: Lang[Lang.default].confirmReceipt2,
+            text: msg,
             leftText: Lang[Lang.default].cancel,
-            rightText: Lang[Lang.default].determine,
+            rightText: rText,
             leftClick: ()=>this.setState({deleteAlert: false,}),
-            rightClick: this.goodsReceipt,
+            rightClick: func,
             leftColor: Color.lightBack,
             leftBgColor: '#fff',
             rightColor: Color.lightBack,
@@ -161,6 +161,12 @@ export default class OrderDetail extends Component {
                 }
             });
         }
+    };
+
+    //联系客服/商家
+    sellTelphone = () => {
+        Linking.openURL('tel: ' + Lang.telephone)
+        .catch(err => console.error('调用电话失败！', err));
     };
 
     //取消订单事件
@@ -223,8 +229,11 @@ export default class OrderDetail extends Component {
                 {this.titleBtns ?
                     <View style={styles.footBox}>
                         <TouchableOpacity onPress={()=>{
-                            Linking.openURL('tel: ' + Lang.telephone)
-                            .catch(err => console.error('调用电话失败！', err));
+                            this.showAlertMoudle(
+                                Lang.telephone2,
+                                this.sellTelphone,
+                                Lang[Lang.default].call
+                            );
                         }} style={styles.btnStyle2}>
                             <Image style={styles.custemIcon} source={require('../../../images/product/custem_center.png')} />
                             <Text style={styles.fontStyle3}>客服</Text>
@@ -257,7 +266,7 @@ export default class OrderDetail extends Component {
                     : null
                 }
                 {showPayModal?
-                    <PayOrder 
+                    <PayOrder
                         mToken={this.mToken}
                         payMoney={this.actualTotal}
                         orderNumber={this.shopOrderNum}
@@ -400,7 +409,7 @@ export default class OrderDetail extends Component {
                     {this.getPriceRow('积分抵现', oIntegral, true, false)}
                 </View>
                 <View style={styles.sessionBox}>
-                    {this.getPriceRow('订单号码', this.orderNum, false)}
+                    {this.getPriceRow('订单号码', orderNum, false)}
                     {this.getPriceRow('下单时间', addTime, false)}
                     {this.getPriceRow('付款时间', payTime, false)}
                     {this.titleBtns.btns1 && this.titleBtns.btns1.length ?
@@ -542,7 +551,9 @@ export default class OrderDetail extends Component {
                     obj.btns2.push({
                         val: '确认收货',
                         bgColor: Color.mainColor,
-                        fun: that.showAlertMoudle,
+                        fun: ()=>{
+                            that.showAlertMoudle(Lang[Lang.default].confirmReceipt2, that.goodsReceipt);
+                        },
                     });
                     obj.image = require('../../../images/car/order_yfh.png');
                     break;
@@ -706,7 +717,7 @@ var styles = StyleSheet.create({
     },
     expressDataBox: {
         flexDirection : 'row',
-        minHeight: PX.rowHeight1,
+        minHeight: 65,
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         paddingTop: 10,
@@ -721,7 +732,7 @@ var styles = StyleSheet.create({
         height: PX.iconSize26,
     },
     addressBox: {
-        minHeight: PX.rowHeight1,
+        minHeight: 65,
         marginLeft: PX.marginLR,
         marginRight: PX.marginLR,
         paddingTop: 12,

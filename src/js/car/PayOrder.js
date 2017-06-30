@@ -114,12 +114,12 @@ export default class PayOrder extends Component {
     };
 
     //支付成功
-    paySuccess = (money = null) => {
+    paySuccess = () => {
         let { mToken, orderNumber, payMoney, navigation, } = this.props;
         navigation.navigate('OrderNotify', {
             pageType: 1,
             mToken: mToken,
-            payMoney: money || payMoney,
+            payMoney: payMoney,
             shopOrderNum: orderNumber,
         });
     };
@@ -216,7 +216,7 @@ export default class PayOrder extends Component {
                         console.log(data);
                         if(data.indexOf('"msg":"Success"') >= 0) {
                             //支付成功
-                            hidePayBox(this.paySuccess);
+                            hidePayBox(that.paySuccess);
                         }
                     }, (err)=> {
                         //支付失败，包括取消的

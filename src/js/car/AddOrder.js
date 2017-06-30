@@ -25,6 +25,7 @@ import InputText from '../public/InputText';
 import PayOrder from './PayOrder';
 import Coupons from '../product/Coupons';
 import OrderGood from './OrderGood';
+import ErrorAlert from '../other/ErrorAlert';
 
 export default class AddOrder extends Component {
     constructor(props) {
@@ -52,7 +53,8 @@ export default class AddOrder extends Component {
         this.selCoupon = null;
         this.orderParam = null;
         this.orderNumber = null;
-        this.timer = [];
+        this.alertMsg = '';
+        this.lockUpateOrder = false;
     }
 
     componentWillMount() {
@@ -67,13 +69,6 @@ export default class AddOrder extends Component {
         }
     }
 
-    componentWillUnmount() {
-        let timers = this.timer;
-        for(let t of timers) {
-            clearTimeout(t);
-        }
-    }
-
     //初始化数据
     initDatas = () => {
         let { navigation } = this.props;
@@ -85,15 +80,6 @@ export default class AddOrder extends Component {
             this.addressID = addressID || null;
             this.orderParam = orderParam || null;
         }
-    };
-
-    _toast = (str) => {
-        let _timer = Toast.show(str, {
-            duration: Toast.durations.SHORT,
-            position: Toast.positions.CENTER,
-            hideOnPress: true,
-        });
-        this.timer.push(_timer);
     };
 
     //从购物车跳转过来
@@ -131,7 +117,7 @@ export default class AddOrder extends Component {
         if(result && result.sTatus == 1 && result.oOrder) {
             let that = this;
             let list = result.oOrder || [];
-            let addressList = result.addressAry || [];
+            let addressList = result.addressAry || null;
             let mIntegral = parseFloat(result.mIntegral) || 0;
             let mCoupon = result.mCoupon || [];
             for(let i in list) {
@@ -158,6 +144,17 @@ export default class AddOrder extends Component {
     //隐藏优惠券列表
     hideCouponBox = () => {
         this.setState({showCouponList: false});
+    };
+
+    //显示提示框
+    showAutoModal = (msg) => {
+        this.alertMsg = msg;
+        this.setState({showAlert: true, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
     };
 
     //选择优惠券
@@ -314,6 +311,7 @@ export default class AddOrder extends Component {
                     />
                     : null
                 }
+                <ErrorAlert visiable={this.state.showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
             </View>
         );
     }
@@ -450,7 +448,9 @@ export default class AddOrder extends Component {
         let that = this;
         let shopOrder = [];
         let { tmpOrderInfo, addressInfo } = this.state;
-        if(tmpOrderInfo) {
+        if(!addressInfo || !addressInfo.saID) {
+            this.showAutoModal(Lang[Lang.default].pleaseWriteAddress);
+        }else if(tmpOrderInfo) {
             for(let i in tmpOrderInfo) {
                 if(tmpOrderInfo[i]) {
                     let obj = {
@@ -463,7 +463,6 @@ export default class AddOrder extends Component {
                     shopOrder.push(obj);
                 }
             }
-
             let order = {
                 goodsOrder: {
                     gPrice: this.actualTotal,
@@ -474,24 +473,62 @@ export default class AddOrder extends Component {
                 },
                 shopOrder: shopOrder,
             }
-            console.log(order);
-            return JSON.stringify(order);
+            return order;
         }
         return null;
     };
 
     //点击提交订单按钮
     updateOrder = () => {
+        if(this.lockUpateOrder) return null;
         let orders = this.createOrderInfo();
-        if(this.mToken && orders && this.carIDs) {
+        if(this.mToken && orders) {
             let obj = {
                 mToken: this.mToken,
-                oAry: orders,
-                cAry: this.carIDs.join(','),
             };
-            console.log(obj);
+            if(this.carIDs) {
+                obj.oAry = JSON.stringify(orders);
+                obj.cAry = this.carIDs.join(',');
+            }else {
+                let good = (this.state.tmpOrderInfo &&
+                    this.state.tmpOrderInfo[0] && 
+                    this.state.tmpOrderInfo[0].cPro && 
+                    this.state.tmpOrderInfo[0].cPro[0] && 
+                    this.state.tmpOrderInfo[0].cPro[0]) ?
+                        this.state.tmpOrderInfo[0].cPro[0] : {};
+                let shop = orders.shopOrder[0] || {};
+                let gid = good.gID || null;
+                let attr = good.mcAttr || null;
+                let attrSub = good.mcAttrSub || null;
+                let num = good.gNum || 0;
+                let price = good.gPrice || null;
+                let saID = orders.goodsOrder.saID || null;
+                let hid = orders.goodsOrder.hID || '';
+                let oIntegral = orders.goodsOrder.oIntegral || 0;
+                let oMessage = shop.oMessage || '';
+                let oExpressMoney = shop.oExpressMoney || 0;
+                if(gid && attr && attrSub && num && saID) {
+                    obj.oType = 'pay';
+                    obj.payOrder = JSON.stringify({
+                        gID: gid,
+                        mcAttr: attr,
+                        mcAttrSub: attrSub,
+                        gNum: num,
+                        gPrice: price,
+                        saID: saID,
+                        hID: hid,
+                        oIntegral: oIntegral,
+                        oMessage: oMessage,
+                        oExpressMoney: oExpressMoney,
+                    });
+                }else {
+                    return;
+                }
+            }
+            this.lockUpateOrder = true;
             Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-                console.log(result)
+                console.log(result);
+                this.lockUpateOrder = false;
                 if(result) {
                     let ret = result.sTatus || 0;
                     let msg = result.sMessage || null;
@@ -502,7 +539,7 @@ export default class AddOrder extends Component {
                             this.setState({showPayModal: true, });
                         }
                     }else if(msg) {
-                        this._toast(msg);
+                        this.showAutoModal(msg);
                     }
                 }
             }, null, {catchFunc: (err)=>{

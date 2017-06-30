@@ -119,7 +119,6 @@ export default class ShopCoupon extends Component {
                         }}
                     />)}
                     autoplay={true}
-                    autoplayTimeout={3}
                     showsButtons={false}>
                     {coupons.map((item, index) => {
                         return (

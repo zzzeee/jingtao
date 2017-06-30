@@ -7,6 +7,7 @@
 const language = {
     default: 'cn',
     telephone: '4000237333',
+    telephone2: '客服号码: 400-023-7333',
     cn : {
         RMB: '¥',
         loading: '正在加载',
@@ -221,6 +222,7 @@ const language = {
         contactMobile: '联系电话',
         homeAddress: '所在地址',
         pleaseSelect: '请选择',
+        pleaseWriteAddress: '请填写您的送货地址',
         detailedAddress: '请填写详细地址',
         setDefaultAddress: '设为默认地址',
         setDefault: '设为默认',
@@ -260,6 +262,7 @@ const language = {
         expressNumber: '运单号码',
         expressName: '物流公司',
         notExpressData: '没有相关物流信息!',
+        call: '呼叫',
     },
 };
 

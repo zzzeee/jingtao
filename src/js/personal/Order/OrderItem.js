@@ -50,7 +50,9 @@ export default class OrderComponent extends Component {
         let orderNum = orderInfo.orderNum || null;
         let freight = parseFloat(orderInfo.oExpressMoney) || 0;
         let price = parseFloat(orderInfo.soPrice) || 0;
-        this.totalMoney = freight + price;
+        let oIntegral = parseFloat(orderInfo.oIntegral) || 0;
+        let oScoupon = parseFloat(orderInfo.oScoupon) || 0;
+        this.totalMoney = (freight + price - oIntegral - oScoupon).toFixed(2);
         let goods = orderInfo.oProduct || [];
         this.expressNum = orderInfo.oExpressNum || null;
         let payid = parseInt(orderInfo.oPay) || 0;
