@@ -14,6 +14,7 @@ import {
     FlatList,
     WebView,
     Animated,
+    Linking,
 } from 'react-native';
 
 import User from '../public/user';
@@ -30,10 +31,10 @@ import CountDown from '../find/CountDown';
 import ProductDetail from './productDetail';
 import ProductAttr from './productAttr';
 import ReturnAlert from './returnAlert';
+import AlertMoudle from '../other/AlertMoudle';
 import Areas from './Areas';
 import Coupons from './Coupons';
 
-var isCanChat = false;
 var isCanShare = false;
 var _User = new User();
 var footHeight = 50;
@@ -58,6 +59,7 @@ export default class ProductScreen extends Component {
             showCouponList: false,
             msgPositon: new Animated.Value(0),  //收藏显示位置
             collectionMsg: null,                //收藏结果
+            deleteAlert: false,
         };
         this.goodid = 0;
         this.carNumber = 0;
@@ -71,6 +73,7 @@ export default class ProductScreen extends Component {
         this.city = null;
         this.freight = null;
         this.userinfo = null;
+        this.alertObject = {};
     }
 
     componentDidMount() {
@@ -158,6 +161,30 @@ export default class ProductScreen extends Component {
             showAttrBox: true,
         });
     }
+
+    //显示删除提示框
+    showAlertMoudle = (msg, func, rText = null) => {
+        this.alertObject = {
+            text: msg,
+            leftText: Lang[Lang.default].cancel,
+            rightText: rText || Lang[Lang.default].determine,
+            leftClick: ()=>this.setState({deleteAlert: false,}),
+            rightClick: func,
+            leftColor: Color.lightBack,
+            leftBgColor: '#fff',
+            rightColor: Color.lightBack,
+            rightBgColor: '#fff',
+        };
+        this.setState({deleteAlert: true,});
+    };
+
+    //联系客服/商家
+    sellTelphone = () => {
+        this.setState({deleteAlert: false,}, ()=>{
+            Linking.openURL('tel: ' + Lang.telephone)
+            .catch(err => console.error('调用电话失败！', err));
+        });
+    };
 
     //商品属性选择结果
     attrCallBack = (datas, obj, tourist) => {
@@ -420,17 +447,21 @@ export default class ProductScreen extends Component {
                 </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
-                        {isCanChat ?
-                            <BtnIcon 
-                                src={require('../../images/product/custem_center.png')} 
-                                width={22} 
-                                style={[styles.productContactImg, {marginLeft: 10,}]} 
-                                text={Lang[Lang.default].customer}
-                                txtStyle={styles.productContactTxt}
-                                txtViewStyle={{minHeight: 12}}
-                            />
-                            : null
-                        }
+                        <BtnIcon 
+                            src={require('../../images/product/custem_center.png')} 
+                            width={22} 
+                            style={[styles.productContactImg, {marginLeft: 10,}]} 
+                            text={Lang[Lang.default].customer}
+                            txtStyle={styles.productContactTxt}
+                            txtViewStyle={{minHeight: 12}}
+                            press={()=>{
+                                this.showAlertMoudle(
+                                    Lang.telephone2,
+                                    this.sellTelphone,
+                                    Lang[Lang.default].call
+                                );
+                            }}
+                        />
                         <View style={styles.btnCarBox}>
                             <BtnIcon 
                                 src={require('../../images/navs/carSelect.png')} 
@@ -477,6 +508,10 @@ export default class ProductScreen extends Component {
                         message={this.message}
                         hideMsg={this.hideReturnBox}
                     />
+                    : null
+                }
+                {this.state.deleteAlert ?
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                     : null
                 }
             </View>

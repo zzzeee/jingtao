@@ -171,8 +171,10 @@ export default class OrderDetail extends Component {
 
     //联系客服/商家
     sellTelphone = () => {
-        Linking.openURL('tel: ' + Lang.telephone)
-        .catch(err => console.error('调用电话失败！', err));
+        this.setState({deleteAlert: false,}, ()=>{
+            Linking.openURL('tel: ' + Lang.telephone)
+            .catch(err => console.error('调用电话失败！', err));
+        });
     };
 
     //取消订单事件
