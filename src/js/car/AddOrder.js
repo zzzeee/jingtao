@@ -172,7 +172,7 @@ export default class AddOrder extends Component {
 
     //隐藏支付框
     hidePaymentBox = (func = null) => {
-        this.setState({ 
+        this.setState({
             showPayModal: false,
         }, ()=>{
             if(func) func();
@@ -277,10 +277,10 @@ export default class AddOrder extends Component {
                         <View>
                             {integralInfo.map(this.changeIntegral)}
                         </View>
-                        <View style={styles.integralSelectItem}>
+                        {/*<View style={styles.integralSelectItem}>
                             <Image source={require('../../images/car/careful.png')} style={styles.carefulImage} />
                             <Text style={styles.goodAttrStyle}>{'注意: 现金支付满148元, 可获得30积分哟!'}</Text>
-                        </View>
+                        </View>*/}
                         <View style={styles.integralBoxFoot}>
                             <Text>
                                 {Lang[Lang.default].used}
@@ -298,6 +298,15 @@ export default class AddOrder extends Component {
                     </View>
                 </ScrollView>
                 </View>
+                {(this.state.tmpOrderInfo.length > 1 && this.selCoupon && this.selCoupon.sId == 0) ?
+                    <View>
+                        <TouchableOpacity style={styles.couponAlertBox} onPress={()=>navigation.navigate('OrderHelp')}>
+                            <Text style={styles.couponAlertText}>提示: 放弃合并付款将无法享受满减优惠</Text>
+                            <Image source={require('../../images/car/explain.png')} style={styles.couponAlertImg} />
+                        </TouchableOpacity>
+                    </View>
+                    : null
+                }
                 <View style={styles.footRowBox}>
                     <View style={styles.footRowLeft}>
                         <Text style={styles.footRowLeftText}>
@@ -471,6 +480,12 @@ export default class AddOrder extends Component {
         let that = this;
         let shopOrder = [];
         let { tmpOrderInfo, addressInfo } = this.state;
+        let shopId = 0;
+        let select_hid = 0;
+        if(this.selCoupon && this.selCoupon.hId) {
+            shopId = this.selCoupon.sId || 0;
+            select_hid = this.selCoupon.hId;
+        }
         if(!addressInfo || !addressInfo.saID) {
             this.showAutoModal(Lang[Lang.default].pleaseWriteAddress);
         }else if(tmpOrderInfo) {
@@ -482,7 +497,9 @@ export default class AddOrder extends Component {
                         oExpressMoney: tmpOrderInfo[i].expressMoney || 0,
                         oMessage: that.messages[i] || '',
                         sId: tmpOrderInfo[i].sId,
+                        hID: 0,
                     };
+                    if(tmpOrderInfo[i].sId == shopId) obj.hID = select_hid;
                     shopOrder.push(obj);
                 }
             }
@@ -491,7 +508,7 @@ export default class AddOrder extends Component {
                     gPrice: this.actualTotal,
                     oNum: tmpOrderInfo.length,
                     saID: addressInfo.saID || '',
-                    hID: '',
+                    hID: shopId == 0 ? select_hid : 0,
                     oIntegral: this.useIntegral || 0,
                 },
                 shopOrder: shopOrder,
@@ -549,6 +566,7 @@ export default class AddOrder extends Component {
                 }
             }
             this.lockUpateOrder = true;
+            console.log(obj);
             Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
                 console.log(result);
                 this.lockUpateOrder = false;
@@ -805,6 +823,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    couponAlertBox: {
+        width: Size.width,
+        height: PX.rowHeight2,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#fff3d6',
+    },
+    couponAlertText: {
+        fontSize: 14,
+        color: '#fa903c',
+    },
+    couponAlertImg: {
+        width: 20,
+        height: 20,
     },
     footRowBox: {
         flexDirection: 'row',

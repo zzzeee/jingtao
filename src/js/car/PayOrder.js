@@ -181,7 +181,7 @@ export default class PayOrder extends Component {
                     })
                     .catch((error) => {
                         console.log(error);
-                        // hidePayBox(this.payFailed);
+                        hidePayBox(this.payFailed);
                     });
                 } else {
                     hidePayBox(()=>this._toast(Lang[Lang.default].shareErrorAlert));

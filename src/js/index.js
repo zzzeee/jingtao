@@ -29,6 +29,7 @@ import MyIntegral from './personal/MyIntegral';
 import IntegralRule from './personal/IntegralRule';
 import AddOrder from './car/AddOrder';
 import Coupon from './car/Coupon';
+import OrderHelp from './car/OrderHelp';
 import OrderNotify from './car/OrderNotify';
 import AddressList from './personal/AddressList';
 import AddressAdd from './personal/AddressAdd';
@@ -228,7 +229,6 @@ const TransactionScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={HelpTransaction} />
 );
 
-
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -237,6 +237,11 @@ const AddOrderScreen = ({ navigation }) => (
 //购物车 - 提交订单 - 选择优惠券
 const CouponScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Coupon} />
+);
+
+//购物车 - 提交订单 - 订单帮助
+const OrderHelpScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={OrderHelp} />
 );
 
 //购物车 - 提交订单 - 支付完成
@@ -298,6 +303,9 @@ const AppNavigator = StackNavigator({
     },
     Coupon: {
         screen: CouponScreen,
+    },
+    OrderHelp: {
+        screen: OrderHelpScreen,
     },
     Collection: {
         screen: CollectionScreen,
