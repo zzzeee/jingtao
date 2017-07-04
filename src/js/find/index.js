@@ -41,6 +41,7 @@ export default class FindScreen extends Component {
             coupons: [],
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             MDYP: null,
+            banner: null,
             isRefreshing: false,
         };
         this.mToken = null;
@@ -71,7 +72,7 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(uCoupons);
-        // console.log(xsqg);
+        console.log(xsqg);
         // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({fetchError: true});
@@ -122,10 +123,12 @@ export default class FindScreen extends Component {
     setXSQGlist = (datas) => {
         if(datas && datas.sTatus) {
             let xsqg = datas.proAry || {};
+            let banner = datas.pufaAry || {};
             let start = xsqg.pbStartTime || null;
             let end = xsqg.pbEndTime || null;
             let proList = xsqg.activityAry || [];
             let coupons = datas.couponAry || [];
+            let bannerImg = banner.pufaImg ? {uri: banner.pufaImg} : require('../../images/empty.png');
             start = this.checkTimeString(start);
             end = this.checkTimeString(end);
             this.setState({
@@ -135,6 +138,7 @@ export default class FindScreen extends Component {
                 endTime: new Date(end).getTime(),
                 datas: xsqg,
                 coupons: coupons,
+                banner: (banner.pufaAble && banner.pufaAble == 1) ? bannerImg : null,
                 dataSource: this.state.dataSource.cloneWithRows(proList),
             });
         }
@@ -311,8 +315,16 @@ export default class FindScreen extends Component {
                             showsHorizontalScrollIndicator={false}
                         />
                     </View>
+                    {this.state.banner ?
+                        <TouchableOpacity style={styles.bannerImgBox} onPress={()=>{
+                            this.props.navigation.navigate('Banner');
+                        }}>
+                            <Image source={this.state.banner} style={styles.bannerImgStyle} />
+                        </TouchableOpacity>
+                        : null
+                    }
                     {this.couponView()}
-                    <View style={styles.mdypImgBox}>
+                    <View style={[styles.mdypImgBox, {marginTop: PX.marginTB}]}>
                         <Image source={require('../../images/find/mdyp.png')} resizeMode="stretch" style={styles.mdypImgStyle} />
                     </View>
                 </View>
@@ -549,6 +561,13 @@ var styles = StyleSheet.create({
         borderBottomWidth: pixel,
         backgroundColor: '#fff',
     },
+    bannerImgBox: {
+        marginTop: PX.marginTB,
+    },
+    bannerImgStyle: {
+        width: Size.width,
+        height: Size.width * 0.5,
+    },
     mdypImgStyle: {
         height: 31,
         width: 93,
@@ -556,7 +575,7 @@ var styles = StyleSheet.create({
     shopItemBox: {
         height: PX.shopItemHeight,
         backgroundColor: '#fff',
-        marginTop: PX.marginTB,
+        // marginTop: PX.marginTB,
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
     },

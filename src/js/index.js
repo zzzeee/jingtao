@@ -46,6 +46,7 @@ import HelpTransaction from './personal/Help/transaction';
 import ProductList from './class/ProductList';
 import Shop from './shop';
 import ShopSearch from './shop/ShopSearch';
+import Banner from './find/PufaBanner';
 
 //显示格式
 class MyNavScren extends Component {
@@ -264,6 +265,11 @@ const ShopSearchScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={ShopSearch} />
 );
 
+//发现页 - 广告页
+const BannerScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={Banner} />
+);
+
 const AppNavigator = StackNavigator({
     TabNav: {
         screen: TabNavScreen,
@@ -351,6 +357,9 @@ const AppNavigator = StackNavigator({
     },
     ShopSearch: {
         screen: ShopSearchScreen,
+    },
+    Banner: {
+        screen: BannerScreen,
     },
 }, {
     initialRouteName: 'TabNav',

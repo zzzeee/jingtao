@@ -1,7 +1,7 @@
 /**
  * 购物车 - 提交订单 - 订单帮助说明
  * @auther linzeyong
- * @date   2017.06.20
+ * @date   2017.07.04
  */
 
 import React , { Component } from 'react';
