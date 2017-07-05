@@ -12,16 +12,129 @@ import {
     Image,
     TouchableOpacity,
     ScrollView,
+    Linking,
 } from 'react-native';
 
+import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import Lang, {str_replace, Privacy} from '../public/language';
 import { Size, pixel, Color, PX } from '../public/globalStyle';
 import InputText from '../public/InputText';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import SendCode from '../login/verificationCode';
+import ErrorAlert from '../other/ErrorAlert';
+import FrequentModel from '../login/FrequentModel';
 
 export default class PufaBanner extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            code: null,
+            mobile: null,
+            showAlert: false,
+            showFrequentModel: false,
+        };
+        this.type = 1;
+        this.alertMsg = '';
+        this.clickNumber = 1;
+        this.frequentNumber = 3;
+    }
+
+    //设置手机号值
+    setMobile = (value) => {
+        this.setState({mobile: value});
+    };
+
+    //设置验证码值
+    setCode = (value) => {
+        this.setState({code: value});
+    };
+
+    //隐藏频繁提示框
+    hideFrequentBox = () => {
+        this.clickNumber = 1;
+        this.setState({showFrequentModel: false});
+    };
+
+    //显示提示框
+    showAutoModal = (msg) => {
+        this.alertMsg = msg;
+        this.setState({showAlert: true, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
+    };
+
+    //检测是否可以允许发送验证码
+    checkCode = () => {
+        let mobile = this.state.mobile;
+        if(mobile) {
+            return true;
+        }
+        return false;
+    };
+
+    //点击发送验证码
+    clickSendCode = (callback, disLock) => {
+        if(this.checkCode()) {
+            let that = this;
+            let mobile = this.state.mobile || '';
+            let cNumber = this.clickNumber || 1;
+            if(!Utils.checkMobile(mobile)) {
+                disLock();
+                this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+            }else if(cNumber > 0 && cNumber % this.frequentNumber === 0) {
+                disLock();
+                this.setState({showFrequentModel: true});
+            }else {
+                Utils.fetch(Urls.sendCode, 'post', {
+                    mPhone: this.state.mobile,
+                }, (result) => {
+                    that.clickNumber++;
+                    disLock();
+                    if(result) {
+                        let ret = result.sTatus || 0;
+                        if(ret == 1) {
+                            callback();
+                            that.sendResult = true;
+                        }else if(ret == 3) {
+                            that.linkPuFa_www();
+                        }else if(result.sMessage) {
+                            that.showAutoModal(result.sMessage);
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    //点击提交按钮
+    updateInfo = () => {
+        let that = this;
+        let mobile = this.state.mobile || '';
+        let code = this.state.code || '';
+        if(!Utils.checkMobile(mobile)) {
+            this.showAutoModal(Lang[Lang.default].mobilePhoneFail);
+        }else if(!code) {
+            this.showAutoModal('请输入验证码');
+        }else {
+            Utils.fetch(Urls.pufaRegister, 'post', {
+                mPhone: mobile,
+                mCode: code,
+            }, (result) => {
+                let ret = result.sTatus || 0;
+                if (ret == 1 || ret == 3) {
+                    that.linkPuFa_www();
+                }else if(result.sMessage) {
+                    that.showAutoModal(result.sMessage);
+                }
+            });
+        }
+    };
+
     render() {
         let { navigation } = this.props;
         return (
@@ -56,7 +169,9 @@ export default class PufaBanner extends Component {
                                 <Image source={require('../../images/find/rule3.png')} style={styles.ruleBeforeImg} />
                                 <View style={styles.flex}>
                                     <Text numberOfLines={2} style={styles.ruleContent}>未正式注册用户,如何登录相应帐号,请查看“
-                                        <Text style={styles.redFont}>登录说明</Text>
+                                        <Text style={styles.redFont} onPress={()=>{
+                                            navigation.navigate('LoginExplain');
+                                        }}>登录说明</Text>
                                     ”。</Text>
                                 </View>
                             </View>
@@ -77,28 +192,28 @@ export default class PufaBanner extends Component {
                             <View style={styles.inputRow}>
                                 <Image source={require('../../images/login/iphone_gary.png')} style={styles.inputLeftIcon} />
                                 <InputText
+                                    vText={this.state.mobile}
                                     pText={Lang[Lang.default].inputMobile}
                                     onChange={this.setMobile}
                                     length={11}
                                     style={styles.inputStyle}
                                     keyType={"numeric"}
-                                    onFocus={()=>this.setInputFocus('tel')}
                                 />
                             </View>
                             <View style={styles.inputRow}>
                                 <Image source={require('../../images/login/code.png')} style={styles.inputLeftIcon} />
                                 <InputText
+                                    vText={this.state.code}
                                     pText={Lang[Lang.default].inputCode}
                                     onChange={this.setCode}
                                     length={10}
                                     style={styles.inputStyle}
-                                    onFocus={()=>this.setInputFocus('code')}
                                 />
-                                <SendCode enable={true} />
+                                <SendCode sendCodeFunc={this.clickSendCode} enable={this.checkCode()} />
                             </View>
                             <View style={styles.formUpdateBox}>
-                                <TouchableOpacity style={styles.btnUpdateForm}>
-                                    <Text style={styles.txtStyle3}>确定</Text>
+                                <TouchableOpacity onPress={this.updateInfo} style={styles.btnUpdateForm}>
+                                    <Text style={styles.txtStyle3}>提交</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.rowStyle}>
@@ -115,9 +230,28 @@ export default class PufaBanner extends Component {
                         <Text style={styles.txtStyle4}>版权所有: 宁波指动网络科技有限公司</Text>
                     </View>
                 </ScrollView>
+                {this.state.showAlert ?
+                    <ErrorAlert 
+                        type={this.type}
+                        visiable={this.state.showAlert} 
+                        message={this.alertMsg} 
+                        hideModal={this.hideAutoModal} 
+                    />
+                    : null
+                }
+                {this.state.showFrequentModel ? 
+                    <FrequentModel isShow={this.state.showFrequentModel} callBack={this.hideFrequentBox} />
+                    : null
+                }
             </View>
         );
     }
+
+    //跳转至浦发信用卡页面
+    linkPuFa_www = () => {
+        Linking.openURL(Urls.gotoPuFa)
+        .catch(err => console.error('跳转失败:', err));
+    };
 }
 
 const styles = StyleSheet.create({

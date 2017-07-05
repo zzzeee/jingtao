@@ -100,6 +100,10 @@ var urls = {
     getWeiXinInfo: host + '/api/AplipayNController/getWeiXinPayInfo',
     //录入商家入驻信息
     updateSellerInfo: host + '/api/ApplyNController/applySettledMerchant',
+    //浦发信用卡
+    gotoPuFa: 'https://ecentre.spdbccc.com.cn/creditcard/indexActivity.htm?data=P1520716',
+    //浦发注册接口
+    pufaRegister: host + '/api/MemberNController/memberPudongDevelopmentUser',
 };
 
 export default urls;

@@ -14,7 +14,6 @@ import {
     InteractionManager,
 } from 'react-native';
 
-import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 
 export default class Welcome extends Component {
@@ -27,7 +26,6 @@ export default class Welcome extends Component {
         const { navigation } = this.props;
         this.timer = setTimeout(() => {
             InteractionManager.runAfterInteractions(() => {
-                SplashScreen.hide();
                  let resetAction = NavigationActions.reset({
                      index: 0,
                      actions: [

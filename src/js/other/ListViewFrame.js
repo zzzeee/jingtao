@@ -75,7 +75,7 @@ export default class ListViewFrame extends Component {
                 }}
                 data={this.state.goodList}
                 numColumns={2}
-                contentContainerStyle={[styles.flatlist, listStyle]}
+                contentContainerStyle={listStyle}
                 keyExtractor={(item, index)=>(index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
@@ -89,7 +89,7 @@ export default class ListViewFrame extends Component {
     pageHead = () => {
         let { headStyle, listHead } = this.props;
         return (
-            <View style={headStyle}>
+            <View style={[styles.flatlist, headStyle]}>
                 {listHead}
                 <View style={styles.goodlistTop}>
                     <View style={styles.goodTopLine}></View>
