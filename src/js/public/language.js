@@ -85,7 +85,7 @@ const language = {
         specification: '规格',
         buyerMessage: '买家留言',
         buyerMessagePlaceholder: '选填，可填写与商品有关的其他要求。',
-        totalProductNumberL: '共计 %s 件商品',
+        totalProductNumberL: '共 %s 件商品',
         containPostage: '(含邮费：%s)',
         total: '共计',
         total2: '合计',

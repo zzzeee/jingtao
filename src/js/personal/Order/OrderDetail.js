@@ -415,6 +415,13 @@ export default class OrderDetail extends Component {
                     {this.getPriceRow('运费', freight)}
                     {this.getPriceRow('优惠券', oScoupon, true, false)}
                     {this.getPriceRow('积分抵现', oIntegral, true, false)}
+                    <View style={styles.totalBox}>
+                        <Text style={styles.totalNumber}>{str_replace(Lang[Lang.default].totalProductNumberL, totalNum)}</Text>
+                        <Text style={styles.defaultFont}>
+                            <Text>{Lang[Lang.default].total2 + ' '}</Text>
+                            <Text style={styles.redColor}>{Lang[Lang.default].RMB + this.actualTotal}</Text>
+                        </Text>
+                    </View>
                 </View>
                 <View style={styles.sessionBox}>
                     {this.getPriceRow('订单号码', orderNum, false)}
@@ -706,6 +713,27 @@ var styles = StyleSheet.create({
         height: PX.rowHeight1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    totalBox: {
+        height: PX.rowHeight1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+    },
+    totalNumber: {
+        color: Color.lightBack,
+        fontSize: 13,
+        paddingRight: 30,
+    },
+    defaultFont: {
+        color: Color.lightBack,
+        fontSize: 13,
+    },
+    redColor: {
+        color: Color.red,
+        fontSize: 14,
     },
     grayBox: {
         backgroundColor: Color.lightGrey,
