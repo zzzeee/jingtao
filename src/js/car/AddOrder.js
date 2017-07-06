@@ -371,13 +371,13 @@ export default class AddOrder extends Component {
         let integral3 = inputIntegral > this.actualTotal ? this.actualTotal : inputIntegral;
         return [{
             content: content1,
-            integral: parseInt(integral1),
+            integral: (integral1),
         }, {
             content: content2,
-            integral: parseInt(integral2),
+            integral: (integral2),
         }, {
             content: content3,
-            integral: parseInt(integral3),
+            integral: (integral3),
         }];
     };
 
