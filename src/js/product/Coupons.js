@@ -15,6 +15,7 @@ import {
     ScrollView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
@@ -29,9 +30,9 @@ export default class Coupons extends Component {
     };
     // 参数类型
     static propTypes = {
-        isShow: React.PropTypes.bool.isRequired,
-        coupons: React.PropTypes.array.isRequired,
-        hideCouponBox: React.PropTypes.func,
+        isShow: PropTypes.bool.isRequired,
+        coupons: PropTypes.array.isRequired,
+        hideCouponBox: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

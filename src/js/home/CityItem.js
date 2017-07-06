@@ -13,6 +13,7 @@ import {
     ListView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, Color, pixel, PX } from '../public/globalStyle';
 import lang from '../public/language';
 import BtnIcon from '../public/BtnIcon';
@@ -25,7 +26,7 @@ export default class CityItem extends Component {
     };
     // 参数类型
     static propTypes = {
-        city: React.PropTypes.object.isRequired,
+        city: PropTypes.object.isRequired,
     };
     // 构造函数
     constructor(props) {

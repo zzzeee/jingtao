@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import InputText from '../public/InputText';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 
@@ -25,10 +26,10 @@ export default class CtrlNumber extends Component {
     };
     // 参数类型
     static propTypes = {
-        num: React.PropTypes.number.isRequired,
-        callBack: React.PropTypes.func, 
-        checkFunc: React.PropTypes.func,
-        addFailFunc: React.PropTypes.func,
+        num: PropTypes.number.isRequired,
+        callBack: PropTypes.func, 
+        checkFunc: PropTypes.func,
+        addFailFunc: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

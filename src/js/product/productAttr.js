@@ -15,6 +15,7 @@ import {
     ScrollView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import User from '../public/user';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -33,15 +34,15 @@ export default class ProductAttr extends Component {
     };
     // 参数类型
     static propTypes = {
-        gid: React.PropTypes.number.isRequired,
-        isShow: React.PropTypes.bool.isRequired,
-        attrs: React.PropTypes.array,
-        chlidAtrrs: React.PropTypes.array,
-        type: React.PropTypes.oneOf([0, 1, 2]),
-        attrCallBack: React.PropTypes.func,
-        priceAtrrs: React.PropTypes.array,
-        pWarehouse: React.PropTypes.array,
-        carDatas: React.PropTypes.array,
+        gid: PropTypes.number.isRequired,
+        isShow: PropTypes.bool.isRequired,
+        attrs: PropTypes.array,
+        chlidAtrrs: PropTypes.array,
+        type: PropTypes.oneOf([0, 1, 2]),
+        attrCallBack: PropTypes.func,
+        priceAtrrs: PropTypes.array,
+        pWarehouse: PropTypes.array,
+        carDatas: PropTypes.array,
     };
     // 构造函数
     constructor(props) {

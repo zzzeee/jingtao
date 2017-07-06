@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
@@ -26,11 +27,11 @@ export default class CouponItem extends Component {
     };
     // 参数类型
     static propTypes = {
-        type: React.PropTypes.number.isRequired,
-        width: React.PropTypes.number.isRequired,
-        coupon: React.PropTypes.object.isRequired,
-        canReceive: React.PropTypes.bool,
-        clearOverImg: React.PropTypes.bool,
+        type: PropTypes.number.isRequired,
+        width: PropTypes.number.isRequired,
+        coupon: PropTypes.object.isRequired,
+        canReceive: PropTypes.bool,
+        clearOverImg: PropTypes.bool,
     };
     constructor(props) {
         super(props);

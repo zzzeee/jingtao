@@ -12,6 +12,7 @@ import {
     TextInput, 
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, Color, pixel } from '../public/globalStyle';
 
 export default class InputText extends Component {
@@ -22,8 +23,8 @@ export default class InputText extends Component {
     };
     // 参数类型
     static propTypes = {
-        onChange: React.PropTypes.func,
-        endEditing: React.PropTypes.func,
+        onChange: PropTypes.func,
+        endEditing: PropTypes.func,
     };
 	//构造
 	constructor(props) {

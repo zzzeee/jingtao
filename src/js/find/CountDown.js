@@ -11,6 +11,7 @@ import {
     Text,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, Color } from '../public/globalStyle';
 import Lang from '../public/language';
 
@@ -21,8 +22,8 @@ export default class CountDown extends Component {
     };
     // 参数类型
     static propTypes = {
-        startTime: React.PropTypes.number.isRequired,
-        endTime: React.PropTypes.number.isRequired,
+        startTime: PropTypes.number.isRequired,
+        endTime: PropTypes.number.isRequired,
     };
     constructor(props) {
         super(props);

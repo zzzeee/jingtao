@@ -313,7 +313,7 @@ var styles = StyleSheet.create({
     userHeadImg: {
         width: PX.userHeadImgSize,
         height: PX.userHeadImgSize,
-        borderRadius: PX.userHeadImgSize / 2,
+        // borderRadius: PX.userHeadImgSize / 2,
     },
     userNameText: {
         paddingLeft: 10,

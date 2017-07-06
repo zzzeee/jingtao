@@ -13,6 +13,7 @@ import {
     WebView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, Color, } from '../public/globalStyle';
@@ -24,7 +25,7 @@ export default class ProductDetail extends Component {
     };
     // 参数类型
     static propTypes = {
-        productID: React.PropTypes.number.isRequired,
+        productID: PropTypes.number.isRequired,
     };
     // 构造函数
     constructor(props) {

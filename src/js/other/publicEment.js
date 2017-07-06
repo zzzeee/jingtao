@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         height: 60,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: Color.floralWhite,
+        // backgroundColor: Color.floralWhite,
     },
     grayText: {
         color: Color.gainsboro,

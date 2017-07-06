@@ -15,6 +15,7 @@ import {
     Animated,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import InputText from '../public/InputText';
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
@@ -50,11 +51,11 @@ export default class FrequentModel extends Component {
     };
     // 参数类型
     static propTypes = {
-        text: React.PropTypes.string,
-        leftText: React.PropTypes.string,
-        leftClick: React.PropTypes.func,
-        rightText: React.PropTypes.string,
-        rightClick: React.PropTypes.func,
+        text: PropTypes.string,
+        leftText: PropTypes.string,
+        leftClick: PropTypes.func,
+        rightText: PropTypes.string,
+        rightClick: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

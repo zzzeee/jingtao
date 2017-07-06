@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Swiper from 'react-native-swiper';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -27,7 +28,7 @@ export default class ShopCoupon extends Component {
     };
     // 参数类型
     static propTypes = {
-        coupons: React.PropTypes.array.isRequired,
+        coupons: PropTypes.array.isRequired,
     };
 
     constructor(props) {

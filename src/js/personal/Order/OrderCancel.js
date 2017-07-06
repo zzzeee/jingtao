@@ -15,6 +15,7 @@ import {
     ScrollView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Utils from '../../public/utils';
 import Urls from '../../public/apiUrl';
 import { Size, PX, pixel, Color } from '../../public/globalStyle';
@@ -27,11 +28,11 @@ export default class OrderCancel extends Component {
     };
     // 参数类型
     static propTypes = {
-        isShow: React.PropTypes.bool.isRequired,
-        orderID: React.PropTypes.string.isRequired,
-        mToken: React.PropTypes.string.isRequired,
-        hideWindow: React.PropTypes.func,
-        cancelCallback: React.PropTypes.func,
+        isShow: PropTypes.bool.isRequired,
+        orderID: PropTypes.string.isRequired,
+        mToken: PropTypes.string.isRequired,
+        hideWindow: PropTypes.func,
+        cancelCallback: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

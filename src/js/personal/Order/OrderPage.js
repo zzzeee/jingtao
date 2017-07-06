@@ -14,6 +14,7 @@ import {
     FlatList,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Utils from '../../public/utils';
 import Urls from '../../public/apiUrl';
 import { Size, PX, pixel, Color } from '../../public/globalStyle';
@@ -34,10 +35,10 @@ export default class OrderComponent extends Component {
     };
     // 参数类型
     static propTypes = {
-        mToken: React.PropTypes.string.isRequired,
-        orderType: React.PropTypes.number,
-        get_list_ref: React.PropTypes.func,
-        selectIndex: React.PropTypes.number.isRequired,
+        mToken: PropTypes.string.isRequired,
+        orderType: PropTypes.number,
+        get_list_ref: PropTypes.func,
+        selectIndex: PropTypes.number.isRequired,
     };
 
     constructor(props) {

@@ -12,6 +12,7 @@ import {
     Image,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import AppHead from '../public/AppHead';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';

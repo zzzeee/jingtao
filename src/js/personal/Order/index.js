@@ -11,6 +11,7 @@ import {
     Text,
     Button,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
@@ -66,51 +67,20 @@ export default class MyOrder extends Component {
 
     render() {
         let { navigation } = this.props;
+        let left = <TouchableOpacity onPress={()=>navigation.navigate('Personal')}>
+            <Image source={require("../../../images/back.png")} style={{width: 26, height: 26}} />
+        </TouchableOpacity>;
         return (
             <View style={styles.flex}>
                 <AppHead
-                    title={Lang[Lang.default].myOrder}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.navigate('Personal');
-                    }} src={require("../../../images/back.png")} />)}
+                    title={Lang[Lang.default].myOrder+'22'}
+                    left={left}
                     onPress={()=>{
                         if(this.listRefs[this.state.selIndex]) {
                             this.listRefs[this.state.selIndex].scrollToOffset({offset: 0, animated: true});
                         }
                     }}
                 />
-                <View style={styles.flex}>
-                    <ScrollableTabView
-                        renderTabBar={() => <DefaultTabBar />}
-                        ref={(_ref)=>this.scrollTabView=_ref}
-                        style={styles.tabBarStyle}
-                        tabStyle={styles.tabBarItemStyle}
-                        // 默认打开第几个（0为第一个）
-                        initialPage={this.state.selIndex}
-                        //"top", "bottom", "overlayTop", "overlayBottom"
-                        tabBarPosition='top'
-                        // 选中的下划线颜色
-                        tabBarUnderlineStyle={styles.tabUnderLine}
-                        // 选中的文字颜色
-                        tabBarActiveTextColor={Color.mainColor}
-                        // 未选中的文字颜色
-                        tabBarInactiveTextColor={Color.lightBack}
-                        tabBarTextStyle={styles.tabTextStyle}
-                        onChangeTab={(obj)=>{
-                            this.setState({
-                                selIndex: obj.i,
-                            });
-                        }}
-                    >
-                        {this.tabs.map((item, index)=>{
-                            return (
-                                <View key={index} style={styles.flex} tabLabel={item.title}>
-                                    {this.getComponent(index, item.value)}
-                                </View>
-                            );
-                        })}
-                    </ScrollableTabView>
-                </View>
             </View>
         );
     }

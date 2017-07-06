@@ -90,7 +90,7 @@ export default class Search extends Component {
 
     //获取热门搜索关键字
     getHotWord = () => {
-        return ['豆腐干', '臭豆腐', '东北野人参'];
+        return [];
     };
 
     //获取地区列表

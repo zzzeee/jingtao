@@ -14,6 +14,7 @@ import {
     Modal,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 
 export default class AlertMoudle extends Component {
@@ -27,16 +28,16 @@ export default class AlertMoudle extends Component {
     };
     // 参数类型
     static propTypes = {
-        visiable: React.PropTypes.bool.isRequired,
-        text: React.PropTypes.string,
-        leftText: React.PropTypes.string,
-        leftClick: React.PropTypes.func,
-        leftColor: React.PropTypes.string,
-        leftBgColor: React.PropTypes.string,
-        rightText: React.PropTypes.string,
-        rightClick: React.PropTypes.func,
-        rightColor: React.PropTypes.string,
-        rightBgColor: React.PropTypes.string,
+        visiable: PropTypes.bool.isRequired,
+        text: PropTypes.string,
+        leftText: PropTypes.string,
+        leftClick: PropTypes.func,
+        leftColor: PropTypes.string,
+        leftBgColor: PropTypes.string,
+        rightText: PropTypes.string,
+        rightClick: PropTypes.func,
+        rightColor: PropTypes.string,
+        rightBgColor: PropTypes.string,
     };
     // 构造函数
     constructor(props) {

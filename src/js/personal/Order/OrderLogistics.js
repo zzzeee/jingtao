@@ -69,6 +69,8 @@ export default class OrderLogistics extends Component {
                         this.setState({
                             logistics: express.showapi_res_body,
                         });
+                    }else {
+                        this.setState({logistics: [], });
                     }
                 }
             });
@@ -86,13 +88,16 @@ export default class OrderLogistics extends Component {
                     }} src={require("../../../images/back.png")} />}
                     onPress={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
                 />
-                <View style={styles.flex}>
-                    <ListFrame
-                        listHead={this.listHeadView()}
-                        navigation={navigation}
-                        get_list_ref={(ref)=>this.ref_flatList=ref}
-                    />
-                </View>
+                {this.state.logistics ?
+                    <View style={styles.flex}>
+                        <ListFrame
+                            listHead={this.listHeadView()}
+                            navigation={navigation}
+                            get_list_ref={(ref)=>this.ref_flatList=ref}
+                        />
+                    </View>
+                    : null
+                }
             </View>
         );
     }
@@ -102,7 +107,6 @@ export default class OrderLogistics extends Component {
         let expressData = logistics.data || [];
         let expressNum = logistics.mailNo || '';
         let expressName = logistics.expTextName || '';
-        
         return (
             <View style={styles.container}>
                 <View style={styles.sessionBox}>
@@ -113,7 +117,7 @@ export default class OrderLogistics extends Component {
                         {Lang[Lang.default].expressName + ': ' + expressName}
                     </Text>
                 </View>
-                {expressData.length ?
+                {expressData.length > 0 ?
                     <View style={styles.expressDataBox}>
                         {expressData.map((item, index)=>{
                             let img = index == 0 ? 

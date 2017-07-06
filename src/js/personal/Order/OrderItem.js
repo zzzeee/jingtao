@@ -14,6 +14,7 @@ import {
     Linking,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Utils from '../../public/utils';
 import Urls from '../../public/apiUrl';
 import BtnIcon from '../../public/BtnIcon';
@@ -29,7 +30,7 @@ export default class OrderComponent extends Component {
     };
     // 参数类型
     static propTypes = {
-        mToken: React.PropTypes.string.isRequired,
+        mToken: PropTypes.string.isRequired,
     };
 
     constructor(props) {

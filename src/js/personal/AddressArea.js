@@ -15,6 +15,7 @@ import {
     ScrollView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
@@ -27,10 +28,10 @@ export default class AddressArea extends Component {
     };
     // 参数类型
     static propTypes = {
-        isShow: React.PropTypes.bool.isRequired,
-        areas: React.PropTypes.array.isRequired,
-        hideAreasBox: React.PropTypes.func,
-        getSelectArea: React.PropTypes.func,
+        isShow: PropTypes.bool.isRequired,
+        areas: PropTypes.array.isRequired,
+        hideAreasBox: PropTypes.func,
+        getSelectArea: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

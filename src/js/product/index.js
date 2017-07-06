@@ -396,6 +396,7 @@ export default class ProductScreen extends Component {
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
         let gdel = good.gDel && good.gDel != '0' ? true : false;
+        if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
         let left = <BtnIcon width={PX.headIconSize} press={()=>{
             navigation.goBack(null);
         }} src={require("../../images/back.png")} />;
@@ -598,6 +599,7 @@ export default class ProductScreen extends Component {
         let good = this.state.goodIofo || {};
         let gid = good.gID;
         let gdel = good.gDel && good.gDel != '0' ? true : false;
+        if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;

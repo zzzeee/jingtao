@@ -12,6 +12,7 @@ import {
     FlatList,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
@@ -26,8 +27,8 @@ export default class ProductScreen extends Component {
     };
     // 参数类型
     static propTypes = {
-        removeClippedSubviews: React.PropTypes.bool,
-        onScroll: React.PropTypes.func,
+        removeClippedSubviews: PropTypes.bool,
+        onScroll: PropTypes.func,
     };
     constructor(props) {
         super(props);

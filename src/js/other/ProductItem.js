@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import { PX, Color, pixel } from '../public/globalStyle';
 import Lang, { str_replace } from '../public/language';
@@ -26,10 +27,10 @@ export default class ProductItem extends Component {
     };
     // 参数类型
     static propTypes = {
-        width: React.PropTypes.number,
-        bottomHeight: React.PropTypes.number,
-        product: React.PropTypes.object,
-        showDiscount: React.PropTypes.bool,
+        width: PropTypes.number,
+        bottomHeight: PropTypes.number,
+        product: PropTypes.object,
+        showDiscount: PropTypes.bool,
     };
 
     render() {

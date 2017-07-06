@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import CtrlNumber from '../other/CtrlNumber';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
@@ -29,9 +30,9 @@ export default class GoodItem extends Component {
     };
     // 参数类型
     static propTypes = {
-        updateCarDatas: React.PropTypes.func,
-        good: React.PropTypes.object.isRequired,
-        carDatas: React.PropTypes.array.isRequired,
+        updateCarDatas: PropTypes.func,
+        good: PropTypes.object.isRequired,
+        carDatas: PropTypes.array.isRequired,
     };
     // 构造函数
     constructor(props) {

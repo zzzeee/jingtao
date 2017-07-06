@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 var WeChat=require('react-native-wechat');
 import ShareMoudle from '../other/ShareMoudle';
 import Lang, {str_replace} from '../public/language';
@@ -29,11 +30,11 @@ export default class FloatMenu extends Component {
     };
     // 参数类型
     static propTypes = {
-        cityName: React.PropTypes.string,
-        visible: React.PropTypes.bool,
-        nativeEvent: React.PropTypes.object,
-        hideMenu: React.PropTypes.func,
-        btnSize: React.PropTypes.number,
+        cityName: PropTypes.string,
+        visible: PropTypes.bool,
+        nativeEvent: PropTypes.object,
+        hideMenu: PropTypes.func,
+        btnSize: PropTypes.number,
     };
 
     constructor(props) {

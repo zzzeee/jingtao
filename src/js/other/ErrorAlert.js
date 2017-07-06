@@ -4,7 +4,6 @@
  * @date   2017.06.07
  */
 
-import PropTypes from 'prop-types';
 import React , { Component } from 'react';
 import {
     StyleSheet,
@@ -16,6 +15,7 @@ import {
     Animated,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
@@ -28,10 +28,10 @@ export default class ErrorAlert extends Component {
     };
     // 参数类型
     static propTypes = {
-        message: React.PropTypes.string.isRequired,
-        visiable: React.PropTypes.bool.isRequired,
-        hideModal: React.PropTypes.func,
-        type: React.PropTypes.number,
+        message: PropTypes.string.isRequired,
+        visiable: PropTypes.bool.isRequired,
+        hideModal: PropTypes.func,
+        type: PropTypes.number,
     };
     // 构造函数
     constructor(props) {

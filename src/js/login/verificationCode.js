@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
@@ -23,11 +24,11 @@ export default class SendCode extends Component {
     };
     // 参数类型
     static propTypes = {
-        timer: React.PropTypes.number,
-        initTxt: React.PropTypes.string,
-        endTxt: React.PropTypes.string,
-        enable: React.PropTypes.bool,
-        sendCodeFunc: React.PropTypes.func,
+        timer: PropTypes.number,
+        initTxt: PropTypes.string,
+        endTxt: PropTypes.string,
+        enable: PropTypes.bool,
+        sendCodeFunc: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

@@ -13,6 +13,7 @@ import {
     ListView,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Util from '../public/utils';
 import Urls from '../public/apiUrl';
 import HeadBox from './HeadBox';
@@ -27,8 +28,8 @@ export default class CityList extends Component {
     };
     // 参数类型
     static propTypes = {
-        pid: React.PropTypes.number.isRequired,
-        isUpdate: React.PropTypes.bool.isRequired,
+        pid: PropTypes.number.isRequired,
+        isUpdate: PropTypes.bool.isRequired,
     };
     //构造函数
     constructor(props) {

@@ -147,7 +147,6 @@ export default class Shop extends Component {
                 <FlatList
                     ref={(_ref)=>this.ref_flatList=_ref} 
                     removeClippedSubviews={false}
-                    contentContainerStyle={styles.flatListStyle}
                     numColumns={2}
                     data={this.state.productList}
                     keyExtractor={(item, index)=>index}
@@ -206,7 +205,7 @@ export default class Shop extends Component {
         let { navigation } = this.props;
         let { proRecom, mCoupon } = this.state;
         return (
-            <View>
+            <View style={styles.flatListStyle}>
                 {this.topSession()}
                 <Recommend 
                     style={{marginBottom: PX.marginTB}} 
@@ -364,13 +363,15 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        height: PX.rowHeight2 + PX.statusHeight,
+        height: PX.rowHeight2 + PX.statusHeight - 1,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         paddingTop: PX.statusHeight,
+        borderBottomColor: Color.lavender,
+        borderBottomWidth: pixel,
     },
     backImage: {
         width: PX.iconSize26,
@@ -380,26 +381,26 @@ const styles = StyleSheet.create({
     inputStyle: {
         height: 32,
         borderWidth: 0,
-        borderBottomWidth: 1,
+        borderBottomWidth: 0,
         borderBottomColor: '#fff',
-        color: 'rgba(255, 255, 255, .8)',
+        color: 'rgba(255, 255, 255, .85)',
         fontSize: 13,
         padding: 0,
         paddingLeft: 32,
-        borderRadius: 0,
-        backgroundColor: 'transparent',
+        borderRadius: 3,
+        backgroundColor: 'rgba(255, 255, 255, .3)',
     },
     inputStyle2: {
         height: 32,
         borderWidth: 0,
         borderBottomWidth: pixel,
         borderBottomColor: Color.lightBack,
-        color: 'rgba(0, 0, 0, 1)',
+        color: Color.gray,
         fontSize: 13,
         padding: 0,
         paddingLeft: 32,
-        borderRadius: 0,
-        backgroundColor: 'transparent',
+        borderRadius: 3,
+        backgroundColor: '#f0f0f0',
     },
     inputBeforeImg: {
         width: 18,

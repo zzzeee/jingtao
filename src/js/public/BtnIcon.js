@@ -13,6 +13,7 @@ import {
     Image,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, Color } from './globalStyle';
 
 export default class BtnIcon extends Component {
@@ -24,10 +25,10 @@ export default class BtnIcon extends Component {
     };
     // 参数类型
     static propTypes = {
-        width: React.PropTypes.number,
-        height: React.PropTypes.number,
-        press: React.PropTypes.func,
-        text: React.PropTypes.string,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        press: PropTypes.func,
+        text: PropTypes.string,
     };
     //构造函数
     constructor(props) {
@@ -43,10 +44,10 @@ export default class BtnIcon extends Component {
         return (
             <TouchableOpacity activeOpacity={1} style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
                 {this.props.src ? 
-                    <Image source={this.props.src} resizeMode={this.props.resizeMode} style={[{
+                    <Image source={this.props.src} resizeMode={this.props.resizeMode} style={[].concat({
                         width: width,
                         height: height,
-                    }, this.props.imageStyle]} />
+                    }, this.props.imageStyle)} />
                     : null
                 }
                 {this.props.text ? 

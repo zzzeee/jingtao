@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Util from '../public/utils';
 import urls from '../public/apiUrl';
 import lang from '../public/language';
@@ -23,7 +24,7 @@ import BtnIcon from '../public/BtnIcon';
 export default class HeadBox extends Component {
     // 参数类型
     static propTypes = {
-        datas: React.PropTypes.object.isRequired,
+        datas: PropTypes.object.isRequired,
     };
     //构造函数
     constructor(props) {

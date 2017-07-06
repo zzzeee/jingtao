@@ -11,9 +11,10 @@ import {
     View,
     Animated,
     PanResponder,
-    propTypes,
     TouchableOpacity,
 } from 'react-native';
+
+import PropTypes from 'prop-types';
 
 export default class SwiperBtn extends Component {
     // 默认参数
@@ -25,12 +26,12 @@ export default class SwiperBtn extends Component {
     };
     // 参数类型
     static propTypes = {
-        btns: React.PropTypes.array,
-        btnParam: React.PropTypes.object,
-        itemHeight: React.PropTypes.number.isRequired,
-        friction: React.PropTypes.number.isRequired,
-        tension: React.PropTypes.number.isRequired,
-        direction: React.PropTypes.oneOf(['left', 'right']),
+        btns: PropTypes.array,
+        btnParam: PropTypes.object,
+        itemHeight: PropTypes.number.isRequired,
+        friction: PropTypes.number.isRequired,
+        tension: PropTypes.number.isRequired,
+        direction: PropTypes.oneOf(['left', 'right']),
     };
     // 构造函数
     constructor(props) {

@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, Color } from '../public/globalStyle';
@@ -23,9 +24,9 @@ import GoodItem from './GoodItem';
 export default class ShopItem extends Component {
     // 参数类型
     static propTypes = {
-        shop: React.PropTypes.object.isRequired,
-        carDatas: React.PropTypes.array.isRequired,
-        updateCarDatas: React.PropTypes.func,
+        shop: PropTypes.object.isRequired,
+        carDatas: PropTypes.array.isRequired,
+        updateCarDatas: PropTypes.func,
     };
     // 构造函数
     constructor(props) {

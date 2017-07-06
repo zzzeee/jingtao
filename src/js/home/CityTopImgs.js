@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Swiper from 'react-native-swiper';
 import { Size, Color, pixel, PX } from '../public/globalStyle';
 
@@ -23,7 +24,7 @@ export default class CityTopImgs extends Component {
     };
     // 参数类型
     static propTypes = {
-        cityImgs: React.PropTypes.array.isRequired,
+        cityImgs: PropTypes.array.isRequired,
     };
     // 构造函数
     constructor(props) {

@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
 
@@ -25,7 +26,7 @@ export default class Recommend extends Component {
     };
     // 参数类型
     static propTypes = {
-        recommends: React.PropTypes.array.isRequired,
+        recommends: PropTypes.array.isRequired,
     };
 
     render() {
