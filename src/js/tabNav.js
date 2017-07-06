@@ -135,7 +135,7 @@ const TabNavs = TabNavigator({
     }
 }, {
     initialRouteName: 'Home',
-    swipeEnabled: false,
+    swipeEnabled: true,
     animationEnabled: false,
     tabBarPosition: 'bottom',
     tabBarOptions: {

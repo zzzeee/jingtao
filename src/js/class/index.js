@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
 import Utils from '../public/utils';
@@ -88,6 +87,7 @@ export default class ClassScreen extends Component {
     }
 
     render() {
+        let { navigation } = this.props;
         let rightList = (
             <ScrollView 
                 ref={(_ref)=>this.ref_listview=_ref}
@@ -117,12 +117,14 @@ export default class ClassScreen extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].tab_class}
-                    right={(<BtnIcon 
-                        style={styles.btnRight} 
-                        width={PX.headIconSize} 
-                        src={require("../../images/search.png")}
-                        press={()=>this.props.navigation.navigate('Search')}
-                    />)}
+                    right={
+                        <TouchableOpacity onPress={()=>navigation.navigate('Search')} style={{padding: 5,}}>
+                            <Image source={require("../../images/search.png")} style={{
+                                width: PX.headIconSize,
+                                height: PX.headIconSize,
+                            }} />
+                        </TouchableOpacity>
+                    }
                 />
                 {this.state.load_or_error ? 
                     this.state.load_or_error : 

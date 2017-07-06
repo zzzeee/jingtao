@@ -19,7 +19,6 @@ import {
 import Swiper from 'react-native-swiper';
 import User from '../public/user';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';

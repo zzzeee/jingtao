@@ -19,7 +19,6 @@ import {
 import User from '../public/user';
 import Utils from '../public/utils';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
@@ -218,7 +217,12 @@ export default class CarsScreen extends Component {
     render() {
         let { navigation } = this.props;
         let left = (navigation.state.params && navigation.state.params.goGoodDetails) ? 
-            <BtnIcon width={PX.headIconSize} press={()=>{navigation.goBack(null);}} src={require("../../images/back.png")} />
+            <TouchableOpacity onPress={()=>navigation.goBack(null)}>
+                <Image source={require("../../images/back.png")} style={{
+                    width: PX.headIconSize,
+                    height: PX.headIconSize,
+                }} />
+            </TouchableOpacity>
             : null;
         let right = (this.state.carDatas && this.state.carDatas.length) ?
             <Text style={styles.editCarText} onPress={()=>{
@@ -287,26 +291,31 @@ export default class CarsScreen extends Component {
                     </Animated.View>
                     <View style={styles.carFooter}>
                         <View style={styles.rowStyle}>
-                            <BtnIcon 
-                                width={20} 
-                                text={Lang[Lang.default].selectAll} 
-                                src={selectIcon} 
-                                press={()=>{
-                                    let newState = !isSelect;
-                                    this.setState({
-                                        isSelect: newState,
-                                        ctrlSelect: newState,
-                                        changeKEY1: null,
-                                        changeKEY2: null,
-                                    });
-                                }} 
-                                style={{
-                                    padding: 0, 
-                                    paddingLeft: PX.marginLR,
-                                    paddingTop: 5,
-                                    paddingBottom: 5,
-                                }}
-                            />
+                            <TouchableOpacity onPress={()=>{
+                                let newState = !isSelect;
+                                this.setState({
+                                    isSelect: newState,
+                                    ctrlSelect: newState,
+                                    changeKEY1: null,
+                                    changeKEY2: null,
+                                });
+                            }} style={{
+                                paddingLeft: PX.marginLR,
+                                paddingTop: 5,
+                                paddingBottom: 5,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}>
+                                <Image source={selectIcon} style={{
+                                    width: 20,
+                                    height: 20,
+                                }} />
+                                <Text style={{
+                                    marginLeft: 6,
+                                    color: Color.lightBack,
+                                    fontSize: 14,
+                                }}>{Lang[Lang.default].selectAll}</Text>
+                            </TouchableOpacity>
                         </View>
                         {editing ?
                             <View style={styles.rowStyle}>

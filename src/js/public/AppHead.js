@@ -9,6 +9,8 @@ import {
 	StyleSheet,
 	Text, 
 	View,
+	Image,
+	TouchableOpacity,
 } from 'react-native';
 
 import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
@@ -22,12 +24,34 @@ export default class AppHead extends Component {
   	}
 
 	render() {
-		let {title, onPress, center, float, style, textStyle, left, right} = this.props;
-		
+		let {
+			title,
+			onPress,
+			center,
+			float,
+			style,
+			textStyle,
+			left,
+			goBack,
+			navigation,
+			leftPress,
+			right,
+		} = this.props;
+		let defaultLeft = goBack ?
+			<TouchableOpacity onPress={()=>{
+				if(leftPress) {
+					leftPress();
+				}else {
+					navigation && navigation.goBack(null);
+				}
+			}} style={{padding: 5,}}>
+				<Image source={require("../../images/back.png")} style={styles.backImg} />
+			</TouchableOpacity>
+			: null;
 	    return (
 			<View style={[styles.topBox, float ? {position: 'absolute', left: 0, right: 0}: {}, style]}>
 				<View style={[styles.sideBox, {left: 10}]}>
-					{left ? left : null}
+					{left ? left : defaultLeft}
 				</View>
 				<View style={styles.middleBox}>
 					{center ?
@@ -73,5 +97,9 @@ var styles = StyleSheet.create({
 		color: Color.mainColor,
 		fontSize: FontSize.headFontSize,
 		fontWeight: FontSize.headFontWeight,
+	},
+	backImg: {
+		width: PX.iconSize26,
+		height: PX.iconSize26,
 	},
 });

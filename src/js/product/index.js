@@ -20,7 +20,6 @@ import {
 import User from '../public/user';
 import Swiper from 'react-native-swiper';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
@@ -397,25 +396,28 @@ export default class ProductScreen extends Component {
         let good = this.state.goodIofo || {};
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
-        let left = <BtnIcon width={PX.headIconSize} press={()=>{
-            navigation.goBack(null);
-        }} src={require("../../images/back.png")} />;
         let right = (
             <View style={styles.rowStyle}>
-                <BtnIcon 
-                    width={PX.headIconSize}
-                    press={()=>this.toggleCollection(1, 0)}
-                    src={this.state.isFavorite ? 
+                <TouchableOpacity onPress={()=>this.toggleCollection(1, 0)} style={{
+                    padding: 5,
+                }}>
+                    <Image source={this.state.isFavorite ? 
                         require("../../images/product/favorite_on.png") :
                         require("../../images/product/favorite.png")
-                    } 
-                />
+                    } style={{
+                        width: PX.headIconSize,
+                        height: PX.headIconSize,
+                    }} />
+                </TouchableOpacity>
                 {isCanShare ?
-                    <BtnIcon 
-                        width={PX.headIconSize} 
-                        style={{marginLeft: 5}} 
-                        src={require("../../images/product/share_orange.png")} 
-                    />
+                    <TouchableOpacity onPress={()=>this.toggleCollection(1, 0)} style={{
+                        padding: 5,
+                    }}>
+                        <Image source={require("../../images/product/share_orange.png")} style={{
+                            width: PX.headIconSize,
+                            height: PX.headIconSize,
+                        }} />
+                    </TouchableOpacity>
                     : null
                 }
             </View>
@@ -424,7 +426,8 @@ export default class ProductScreen extends Component {
             <View style={styles.flex}>
                 <AppHead 
                     title={Lang[Lang.default].productDetails}
-                    left={left}
+                    goBack={true}
+                    navigation={navigation}
                     right={right}
                     onPress={()=>{
                         this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
@@ -448,31 +451,36 @@ export default class ProductScreen extends Component {
                 </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
-                        <BtnIcon 
-                            src={require('../../images/product/custem_center.png')} 
-                            width={22} 
-                            style={[styles.productContactImg, {marginLeft: 10,}]} 
-                            text={Lang[Lang.default].customer}
-                            txtStyle={styles.productContactTxt}
-                            txtViewStyle={{minHeight: 12}}
-                            press={()=>{
-                                this.showAlertMoudle(
-                                    Lang.telephone2,
-                                    this.sellTelphone,
-                                    Lang[Lang.default].call
-                                );
-                            }}
-                        />
+                        <TouchableOpacity onPress={()=>{
+                            this.showAlertMoudle(
+                                Lang.telephone2,
+                                this.sellTelphone,
+                                Lang[Lang.default].call
+                            );
+                        }} style={[styles.productContactImg, {
+                            marginLeft: 10,
+                            padding: 5,
+                            alignItems: 'center',
+                            minHeight: 12,
+                        }]}>
+                            <Image source={require('../../images/product/custem_center.png')} style={{
+                                width: 22,
+                                height: 22,
+                            }} />
+                            <Text style={styles.productContactTxt}>{Lang[Lang.default].customer}</Text>
+                        </TouchableOpacity>
                         <View style={styles.btnCarBox}>
-                            <BtnIcon 
-                                src={require('../../images/navs/carSelect.png')} 
-                                width={22}
-                                press={()=>navigation.navigate('Car')}
-                                style={styles.productContactImg} 
-                                text={Lang[Lang.default].tab_car}
-                                txtStyle={styles.productContactTxt}
-                                txtViewStyle={{minHeight: 12}}
-                            />
+                            <TouchableOpacity onPress={()=>navigation.navigate('Car')} style={[styles.productContactImg, {
+                                padding: 5,
+                                alignItems: 'center',
+                                minHeight: 12,
+                            }]}>
+                                <Image source={require('../../images/navs/carSelect.png')} style={{
+                                    width: 22,
+                                    height: 22,
+                                }} />
+                                <Text style={styles.productContactTxt}>{Lang[Lang.default].tab_car}</Text>
+                            </TouchableOpacity>
                             {(this.carNumber && this.carNumber > 0) ?
                                 <TouchableOpacity onPress={()=>navigation.navigate('Car')} style={styles.carNumberStyle}>
                                     <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
@@ -772,38 +780,34 @@ export default class ProductScreen extends Component {
                                 <Text numberOfLines={1} style={styles.txtStyle2}>{shopName}</Text>
                             </View>
                             <View style={styles.rowStyle}>
-                                <BtnIcon 
-                                    src={require('../../images/product/7day.png')} 
-                                    width={20} 
-                                    style={styles.shopMarkImg} 
-                                    text={Lang[Lang.default].sevenDays} 
-                                    txtStyle={styles.shopMarkText}
-                                    txtViewStyle={{minHeight: 12}}
-                                />
-                                <BtnIcon 
-                                    src={require('../../images/product/origin.png')} 
-                                    width={20} 
-                                    style={styles.shopMarkImg} 
-                                    text={Lang[Lang.default].certifiedGuarantee} 
-                                    txtStyle={styles.shopMarkText}
-                                    txtViewStyle={{minHeight: 12}}
-                                />
-                                <BtnIcon 
-                                    src={require('../../images/product/quick.png')} 
-                                    width={20} 
-                                    style={styles.shopMarkImg} 
-                                    text={Lang[Lang.default].lightningConsignment} 
-                                    txtStyle={styles.shopMarkText}
-                                    txtViewStyle={{minHeight: 12}}
-                                />
-                                <BtnIcon 
-                                    src={require('../../images/product/direct.png')} 
-                                    width={20} 
-                                    style={styles.shopMarkImg} 
-                                    text={Lang[Lang.default].directDeal} 
-                                    txtStyle={styles.shopMarkText}
-                                    txtViewStyle={{minHeight: 12}}
-                                />
+                                <View style={styles.shopMarkImg}>
+                                    <Image source={require('../../images/product/7day.png')} style={{
+                                        width: 20,
+                                        height: 20,
+                                    }} />
+                                    <Text style={styles.shopMarkText}>{Lang[Lang.default].sevenDays}</Text>
+                                </View>
+                                <View style={styles.shopMarkImg}>
+                                    <Image source={require('../../images/product/origin.png')} style={{
+                                        width: 20,
+                                        height: 20,
+                                    }} />
+                                    <Text style={styles.shopMarkText}>{Lang[Lang.default].certifiedGuarantee}</Text>
+                                </View>
+                                <View style={styles.shopMarkImg}>
+                                    <Image source={require('../../images/product/quick.png')} style={{
+                                        width: 20,
+                                        height: 20,
+                                    }} />
+                                    <Text style={styles.shopMarkText}>{Lang[Lang.default].lightningConsignment}</Text>
+                                </View>
+                                <View style={styles.shopMarkImg}>
+                                    <Image source={require('../../images/product/direct.png')} style={{
+                                        width: 20,
+                                        height: 20,
+                                    }} />
+                                    <Text style={styles.shopMarkText}>{Lang[Lang.default].directDeal}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>

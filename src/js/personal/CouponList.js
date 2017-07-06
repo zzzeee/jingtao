@@ -20,7 +20,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import CouponItem from '../other/CouponItem';
 
 export default class CouponList extends Component {
@@ -70,9 +69,8 @@ export default class CouponList extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].myCoupons}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />}
+                    goBack={true}
+                    navigation={navigation}
                     onPress={() => {
                         this.ref_flatList && this.ref_flatList.scrollToOffset({offset: 0, animated: true});
                     }}

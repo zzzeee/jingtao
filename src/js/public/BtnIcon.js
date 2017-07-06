@@ -38,25 +38,38 @@ export default class BtnIcon extends Component {
     }
 
     render() {
-        let width = this.props.width ? this.props.width : 14;
-        let height = this.props.height ? this.props.height : width;
-
+        let { 
+            width, 
+            height, 
+            style, 
+            press, 
+            src, 
+            text, 
+            txtStyle, 
+            txtViewStyle, 
+            size, 
+            color, 
+            resizeMode, 
+            imageStyle, 
+        } = this.props;
+        let _width = width ? width : 14;
+        let _height = height ? height : _width;
         return (
-            <TouchableOpacity activeOpacity={1} style={[styles.iconBox, this.props.style]} onPress={this.props.press}>
-                {this.props.src ? 
-                    <Image source={this.props.src} resizeMode={this.props.resizeMode} style={[].concat({
-                        width: width,
-                        height: height,
-                    }, this.props.imageStyle)} />
+            <TouchableOpacity activeOpacity={1} style={[].concat(styles.iconBox, style)} onPress={press}>
+                {src ? 
+                    <Image source={src} resizeMode={resizeMode} style={[].concat({
+                        width: _width,
+                        height: _height,
+                    }, imageStyle)} />
                     : null
                 }
-                {this.props.text ? 
-                    <View style={[styles.textView, this.props.txtViewStyle]}>
+                {text ? 
+                    <View style={[styles.textView, txtViewStyle]}>
                         <Text style={[{
                             paddingLeft: 4,
-                            color: this.props.color ? this.props.color : Color.lightBack,
-                            fontSize: this.props.size,
-                        }, this.props.txtStyle]}>{this.props.text}</Text>
+                            color: color ? color : Color.lightBack,
+                            fontSize: size,
+                        }, txtStyle]}>{text}</Text>
                     </View>
                     : null
                 }

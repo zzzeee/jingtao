@@ -17,7 +17,6 @@ import {
 import Lang, {str_replace, Transaction} from '../../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../../public/globalStyle';
 import AppHead from '../../public/AppHead';
-import BtnIcon from '../../public/BtnIcon';
 
 export default class HelpTransaction extends Component {
     render() {
@@ -26,9 +25,8 @@ export default class HelpTransaction extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].contactUs}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={this.props.navigation}
                 />
                 <ScrollView contentContainerStyle={styles.scrollStyle}>
                     <Text style={styles.defaultFont}>{Transaction}</Text>

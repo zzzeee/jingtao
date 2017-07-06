@@ -19,7 +19,6 @@ import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {Rule, str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 
 export default class MyIntegral extends Component {
     constructor(props) {
@@ -34,9 +33,8 @@ export default class MyIntegral extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].integralRule}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={this.props.navigation}
                 />
                 <ScrollView contentContainerStyle={styles.container}>
                     <View style={styles.topBox}>

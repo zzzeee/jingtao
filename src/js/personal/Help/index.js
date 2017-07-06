@@ -16,7 +16,6 @@ import {
 import Lang, {str_replace} from '../../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../../public/globalStyle';
 import AppHead from '../../public/AppHead';
-import BtnIcon from '../../public/BtnIcon';
 
 export default class Help extends Component {
     render() {
@@ -25,9 +24,8 @@ export default class Help extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].contactUs}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={this.props.navigation}
                 />
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity onPress={()=>navigation.navigate('Privacy')} style={styles.rowMain}>

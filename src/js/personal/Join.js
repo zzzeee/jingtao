@@ -17,7 +17,6 @@ import {
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import { Size, PX, pixel, Color, FontSize } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
@@ -95,12 +94,11 @@ export default class Join extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].jtJoiner}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />}
+                    goBack={true}
+                    navigation={navigation}
                 />
                 <ScrollView contentContainerStyle={styles.container}>
-                    <Image style={styles.bannerImg} source={require('../../images/personal/join_banner.jpg')} />
+                    <Image style={styles.bannerImg} source={require('../../images/personal/join_banner2.png')} />
                     <View style={styles.titleBox}>
                         <Text style={styles.titleStyle}>{Lang[Lang.default].nowJoin}</Text>
                     </View>

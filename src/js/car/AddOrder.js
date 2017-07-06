@@ -202,9 +202,8 @@ export default class AddOrder extends Component {
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].updateOrder}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.navigate('Car');
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    leftPress={()=>navigation.navigate('Car')}
                 />
                 <View style={styles.body}>
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
@@ -521,6 +520,7 @@ export default class AddOrder extends Component {
     //点击提交订单按钮
     updateOrder = () => {
         if(this.lockUpateOrder) return null;
+        let { navigation } = this.props;
         let orders = this.createOrderInfo();
         if(this.mToken && orders) {
             let obj = {
@@ -574,7 +574,14 @@ export default class AddOrder extends Component {
                     let ret = result.sTatus || 0;
                     let msg = result.sMessage || null;
                     let orderNum = result.orderNum || null;
-                    if(ret == 1) {
+                    if(ret == 9) {
+                        navigation.navigate('OrderNotify', {
+                            pageType: 1,
+                            mToken: this.mToken,
+                            payMoney: this.actualTotal,
+                            shopOrderNum: orderNum,
+                        });
+                    }else if(ret == 1) {
                         if(orderNum) {
                             this.orderNumber = orderNum;
                             this.setState({showPayModal: true, });

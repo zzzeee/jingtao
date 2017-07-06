@@ -22,7 +22,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
@@ -183,9 +182,8 @@ export default class ShopSearch extends Component {
         return (
             <View style={styles.container}>
                 <AppHead
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                     right={<Text style={styles.headRightText} onPress={this.clickSearch}>{Lang[Lang.default].search}</Text>}
                     center={
                         <View style={styles.headInputBox}>

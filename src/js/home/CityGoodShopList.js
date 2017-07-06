@@ -24,7 +24,6 @@ import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
 import CityTopImgs from './CityTopImgs';
 import { EndView } from '../other/publicEment';
@@ -340,6 +339,7 @@ export default class CityGoodShopList extends Component {
 
     render() {
         let _style = {};
+        let { navigation } = this.props;
         if(this.state.isFloat) {
             _style = {
                 position: 'absolute',
@@ -443,24 +443,25 @@ export default class CityGoodShopList extends Component {
                 }} />
                 <View>
                     <AppHead
-                        center={<BtnIcon 
-                            width={20} 
-                            text={this.state.cityName} 
-                            src={require("../../images/car/address_nav.png")} 
-                            txtStyle={{
-                                color: Color.mainColor,
-                                fontSize: FontSize.headFontSize,
-                                fontWeight: FontSize.headFontWeight,
-                            }}
-                            press={()=>{
+                        center={
+                            <TouchableOpacity onPress={()=>{
                                 if(this.ref_listview) {
                                     this.ref_listview.scrollTo({x: 0, y: 0, animated: true})
                                 }
-                            }}
-                        />}
-                        left={<BtnIcon width={PX.headIconSize} press={()=>{
-                                this.props.navigation.goBack(null);
-                        }} src={require("../../images/back.png")} />}
+                            }} style={{flexDirection: 'row',}}>
+                                <Image source={require("../../images/car/address_nav.png")} style={{
+                                    width: 20,
+                                    height: 20,
+                                }} />
+                                <Text style={{
+                                    color: Color.mainColor,
+                                    fontSize: FontSize.headFontSize,
+                                    fontWeight: FontSize.headFontWeight,
+                                }}>{this.state.cityName}</Text>
+                            </TouchableOpacity>
+                        }
+                        goBack={true}
+                        navigation={navigation}
                     />
                 </View>
                 <View style={styles.flex}>
@@ -637,6 +638,7 @@ export default class CityGoodShopList extends Component {
 
     // 商品列表的行内容(不多于3行)
     _renderItem2 = (obj, sectionID, rowID) => {
+        console.log(obj);
         let imgurl = obj.gThumbPic || null;
         let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
         let name = obj.gName || '';
@@ -655,17 +657,20 @@ export default class CityGoodShopList extends Component {
                 </View>
                 <View style={styles.goodRightView}>
                     <View>
-                        <BtnIcon 
-                            src={require('../../images/home/market.png')} 
-                            width={15} text={'abc'} 
-                            txtStyle={styles.fontStyle2} 
-                            style={{
-                                marginBottom: 13, 
-                                marginTop: 10,
-                                paddingTop: 0,
-                                paddingBottom: 0,
-                            }}
-                        />
+                        <TouchableOpacity style={{
+                            marginBottom: 13, 
+                            marginTop: 10,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={require("../../images/car/shophead.png")} style={{
+                                width: 15,
+                                height: 15,
+                            }} />
+                            <Text style={styles.fontStyle2}>{null}</Text>
+                        </TouchableOpacity>
                         <Text style={styles.fontStyle3}>{name}</Text>
                     </View>
                     <View>
@@ -691,11 +696,16 @@ export default class CityGoodShopList extends Component {
         return (
             <View key={rowID} style={[styles.shopItemBox, styles.shadowStyle]}>
                 <View style={styles.shopItemTop}>
-                    <BtnIcon width={26} 
-                        src={require('../../images/car/shophead.png')} 
-                        text={name} 
-                        style={{padding: 0}}
-                    />
+                    <TouchableOpacity style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                    }}>
+                        <Image source={require('../../images/car/shophead.png')} style={{
+                            width: 26,
+                            height: 26,
+                        }} />
+                        <Text style={styles.fontStyle2}>{name}</Text>
+                    </TouchableOpacity>
                     <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
                 </View>
                 <View style={{width: Size.width - 25}}>

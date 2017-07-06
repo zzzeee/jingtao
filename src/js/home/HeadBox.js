@@ -19,7 +19,6 @@ import Util from '../public/utils';
 import urls from '../public/apiUrl';
 import lang from '../public/language';
 import { Size, Color } from '../public/globalStyle';
-import BtnIcon from '../public/BtnIcon';
 
 export default class HeadBox extends Component {
     // 参数类型
@@ -110,14 +109,35 @@ export default class HeadBox extends Component {
             }]}>
                 <View style={styles.cityHead}>
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
-                    {/*<BtnIcon width={20} src={img_down} />*/}
                 </View>
                 <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 0)}>
                     <Image source={{uri: cimg}} style={styles.cityImage} />
                 </TouchableOpacity>
                 <View style={styles.cityfoot}>
-                    <BtnIcon src={img_enter} size={12} text={lang.cn.goin + name} press={()=>this.linkList(obj.region_id, name, 0)} />
-                    <BtnIcon src={img_mark} size={12} text={lang.cn.allSeller} press={()=>this.linkList(obj.region_id, name, 1)} />
+                    <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 0)} style={{
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={img_enter} style={{
+                            width: 18,
+                            height: 18,
+                        }} />
+                        <Text style={{
+                            fontSize: 12,
+                            color: Color.lightBack,
+                        }}>{lang[lang.default].goin + name}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 1)} style={{
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={img_mark} style={{
+                            width: 18,
+                            height: 18,
+                        }} />
+                        <Text style={{
+                            fontSize: 12,
+                            color: Color.lightBack,
+                        }}>{lang[lang.default].allSeller}</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );

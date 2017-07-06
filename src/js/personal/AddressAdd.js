@@ -22,7 +22,6 @@ import InputText from '../public/InputText';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import ErrorAlert from '../other/ErrorAlert';
 
 export default class AddressAdd extends Component {
@@ -246,9 +245,8 @@ export default class AddressAdd extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].addAddress}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />}
+                    goBack={true}
+                    navigation={navigation}
                     onPress={() => {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
                     }}

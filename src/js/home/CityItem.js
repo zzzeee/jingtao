@@ -10,13 +10,13 @@ import {
     Text,
     View,
     Image,
+    TouchableOpacity,
     ListView,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
 import { Size, Color, pixel, PX } from '../public/globalStyle';
 import lang from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import ProductItem from '../other/ProductItem';
 
 export default class CityItem extends Component {
@@ -87,14 +87,22 @@ export default class CityItem extends Component {
             <View>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
-                    <BtnIcon width={26} src={img_down} style={{padding: 5}} press={(e)=>{
+                    <TouchableOpacity onPress={(e)=>{
                         if(this.props.showFloatMenu && e && e.nativeEvent && name) {
                             this.props.showFloatMenu(e.nativeEvent, name, {
                                 img: img,
                                 cityId: id,
                             });
                         }
-                    }} />
+                    }} style={{
+                        padding: 5,
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={img_down} style={{
+                            width: 26,
+                            height: 26,
+                        }} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.cityTitleRow}>
                     <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
@@ -111,33 +119,52 @@ export default class CityItem extends Component {
                 />
                 <View style={styles.cityItemFootBox}>
                     <View style={styles.noLeftBorder}>
-                        <BtnIcon 
-                            width={16}
-                            size={13}
-                            color={Color.lightBack}
-                            src={img_enter}
-                            text={lang.cn.goin + name}
-                            press={()=>this.linkList(id, name, 0)}
-                        />
+                        <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
+                            padding: 5,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={img_enter} style={{
+                                width: 16,
+                                height: 16,
+                            }} />
+                            <Text style={{
+                                fontSize: 13,
+                                color: Color.lightBack,
+                            }}>{lang[lang.default].goin + name}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.leftBorder}>
-                        <BtnIcon
-                            width={16}
-                            size={13}
-                            color={Color.lightBack}
-                            src={img_mark}
-                            text={lang.cn.allSeller}
-                            press={()=>this.linkList(id, name, 1)}
-                        />
+                        <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
+                            padding: 5,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={img_mark} style={{
+                                width: 16,
+                                height: 16,
+                            }} />
+                            <Text style={{
+                                fontSize: 13,
+                                color: Color.lightBack,
+                            }}>{lang[lang.default].allSeller}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.leftBorder}>
-                        <BtnIcon
-                            width={16}
-                            size={13}
-                            color={Color.lightBack}
-                            src={img_share}
-                            text={lang.cn.sharePruduct}
-                        />
+                        <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
+                            padding: 5,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={img_share} style={{
+                                width: 16,
+                                height: 16,
+                            }} />
+                            <Text style={{
+                                fontSize: 13,
+                                color: Color.lightBack,
+                            }}>{lang[lang.default].sharePruduct}</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>

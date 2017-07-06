@@ -15,7 +15,6 @@ import {
 import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 
 export default class About extends Component {
     rows = [
@@ -32,9 +31,8 @@ export default class About extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].contactUs}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                 />
                 <View style={styles.flex}>
                     {this.rows.map(this.rendRow)}

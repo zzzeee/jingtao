@@ -23,7 +23,6 @@ import CityList from './CityList';
 import FloatMenu from './FloatMenu';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
-import BtnIcon from '../public/BtnIcon';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color } from '../public/globalStyle';
 
@@ -72,17 +71,19 @@ export default class HomeScreen extends Component {
             <View style={styles.flex}>
                 <View style={styles.headView}>
                     <Text style={{width: 40}}>{null}</Text>
-                    <BtnIcon 
-                        width={100} 
-                        height={PX.headHeight - 10}
-                        src={require("../../images/logoTitle.png")}
-                    />
-                    <BtnIcon 
-                        style={styles.btnRight} 
-                        width={PX.headIconSize} 
-                        src={require("../../images/search.png")}
-                        press={()=>navigation.navigate('Search')}
-                    />
+                    <Image source={require("../../images/logoTitle.png")} style={{
+                        width: 100,
+                        height: 22.5,
+                    }} />
+                    <TouchableOpacity onPress={()=>navigation.navigate('Search')} style={{
+                        paddingRight: 15,
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={require("../../images/search.png")} style={{
+                            width: PX.headIconSize,
+                            height: PX.headIconSize,
+                        }} />
+                    </TouchableOpacity>
                 </View>
                 <Animated.View style={[styles.hideHead, {
                     height: this.state.heightValue,
@@ -91,23 +92,34 @@ export default class HomeScreen extends Component {
                         outputRange: [0, 1]
                     }),
                 }]}>
-                    <BtnIcon 
-                        style={styles.btnLeft}
-                        width={PX.headIconSize}
-                        src={require("../../images/logo.png")} 
-                        press={this.scrollStart}
-                    />
+                    <TouchableOpacity onPress={this.scrollStart} style={{
+                        paddingLeft: 15,
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={require("../../images/logo.png")} style={{
+                            width: PX.headIconSize,
+                            height: PX.headIconSize,
+                        }} />
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.titleTextBox} onPress={this.scrollStart}>
                         <Text style={styles.headTitle1}>{str_replace(Lang[Lang.default].previewing, '')}</Text>
                         <Text style={styles.headTitle2}>{this.state.provinceName + Lang[Lang.default].guan}</Text>
-                        <BtnIcon width={16} src={require("../../images/sanjiao.png")} press={this.scrollStart} />
+                        <TouchableOpacity onPress={this.scrollStart}>
+                            <Image source={require("../../images/sanjiao.png")} style={{
+                                width: 16,
+                                height: 16,
+                            }} />
+                        </TouchableOpacity>
                     </TouchableOpacity>
-                    <BtnIcon 
-                        style={styles.btnRight} 
-                        width={PX.headIconSize} 
-                        src={require("../../images/search.png")}
-                        press={()=>navigation.navigate('Search')}
-                    />
+                    <TouchableOpacity onPress={()=>navigation.navigate('Search')} style={{
+                        paddingRight: 15,
+                        flexDirection: 'row',
+                    }}>
+                        <Image source={require("../../images/search.png")} style={{
+                            width: PX.headIconSize,
+                            height: PX.headIconSize,
+                        }} />
+                    </TouchableOpacity>
                 </Animated.View>
                 <ScrollView 
                     ref={(_ref)=>this.ref_scrollview=_ref} 

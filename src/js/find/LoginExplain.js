@@ -17,7 +17,6 @@ import {
 import Lang, {str_replace, Privacy} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 
 export default class LoginExplain extends Component {
     render() {
@@ -26,9 +25,8 @@ export default class LoginExplain extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={'登录说明'}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                 />
                 <ScrollView contentContainerStyle={styles.scrollStyle}>
                     <Text style={styles.titleStyle}>未注册用户, 请按以下步骤登录帐号。</Text>

@@ -14,7 +14,6 @@ import {
 
 import PropTypes from 'prop-types';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
@@ -41,9 +40,8 @@ export default class Coupon extends Component {
                 <View>
                     <AppHead
                         title={Lang[Lang.default].select + Lang[Lang.default].coupon}
-                        left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                        }} src={require("../../images/back.png")} />)}
+                        goBack={true}
+                        navigation={navigation}
                     />
                 </View>
                 <View style={styles.body}>

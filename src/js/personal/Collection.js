@@ -21,7 +21,6 @@ import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import SwiperBtn from '../other/SwiperBtn';
 import AlertMoudle from '../other/AlertMoudle';
 
@@ -234,9 +233,8 @@ export default class Collection extends Component {
                 <View>
                     <AppHead
                         title={Lang[Lang.default].myCollection}
-                        left={<BtnIcon width={PX.headIconSize} press={()=>{
-                                this.props.navigation.goBack(null);
-                        }} src={require("../../images/back.png")} />}
+                        goBack={true}
+                        navigation={this.props.navigation}
                     />
                 </View>
                 <View style={styles.flex}>

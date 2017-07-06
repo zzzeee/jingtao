@@ -21,7 +21,6 @@ import Lang, {str_replace, Privacy} from '../public/language';
 import { Size, pixel, Color, PX } from '../public/globalStyle';
 import InputText from '../public/InputText';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 import SendCode from '../login/verificationCode';
 import ErrorAlert from '../other/ErrorAlert';
 import FrequentModel from '../login/FrequentModel';
@@ -141,9 +140,8 @@ export default class PufaBanner extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={'办卡领取积分'}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                 />
                 <ScrollView>
                     <Image source={require('../../images/find/pufa_banner.png')} style={styles.topImg} />

@@ -16,7 +16,6 @@ import {
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import LoginWord from '../datas/ServiceInstructions';
 
 export default class Login extends Component {
@@ -28,9 +27,8 @@ export default class Login extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].jingtaoUserAgreement}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />}
+                    goBack={true}
+                    navigation={navigation}
                     onPress={() => {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
                     }}

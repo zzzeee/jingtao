@@ -22,7 +22,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import AlertMoudle from '../other/AlertMoudle';
 import Areas from './searchArea';
@@ -241,9 +240,8 @@ export default class Search extends Component {
             <View style={styles.container}>
                 <AppHead
                     style={{backgroundColor: Color.mainColor, }}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                         navigation.goBack(null);
-                    }} src={require("../../images/back_white.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                     right={<Text style={styles.headRightText} onPress={this.clickSearch}>{Lang[Lang.default].search}</Text>}
                     center={
                         <View style={styles.headInputBox}>

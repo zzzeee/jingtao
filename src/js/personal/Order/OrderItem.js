@@ -17,7 +17,6 @@ import {
 import PropTypes from 'prop-types';
 import Utils from '../../public/utils';
 import Urls from '../../public/apiUrl';
-import BtnIcon from '../../public/BtnIcon';
 import { Size, PX, pixel, Color } from '../../public/globalStyle';
 import Lang, {str_replace} from '../../public/language';
 import Nothing from '../../other/ListNothing';
@@ -62,12 +61,20 @@ export default class OrderComponent extends Component {
         return (
             <View style={styles.boxStyle}>
                 <View style={styles.rowStyle1}>
-                    <BtnIcon 
-                        text={sName}
-                        src={require('../../../images/car/shophead.png')}
-                        width={26}
-                        press={()=>navigation.navigate('Shop', {shopID: sid})}
-                    />
+                    <TouchableOpacity onPress={()=>navigation.navigate('Shop', {shopID: sid})} style={{
+                        padding: 5,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                    }}>
+                        <Image source={require('../../../images/car/shophead.png')} style={{
+                            width: 26,
+                            height: 26,
+                        }} />
+                        <Text style={{
+                            color: Color.lightBack,
+                            fontSize: 14,
+                        }}>{sName}</Text>
+                    </TouchableOpacity>
                     <Text style={styles.fontStyle3}>{orderTitleBtns.text}</Text>
                 </View>
                 <View>

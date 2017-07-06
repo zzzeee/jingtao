@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 
 import PropTypes from 'prop-types';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import { Size, PX, Color } from '../public/globalStyle';
 import Lang, {str_replace} from '../public/language';
@@ -103,31 +102,37 @@ export default class ShopItem extends Component {
             <View style={styles.shopBox}>
                 <View style={styles.shopBoxHead}>
                     <View style={styles.rowStyle}>
-                        <BtnIcon 
-                            width={20} 
-                            src={selectIcon} 
-                            press={()=>{
-                                let newState = !this.state.isSelect;
-                                this.setState({
-                                    isSelect: newState,
-                                    ctrlSelect: newState,
-                                });
-                            }}
-                            style={{
-                                padding: 0, 
-                                paddingLeft: PX.marginLR,
-                                paddingTop: 5,
-                                paddingBottom: 5,
-                            }}
-                        />
-                        <BtnIcon 
-                            width={20} 
-                            src={require('../../images/car/shophead.png')} 
-                            text={name} 
-                            style={{marginLeft: 20, padding: 0}} 
-                            txtStyle={{marginLeft: 6}}
-                            press={()=>navigation.navigate('Shop', {shopID: sid})}
-                        />
+                        <TouchableOpacity onPress={()=>{
+                            let newState = !this.state.isSelect;
+                            this.setState({
+                                isSelect: newState,
+                                ctrlSelect: newState,
+                            });
+                        }} style={{
+                            paddingLeft: PX.marginLR,
+                            paddingTop: 5,
+                            paddingBottom: 5,
+                        }}>
+                            <Image source={selectIcon} style={{
+                                width: 20,
+                                height: 20,
+                            }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>navigation.navigate('Shop', {shopID: sid})} style={{
+                            marginLeft: 20,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={require('../../images/car/shophead.png')} style={{
+                                width: 20,
+                                height: 20,
+                            }} />
+                            <Text style={{
+                                marginLeft: 6,
+                                color: Color.lightBack,
+                                fontSize: 14,
+                            }}>{name}</Text>
+                        </TouchableOpacity>
                     </View>
                     <TouchableOpacity onPress={()=>{
                         showCouponBox(sid);

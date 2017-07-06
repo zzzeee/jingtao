@@ -21,7 +21,6 @@ import Alipay from 'react-native-yunpeng-alipay'
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color, PX } from '../public/globalStyle';
 
 export default class PayOrder extends Component {

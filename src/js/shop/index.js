@@ -21,7 +21,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import CouponItem from '../other/CouponItem';
 import InputText from '../public/InputText';
 import Recommend from './Recommend';

@@ -20,7 +20,6 @@ import Lang, {str_replace} from '../../public/language';
 import ListFrame from '../../other/ListViewFrame';
 import { NavigationActions } from 'react-navigation';
 import AppHead from '../../public/AppHead';
-import BtnIcon from '../../public/BtnIcon';
 
 export default class OrderLogistics extends Component {
     constructor(props) {
@@ -83,9 +82,8 @@ export default class OrderLogistics extends Component {
             <View style={styles.flex}>
                 <AppHead 
                     title={Lang[Lang.default].logisticsInfo}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
-                        navigation.goBack(null);
-                    }} src={require("../../../images/back.png")} />}
+                    goBack={true}
+                    navigation={navigation}
                     onPress={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
                 />
                 {this.state.logistics ?

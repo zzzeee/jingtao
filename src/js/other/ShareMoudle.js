@@ -18,7 +18,6 @@ import {
 var WeChat=require('react-native-wechat');
 import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import { Size, pixel, Color } from '../public/globalStyle';
 
 var itemMargin = 30;

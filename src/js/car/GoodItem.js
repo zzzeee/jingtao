@@ -16,7 +16,6 @@ import {
 
 import PropTypes from 'prop-types';
 import CtrlNumber from '../other/CtrlNumber';
-import BtnIcon from '../public/BtnIcon';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, Color, pixel } from '../public/globalStyle';
@@ -95,17 +94,17 @@ export default class GoodItem extends Component {
         return (
             <View style={styles.goodBox}>
                 <View style={styles.selectIconView}>
-                    <BtnIcon 
-                        src={selectIcon} 
-                        width={20} 
-                        press={this.changeSelectState} 
-                        style={{
-                            paddingLeft: PX.marginLR,
-                            paddingRight: 12,
-                            paddingTop: 35,
-                            paddingBottom: 35,
-                        }} 
-                    />
+                    <TouchableOpacity onPress={this.changeSelectState} style={{
+                        paddingLeft: PX.marginLR,
+                        paddingRight: 12,
+                        paddingTop: 35,
+                        paddingBottom: 35,
+                    }}>
+                        <Image source={selectIcon} style={{
+                            width: 20,
+                            height: 20,
+                        }} />
+                    </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.goodItem} onPress={()=>{
                     if(gid > 0) navigation.navigate('Product', {gid: gid});

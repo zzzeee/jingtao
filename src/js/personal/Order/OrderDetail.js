@@ -16,7 +16,6 @@ import {
 
 import Utils from '../../public/utils';
 import Urls from '../../public/apiUrl';
-import BtnIcon from '../../public/BtnIcon';
 import { Size, PX, pixel, Color } from '../../public/globalStyle';
 import Lang, {str_replace} from '../../public/language';
 import ListFrame from '../../other/ListViewFrame';
@@ -200,12 +199,12 @@ export default class OrderDetail extends Component {
             load_or_error, 
             showPayModal,
         } = this.state;
-        let listHeadComponent = this.orderComponent();
         return (
             <View style={styles.flex}>
                 <AppHead
                     title={Lang[Lang.default].orderDetail}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
+                    goBack={true}
+                    leftPress={()=>{
                         if(this.isRefresh) {
                             navigation.navigate('MyOrder', {
                                 mToken: this.mToken,
@@ -214,7 +213,7 @@ export default class OrderDetail extends Component {
                         }else {
                             navigation.goBack(null);
                         }
-                    }} src={require("../../../images/back.png")} />)}
+                    }}
                     onPress={()=>{
                         if(this.ref_flatList) {
                             this.ref_flatList.scrollToOffset({offset: 0, animated: true});
@@ -226,7 +225,7 @@ export default class OrderDetail extends Component {
                         load_or_error :
                         (orders ?
                             <ListFrame
-                                listHead={listHeadComponent}
+                                listHead={this.orderComponent()}
                                 navigation={navigation}
                                 get_list_ref={(ref)=>this.ref_flatList=ref}
                             />
@@ -397,12 +396,20 @@ export default class OrderDetail extends Component {
                 </View>
                 <View style={styles.sessionBox}>
                     <View style={styles.rowStyle1}>
-                        <BtnIcon 
-                            text={sName}
-                            src={require('../../../images/car/shophead.png')}
-                            width={26}
-                            press={()=>navigation.navigate('Shop', {shopID: sid})}
-                        />
+                        <TouchableOpacity onPress={()=>navigation.navigate('Shop', {shopID: sid})} style={{
+                            padding: 5,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            <Image source={require('../../../images/car/shophead.png')} style={{
+                                width: 26,
+                                height: 26,
+                            }} />
+                            <Text style={{
+                                color: Color.lightBack,
+                                fontSize: 14,
+                            }}>{sName}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View>
                         {goods.map((item, index)=>{

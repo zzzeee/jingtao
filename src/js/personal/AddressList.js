@@ -21,7 +21,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import BtnIcon from '../public/BtnIcon';
 import AlertMoudle from '../other/AlertMoudle';
 
 export default class AddressList extends Component {
@@ -158,13 +157,14 @@ export default class AddressList extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].addressList}
-                    left={<BtnIcon width={PX.headIconSize} press={()=>{
+                    goBack={true}
+                    leftPress={()=>{
                         if(that.previou) {
                             navigation.goBack(null);
                         }else {
                             navigation.navigate('Personal');
                         }
-                    }} src={require("../../images/back.png")} />}
+                    }}
                     onPress={() => {
                         scrollref && scrollref.scrollTo({x: 0, y: 0, animated: true});
                     }}
@@ -203,38 +203,62 @@ export default class AddressList extends Component {
                                 </View>
                                 <View style={styles.addressFootRow}>
                                     <View>
-                                        <BtnIcon 
-                                            width={20}
-                                            text={Lang[Lang.default].setDefault}
-                                            src={img}
-                                            press={()=>{
-                                                if(!isSelect && said) that.setDefaultAddress(index, said);
-                                            }}
-                                        />
+                                        <TouchableOpacity onPress={()=>{
+                                            if(!isSelect && said) that.setDefaultAddress(index, said);
+                                        }} style={{
+                                            padding: 5,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                            <Image source={img} style={{
+                                                width: 20,
+                                                height: 20,
+                                            }} />
+                                            <Text style={{
+                                                color: Color.lightBack,
+                                                fontSize: 14,
+                                            }}>{Lang[Lang.default].setDefault}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                     <View style={styles.rowStyle}>
-                                        <BtnIcon 
-                                            width={20}
-                                            text={Lang[Lang.default].edit}
-                                            src={require("../../images/edit.png")} 
-                                            press={()=>{
-                                                navigation.navigate('AddressAdd', {
-                                                    mToken: that.mToken,
-                                                    addressInfo: item,
-                                                    addressNum: that.state.addresss.length,
-                                                    previou: that.previou,
-                                                    carIDs: that.carIDs,
-                                                    orderParam: that.orderParam,
-                                                });
-                                            }}
-                                        />
-                                        <BtnIcon 
-                                            width={20}
-                                            text={Lang[Lang.default].delete}
-                                            src={require("../../images/delete.png")}
-                                            press={()=>that.showAlertMoudle(said)}
-                                            style={{marginLeft: 20,}}
-                                        />
+                                        <TouchableOpacity onPress={()=>{
+                                            navigation.navigate('AddressAdd', {
+                                                mToken: that.mToken,
+                                                addressInfo: item,
+                                                addressNum: that.state.addresss.length,
+                                                previou: that.previou,
+                                                carIDs: that.carIDs,
+                                                orderParam: that.orderParam,
+                                            });
+                                        }} style={{
+                                            padding: 5,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                            <Image source={require("../../images/edit.png")} style={{
+                                                width: 20,
+                                                height: 20,
+                                            }} />
+                                            <Text style={{
+                                                color: Color.lightBack,
+                                                fontSize: 14,
+                                            }}>{Lang[Lang.default].edit}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={()=>that.showAlertMoudle(said)} style={{
+                                            padding: 5,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            marginLeft: 20,
+                                        }}>
+                                            <Image source={require("../../images/delete.png")} style={{
+                                                width: 20,
+                                                height: 20,
+                                            }} />
+                                            <Text style={{
+                                                color: Color.lightBack,
+                                                fontSize: 14,
+                                            }}>{Lang[Lang.default].delete}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableOpacity>

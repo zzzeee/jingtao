@@ -17,7 +17,6 @@ import {
 import Lang, {str_replace, Privacy} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import BtnIcon from '../public/BtnIcon';
 
 export default class OrderHelp extends Component {
     render() {
@@ -26,9 +25,8 @@ export default class OrderHelp extends Component {
             <View style={styles.container}>
                 <AppHead
                     title={'订单帮助'}
-                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
-                            navigation.goBack(null);
-                    }} src={require("../../images/back.png")} />)}
+                    goBack={true}
+                    navigation={navigation}
                 />
                 <ScrollView>
                     <View style={styles.sessionBox}>
