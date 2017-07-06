@@ -77,8 +77,9 @@ export default class FindScreen extends Component {
             this.setState({fetchError: true});
         }else {
             this.setUserCoupons(uCoupons);
-            this.setXSQGlist(xsqg);
-            this.setMDYPlist(mdyp);
+            let _xsqg_ = this.setXSQGlist(xsqg);
+            let _mdyp_ = this.setMDYPlist(mdyp);
+            this.setState(Object.assign({}, _xsqg_, _mdyp_));
         }
     };
 
@@ -120,6 +121,7 @@ export default class FindScreen extends Component {
 
     //设置限时抢购列表
     setXSQGlist = (datas) => {
+        let obj = {};
         if(datas && datas.sTatus) {
             let xsqg = datas.proAry || {};
             let banner = datas.pufaAry || {};
@@ -130,7 +132,7 @@ export default class FindScreen extends Component {
             let bannerImg = banner.pufaImg ? {uri: banner.pufaImg} : require('../../images/empty.png');
             start = this.checkTimeString(start);
             end = this.checkTimeString(end);
-            this.setState({
+            obj = {
                 fetchError: false,
                 isRefreshing: false,
                 startTime: new Date(start).getTime(),
@@ -139,23 +141,26 @@ export default class FindScreen extends Component {
                 coupons: coupons,
                 banner: (banner.pufaAble && banner.pufaAble == 1) ? bannerImg : null,
                 dataSource: this.state.dataSource.cloneWithRows(proList),
-            });
+            };
         }
+        return obj;
     };
 
     //设置名店优品列表
     setMDYPlist = (datas) => {
+        let obj = {};
         if(datas && datas.sTatus && datas.shopAry) {
             let mdyp = datas.shopAry || [];
             if(mdyp.length > 0) {
                 this.pageOffest++;
-                this.setState({
+                obj = {
                     fetchError: false,
                     isRefreshing: false,
                     MDYP: mdyp,
-                });
+                };
             }
         }
+        return obj;
     };
 
     //把用户领取过的优惠券ID放入数组
@@ -332,6 +337,7 @@ export default class FindScreen extends Component {
     };
 
     render() {
+        let { MDYP, isRefreshing, } = this.state;
         return (
             <View style={styles.flex}>
                 <View>
@@ -343,29 +349,32 @@ export default class FindScreen extends Component {
                     />
                 </View>
                 <View style={styles.bodyStyle}>
-                    <FlatList
-                        ref={(_ref)=>this.ref_flatList=_ref} 
-                        removeClippedSubviews={false}
-                        data={this.state.MDYP}
-                        keyExtractor={(item, index) => (index + '_' + item.sId)}
-                        renderItem={this.mdyp_renderItem}
-                        ListHeaderComponent={this.topPage}
-                        onEndReached={()=>{
-                            if(!this.loadMoreLock) {
-                                console.log('正在加载更多 ..');
-                                this.loadMore();
-                            }else {
-                                console.log('加载更多已被锁住。');
-                            }
-                        }}
-                        // onEndReachedThreshold={20}
-                        getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
-                        refreshing={this.state.isRefreshing}
-                        onRefresh={()=>{
-                            this.setState({isRefreshing: true});
-                            this.initPage();
-                        }}
-                    />
+                    {MDYP ?
+                        <FlatList
+                            ref={(_ref)=>this.ref_flatList=_ref} 
+                            // removeClippedSubviews={false}
+                            data={MDYP}
+                            keyExtractor={(item, index) => (index + '_' + item.sId)}
+                            renderItem={this.mdyp_renderItem}
+                            ListHeaderComponent={this.topPage}
+                            onEndReached={()=>{
+                                if(!this.loadMoreLock) {
+                                    console.log('正在加载更多 ..');
+                                    this.loadMore();
+                                }else {
+                                    console.log('加载更多已被锁住。');
+                                }
+                            }}
+                            // onEndReachedThreshold={20}
+                            getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
+                            refreshing={isRefreshing}
+                            onRefresh={()=>{
+                                this.setState({isRefreshing: true});
+                                this.initPage();
+                            }}
+                        />
+                        : null
+                    }
                 </View>
             </View>
         );

@@ -65,7 +65,6 @@ export default class CarsScreen extends Component {
 
     componentDidMount() {
         _User.getUserInfo().then((user) => {
-            console.log(user);
             if(user) {
                 this.userinfo = user;
                 this.initDatas();
@@ -80,73 +79,38 @@ export default class CarsScreen extends Component {
     }
 
     //初始化数据
-    initDatas = () => {
-        let that = this;
+    initDatas = async () => {
+        let obj = {
+            isRefreshing: false,
+        };
         if(this.userinfo) {
-            Utils.fetch(Urls.getCarInfo, 'post', this.userinfo, (car) => {
-                console.log(car);
-                if(car && car.sTatus) {
-                    if(car.sTatus == 4) {
-                        if(this.userinfo[_User.keyMember]) this.userinfo = null;
-                        _User.delUserID(_User.keyMember);
-                        this.alertObject = {
-                            text: Lang[Lang.default].accountInvalidation,
-                            leftText: Lang[Lang.default].logInAgain2,
-                            rightText: Lang[Lang.default].cancel,
-                            rightClick: ()=>this.setState({deleteAlert: false,}),
-                            leftClick: ()=>{
-                                this.setState({deleteAlert: false,}, ()=>{
-                                    this.props.navigation.navigate('Login', {back: 'Car'});
-                                });
-                            },
-                        };
-                        this.setState({
-                            // deleteAlert: true,
-                            carDatas: [],
-                            isRefreshing: false,
+            let car = await Utils.async_fetch(Urls.getCarInfo, 'post', this.userinfo) || null;
+            console.log(car);
+            if(car) {
+                let ret = car.sTatus || 0;
+                let msg = car.sMessage || null;
+                let userCar = car.cartAry || {};
+                if(ret == 4) {
+                    if(this.userinfo[_User.keyMember]) this.userinfo = null;
+                    _User.delUserID(_User.keyMember);
+                    obj.carDatas = [];
+                }else if(ret == 1) {
+                    obj.carDatas = userCar.normalAry || [];
+                    obj.invalidList = userCar.abnormalAry || [];
+                    if(!this.state.goodList) {
+                        let recommends = await Utils.async_fetch(Urls.getRecommendList, 'get', {
+                            pPage: this.page, 
+                            pPerNum: this.pageNumber,
                         });
-                        return;
-                    }else if(car.sTatus == 1 && car.cartAry) {
-                        let orders_ok = car.cartAry.normalAry || [];
-                        let invalidList = car.cartAry.abnormalAry || [];
-                        that.setState({
-                            carDatas: orders_ok,
-                            invalidList: invalidList,
-                            isRefreshing: false,
-                        });
-                        if(!that.state.goodList) {
-                            Utils.fetch(Urls.getRecommendList, 'get', {
-                                pPage: this.page, 
-                                pPerNum: this.pageNumber,
-                            }, (ret) => {
-                                // console.log(ret);
-                                if(ret && ret.sTatus && ret.proAry && ret.proAry.length) {
-                                    that.page++;
-                                    let list = ret.proAry || [];
-                                    that.setState({
-                                        goodList: list,
-                                        isRefreshing: false,
-                                    });
-                                }
-                            });
+                        if(recommends && recommends.proAry) {
+                            this.page++;
+                            obj.goodList = recommends.proAry || [];
                         }
-                        return;
                     }
                 }
-                that.setState({
-                    carDatas: [],
-                    isRefreshing: false,
-                });
-            }, null, {
-                catchFunc: (err) => {
-                    console.log('获取数据出错');
-                    console.log(err);
-                    that.setState({isRefreshing: false, });
-                },
-            });
-        }else {
-            that.setState({isRefreshing: false, });
+            }
         }
+        this.setState(obj);
     };
 
     //获取会员信息
@@ -280,7 +244,7 @@ export default class CarsScreen extends Component {
         let selectIcon = isSelect ? 
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
-        if(carDatas && carDatas.length) {
+        if(carDatas && carDatas.length > 0) {
             return (
                 <View style={styles.flex}>
                     <View style={styles.flex}>
@@ -341,7 +305,7 @@ export default class CarsScreen extends Component {
                     <ErrorAlert visiable={showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
                 </View>
             );
-        }else if(!this.userinfo || carDatas.length == 0) {
+        }else if(carDatas && carDatas.length == 0) {
             return (
                 <View style={styles.flex}>
                     <Nothing 

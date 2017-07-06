@@ -60,7 +60,7 @@ export default class PersonalScreen extends Component {
             Utils.fetch(Urls.getUserInfo, 'post', {
                 mToken: this.mToken,
             }, (result) => {
-                console.log(result);
+                // console.log(result);
                 if(result && result.sTatus == 1) {
                     this.setState({
                         islogin: true,

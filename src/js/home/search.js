@@ -16,6 +16,7 @@ import {
     Keyboard,
 } from 'react-native';
 
+import BtnIcon from '../public/BtnIcon';
 import SearchData from '../public/search';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -240,8 +241,9 @@ export default class Search extends Component {
             <View style={styles.container}>
                 <AppHead
                     style={{backgroundColor: Color.mainColor, }}
-                    goBack={true}
-                    navigation={navigation}
+                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
+                            navigation.goBack(null);
+                        }} src={require("../../images/back_white.png")} />)}
                     right={<Text style={styles.headRightText} onPress={this.clickSearch}>{Lang[Lang.default].search}</Text>}
                     center={
                         <View style={styles.headInputBox}>

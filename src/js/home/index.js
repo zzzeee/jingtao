@@ -214,7 +214,7 @@ export default class HomeScreen extends Component {
     _onMessage = (e) => {
         let data = JSON.parse(e.nativeEvent.data) || {};
         let id = parseInt(data.id) || 0;
-        console.log(e.nativeEvent.data);
+        // console.log(e.nativeEvent.data);
         if(id > 0 && id != this.state.provinceID) {
             this.getProvinceDatas(id);
         }
@@ -226,7 +226,6 @@ export default class HomeScreen extends Component {
             Utils.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id
             }, function(result) {
-                console.log(result);
                 if(result && result.provinceAry) {
                     let ret = that.removeHideCitys(result.provinceAry);
                     let name = ret.region_name || '';
