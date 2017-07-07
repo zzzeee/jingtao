@@ -25,7 +25,7 @@ export default class Help extends Component {
                 <AppHead
                     title={Lang[Lang.default].contactUs}
                     goBack={true}
-                    navigation={this.props.navigation}
+                    navigation={navigation}
                 />
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity onPress={()=>navigation.navigate('Privacy')} style={styles.rowMain}>

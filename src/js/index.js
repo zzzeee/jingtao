@@ -45,6 +45,7 @@ import About from './personal/About';
 import Help from './personal/Help/';
 import HelpPrivacy from './personal/Help/privacy';
 import HelpTransaction from './personal/Help/transaction';
+import SetApp from './personal/SetApp';
 import ProductList from './class/ProductList';
 import Shop from './shop';
 import ShopSearch from './shop/ShopSearch';
@@ -239,6 +240,11 @@ const TransactionScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={HelpTransaction} />
 );
 
+//个人中心 - 设置
+const SetAppScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={SetApp} />
+);
+
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -365,6 +371,9 @@ const AppNavigator = StackNavigator({
     },
     Transaction: {
         screen: TransactionScreen,
+    },
+    SetApp: {
+        screen: SetAppScreen,
     },
     ProductList: {
         screen: ProductListScreen,

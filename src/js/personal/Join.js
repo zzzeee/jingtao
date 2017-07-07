@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     bannerImg: {
         width: Size.width,
         height: Size.width * 1179 / 375,
+        backgroundColor: '#fff',
     },
     titleBox: {
         paddingTop: 24,

@@ -48,7 +48,6 @@ export default class Login extends Component {
     }
 
     componentDidMount() {
-        // console.log('componentDidMount login');
     }
 
     //设置哪个输入框获得焦点
@@ -181,11 +180,13 @@ export default class Login extends Component {
         let color = this.checkFormat() ?  '#fff' : Color.lightBack;
         let bgcolor = this.checkFormat() ? Color.mainColor : Color.gray;
         let disabled = this.checkFormat() ? false : true;
+        let canBack = true;
+        if(navigation.state.params && navigation.state.params.notBack) canBack = false;
         return (
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].passwordLogin}
-                    goBack={true}
+                    goBack={canBack}
                     navigation={navigation}
                     right={(<Text style={styles.forgetPasswordText} onPress={()=>{navigation.navigate('FrogetPass')}}>
                         {Lang[Lang.default].forgetPassword}
