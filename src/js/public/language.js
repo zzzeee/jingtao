@@ -4,6 +4,15 @@
  * @date   2017.04.18
  */
 
+//底部导航栏下标(用于跳转)
+export const TABKEY = {
+    home: 'home', 
+    find: 'find', 
+    class: 'class', 
+    car: 'car', 
+    personal: 'personal',
+};
+
 const language = {
     default: 'cn',
     telephone: '4000237333',

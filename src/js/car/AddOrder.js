@@ -19,7 +19,7 @@ import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import BtnIcon from '../public/BtnIcon';
 import InputText from '../public/InputText';
 import PayOrder from './PayOrder';
@@ -203,7 +203,7 @@ export default class AddOrder extends Component {
                 <AppHead
                     title={Lang[Lang.default].updateOrder}
                     goBack={true}
-                    leftPress={()=>navigation.navigate('Car')}
+                    leftPress={()=>navigation.navigate('TabNav', {PathKey: TABKEY.car})}
                 />
                 <View style={styles.body}>
                 <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>

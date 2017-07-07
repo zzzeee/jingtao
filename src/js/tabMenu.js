@@ -18,7 +18,7 @@ import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
 export default class TabMenu extends Component {
 
     renderTabOption(tab, i) {
-        let color = this.props.activeTab == i ? Color.mainColor : Color.lightBack;
+        let color = this.props.activeTab == i ? Color.mainColor : Color.gray;
         let img = this.props.activeTab == i ? tab.selIcon : tab.icon;
         return (
             <TouchableOpacity 

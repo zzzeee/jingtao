@@ -21,7 +21,7 @@ import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import InputText from '../public/InputText';
 import ErrorAlert from '../other/ErrorAlert';
 import FrequentModel from './FrequentModel';
@@ -154,9 +154,13 @@ export default class Login extends Component {
                             .then(() => {
                                 if(navigation) {
                                     let params = navigation.state.params || null;
-                                    let back = params ? (params.back ? params.back : 'Personal') : 'Personal';
+                                    let back = params ? (params.back ? params.back : null) : null;
                                     let backObj = params ? (params.backObj ? params.backObj : {}) : {};
                                     backObj.mToken = token;
+                                    if(!back) {
+                                        back = 'TabNav';
+                                        backObj.PathKey = TABKEY.personal;
+                                    }
                                     navigation.navigate(back, backObj);
                                 }
                             });
@@ -261,7 +265,7 @@ export default class Login extends Component {
                         </View>
                         <View></View>
                     </View>
-                    <TouchableOpacity disabled={disabled} onPressIn={()=>console.log('ssdfsfds')} onPress={this.startLogin} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={this.startLogin} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
                         <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].logo}</Text>

@@ -20,7 +20,7 @@ import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import AlertMoudle from '../other/AlertMoudle';
 
 export default class AddressList extends Component {
@@ -162,7 +162,7 @@ export default class AddressList extends Component {
                         if(that.previou) {
                             navigation.goBack(null);
                         }else {
-                            navigation.navigate('Personal');
+                            navigation.navigate('TabNav', {PathKey: TABKEY.personal});
                         }
                     }}
                     onPress={() => {

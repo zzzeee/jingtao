@@ -23,7 +23,7 @@ import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
@@ -393,6 +393,7 @@ export default class ProductScreen extends Component {
 
     render() {
         let { navigation } = this.props;
+        console.log(navigation);
         let good = this.state.goodIofo || {};
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
@@ -470,7 +471,9 @@ export default class ProductScreen extends Component {
                             <Text style={styles.productContactTxt}>{Lang[Lang.default].customer}</Text>
                         </TouchableOpacity>
                         <View style={styles.btnCarBox}>
-                            <TouchableOpacity onPress={()=>navigation.navigate('Car')} style={[styles.productContactImg, {
+                            <TouchableOpacity onPress={()=>{
+                                navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                            }} style={[styles.productContactImg, {
                                 padding: 5,
                                 alignItems: 'center',
                                 minHeight: 12,
@@ -482,7 +485,9 @@ export default class ProductScreen extends Component {
                                 <Text style={styles.productContactTxt}>{Lang[Lang.default].tab_car}</Text>
                             </TouchableOpacity>
                             {(this.carNumber && this.carNumber > 0) ?
-                                <TouchableOpacity onPress={()=>navigation.navigate('Car')} style={styles.carNumberStyle}>
+                                <TouchableOpacity onPress={()=>{
+                                    navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                                }} style={styles.carNumberStyle}>
                                     <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
                                 </TouchableOpacity>
                                 : null

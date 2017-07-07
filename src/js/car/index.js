@@ -21,7 +21,7 @@ import Utils from '../public/utils';
 import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import { Size, PX, pixel, Color } from '../public/globalStyle';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import ShopItem from './ShopItem';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
@@ -48,7 +48,7 @@ export default class CarsScreen extends Component {
             deleteAlert: false,
             operateMsg: null,
             msgPositon: new Animated.Value(0),
-            isRefreshing: false,
+            isRefreshing: true,
             showCouponList: false,
             uCoupons: [],
         };
@@ -68,6 +68,9 @@ export default class CarsScreen extends Component {
             if(user) {
                 this.userinfo = user;
                 this.initDatas();
+            }else {
+                this.userinfo = false;
+                this.setState({isRefreshing: false,});
             }
         });
     }
@@ -91,8 +94,8 @@ export default class CarsScreen extends Component {
                 let msg = car.sMessage || null;
                 let userCar = car.cartAry || {};
                 if(ret == 4) {
-                    if(this.userinfo[_User.keyMember]) this.userinfo = null;
-                    _User.delUserID(_User.keyMember);
+                    if(this.userinfo[_User.keyMember]) this.userinfo = false;
+                    await _User.delUserID(_User.keyMember);
                     obj.carDatas = [];
                 }else if(ret == 1) {
                     obj.carDatas = userCar.normalAry || [];
@@ -227,7 +230,8 @@ export default class CarsScreen extends Component {
                         isShow={this.state.showCouponList}
                         hideCouponBox={this.hideCouponBox}
                         navigation={navigation}
-                        back={'Car'}
+                        back={'TabNav'}
+                        backObj={{PathKey: TABKEY.car}}
                     />
                     : null
                 }
@@ -305,7 +309,7 @@ export default class CarsScreen extends Component {
                     <ErrorAlert visiable={showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
                 </View>
             );
-        }else if(carDatas && carDatas.length == 0) {
+        }else if(this.userinfo === false || (carDatas && carDatas.length == 0)) {
             return (
                 <View style={styles.flex}>
                     <Nothing 
@@ -651,7 +655,7 @@ export default class CarsScreen extends Component {
                 });
             }else {
                 this.setState({deleteAlert: false,}, ()=>{
-                    this.goToLogin('Car');
+                    this.goToLogin('TabNav', {PathKey: TABKEY.Car});
                 });
             }
         }

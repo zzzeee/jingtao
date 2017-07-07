@@ -18,8 +18,8 @@ import { Color, PX } from './public/globalStyle';
 import JPushModule from 'jpush-react-native';
 
 import Welcome from './welcome';
-import TabNavScreen from './tabNav';
-// import TabView from './tabView';
+// import TabNavScreen from './tabNav';
+import TabView from './tabView';
 import Login from './login';
 import LoginWord from './login/LoginWord';
 import Register from './login/register';
@@ -129,10 +129,10 @@ const WelcomeScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={Welcome} />
 );
 
-// //首页主页
-// const TabNavScreen = ({ navigation }) => (
-//     <MyNavScren navigation={navigation} NavScreen={TabView} />
-// );
+//首页主页
+const TabNavScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={TabView} />
+);
 
 //登录
 const LoginScreen = ({ navigation }) => (
@@ -382,7 +382,7 @@ const AppNavigator = StackNavigator({
         screen: LoginExplainScreen,
     },
 }, {
-    initialRouteName: 'TabNav',
+    initialRouteName: 'Welcome',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
 });

@@ -20,7 +20,7 @@ import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import InputText from '../public/InputText';
 import SendCode from './verificationCode';
 import ErrorAlert from '../other/ErrorAlert';
@@ -209,7 +209,8 @@ export default class Register extends Component {
                          that.type = 2;
                          that.timer = setTimeout(() => {
                              that.props.navigation.navigate('Login', {
-                                 back: 'Personal',
+                                 back: 'TabNav',
+                                 backObj: TABKEY.personal,
                              });
                          }, 2000);
                     }

@@ -124,6 +124,7 @@ export default class HomeScreen extends Component {
                 <ScrollView 
                     ref={(_ref)=>this.ref_scrollview=_ref} 
                     onScroll={this._onScroll}
+                    contentContainerStyle={styles.scrollStyle}
                 >
                     <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
                         <WebView
@@ -340,5 +341,8 @@ var styles = StyleSheet.create({
     },
     btnRight: {
         paddingRight: 15,
+    },
+    scrollStyle: {
+        backgroundColor: Color.lightGrey,
     },
 });

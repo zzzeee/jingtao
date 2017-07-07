@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
-import Lang, {str_replace} from '../../public/language';
+import Lang, {str_replace, TABKEY} from '../../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../../public/globalStyle';
 import AppHead from '../../public/AppHead';
 import OrderPage from './OrderPage';
@@ -70,7 +70,7 @@ export default class MyOrder extends Component {
                 <AppHead
                     title={Lang[Lang.default].myOrder}
                     goBack={true}
-                    leftPress={()=>navigation.navigate('Personal')}
+                    leftPress={()=>navigation.navigate('TabNav', {PathKey: TABKEY.personal})}
                     onPress={()=>{
                         if(this.listRefs[this.state.selIndex]) {
                             this.listRefs[this.state.selIndex].scrollToOffset({offset: 0, animated: true});

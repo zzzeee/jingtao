@@ -22,7 +22,7 @@ import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, pixel, Color, PX, errorStyles } from '../public/globalStyle';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import ProductItem from '../other/ProductItem';
 import CountDown from './CountDown';
 import CouponItem from '../other/CouponItem';
@@ -41,7 +41,7 @@ export default class FindScreen extends Component {
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
             MDYP: null,
             banner: null,
-            isRefreshing: false,
+            isRefreshing: true,
         };
         this.mToken = null;
         this.userCoupons = [];
@@ -74,7 +74,10 @@ export default class FindScreen extends Component {
         // console.log(xsqg);
         // console.log(mdyp);
         if(!xsqg && !mdyp) {
-            this.setState({fetchError: true});
+            this.setState({
+                fetchError: true,
+                isRefreshing: false,
+            });
         }else {
             this.setUserCoupons(uCoupons);
             let _xsqg_ = this.setXSQGlist(xsqg);
@@ -279,7 +282,8 @@ export default class FindScreen extends Component {
                                     type={1} 
                                     coupon={item} 
                                     navigation={that.props.navigation}
-                                    back={'Find'}
+                                    back={'TabNav'}
+                                    backObj={{PathKey: TABKEY.find, }}
                                     userid={that.mToken}
                                     userCoupons={that.userCoupons}
                                 />
@@ -349,32 +353,29 @@ export default class FindScreen extends Component {
                     />
                 </View>
                 <View style={styles.bodyStyle}>
-                    {MDYP ?
-                        <FlatList
-                            ref={(_ref)=>this.ref_flatList=_ref} 
-                            // removeClippedSubviews={false}
-                            data={MDYP}
-                            keyExtractor={(item, index) => (index + '_' + item.sId)}
-                            renderItem={this.mdyp_renderItem}
-                            ListHeaderComponent={this.topPage}
-                            onEndReached={()=>{
-                                if(!this.loadMoreLock) {
-                                    console.log('正在加载更多 ..');
-                                    this.loadMore();
-                                }else {
-                                    console.log('加载更多已被锁住。');
-                                }
-                            }}
-                            // onEndReachedThreshold={20}
-                            getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
-                            refreshing={isRefreshing}
-                            onRefresh={()=>{
-                                this.setState({isRefreshing: true});
-                                this.initPage();
-                            }}
-                        />
-                        : null
-                    }
+                    <FlatList
+                        ref={(_ref)=>this.ref_flatList=_ref} 
+                        removeClippedSubviews={false}
+                        data={MDYP}
+                        keyExtractor={(item, index) => (index + '_' + item.sId)}
+                        renderItem={this.mdyp_renderItem}
+                        ListHeaderComponent={this.topPage}
+                        onEndReached={()=>{
+                            if(!this.loadMoreLock) {
+                                console.log('正在加载更多 ..');
+                                this.loadMore();
+                            }else {
+                                console.log('加载更多已被锁住。');
+                            }
+                        }}
+                        // onEndReachedThreshold={20}
+                        getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
+                        refreshing={isRefreshing}
+                        onRefresh={()=>{
+                            this.setState({isRefreshing: true});
+                            this.initPage();
+                        }}
+                    />
                 </View>
             </View>
         );

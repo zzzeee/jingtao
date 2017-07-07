@@ -135,7 +135,7 @@ const TabNavs = TabNavigator({
     }
 }, {
     initialRouteName: 'Home',
-    swipeEnabled: true,
+    swipeEnabled: false,
     animationEnabled: false,
     tabBarPosition: 'bottom',
     tabBarOptions: {
@@ -177,21 +177,3 @@ const styles = StyleSheet.create({
 });
 
 export default TabNavs;
-
-// export default () => (
-//     <TabNavs
-//         onNavigationStateChange={(prevState, currentState) => {
-//             if (console.group) {
-//                 console.group('Navigation onNavigationStateChange: ');
-//                 console.log('prevState: ', prevState);
-//                 console.log('currentState: ', currentState);
-//                 console.groupEnd();
-//             } else {
-//                 console.log('Navigation onNavigationStateChange: ', {
-//                     prevState: prevState,
-//                     currentState: currentState,
-//                 });
-//             }
-//         }}
-//     />
-// );
