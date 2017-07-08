@@ -638,10 +638,10 @@ export default class CityGoodShopList extends Component {
 
     // 商品列表的行内容(不多于3行)
     _renderItem2 = (obj, sectionID, rowID) => {
-        console.log(obj);
         let imgurl = obj.gThumbPic || null;
         let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
         let name = obj.gName || '';
+        let sname = obj.sShopName || '';
         let stock = obj.stock || 0;
         let price = obj.gDiscountPrice || null;
 
@@ -669,7 +669,7 @@ export default class CityGoodShopList extends Component {
                                 width: 15,
                                 height: 15,
                             }} />
-                            <Text style={styles.fontStyle2}>{null}</Text>
+                            <Text style={styles.fontStyle6}>{sname}</Text>
                         </TouchableOpacity>
                         <Text style={styles.fontStyle3}>{name}</Text>
                     </View>
@@ -690,6 +690,7 @@ export default class CityGoodShopList extends Component {
     // 店铺列表
     _renderItem3 = (obj, sectionID, rowID) => {
         let { navigation } = this.props;
+        let sid = obj.sId || null;
         let name = obj.sShopName || '';
         let list = obj.recomdProduct || [];
         if(list.length == 0) return <View key={rowID}></View>;
@@ -704,9 +705,13 @@ export default class CityGoodShopList extends Component {
                             width: 26,
                             height: 26,
                         }} />
-                        <Text style={styles.fontStyle2}>{name}</Text>
+                        <Text style={styles.fontStyle6}>{name}</Text>
                     </TouchableOpacity>
-                    <Text style={styles.btnGoToShop}>{Lang[Lang.default].gotoShop}</Text>
+                    <Text style={styles.btnGoToShop} onPress={()=>{
+                        if(sid) {
+                            navigation.navigate('Shop', {shopID: sid,})
+                        }
+                    }}>{Lang[Lang.default].gotoShop}</Text>
                 </View>
                 <View style={{width: Size.width - 25}}>
                 <Swiper
@@ -777,7 +782,6 @@ export default class CityGoodShopList extends Component {
     };
 
     _onScroll = (e) => {
-        // console.log(e.nativeEvent);
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         //判断浮动
         if(offsetY > topImgHeight && !this.state.isFloat) {
@@ -906,6 +910,11 @@ var styles = StyleSheet.create({
     fontStyle5: {
         fontSize: 10,
         color: Color.red,
+    },
+    fontStyle6: {
+        fontSize: 12,
+        color: Color.lightBack,
+        paddingLeft: 5,
     },
     rowStyle: {
         flexDirection: 'row',
@@ -1094,9 +1103,9 @@ var styles = StyleSheet.create({
         paddingBottom: 5,
         paddingLeft: 15,
         paddingRight: 15,
-        borderRadius: 8,
+        borderRadius: 3,
         borderWidth: 1,
-        borderColor: Color.floralWhite,
+        borderColor: Color.gray,
     },
     paginationStyle: {
         position: 'absolute',

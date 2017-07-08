@@ -56,7 +56,7 @@ export default class ClassScreen extends Component {
         let that = this;
         Utils.fetch(Urls.getProductClassify, 'get', {
             cType: 0,
-        }, function(result) {
+        }, (result) => {
             if(result && result.classAry && result.classAry[0] && result.classAry[0].child) {
                 let sessionArr = {}, 
                 ret = result.classAry[0].child, 
@@ -81,8 +81,10 @@ export default class ClassScreen extends Component {
                     dataSource: that.state.dataSource.cloneWithRowsAndSections(sessionArr),
                 });
             }
-        }, function(view) {
+        }, (view) => {
             that.setState({load_or_error: view});
+        }, {
+            loadType: 2,
         });
     }
 

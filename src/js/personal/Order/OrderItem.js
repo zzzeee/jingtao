@@ -41,7 +41,12 @@ export default class OrderComponent extends Component {
     }
 
     render() {
-        let { mToken, navigation, orderInfo, selectIndex } = this.props;
+        let { 
+            mToken, 
+            navigation, 
+            orderInfo, 
+            selectIndex,
+        } = this.props;
         if(!orderInfo || this.state.isDelete) return null;
         let sid = orderInfo.sId || 0;
         let orderID = orderInfo.soID || null;
@@ -57,7 +62,9 @@ export default class OrderComponent extends Component {
         this.expressNum = orderInfo.oExpressNum || null;
         let payid = parseInt(orderInfo.oPay) || 0;
         let statuid = parseInt(orderInfo.oStatus) || 0;
-        let orderTitleBtns = this.getOrderBtns(payid, statuid);
+        let addTime = orderInfo.oAddTime || null;
+        let payTime = orderInfo.oPayTime || null;
+        let orderTitleBtns = this.getOrderBtns(payid, statuid, addTime, payTime);
         return (
             <View style={styles.boxStyle}>
                 <View style={styles.rowStyle1}>
@@ -136,13 +143,41 @@ export default class OrderComponent extends Component {
     };
 
     /**
+     * 返回指定时长的过期时间
+     * @param timeStr  string 开始计算时间
+     * @param hour     number 几个小时之后
+     */
+    returnExpressTime = (timeStr, hour) => {
+        let _date = '';
+        if(timeStr && hour) {
+            let time = hour * 60 * 60 * 1000;
+            let ntime = new Date().getTime();
+            let stime = new Date(timeStr.replace(/-/g, "/")).getTime();
+            let _time = time + stime - ntime;
+            if(_time > 0) {
+                let etime = new Date(ntime + _time);
+                let _day = etime.getDate();
+                let _month = etime.getMonth() + 1;
+                let _hour = etime.getHours();
+                let _minute = etime.getMinutes();
+                _date = _month + '月' + _day + '日' + _hour + ':' + _minute;
+            }else {
+                _date = null;
+            }
+        }
+        return _date;
+    };
+
+    /**
      * 获取订单标识符和操作按钮等信息
      * @param payid  number 付款状态
      * 注：0 未付款, 1 已付款, 2 已退款
      * @param status number 订单状态
      * 0 确认中, 1 已确认, 2 取消订单, 3 已发货, 4 收货成功, 5 收货失败, 6 申请退换货, 7 申请失败, 8 申请完成
+     * @param addTime string 订单生成时间
+     * @param fhTime  string 发货时间
      */
-    getOrderBtns = (payid, _statuid,) => {
+    getOrderBtns = (payid, _statuid, addTime, fhTime) => {
         let { 
             mToken, 
             navigation, 
@@ -154,6 +189,7 @@ export default class OrderComponent extends Component {
         } = this.props;
         let that = this;
         let statuid = parseInt(_statuid) || 0;
+        let expirationDate = '';
         let obj = {
             text: '',
             btns: [{
@@ -168,6 +204,17 @@ export default class OrderComponent extends Component {
                 }
             }],
         };
+
+        if(payid == 0) {
+            //自动取消
+            expirationDate = this.returnExpressTime(addTime, 23);
+            if(expirationDate === null) statuid = 2;
+        }else if(payid == 1 && statuid == 3) {
+            //自动收货
+            expirationDate = this.returnExpressTime(fhTime, (15 * 24 - 1));
+            if(expirationDate === null) statuid = 4;
+        }
+
         if(statuid == 2) {
             obj.text = Lang[Lang.default].shopClose;
         }else if(payid == 1) {
@@ -203,7 +250,13 @@ export default class OrderComponent extends Component {
                         fun: (soid)=>{
                             showAlert(
                                 Lang[Lang.default].confirmReceipt2,
-                                ()=>changeOrderStatu(soid, 4, Lang[Lang.default].successfulReceipt)
+                                ()=>{changeOrderStatu(
+                                    soid, 
+                                    4, 
+                                    Lang[Lang.default].successfulReceipt, 
+                                    null, 
+                                    that.totalMoney
+                                )}
                             );
                         }
                     });

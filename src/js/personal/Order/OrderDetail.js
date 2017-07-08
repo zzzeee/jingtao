@@ -328,7 +328,7 @@ export default class OrderDetail extends Component {
         let goods = sOrderInfo.oProAry || [];
         let payid = parseInt(sOrderInfo.oPay) || 0;
         let statuid = parseInt(sOrderInfo.oStatus) || 0;
-        let addTime = tOrderInfo.oAddtime || null;
+        let addTime = tOrderInfo.oAddTime || null;
         let payTime = sOrderInfo.oPayTime || null;
         let fhTime = sOrderInfo.oExpressTime || null;
         let name = tOrderInfo.oBuyName || '';

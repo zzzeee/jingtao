@@ -176,8 +176,9 @@ export default class OrderComponent extends Component {
      * @param statu number 订单状态 2 取消订单, 4 确认收货
      * @param successMsg string 操作成功后的提示信息
      * @param param object 附加数据
+     * @param money float  支付金额
      */
-    changeOrderStatu = (soid, statu, successMsg, param = null) => {
+    changeOrderStatu = (soid, statu, successMsg, param = null, money = null) => {
         let { mToken, navigation, } = this.props;
         if(soid && mToken) {
             let obj = Object.assign({
@@ -195,7 +196,12 @@ export default class OrderComponent extends Component {
                         this.setState({
                             deleteAlert: false,
                         }, ()=>{
-                            navigation.navigate('PayFinish');
+                            navigation.navigate('OrderNotify', {
+                                pageType: 2,
+                                mToken: mToken,
+                                payMoney: money,
+                                shopOrderNum: soid,
+                            });
                         });
                     }else {
                         this.alertMsg = msg;

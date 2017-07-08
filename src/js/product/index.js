@@ -12,7 +12,6 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
-    WebView,
     Animated,
     Linking,
 } from 'react-native';
@@ -33,6 +32,7 @@ import ReturnAlert from './returnAlert';
 import AlertMoudle from '../other/AlertMoudle';
 import Areas from './Areas';
 import Coupons from './Coupons';
+import { EndView } from '../other/publicEment';
 
 var isCanShare = false;
 var _User = new User();
@@ -59,6 +59,7 @@ export default class ProductScreen extends Component {
             msgPositon: new Animated.Value(0),  //收藏显示位置
             collectionMsg: null,                //收藏结果
             deleteAlert: false,
+            isRefreshing: true,
         };
         this.goodid = 0;
         this.carNumber = 0;
@@ -75,10 +76,17 @@ export default class ProductScreen extends Component {
         this.alertObject = {};
     }
 
+    componentWillMount() {
+        this.goodid = this.props.navigation && 
+            this.props.navigation.state &&
+            this.props.navigation.state.params && 
+            this.props.navigation.state.params.gid ?
+            this.props.navigation.state.params.gid : 0;
+    }
+
     componentDidMount() {
         let that = this;
         _User.getUserInfo().then((_user) => {
-            console.log(_user);
             that.userinfo = _user;
             that.initDatas();
         });
@@ -92,21 +100,11 @@ export default class ProductScreen extends Component {
 
     //初始化数据
     initDatas = async () => {
-        this.goodid = this.props.navigation && 
-            this.props.navigation.state &&
-            this.props.navigation.state.params && 
-            this.props.navigation.state.params.gid ?
-            this.props.navigation.state.params.gid : 0;
+        let state = {isRefreshing: false, };
         if(this.goodid > 0) {
             let obj = Object.assign({gID: this.goodid}, this.userinfo);
             let info = await Utils.async_fetch(Urls.getProductInfo, 'post', obj);
-            let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
-                pPage: this.page, 
-                pPerNum: this.pageNumber,
-            });
-            let state = {};
             console.log(info);
-            // console.log(list);
             if(info && info.sTatus && info.proInfo) {
                 if(info.proInfo.mCartNum && 
                 info.proInfo.mCartNum.length && 
@@ -116,9 +114,12 @@ export default class ProductScreen extends Component {
                 }
                 state.fetchError = false;
                 state.goodIofo = info.proInfo;
-                // state.goodIofo.gDel = 1;
                 state.isFavorite = info.proInfo.fStatus == 1 ? true : false;
                 state.shopFavorite = info.proInfo.fShopStatus == 1 ? true : false;
+                let list = await Utils.async_fetch(Urls.getRecommendList, 'get', {
+                    pPage: this.page, 
+                    pPerNum: this.pageNumber,
+                });
                 if(list && list.sTatus && list.proAry && list.proAry.length) {
                     state.goodList = list.proAry;
                     this.page++;
@@ -126,8 +127,8 @@ export default class ProductScreen extends Component {
             }else {
                 state.fetchError = true;
             }
-            this.setState(state);
         }
+        this.setState(state);
     };
 
     // 加载更多
@@ -393,10 +394,10 @@ export default class ProductScreen extends Component {
 
     render() {
         let { navigation } = this.props;
-        console.log(navigation);
         let good = this.state.goodIofo || {};
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
+        if(this.state.fetchError) gdel = true;
         let right = (
             <View style={styles.rowStyle}>
                 <TouchableOpacity onPress={()=>this.toggleCollection(1, 0)} style={{
@@ -435,16 +436,20 @@ export default class ProductScreen extends Component {
                     }}
                 />
                 <View style={styles.flex}>
-                    {this.state.fetchError === null ?
-                        null : (this.state.fetchError ?
-                            <View style={errorStyles.bodyView}>
-                                <Text style={errorStyles.refaceBtn} onPress={this.initDatas}>
-                                    {Lang[Lang.default].reconnect}
-                                </Text>
-                                <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
-                            </View>
-                            : this.pageBody()
-                        )
+                    {this.state.fetchError ?
+                        <View style={errorStyles.bodyView}>
+                            <Text style={errorStyles.refaceBtn} onPress={()=>{
+                                this.page = 1;
+                                this.setState({
+                                    isRefreshing: true,
+                                    fetchError: null,
+                                }, this.initDatas);
+                            }}>
+                                {Lang[Lang.default].reconnect}
+                            </Text>
+                            <Text style={errorStyles.errRemind}>{Lang[Lang.default].fetchError}</Text>
+                        </View>
+                        : this.pageBody()
                     }
                 </View>
                 <Animated.View style={[styles.ctrlResultView, {bottom: this.state.msgPositon}]}>
@@ -485,7 +490,7 @@ export default class ProductScreen extends Component {
                                 <Text style={styles.productContactTxt}>{Lang[Lang.default].tab_car}</Text>
                             </TouchableOpacity>
                             {(this.carNumber && this.carNumber > 0) ?
-                                <TouchableOpacity onPress={()=>{
+                                <TouchableOpacity disabled={gdel} onPress={()=>{
                                     navigation.navigate('TabNav', {PathKey: TABKEY.car});
                                 }} style={styles.carNumberStyle}>
                                     <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
@@ -497,6 +502,7 @@ export default class ProductScreen extends Component {
                     <View style={styles.rowStyle}>
                         <TouchableOpacity 
                             activeOpacity ={1} 
+                            disabled={gdel}
                             style={[styles.btnProductShopping, {
                                 backgroundColor: gdel ? Color.lightGrey : Color.orange,
                             }]}
@@ -506,6 +512,7 @@ export default class ProductScreen extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity 
                             activeOpacity ={1} 
+                            disabled={gdel}
                             style={[styles.btnProductShopping, {
                                 backgroundColor: gdel ? Color.gray : Color.mainColor,
                             }]}
@@ -533,40 +540,57 @@ export default class ProductScreen extends Component {
     }
 
     pageBody = () => {
+        let { 
+            isRefreshing, 
+            goodList,
+            showAttrBox,
+            showAreas,
+            showCouponList
+        } = this.state;
         let good = this.state.goodIofo || {};
         let gid = parseInt(good.gID) || 0;
-        if(gid && gid > 0) {
-            let attrs = good.attrs || [];
-            let chlidAtrrs = good.chlidAtrrs || [];
-            let priceAtrrs = good.priceAtrrs || [];
-            let pWarehouse = good.pWarehouse || [];
-            let areas = good.areas || [];
-            let mCoupon = good.mCoupon || [];
-            let mToken = (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
-            return (
-                <View>
-                    <FlatList
-                        ref={(_ref)=>this.ref_flatList=_ref} 
-                        data={this.state.goodList}
-                        numColumns={2}
-                        onScroll={this._onScroll}
-                        removeClippedSubviews={false}
-                        contentContainerStyle={styles.flatListStyle}
-                        keyExtractor={(item, index) => (index)}
-                        enableEmptySections={true}
-                        renderItem={this._renderItem}
-                        ListHeaderComponent={this.pageHead}
-                        onEndReached={()=>{
-                            if(!this.loadMoreLock) {
-                                console.log('正在加载更多 ..');
-                                this.loadMore();
-                            }else {
-                                console.log('加载更多已被锁住。');
-                            }
-                        }}
-                    />
+        let attrs = good.attrs || [];
+        let chlidAtrrs = good.chlidAtrrs || [];
+        let priceAtrrs = good.priceAtrrs || [];
+        let pWarehouse = good.pWarehouse || [];
+        let areas = good.areas || [];
+        let mCoupon = good.mCoupon || [];
+        let mToken = (this.userinfo && this.userinfo[_User.keyMember]) ? this.userinfo[_User.keyMember] : null;
+        return (
+            <View style={styles.container}>
+                <FlatList
+                    ref={(_ref)=>this.ref_flatList=_ref} 
+                    data={goodList}
+                    numColumns={2}
+                    onScroll={this._onScroll}
+                    removeClippedSubviews={false}
+                    contentContainerStyle={styles.whiteBg}
+                    keyExtractor={(item, index) => (index)}
+                    enableEmptySections={true}
+                    renderItem={this._renderItem}
+                    ListHeaderComponent={this.pageHead}
+                    refreshing={isRefreshing}
+                    onRefresh={()=>{
+                        this.page = 1;
+                        this.setState({isRefreshing: true});
+                        this.initDatas();
+                    }}
+                    onEndReached={()=>{
+                        if(!this.loadMoreLock) {
+                            // this.loadMore();
+                        }
+                    }}
+                    ListFooterComponent={()=>{
+                        if(goodList && goodList.length > 1) {
+                            return <EndView />;
+                        }else {
+                            return <View />;
+                        }
+                    }}
+                />
+                {showAttrBox ?
                     <ProductAttr 
-                        isShow={this.state.showAttrBox}
+                        isShow={showAttrBox}
                         gid={gid}
                         userid={this.userinfo}
                         attrs={attrs}
@@ -581,38 +605,45 @@ export default class ProductScreen extends Component {
                         pWarehouse={good.pWarehouse}
                         navigation={this.props.navigation}
                     />
+                    : null
+                }
+                {showAreas ?
                     <Areas
                         gid={gid}
                         areas={good.areas}
-                        isShow={this.state.showAreas} 
+                        isShow={showAreas} 
                         hideAreasBox={this.hideAreasBox}
                         getSelectArea={this.getSelectArea}
                     />
+                    : null
+                }
+                {showCouponList ?
                     <Coupons
                         gid={gid}
                         userid={mToken}
                         coupons={mCoupon}
-                        isShow={this.state.showCouponList} 
+                        isShow={showCouponList} 
                         hideCouponBox={this.hideCouponBox}
                         navigation={this.props.navigation}
                         back={'Product'}
                         backObj={{gid: gid}}
-                    />
-                </View>
-            );
-        }else {
-            return null;
-        }
+                    /> 
+                    : null
+                }
+                
+            </View>
+        );
     };
 
     //商品主要信息
     productInfo = () => {
-        if(!this.state.goodIofo) return null;
         let { navigation } = this.props;
         let good = this.state.goodIofo || {};
-        let gid = good.gID;
+        let gid = good.gID || null;
+        if(!gid) return null;
         let gdel = good.gDel && good.gDel != '0' ? true : false;
         if(good.hasOwnProperty('gShelves') && good.gShelves == 0) gdel = true;
+        if(this.state.fetchError) gdel = true;
         let name = good.gName || null;
         let price = good.gDiscountPrice || null;
         let marketPrice = good.gPrices || null;
@@ -835,9 +866,9 @@ export default class ProductScreen extends Component {
 
     //页面头部 - 商品详情
     pageHead = () => {
-        if(!this.state.goodIofo) return null;
+        if(!this.state.goodIofo || !this.state.goodIofo.gID) return null;
         return (
-            <View>
+            <View style={styles.grayBg}>
                 {this.productInfo()}
                 <ProductDetail moreHeight={moreHeight} productID={parseInt(this.state.goodIofo.gID)} />
                 <View style={styles.goodlistTop}>
@@ -968,8 +999,15 @@ var styles = StyleSheet.create({
     flex: {
         flex: 1,
     },
+    container: {
+        flex: 1,
+        backgroundColor: Color.lightGrey,
+    },
     whiteBg: {
         backgroundColor: '#fff',
+    },
+    grayBg: {
+        backgroundColor: Color.lightGrey,
     },
     rowStyle: {
         flexDirection: 'row',
@@ -1010,9 +1048,6 @@ var styles = StyleSheet.create({
     txtStyle9: {
         color: Color.red,
         fontSize: 12,
-    },
-    flatListStyle: {
-        backgroundColor: Color.lightGrey,
     },
     productDeleteBox: {
         backgroundColor: Color.lightGrey,

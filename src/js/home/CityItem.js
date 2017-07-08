@@ -135,7 +135,7 @@ export default class CityItem extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.leftBorder}>
-                        <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
+                        <TouchableOpacity onPress={()=>this.linkList(id, name, 1)} style={{
                             padding: 5,
                             flexDirection: 'row',
                             alignItems: 'center',

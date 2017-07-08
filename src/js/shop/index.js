@@ -196,7 +196,6 @@ export default class Shop extends Component {
         }else {
             this.state.opacityVal.setValue(showHeadBgHeight);
         }
-        console.log(this.state.opacityVal);
     };
 
     listHeadPage = () => {

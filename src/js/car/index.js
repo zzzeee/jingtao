@@ -28,6 +28,7 @@ import AlertMoudle from '../other/AlertMoudle';
 import ErrorAlert from '../other/ErrorAlert';
 import Coupons from '../product/Coupons';
 import Nothing from '../other/ListNothing';
+import { EndView } from '../other/publicEment';
 
 var _User = new User();
 
@@ -82,7 +83,7 @@ export default class CarsScreen extends Component {
     }
 
     //初始化数据
-    initDatas = async () => {
+    initDatas = async (someRefresh = false) => {
         let obj = {
             isRefreshing: false,
         };
@@ -96,7 +97,22 @@ export default class CarsScreen extends Component {
                 if(ret == 4) {
                     if(this.userinfo[_User.keyMember]) this.userinfo = false;
                     await _User.delUserID(_User.keyMember);
+                    this.alertObject = {
+                        text: Lang[Lang.default].accountInvalidation,
+                        leftText: Lang[Lang.default].logInAgain2,
+                        rightText: Lang[Lang.default].cancel,
+                        rightClick: ()=>this.setState({deleteAlert: false,}),
+                        leftClick: ()=>{
+                            this.setState({deleteAlert: false,}, ()=>{
+                                this.props.navigation.navigate('Login', {
+                                    back: 'TabNav', 
+                                    backObj: {PathKey: TABKEY.car},
+                                });
+                            });
+                        },
+                    };
                     obj.carDatas = [];
+                    obj.deleteAlert = true;
                 }else if(ret == 1) {
                     obj.carDatas = userCar.normalAry || [];
                     obj.invalidList = userCar.abnormalAry || [];
@@ -247,69 +263,8 @@ export default class CarsScreen extends Component {
         let { carDatas, isSelect, editing, msgPositon, operateMsg, showAlert, } = this.state;
         let selectIcon = isSelect ? 
             require('../../images/car/select.png') : 
-            require('../../images/car/no_select.png');
-        if(carDatas && carDatas.length > 0) {
-            return (
-                <View style={styles.flex}>
-                    <View style={styles.flex}>
-                        {this.bodyContent()}
-                    </View>
-                    <Animated.View style={[styles.ctrlResultView, {bottom: msgPositon}]}>
-                        <Text style={styles.ctrlResultText}>{operateMsg}</Text>
-                    </Animated.View>
-                    <View style={styles.carFooter}>
-                        <View style={styles.rowStyle}>
-                            <TouchableOpacity onPress={()=>{
-                                let newState = !isSelect;
-                                this.setState({
-                                    isSelect: newState,
-                                    ctrlSelect: newState,
-                                    changeKEY1: null,
-                                    changeKEY2: null,
-                                });
-                            }} style={{
-                                paddingLeft: PX.marginLR,
-                                paddingTop: 5,
-                                paddingBottom: 5,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                            }}>
-                                <Image source={selectIcon} style={{
-                                    width: 20,
-                                    height: 20,
-                                }} />
-                                <Text style={{
-                                    marginLeft: 6,
-                                    color: Color.lightBack,
-                                    fontSize: 14,
-                                }}>{Lang[Lang.default].selectAll}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        {editing ?
-                            <View style={styles.rowStyle}>
-                                <TouchableOpacity style={styles.btnCollection} onPress={this.selectCollection}>
-                                    <Text style={styles.settlementText}>{Lang[Lang.default].collection}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.btnDelete} onPress={this.selectDelete}>
-                                    <Text style={styles.settlementText}>{Lang[Lang.default].delete}</Text>
-                                </TouchableOpacity>
-                            </View> :
-                            <View style={styles.rowStyle}>
-                                <View style={styles.carFooterRightLeft}>
-                                    <Text style={styles.textStyle1}>{Lang[Lang.default].total2 + ':'}</Text>
-                                    <Text style={styles.textStyle2}>{100}</Text>
-                                    <Text style={styles.textStyle3}>{Lang[Lang.default].excludingFreight}</Text>
-                                </View>
-                                <TouchableOpacity style={styles.btnSettlement} onPress={this.goSettlement}>
-                                    <Text style={styles.settlementText}>{Lang[Lang.default].settlement}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        }
-                    </View>
-                    <ErrorAlert visiable={showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
-                </View>
-            );
-        }else if(this.userinfo === false || (carDatas && carDatas.length == 0)) {
+            require('../../images/car/no_select.png'); 
+        if(this.userinfo === false || (carDatas && carDatas.length == 0)) {
             return (
                 <View style={styles.flex}>
                     <Nothing 
@@ -320,7 +275,71 @@ export default class CarsScreen extends Component {
                 </View>
             );
         }else {
-            return null;
+            return (
+                <View style={styles.flex}>
+                    <View style={styles.flex}>
+                        {this.bodyContent()}
+                    </View>
+                    {(carDatas && carDatas.length > 0) ?
+                        <View>
+                            <Animated.View style={[styles.ctrlResultView, {bottom: msgPositon}]}>
+                                <Text style={styles.ctrlResultText}>{operateMsg}</Text>
+                            </Animated.View>
+                            <View style={styles.carFooter}>
+                                <View style={styles.rowStyle}>
+                                    <TouchableOpacity onPress={()=>{
+                                        let newState = !isSelect;
+                                        this.setState({
+                                            isSelect: newState,
+                                            ctrlSelect: newState,
+                                            changeKEY1: null,
+                                            changeKEY2: null,
+                                        });
+                                    }} style={{
+                                        paddingLeft: PX.marginLR,
+                                        paddingTop: 5,
+                                        paddingBottom: 5,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Image source={selectIcon} style={{
+                                            width: 20,
+                                            height: 20,
+                                        }} />
+                                        <Text style={{
+                                            marginLeft: 6,
+                                            color: Color.lightBack,
+                                            fontSize: 14,
+                                        }}>{Lang[Lang.default].selectAll}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {editing ?
+                                    <View style={styles.rowStyle}>
+                                        <TouchableOpacity style={styles.btnCollection} onPress={this.selectCollection}>
+                                            <Text style={styles.settlementText}>{Lang[Lang.default].collection}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.btnDelete} onPress={this.selectDelete}>
+                                            <Text style={styles.settlementText}>{Lang[Lang.default].delete}</Text>
+                                        </TouchableOpacity>
+                                    </View> :
+                                    <View style={styles.rowStyle}>
+                                        <View style={styles.carFooterRightLeft}>
+                                            <Text style={styles.textStyle1}>{Lang[Lang.default].total2 + ':'}</Text>
+                                            <Text style={styles.textStyle2}>{100}</Text>
+                                            <Text style={styles.textStyle3}>{Lang[Lang.default].excludingFreight}</Text>
+                                        </View>
+                                        <TouchableOpacity style={styles.btnSettlement} onPress={this.goSettlement}>
+                                            <Text style={styles.settlementText}>{Lang[Lang.default].settlement}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
+                            </View>
+                        </View>
+                        : null
+                    }
+                    <ErrorAlert visiable={showAlert} message={this.alertMsg} hideModal={this.hideAutoModal} />
+                </View>
+            );
         }
     }
 
@@ -380,7 +399,7 @@ export default class CarsScreen extends Component {
         return (
             <View>
                 {cars}
-                {(this.state.editing || !this.state.carDatas.length) ?
+                {(this.state.editing || !this.state.carDatas || !this.state.carDatas.length) ?
                     null :
                     <View style={styles.goodlistTop}>
                         <View style={styles.goodTopLine}></View>
@@ -435,27 +454,33 @@ export default class CarsScreen extends Component {
 
     //正文内容 (购物车商品和猜你喜欢商品)
     bodyContent = () => {
+        let { isRefreshing, goodList, } = this.state;
         return (
             <FlatList
                 ref={(_ref)=>this.ref_flatList=_ref} 
-                data={this.state.goodList}
+                data={goodList}
                 numColumns={2}
                 contentContainerStyle={{backgroundColor: '#fff'}}
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
                 ListHeaderComponent={this.carsBox}
-                refreshing={this.state.isRefreshing}
+                refreshing={isRefreshing}
                 onRefresh={()=>{
                     this.setState({isRefreshing: true});
+                    this.page = 1;
                     this.initDatas();
                 }}
                 onEndReached={()=>{
                     if(!this.loadMoreLock) {
-                        console.log('正在加载更多 ..');
                         // this.loadMore();
+                    }
+                }}
+                ListFooterComponent={()=>{
+                    if(goodList && goodList.length > 3) {
+                        return <EndView />;
                     }else {
-                        console.log('加载更多已被锁住。');
+                        return <View />;
                     }
                 }}
             />

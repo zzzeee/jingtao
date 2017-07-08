@@ -45,6 +45,9 @@ export default class Login extends Component {
         this.alertMsg = '';
         this.clickNumber = 1;
         this.frequentNumber = 3;
+        this.btnLock = false;
+        this.inputtext1 = null;
+        this.inputtext2 = null;
     }
 
     componentDidMount() {
@@ -133,7 +136,10 @@ export default class Login extends Component {
         let mobile = this.state.mobile || null;
         let pword = this.state.password || null;
         if(mobile && pword) {
-            if(!this.showInputIsAble()) return;
+            if(!this.showInputIsAble()) {
+                this.btnLock = false;
+                return;
+            }
             _User.getUserID(_User.keyTourist)
             .then((value) => {
                 let obj = {
@@ -143,6 +149,7 @@ export default class Login extends Component {
                 };
                 Utils.fetch(Urls.checkUser, 'post', obj, (result) => {
                     console.log(result);
+                    this.btnLock = false;
                     that.clickNumber++;
                     if(result) {
                         let ret = result.sTatus || 0;
@@ -171,6 +178,7 @@ export default class Login extends Component {
                 });
             });
         }else {
+            this.btnLock = false;
             this.showAutoModal(Lang[Lang.default].mobilePhoneEmpty);
         }
     };
@@ -208,6 +216,12 @@ export default class Login extends Component {
                                     style={styles.inputStyle}
                                     keyType={"numeric"}
                                     onFocus={()=>this.setInputFocus('tel')}
+                                    endEditing={()=>{
+                                        this.inputtext1 && this.inputtext1.blur();
+                                    }}
+                                    submitEditing={()=>{
+                                        this.inputtext1 && this.inputtext1.blur();
+                                    }}
                                 />
                             </View>
                             <View style={styles.inputRightStyle}>
@@ -235,6 +249,12 @@ export default class Login extends Component {
                                     length={26}
                                     style={styles.inputStyle}
                                     onFocus={()=>this.setInputFocus('pwd')}
+                                    endEditing={()=>{
+                                        this.inputtext2 && this.inputtext2.blur();
+                                    }}
+                                    submitEditing={()=>{
+                                        this.inputtext2 && this.inputtext2.blur();
+                                    }}
                                 />
                             </View>
                             {(this.state.password && this.state.onFocusPassword) ?
@@ -266,7 +286,12 @@ export default class Login extends Component {
                         </View>
                         <View></View>
                     </View>
-                    <TouchableOpacity disabled={disabled} onPress={this.startLogin} style={[styles.btnLoginBox, {
+                    <TouchableOpacity disabled={disabled} onPress={()=>{
+                        if(!this.btnLock) {
+                            this.btnLock = true;
+                            this.startLogin();
+                        }
+                    }} style={[styles.btnLoginBox, {
                         backgroundColor: bgcolor,
                     }]}>
                         <Text style={[styles.txtStyle1, {color: color}]}>{Lang[Lang.default].logo}</Text>

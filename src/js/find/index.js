@@ -11,7 +11,6 @@ import {
     Text,
     ScrollView,
     Image,
-    ListView,
     FlatList,
     TouchableOpacity,
 } from 'react-native';
@@ -38,7 +37,7 @@ export default class FindScreen extends Component {
             fetchError: null,
             datas: null,
             coupons: [],
-            dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            dataSource: null,
             MDYP: null,
             banner: null,
             isRefreshing: true,
@@ -71,8 +70,8 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(uCoupons);
-        // console.log(xsqg);
-        // console.log(mdyp);
+        console.log(xsqg);
+        console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
                 fetchError: true,
@@ -143,7 +142,7 @@ export default class FindScreen extends Component {
                 datas: xsqg,
                 coupons: coupons,
                 banner: (banner.pufaAble && banner.pufaAble == 1) ? bannerImg : null,
-                dataSource: this.state.dataSource.cloneWithRows(proList),
+                dataSource: proList,
             };
         }
         return obj;
@@ -298,9 +297,10 @@ export default class FindScreen extends Component {
 
     // 名店优品之上的上方部分
     topPage = () => {
-        if(this.state.fetchError === null) {
+        let { fetchError, dataSource, banner, } = this.state;
+        if(fetchError === null) {
              return null;
-        }else if(this.state.fetchError) {
+        }else if(fetchError) {
             return (
                 <View style={[errorStyles.bodyView, {
                     height: Size.height - PX.headHeight - PX.tabHeight,
@@ -312,22 +312,26 @@ export default class FindScreen extends Component {
         }else {
             return (
                 <View>
-                    <View style={styles.panicBuyingBox}>
-                        {this.getPanicBuying()}
-                        <ListView
-                            horizontal={true}
-                            contentContainerStyle={styles.listViewStyle}
-                            enableEmptySections={true}
-                            dataSource={this.state.dataSource}
-                            renderRow={this.xsqg_renderItem}
-                            showsHorizontalScrollIndicator={false}
-                        />
-                    </View>
-                    {this.state.banner ?
+                    {(dataSource && dataSource.length) ?
+                         <View style={styles.panicBuyingBox}>
+                            {this.getPanicBuying()}
+                            <FlatList
+                                horizontal={true}
+                                contentContainerStyle={styles.listViewStyle}
+                                keyExtractor={(item, index) => ('xsqg_' + index)}
+                                enableEmptySections={true}
+                                data={dataSource}
+                                renderItem={this.xsqg_renderItem}
+                                showsHorizontalScrollIndicator={false}
+                            />
+                        </View>
+                        : null
+                    }
+                    {banner ?
                         <TouchableOpacity style={styles.bannerImgBox} onPress={()=>{
                             this.props.navigation.navigate('Banner');
                         }}>
-                            <Image source={this.state.banner} style={styles.bannerImgStyle} />
+                            <Image source={banner} style={styles.bannerImgStyle} />
                         </TouchableOpacity>
                         : null
                     }
@@ -357,7 +361,7 @@ export default class FindScreen extends Component {
                         ref={(_ref)=>this.ref_flatList=_ref} 
                         removeClippedSubviews={false}
                         data={MDYP}
-                        keyExtractor={(item, index) => (index + '_' + item.sId)}
+                        keyExtractor={(item, index) => ('mdyp_' + index)}
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
                         onEndReached={()=>{
@@ -382,12 +386,11 @@ export default class FindScreen extends Component {
     }
 
     // 限时抢购列表的行内容
-    xsqg_renderItem = (obj, sectionID, rowID) => {
+    xsqg_renderItem = ({ item }) => {
         return (
             <View style={styles.ProductItemBox}>
                 <ProductItem 
-                    product={obj} 
-                    _key={rowID} 
+                    product={item} 
                     panicBuying={true}
                     width={160} 
                     showDiscount={true} 

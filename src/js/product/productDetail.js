@@ -15,6 +15,7 @@ import {
 
 import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
+import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
 import { Size, PX, Color, } from '../public/globalStyle';
 
@@ -33,6 +34,9 @@ export default class ProductDetail extends Component {
         this.state = {
             webViewHeight: 0,
         };
+    }
+
+    componentDidMount() {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
