@@ -85,10 +85,9 @@ export default class ProductScreen extends Component {
     }
 
     componentDidMount() {
-        let that = this;
         _User.getUserInfo().then((_user) => {
-            that.userinfo = _user;
-            that.initDatas();
+            this.userinfo = _user;
+            this.initDatas();
         });
     }
 

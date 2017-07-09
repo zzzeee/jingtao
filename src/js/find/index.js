@@ -55,12 +55,6 @@ export default class FindScreen extends Component {
         this.initPage();
     }
 
-    componentWillUnmount() {
-        // 如果存在this.timer，则使用clearTimeout清空。
-        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
-    }
-
     //初始化页面
     initPage = async () => {
         this.pageOffest = 1;
@@ -346,6 +340,7 @@ export default class FindScreen extends Component {
 
     render() {
         let { MDYP, isRefreshing, } = this.state;
+        if(!MDYP) return null;
         return (
             <View style={styles.flex}>
                 <View>
@@ -419,16 +414,15 @@ export default class FindScreen extends Component {
     };
 
     // 名店优品列表的行内容
-    mdyp_renderItem = ({item}) => {
+    mdyp_renderItem = ({item, index}) => {
         let navigation = this.props.navigation || null;
         let sid = item.sId || null;
         let name = item.sShopName || null;
         let plist = item.proAry || [];
         let img = item.sLogo || '';
-
         if(name && plist.length > 0) {
             let p1 = null, p2 = null, p3 = null;
-            let gid1 = gid2 = gid3 = 0;
+            let gid1 = 0, gid2 = 0, gid3 = 0;
             if(plist[0]) {
                 let _img = plist[0].gThumbPic || null;
                 gid1 = plist[0].gID || 0;
