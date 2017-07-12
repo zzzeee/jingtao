@@ -47,12 +47,17 @@ export default class SwiperBtn extends Component {
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.positionValue = 0;
+        this.position.setValue(0);
+    }
+
     //定义触屏响应事件
     panResponderInit = PanResponder.create({
         // 要求成为响应者：
         onStartShouldSetPanResponder: (evt, gestureState) => false,
         onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
-        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => false,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
         // 响应开始
         onPanResponderGrant: (evt, gestureState) => {
@@ -88,7 +93,12 @@ export default class SwiperBtn extends Component {
         },
         onPanResponderTerminationRequest: (evt, gestureState) => true,
         // 响应结束
-        onPanResponderRelease: (evt, {vx}) => {
+        onPanResponderRelease: (evt, {vx, dx}) => {
+            let press = this.props.onPress || null;
+            if(dx < 5 && dx > -5 && press) {
+                press();
+                return;
+            }
             this.position.flattenOffset();
             let result = 0;
             let min = this.minOffset;

@@ -44,6 +44,7 @@ export default class ProductItem extends Component {
             goodNameStyle, 
             goodPriceStyle, 
             showDiscount,
+            showLimit,
             navigation,
         } = this.props;
         if(!product) return null;
@@ -51,6 +52,7 @@ export default class ProductItem extends Component {
         let type = product.num || 0;
         let gimg = product.gThumbPic || '';
         let name = product.gName || '';
+        let isLimit = product.aStatus == 1 ? true : false;
         let gPrice = parseFloat(product.gPrices) || '';
         let dPrice = panicBuying ? parseFloat(product.pbgPrice) : parseFloat(product.gDiscountPrice);
         let discount = (gPrice && dPrice && gPrice > 0 && dPrice > 0) ? (dPrice / gPrice).toFixed(2) : null;
@@ -90,7 +92,18 @@ export default class ProductItem extends Component {
                         {(showDiscount && discount && discount > 0 && discount < 1) ?
                             <View style={styles.discountView}>
                                 <Text style={styles.discountText}>
-                                    {str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))}
+                                    {isLimit ?
+                                        Lang[Lang.default].timeLimit :
+                                        str_replace(Lang[Lang.default].discount, (discount * 10).toFixed(1))
+                                    }
+                                </Text>
+                            </View>
+                            : null
+                        }
+                        {showLimit && isLimit ?
+                            <View style={styles.discountView}>
+                                <Text style={styles.discountText}>
+                                    {Lang[Lang.default].timeLimit}
                                 </Text>
                             </View>
                             : null

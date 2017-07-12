@@ -161,7 +161,8 @@ export default class Collection extends Component {
             }, function(view) {
                 that.setState({load_or_error: view});
             }, {
-                hideLoad: true,
+                loadType: 2,
+                // hideLoad: true,
                 catchFunc: (err)=>console.log(err),
             });
         }
@@ -181,6 +182,7 @@ export default class Collection extends Component {
                 this.setState({
                     totalNum: _total,
                     dataSource: _datas,
+                    load_or_error: null,
                 });
             }else {
                 this.getCollectionList();
@@ -307,15 +309,17 @@ export default class Collection extends Component {
                     _key: gid ? 'gID' : 'sId',
                 }}
                 itemHeight={122}
-            >
-                <TouchableOpacity activeOpacity={1} onPress={()=>{
+                onPress={()=>{
                     if(gid > 0 && navigation) {
                         //跳转到商品
                         navigation.navigate('Product', {gid: gid});
                     }else if(sid > 0 && navigation) {
                         //跳转到商家
+                        navigation.navigate('Shop', {shopID: sid});
                     }
-                }} style={styles.itemStyle}>
+                }}
+            >
+                <TouchableOpacity activeOpacity={1} style={styles.itemStyle}>
                     <View style={styles.itemLeftStyle}>
                         <Image style={styles.collectionImg} source={img} />
                     </View>

@@ -53,8 +53,7 @@ export default class ListViewFrame extends Component {
                     let oldList = that.state.goodList || [];
                     let goodList = oldList.concat(result.proAry);
                     that.page++;
-                    that.loadMoreLock = false;
-                    that.setState({ goodList });
+                    that.setState({ goodList }, ()=>that.loadMoreLock = false);
                 }
             }, null, {
                 catchFunc: (err)=>{console.log(err)}

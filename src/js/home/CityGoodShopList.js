@@ -180,7 +180,7 @@ export default class CityGoodShopList extends Component {
                 pPage: this.page,
                 pPerNum: this.number,
             }, function(result) {
-                // console.log(result);
+                console.log(result);
                 if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let ret = result.proAry || [];
                     let num = parseInt(result.proNum) || 0;
@@ -630,6 +630,7 @@ export default class CityGoodShopList extends Component {
                     goodNameViewStyle={{height: 30}}
                     goodPriceStyle={{height: 35}}
                     navigation={this.props.navigation}
+                    showLimit={true}
                 />
                 {end}
             </View>
@@ -638,7 +639,7 @@ export default class CityGoodShopList extends Component {
 
     // 商品列表的行内容(不多于3行)
     _renderItem2 = (obj, sectionID, rowID) => {
-        let imgurl = obj.gThumbPic || null;
+        let imgurl = obj.gThumBPic || null;
         let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
         let name = obj.gName || '';
         let sname = obj.sShopName || '';
@@ -674,9 +675,6 @@ export default class CityGoodShopList extends Component {
                         <Text style={styles.fontStyle3}>{name}</Text>
                     </View>
                     <View>
-                        <Text style={[styles.fontStyle4, {
-                            paddingBottom: 17,
-                        }]}>{Lang[Lang.default].stock + ':' + stock}</Text>
                         <Text style={[styles.fontStyle5, {paddingBottom: 15,}]}>
                             {Lang[Lang.default].RMB}
                             <Text style={{fontSize: 19}}>{price}</Text>
@@ -760,9 +758,6 @@ export default class CityGoodShopList extends Component {
                                             <Text style={styles.fontStyle3}>{gname}</Text>
                                         </View>
                                         <View>
-                                            <Text style={[styles.fontStyle4, {
-                                                paddingBottom: 17,
-                                            }]}>{Lang[Lang.default].stock + ':' + gstock}</Text>
                                             <Text style={styles.fontStyle5}>
                                                 {Lang[Lang.default].RMB}
                                                 <Text style={{fontSize: 19}}>{gprice}</Text>
@@ -899,7 +894,7 @@ var styles = StyleSheet.create({
         color: Color.gray,
     },
     fontStyle3: {
-        fontSize: 13,
+        fontSize: 14,
         color: Color.lightBack,
         lineHeight: 17,
     },

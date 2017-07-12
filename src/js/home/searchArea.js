@@ -56,6 +56,7 @@ export default class Area extends Component {
                 }}
             >
                 <View style={styles.modalHtml}>
+                    <TouchableOpacity activeOpacity={1} onPress={hideAreaBox} style={styles.headBox} />
                     <View style={styles.modalBody}>
                         <View style={styles.flex}>
                             <ScrollView contentContainerStyle={styles.scrollStyle}>
@@ -68,6 +69,7 @@ export default class Area extends Component {
                                     selects: new Set(),
                                 }, ()=>{
                                     setSelectArea([]);
+                                    hideAreaBox();
                                 });
                             }} activeOpacity={1}>
                                 <Text style={styles.leftBottonText}>{Lang[Lang.default].clear}</Text>
@@ -80,7 +82,7 @@ export default class Area extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity activeOpacity={1} onPress={hideAreaBox} style={styles.footBox}></TouchableOpacity>
+                    <TouchableOpacity activeOpacity={1} onPress={hideAreaBox} style={styles.footBox} />
                 </View>
             </Modal>
         );
@@ -124,12 +126,14 @@ var styles = StyleSheet.create({
     modalHtml: {
         flex: 1,
     },
+    headBox: {
+        height: PX.headHeight + PX.rowHeight2,
+    },
     modalBody: {
         width: Size.width,
         height: 250,
         borderTopColor: Color.gainsboro,
         borderTopWidth: pixel,
-        marginTop: PX.headHeight + PX.rowHeight2,
         backgroundColor: '#fff',
     },
     scrollStyle: {

@@ -339,6 +339,7 @@ export default class OrderDetail extends Component {
         let oScoupon = parseInt(sOrderInfo.oScoupon) || 0;
         this.titleBtns = this.getOrderBtns(payid, statuid, addTime, fhTime, expressData);
         this.actualTotal = (totalMoney - oIntegral - oScoupon).toFixed(2);
+        if(this.actualTotal < 0) this.actualTotal = 0;
         return (
             <View style={styles.container}>
                 <View style={styles.sessionBox}>

@@ -471,11 +471,6 @@ export default class CarsScreen extends Component {
                     this.page = 1;
                     this.initDatas();
                 }}
-                onEndReached={()=>{
-                    if(!this.loadMoreLock) {
-                        // this.loadMore();
-                    }
-                }}
                 ListFooterComponent={()=>{
                     if(goodList && goodList.length > 3) {
                         return <EndView />;

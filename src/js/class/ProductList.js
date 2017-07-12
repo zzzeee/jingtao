@@ -55,7 +55,8 @@ export default class Search extends Component {
             'isRepeat': true,
             'press': null,
         }, {
-            'text': Lang[Lang.default].newGood,
+            // 'text': Lang[Lang.default].newGood,
+            'text': '同城日达',
             'isRepeat': false,
             'press': null,
         }, {
@@ -99,7 +100,7 @@ export default class Search extends Component {
     };
 
     //已选的地区数据
-    selectCity = (datas, getData) => {
+    selectCity = (datas) => {
         let _data = datas.join(',');
         if(this.citys != _data) {
             this.citys = _data;

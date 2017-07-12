@@ -227,6 +227,7 @@ export default class HomeScreen extends Component {
             Utils.fetch(Urls.getCityAndProduct, 'post', {
                 pID: id
             }, function(result) {
+                // console.log(result);
                 if(result && result.provinceAry) {
                     let ret = that.removeHideCitys(result.provinceAry);
                     let name = ret.region_name || '';

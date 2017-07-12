@@ -64,8 +64,8 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(uCoupons);
-        console.log(xsqg);
-        console.log(mdyp);
+        // console.log(xsqg);
+        // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
                 fetchError: true,
@@ -186,24 +186,20 @@ export default class FindScreen extends Component {
 
     // 加载更多
     loadMore = () => {
-        let stime = new Date().getTime();
         if(!this.loadMoreLock) {
             let that = this;
             this.loadMoreLock = true;
             Utils.fetch(Urls.getFindShopList, 'POST', {
                 sPage: this.pageOffest,
                 sPerNum: this.pageNumber,
-            }, function(result){
+            }, (result) => {
                 if(result && result.sTatus && result.shopAry.length) {
                     let MDYP = that.state.MDYP.concat(result.shopAry);
-                    let etime = new Date().getTime();
-                    let t = that.lockTime - (etime - stime);
                     console.log(MDYP);
                     that.pageOffest++;
-                    that.setState({ MDYP });
-                    that.timer = setTimeout(() => { 
+                    that.setState({ MDYP }, ()=>{
                         that.loadMoreLock = false;
-                    }, t > 0 ? t : 1);
+                    });
                 }
             });
         }
@@ -340,7 +336,7 @@ export default class FindScreen extends Component {
 
     render() {
         let { MDYP, isRefreshing, } = this.state;
-        if(!MDYP) return null;
+        // if(!MDYP) return null;
         return (
             <View style={styles.flex}>
                 <View>
@@ -383,16 +379,21 @@ export default class FindScreen extends Component {
     // 限时抢购列表的行内容
     xsqg_renderItem = ({ item }) => {
         return (
-            <View style={styles.ProductItemBox}>
+            <View>
                 <ProductItem 
-                    product={item} 
+                    product={item}
                     panicBuying={true}
-                    width={160} 
-                    showDiscount={true} 
+                    width={160}
+                    showDiscount={true}
+                    navigation={this.props.navigation}
+                    boxStyle={{
+                        marginRight: 10,
+                        marginBottom: 5,
+                    }}
                 />
                 {this.beOverdue() ?
                     null : 
-                    <View style={[styles.productAboveImg]}>
+                    <View style={styles.productAboveImgBox}>
                         <Image 
                             source={require('../../images/find/activity_expired.png')} 
                             resizeMode="stretch" 
@@ -532,6 +533,13 @@ var styles = StyleSheet.create({
     },
     ProductItemBox: {
         marginRight: 10,
+    },
+    productAboveImgBox: {
+        position: 'absolute', 
+        left: 0, 
+        top: 0,
+        bottom: 5,
+        right: 10,
     },
     productAboveImg: {
         position: 'absolute', 

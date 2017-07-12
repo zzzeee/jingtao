@@ -63,7 +63,8 @@ export default class Search extends Component {
             'isRepeat': true,
             'press': null,
         }, {
-            'text': Lang[Lang.default].newGood,
+            // 'text': Lang[Lang.default].newGood,
+            'text': '同城日达',
             'isRepeat': false,
             'press': null,
         }, {

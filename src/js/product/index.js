@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 
 import User from '../public/user';
-import Swiper from 'react-native-swiper';
 import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -33,6 +32,7 @@ import AlertMoudle from '../other/AlertMoudle';
 import Areas from './Areas';
 import Coupons from './Coupons';
 import { EndView } from '../other/publicEment';
+import SwiperDIY from '../other/SwiperDIY';
 
 var isCanShare = false;
 var _User = new User();
@@ -74,6 +74,7 @@ export default class ProductScreen extends Component {
         this.freight = null;
         this.userinfo = null;
         this.alertObject = {};
+        this.timer = [];
     }
 
     componentWillMount() {
@@ -94,7 +95,10 @@ export default class ProductScreen extends Component {
     componentWillUnmount() {
         // 如果存在this.timer，则使用clearTimeout清空。
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
+        let times = this.timer;
+        for(let _time of times) {
+            clearTimeout(_time);
+        }
     }
 
     //初始化数据
@@ -267,11 +271,12 @@ export default class ProductScreen extends Component {
     //显示提示框
     showReturnBox = (obj) => {
         this.setState(obj, () => {
-            this.timer = setTimeout(()=>{
+            let _time = setTimeout(()=>{
                 if(this.state.showReturnMsg) {
                     this.hideReturnBox();
                 }
             }, 2500);
+            this.timer.push(_time);
         });
     };
 
@@ -320,12 +325,13 @@ export default class ProductScreen extends Component {
             toValue: PX.rowHeight1,
             duration: 450,
         }).start(()=>{
-            this.timer = setTimeout(()=>{
+            let _time = setTimeout(()=>{
                 Animated.timing(this.state.msgPositon, {
                     toValue: 0,
                     duration: 300,
                 }).start();
             }, 2000);
+            this.timer.push(_time);
         });
     };
 
@@ -562,7 +568,7 @@ export default class ProductScreen extends Component {
                     data={goodList}
                     numColumns={2}
                     onScroll={this._onScroll}
-                    removeClippedSubviews={false}
+                    // removeClippedSubviews={false}
                     contentContainerStyle={styles.whiteBg}
                     keyExtractor={(item, index) => (index)}
                     enableEmptySections={true}
@@ -651,6 +657,7 @@ export default class ProductScreen extends Component {
         let shopHead = good.sLogo || null;
         shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
         let isGive = parseInt(good.gIntegral) || 0;
+        isGive = isGive > 0 ? true : false;
         let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;
         let isLimit = good.aStatus == 1 ? true : false;
         let endTime = good.aEndtime || null;
@@ -676,38 +683,33 @@ export default class ProductScreen extends Component {
                                 </Image> 
                             </View> :
                             <View style={styles.wrapperBox}>
-                                <Swiper
-                                    width={Size.width}
-                                    height={Size.width}
-                                    style={styles.wrapper}
-                                    horizontal={true}
-                                    showsPagination={true}
-                                    paginationStyle={styles.paginationStyle}
-                                    dot={(<View 
-                                        style={{
-                                            backgroundColor:'rgba(0, 0, 0, .3)',
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            margin: 5,
-                                        }}
-                                    />)}
-                                    activeDot={(<View 
-                                        style={{
-                                            backgroundColor:'rgba(229, 86, 69, 1)',
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            margin: 5,
-                                        }}
-                                    />)}
-                                    autoplay={false}
-                                    showsButtons={false}
+                                <SwiperDIY 
+                                    open3D={false}
+                                    autoPlay={false}
+                                    style={{
+                                        width: Size.width,
+                                        height: Size.width,
+                                    }}
+                                    spotBoxStyle={styles.paginationStyle}
+                                    spotStyle={{
+                                        backgroundColor:'rgba(0, 0, 0, .3)',
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: 3,
+                                        margin: 5,
+                                    }}
+                                    spotActiveStyle={{
+                                        backgroundColor:'rgba(229, 86, 69, 1)',
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: 3,
+                                        margin: 5,
+                                    }}
                                 >
                                     {img_arr.map((item, index)=>{
                                         return <Image key={index} source={{uri: item}} style={styles.productImg} />;
                                     })}
-                                </Swiper>
+                                </SwiperDIY>
                             </View>
                         }
                         <View style={styles.areaStockView}>
@@ -778,7 +780,7 @@ export default class ProductScreen extends Component {
                     </View>
                     {isLimit ?
                         <View style={styles.CountDownBox}>
-                            <CountDown endTime={endTime} />
+                            <CountDown endTime={parseInt(endTime)} />
                         </View>
                         : null
                     }

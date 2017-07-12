@@ -391,7 +391,7 @@ const AppNavigator = StackNavigator({
         screen: LoginExplainScreen,
     },
 }, {
-    initialRouteName: 'Welcome',
+    initialRouteName: 'TabNav',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
 });

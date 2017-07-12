@@ -11,6 +11,7 @@ import {
     View,
     Image,
     ListView,
+    TouchableOpacity,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -19,6 +20,7 @@ import Urls from '../public/apiUrl';
 import HeadBox from './HeadBox';
 import CityItem from './CityItem';
 import { EndView } from '../other/publicEment';
+import { Size, Color } from '../public/globalStyle';
 
 export default class CityList extends Component {
     // 默认参数
@@ -114,8 +116,21 @@ export default class CityList extends Component {
     // 列表的行内容
     renderItem = (obj, sectionID, rowID) => {
         if(!obj || !obj.proAdsAry || obj.proAdsAry.length == 0) return null;
+        let banner = obj.bannerAds || [];
+        let { navigation } = this.props;
         return (
             <View style={styles.itemBox}>
+                {banner.length > 0 ?
+                    <TouchableOpacity onPress={()=>{
+                        let gid = banner[0].adUrl || null;
+                        if(navigation && gid) {
+                            navigation.navigate('Product', {gid: gid});
+                        }
+                    }}>
+                        <Image source={{uri: banner[0].adImg || null}} style={styles.bannerStyle} />
+                    </TouchableOpacity>
+                    : null
+                }
                 <CityItem city={obj} showFloatMenu={this.props.showFloatMenu} navigation={this.props.navigation} />
             </View>
         );
@@ -131,5 +146,9 @@ var styles = StyleSheet.create({
     itemBox: {
         marginTop: 10,
         backgroundColor: '#fff',
+    },
+    bannerStyle: {
+        width: Size.width,
+        height: Size.width * 0.361,
     },
 });

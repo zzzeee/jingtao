@@ -58,6 +58,7 @@ export default class OrderComponent extends Component {
         let oIntegral = parseFloat(orderInfo.oIntegral) || 0;
         let oScoupon = parseFloat(orderInfo.oScoupon) || 0;
         this.totalMoney = (freight + price - oIntegral - oScoupon).toFixed(2);
+        if(this.totalMoney < 0) this.totalMoney = 0;
         let goods = orderInfo.oProduct || [];
         this.expressNum = orderInfo.oExpressNum || null;
         let payid = parseInt(orderInfo.oPay) || 0;
