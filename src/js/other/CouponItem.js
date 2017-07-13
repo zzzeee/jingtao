@@ -211,7 +211,7 @@ export default class CouponItem extends Component {
                 <View style={style}>
                     <TouchableOpacity 
                         activeOpacity={1}
-                        disabled={isReceive || !canReceive}
+                        disabled={(type != 3 && (isReceive || !canReceive))}
                         style={{backgroundColor: bgColor}}
                         onPress={()=>{
                             if(type == 3) {

@@ -67,7 +67,7 @@ export default class MyIntegral extends Component {
                 console.log(result);
                 if(result && result.sTatus == 1 && result.integralAry) {
                     let info = result.integralAry || {};
-                    let mIntegral = info.mIntegral || null;
+                    let mIntegral = parseInt(info.mIntegral) || 0;
                     let mUserIntegral = info.mUserIntegral || null;
                     let datas = info.integralAry || [];
                     this.setState({ mIntegral, mUserIntegral, datas });

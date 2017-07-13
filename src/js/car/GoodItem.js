@@ -85,11 +85,12 @@ export default class GoodItem extends Component {
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
         let img = good.gPicture || null;
+        if(!img) img = good.gThumbPic || null;
         let goodImg = img ? {uri: img} : require('../../images/empty.png');
         let goodName = good.gName || '';
         let goodAttr = good.mcAttr || '';
         let goodPrice = good.gPrice || null;
-        let goodType = good.type || 0;
+        let goodType = (good.aStatus && good.aStatus == 1) ? true : false;
         this.number = parseInt(good.gNum);
         return (
             <View style={styles.goodBox}>

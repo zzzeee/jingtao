@@ -427,17 +427,17 @@ export default class FindScreen extends Component {
             if(plist[0]) {
                 let _img = plist[0].gThumbPic || null;
                 gid1 = plist[0].gID || 0;
-                p1 = <Image source={{uri: _img}} style={styles.flex} />;
+                p1 = <Image source={{uri: _img}} style={styles.shopProductBig} />;
             }
             if(plist[1]) {
                 let _img = plist[1].gThumbPic || null;
                 gid2 = plist[1].gID || 0;
-                p2 = <Image source={{uri: _img}} style={styles.flex} />;
+                p2 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
             }
             if(plist[2]) {
                 let _img = plist[2].gThumbPic || null;
                 gid3 = plist[2].gID || 0;
-                p3 = <Image source={{uri: _img}} style={styles.flex} />;
+                p3 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
             }
 
             return (
@@ -458,7 +458,7 @@ export default class FindScreen extends Component {
                             if(navigation && gid1 && gid1 > 0) {
                                 navigation.navigate('Product', {gid: gid1});
                             }
-                        }} style={styles.shopProductBig}>
+                        }}>
                             {p1}
                         </TouchableOpacity>
                         <View>
@@ -466,14 +466,14 @@ export default class FindScreen extends Component {
                                 if(navigation && gid2 && gid2 > 0) {
                                     navigation.navigate('Product', {gid: gid2});
                                 }
-                            }} style={[styles.shopProductSmall, {marginBottom: 5}]}>
+                            }} style={{marginBottom: 5}}>
                                 {p2}
                             </TouchableOpacity>
                             <TouchableOpacity onPress={()=>{
                                 if(navigation && gid3 && gid3 > 0) {
                                     navigation.navigate('Product', {gid: gid3});
                                 }
-                            }} style={styles.shopProductSmall}>
+                            }}>
                                 {p3}
                             </TouchableOpacity>
                         </View>
@@ -580,7 +580,7 @@ var styles = StyleSheet.create({
     },
     bannerImgStyle: {
         width: Size.width,
-        height: Size.width * 0.5,
+        height: Size.width * 0.45,
     },
     mdypImgStyle: {
         height: 31,
@@ -631,9 +631,13 @@ var styles = StyleSheet.create({
         width: bigImageHeight,
         height: bigImageHeight,
         marginRight: 5,
+        borderWidth: pixel,
+        borderColor: Color.lavender,
     },
     shopProductSmall: {
         width: Size.width - 35 - bigImageHeight,
         height: bigImageHeight / 2 - 3,
+        borderWidth: pixel,
+        borderColor: Color.lavender,
     },
 });

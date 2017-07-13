@@ -21,6 +21,7 @@ export default class OrderGood extends Component {
         let { good, onPress } = this.props;
         if(!good) return null;
         let goodImgUrl = good.gPicture || null;
+        if(!goodImgUrl) goodImgUrl = good.gThumbPic || null;
         let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.png');
         let goodName = good.gName || null;
         let goodAttr = good.mcAttr || null;
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: PX.marginLR,
         marginBottom: 3,
-        backgroundColor: Color.floralWhite,
+        backgroundColor: '#F3F4F8',
     },
     goodImageStyle: {
         width: 90,

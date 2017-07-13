@@ -78,6 +78,7 @@ export default class AlertMoudle extends Component {
                             }]} onPress={leftClick} activeOpacity={1}>
                                 <Text style={[styles.leftBottonText, {color: leftColor}]}>{leftText}</Text>
                             </TouchableOpacity>
+                            <View style={styles.lineStyle} />
                             <TouchableOpacity style={[styles.rightBottonStyle, {
                                 backgroundColor: rightBgColor,
                             }]} onPress={rightClick} activeOpacity={1}>
@@ -131,13 +132,17 @@ var styles = StyleSheet.create({
     leftBottonText: {
         fontSize: 16,
     },
+    lineStyle: {
+        height: 50,
+        width: 0,
+        borderLeftWidth: pixel,
+        borderLeftColor: Color.lavender,
+    },
     rightBottonStyle: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomRightRadius: 5,
-        borderLeftWidth: pixel,
-        borderLeftColor: Color.lavender,
     },
     rightBottonText: {
         fontSize: 16,

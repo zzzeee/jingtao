@@ -269,16 +269,14 @@ export default class Shop extends Component {
                             <Text numberOfLines={1} style={styles.shopArea}>{sArea}</Text>
                         </View>
                         <View>
-                            <TouchableOpacity onPress={this.collectionShop} style={[styles.btnCollectionBox, {
-                                backgroundColor: isCollection ? 'transparent' : '#fff',
-                            }]}>
+                            <TouchableOpacity onPress={this.collectionShop} style={styles.btnCollectionBox}>
                                 {isCollection ?
                                     <Image source={require('../../images/favorite_white.png')} style={styles.collectionIcon} /> :
-                                    <Image source={require('../../images/favorite_gary.png')}  style={styles.collectionIcon} />
+                                    <Image source={require('../../images/favorite_white_empty.png')}  style={styles.collectionIcon} />
                                 }
                                 <Text style={{
                                     fontSize: 11,
-                                    color: isCollection ? '#fff' : Color.gainsboro2,
+                                    color: '#fff',
                                 }}>{isCollection ? Lang[Lang.default].collectioned : Lang[Lang.default].notCollection}</Text>
                             </TouchableOpacity>
                         </View>
@@ -342,14 +340,14 @@ const styles = StyleSheet.create({
     },
     areaImgBg: {
         width: Size.width,
-        height: 150,
+        height: 130,
+        marginBottom: PX.marginTB,
     },
     areaImgBgOver: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, .45)',
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
-        paddingTop: 20,
     },
     inputRow: {
         height: PX.rowHeight2,
@@ -361,13 +359,12 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        height: PX.rowHeight2 + PX.statusHeight - 1,
+        height: PX.rowHeight2 - 1,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
         paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
-        paddingTop: PX.statusHeight,
         borderBottomColor: Color.lavender,
         borderBottomWidth: pixel,
     },
@@ -411,8 +408,7 @@ const styles = StyleSheet.create({
     headNameBox: {
         height: 86,
         flexDirection: 'row',
-        alignItems: 'flex-end',
-        paddingBottom: 13,
+        alignItems: 'center',
     },
     logoStyle: {
         height: 60,

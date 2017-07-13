@@ -60,7 +60,7 @@ export default class PersonalScreen extends Component {
             Utils.fetch(Urls.getUserInfo, 'post', {
                 mToken: this.mToken,
             }, (result) => {
-                // console.log(result);
+                console.log(result);
                 if(result && result.sTatus == 1) {
                     this.setState({
                         islogin: true,
@@ -85,7 +85,7 @@ export default class PersonalScreen extends Component {
         let noReceipt = (orderNum && orderNum.noReceipt) ? (parseInt(orderNum.noReceipt) || 0) : 0;
         if(islogin && userInfo) {
             name = userInfo.mNickName || userInfo.mPhone;
-            integral = userInfo.mIntegral || 0;
+            integral = parseInt(userInfo.mIntegral) || 0;
         }
         let couponOverdue = (mCouponNum && mCouponNum > 0) ? 
             str_replace(Lang[Lang.default].couponBeOverdue, mCouponNum) : '';
@@ -103,10 +103,12 @@ export default class PersonalScreen extends Component {
                                     <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
                                     <Text style={styles.userNameText}>{name}</Text>
                                 </View>
-                                <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
-                                    <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, integral)}</Text>
-                                    <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
-                                </Image>
+                                <TouchableOpacity onPress={()=>this.linkPage(true, 'MyIntegral')}>
+                                    <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
+                                        <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, integral)}</Text>
+                                        <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
+                                    </Image>
+                                </TouchableOpacity>
                             </View> :
                             <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
                                 <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{
@@ -119,13 +121,13 @@ export default class PersonalScreen extends Component {
                         }
                     </Image>
                     <View style={styles.btnsListBox}>
-                        <View style={styles.orderRow}>
+                        <TouchableOpacity style={styles.orderRow} onPress={()=>this.linkPage(true, 'MyOrder')}>
                             <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
-                            <TouchableOpacity style={styles.lightTextBox} onPress={()=>this.linkPage(true, 'MyOrder')}>
+                            <View style={styles.lightTextBox}>
                                 <Text style={styles.lightText}>{Lang[Lang.default].viewAllOrder}</Text>
                                 <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
-                            </TouchableOpacity>
-                        </View>
+                            </View>
+                        </TouchableOpacity>
                         <View style={styles.ctrlBtnBox}>
                             <BtnIcon 
                                 src={require('../../images/personal/daifukuan.png')} 
@@ -189,7 +191,7 @@ export default class PersonalScreen extends Component {
                             'CouponList', 
                             couponOverdue
                         )}
-                        {this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)}
+                        {/*this.btnRow(require('../../images/personal/myWallet.png'), Lang[Lang.default].myWallet, null, null)*/}
                         {this.btnRow(require('../../images/personal/myCollection.png'), Lang[Lang.default].myCollection, 'Collection', null)}
                         {this.btnRow(require('../../images/personal/myAddress.png'), Lang[Lang.default].myAddress, 'AddressList', null)}
                     </View>

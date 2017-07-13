@@ -62,6 +62,7 @@ export default class CarsScreen extends Component {
         this.ref_flatList = null;
         this.alertObject = {};
         this.userinfo = null;
+        this.total = 0;
     }
 
     componentDidMount() {
@@ -83,7 +84,7 @@ export default class CarsScreen extends Component {
     }
 
     //初始化数据
-    initDatas = async (someRefresh = false) => {
+    initDatas = async () => {
         let obj = {
             isRefreshing: false,
         };
@@ -117,6 +118,7 @@ export default class CarsScreen extends Component {
                     obj.carDatas = userCar.normalAry || [];
                     obj.invalidList = userCar.abnormalAry || [];
                     if(!this.state.goodList) {
+                        console.log('加载猜你喜欢商品')
                         let recommends = await Utils.async_fetch(Urls.getRecommendList, 'get', {
                             pPage: this.page, 
                             pPerNum: this.pageNumber,
@@ -125,7 +127,11 @@ export default class CarsScreen extends Component {
                             this.page++;
                             obj.goodList = recommends.proAry || [];
                         }
+                    }else {
+                        console.log('没有加载猜你喜欢商品')
                     }
+                }else {
+                    obj.carDatas = [];
                 }
             }
         }
@@ -277,7 +283,7 @@ export default class CarsScreen extends Component {
         }else {
             return (
                 <View style={styles.flex}>
-                    <View style={styles.flex}>
+                    <View style={styles.container}>
                         {this.bodyContent()}
                     </View>
                     {(carDatas && carDatas.length > 0) ?
@@ -325,7 +331,7 @@ export default class CarsScreen extends Component {
                                     <View style={styles.rowStyle}>
                                         <View style={styles.carFooterRightLeft}>
                                             <Text style={styles.textStyle1}>{Lang[Lang.default].total2 + ':'}</Text>
-                                            <Text style={styles.textStyle2}>{100}</Text>
+                                            <Text style={styles.textStyle2}>{this.total}</Text>
                                             <Text style={styles.textStyle3}>{Lang[Lang.default].excludingFreight}</Text>
                                         </View>
                                         <TouchableOpacity style={styles.btnSettlement} onPress={this.goSettlement}>
@@ -512,13 +518,19 @@ export default class CarsScreen extends Component {
         if(key1 !== null) {
             //如果全部被选中激活全选
             let isSelectAll = true;
+            let _total = 0;
             for(let i in datas) {
                 for(let j in datas[i]['cPro']) {
-                    if(datas[i]['cPro'][j].select === false) {
+                    if(datas[i]['cPro'][j].select) {
+                        let price = parseFloat(datas[i]['cPro'][j].gPrice) || 0;
+                        let number = parseInt(datas[i]['cPro'][j].gNum) || 0;
+                        _total += (price * number);
+                    }else if(datas[i]['cPro'][j].select === false) {
                         isSelectAll = false;
                     }
                 }
             }
+            this.total = parseFloat(_total.toFixed(2));
             this.setState({
                 isSelect: isSelectAll,
                 ctrlSelect: null,
@@ -628,18 +640,13 @@ export default class CarsScreen extends Component {
                     if(type == 1) {
                         obj.invalidList = [];
                     }else if(type == 2) {
-                        let cars = that.state.carDatas || [];
-                        for(let i in cars) {
-                            for(let i2 in cars[i]['cPro']) {
-                                for(let i3 in carIDs) {
-                                    if(cars[i]['cPro'][i2].mcID == carIDs[i3]) {
-                                        cars[i]['cPro'].splice(i2, 1);
-                                    }
-                                }
-                            }
-                        }
-                        console.log(cars);
-                        obj.carDatas = cars;
+                        obj.carDatas = null;
+                        obj.isRefreshing = true;
+                        that.setState(obj, ()=>{
+                            that.resultMsgAnimated();
+                            that.initDatas();
+                        });
+                        return;
                     }
                     that.setState(obj, that.resultMsgAnimated);
                 }
@@ -669,7 +676,7 @@ export default class CarsScreen extends Component {
                             this.setState({
                                 deleteAlert: false,
                                 operateMsg: result.sMessage,
-                            }, that.resultMsgAnimated);
+                            }, this.resultMsgAnimated);
                         }
                     }
                 });
@@ -734,6 +741,10 @@ var styles = StyleSheet.create({
     flex: {
         flex: 1,
     },
+    container: {
+        flex: 1,
+        backgroundColor: Color.lightGrey,
+    },
     editCarText: {
         fontSize: 14,
         color: Color.orangeRed,
@@ -769,7 +780,7 @@ var styles = StyleSheet.create({
     textStyle2: {
         color: Color.orangeRed,
         fontSize: 14,
-        paddingRight: PX.marginLR,
+        paddingRight: 10,
     },
     textStyle3: {
         color: Color.gainsboro,

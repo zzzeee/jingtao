@@ -119,12 +119,12 @@ export default class SendCode extends Component {
 
 var styles = StyleSheet.create({
     btnBox: {
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 4,
-        paddingBottom: 4,
         borderRadius: 3,
         borderWidth: 1,
+        width: 100,
+        height: 27,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     btnText: {
         fontSize: 13,

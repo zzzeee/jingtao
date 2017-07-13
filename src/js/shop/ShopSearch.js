@@ -16,6 +16,7 @@ import {
     Keyboard,
 } from 'react-native';
 
+import BtnIcon from '../public/BtnIcon';
 import SearchData from './AsyncSearch';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
@@ -134,6 +135,18 @@ export default class ShopSearch extends Component {
         }
     };
 
+    //点击搜索历史
+    clickSearchItemText = (str) => {
+        this.page = 1;
+        this.search_name = str;
+        this.loadMoreLock = false;
+        this.setState({
+            sdatas: [],
+            searchtext: str,
+            load_or_error: this.getLoadView(),
+        }, this.getProductList);
+    };
+
     //获取产品列表
     getProductList = () => {
         if(!this.loadMoreLock && !this.searchLock) {
@@ -182,24 +195,24 @@ export default class ShopSearch extends Component {
         return (
             <View style={styles.container}>
                 <AppHead
-                    goBack={true}
-                    navigation={navigation}
+                    style={{backgroundColor: Color.mainColor, }}
+                    left={(<BtnIcon width={PX.headIconSize} press={()=>{
+                        navigation.goBack(null);
+                    }} src={require("../../images/back_white.png")} />)}
                     right={<Text style={styles.headRightText} onPress={this.clickSearch}>{Lang[Lang.default].search}</Text>}
                     center={
                         <View style={styles.headInputBox}>
                             <InputText
                                 vText={this.state.searchtext}
-                                pText={Lang[Lang.default].shopSearch}
+                                pText={Lang[Lang.default].inputSearchProductName}
                                 onChange={this.setSearchtext}
                                 length={20}
                                 style={styles.inputStyle}
-                                onFocus={this.linkShopSearch}
-                                focus={true}
                             />
-                            <Image style={styles.inputBeforeImg} source={require('../../images/search_gary.png')} />
+                            <Image style={styles.inputBeforeImg} source={require('../../images/home/search_white.png')} />
                             {this.state.searchtext ?
                                 <TouchableOpacity style={styles.inputAfterBox} onPress={()=>this.setSearchtext('')}>
-                                    <Image style={styles.inputAfterImg} source={require('../../images/login/close.png')} />
+                                    <Image style={styles.inputAfterImg} source={require('../../images/home/close_white.png')} />
                                 </TouchableOpacity>
                                 : null
                             }
@@ -273,7 +286,7 @@ export default class ShopSearch extends Component {
 
     renderLogItem = (item, index) => {
         return (
-            <TouchableOpacity key={index} onPress={()=>this.clickSearchItemText(item)}>
+            <TouchableOpacity key={index} style={{margin: 10,}} onPress={()=>this.clickSearchItemText(item)}>
                 <Text style={styles.searchItemText}>{item}</Text>
             </TouchableOpacity>
         );
@@ -360,19 +373,18 @@ const styles = StyleSheet.create({
         color: Color.lightBack,
     },
     headInputBox: {
-        width: Size.width - 144,
+        width: Size.width - 112,
     },
     inputStyle: {
         height: 32,
-        borderWidth: 0,
-        borderBottomWidth: pixel,
-        borderBottomColor: Color.lightBack,
-        color: 'rgba(0, 0, 0, 1)',
+        borderRadius: 5,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        color: 'rgba(255, 255, 255, .5)',
         fontSize: 13,
-        padding: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
         paddingLeft: 32,
-        borderRadius: 0,
-        backgroundColor: 'transparent',
+        paddingRight: 32,
     },
     inputBeforeImg: {
         width: 18,
@@ -393,7 +405,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     headRightText: {
-        color: Color.mainColor,
+        color: '#fff',
         fontSize: 14,
         padding: 5,
     },
@@ -460,7 +472,6 @@ const styles = StyleSheet.create({
         borderColor: Color.lightGrey,
         borderWidth: 1,
         borderRadius: 3,
-        margin: 10,
     },
     btnProductItem: {
         width: Size.width,

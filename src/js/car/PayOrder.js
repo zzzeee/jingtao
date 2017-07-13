@@ -126,12 +126,17 @@ export default class PayOrder extends Component {
     //支付失败
     payFailed = () => {
         let { mToken, orderNumber, navigation, } = this.props;
-        console.log(this.props);
-        navigation.navigate('OrderDetail', {
-            mToken: mToken,
-            isRefresh: true,
-            shopOrderNum: orderNumber,
-        });
+        if(orderNumber) {
+            if(String(orderNumber).indexOf('jt') >= 0) {
+                navigation.navigate('MyOrder', {mToken: mToken});
+            }else {
+                navigation.navigate('OrderDetail', {
+                    mToken: mToken,
+                    isRefresh: true,
+                    shopOrderNum: orderNumber,
+                });
+            }
+        }
     };
 
     //获取微信支付信息

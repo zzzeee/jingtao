@@ -111,6 +111,7 @@ class MyNavScren extends Component {
          * }
          */
         let isShowStatu = NavScreen.name == 'Shop' ? false : true;
+        isShowStatu = true;
         return (
             <View style={styles.flex}>
                 <StatusBar hidden={!isShowStatu} backgroundColor={Color.mainColor} barStyle="light-content" />
@@ -391,7 +392,7 @@ const AppNavigator = StackNavigator({
         screen: LoginExplainScreen,
     },
 }, {
-    initialRouteName: 'TabNav',
+    initialRouteName: 'Welcome',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
 });

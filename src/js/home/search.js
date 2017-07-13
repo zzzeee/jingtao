@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
         color: Color.lightBack,
     },
     headInputBox: {
-        width: Size.width - 144,
+        width: Size.width - 112,
     },
     inputStyle: {
         height: 32,

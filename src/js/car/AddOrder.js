@@ -105,6 +105,7 @@ export default class AddOrder extends Component {
                 addressID: this.addressID,
             }, this.orderParam);
             this.orderParam.mToken = this.mToken;
+            console.log(obj);
             Utils.fetch(Urls.buyNowAPI, 'post', obj, this.orderInfoCallBack, null, {
                 catchFunc: (err)=>console.log(err),
             });
@@ -118,7 +119,7 @@ export default class AddOrder extends Component {
             let that = this;
             let list = result.oOrder || [];
             let addressList = result.addressAry || null;
-            let mIntegral = parseFloat(result.mIntegral) || 0;
+            let mIntegral = parseInt(result.mIntegral) || 0;
             let mCoupon = result.mCoupon || [];
             for(let i in list) {
                 let gPrice = parseFloat(list[i].soPrice) || 0;
@@ -164,7 +165,9 @@ export default class AddOrder extends Component {
     selectCoupon = (coupon) => {
         console.log(coupon);
         if(coupon && coupon.hMoney && coupon.hUseMoney) {
-            this.couponDiscount = this.productTotal > coupon.hUseMoney ? coupon.hMoney : 0;
+            let couMoney = parseFloat(coupon.hMoney) || 0;
+            let useMoney = parseFloat(coupon.hUseMoney) || 0;
+            this.couponDiscount = this.productTotal >= useMoney ? couMoney : 0;
             this.selCoupon = coupon;
             this.hideCouponBox();
         }
