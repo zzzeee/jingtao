@@ -122,9 +122,12 @@ export default class CityList extends Component {
             <View style={styles.itemBox}>
                 {banner.length > 0 ?
                     <TouchableOpacity onPress={()=>{
-                        let gid = banner[0].adUrl || null;
-                        if(navigation && gid) {
-                            navigation.navigate('Product', {gid: gid});
+                        let type = banner[0].adType || 0;
+                        let id = banner[0].adUrl || null;
+                        if(navigation && id && type == 1) {
+                            navigation.navigate('Product', {gid: id});
+                        }else if(navigation && id && type == 0) {
+                            navigation.navigate('Shop', {shopID: id});
                         }
                     }}>
                         <Image source={{uri: banner[0].adImg || null}} style={styles.bannerStyle} />

@@ -68,6 +68,14 @@ export default class ProductItem extends Component {
             <TouchableOpacity activeOpacity={1} onPress={()=>{
                 if(gid > 0 && navigation) {
                     navigation.navigate('Product', {gid: gid});
+                }else {
+                    let type = product.adType || 0;
+                    let id = product.adUrl || null;
+                    if(navigation && id && type == 1) {
+                        navigation.navigate('Product', {gid: id});
+                    }else if(navigation && id && type == 0) {
+                        navigation.navigate('Shop', {shopID: id});
+                    }
                 }
             }}>
                 <View style={[styles.productBox, {width: width}, boxStyle]}>

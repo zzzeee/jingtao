@@ -916,8 +916,8 @@ export default class ProductScreen extends Component {
     getFreightInfo = () => {
         let province = this.province && this.province.name ? this.province.name : null;
         let city = this.city && this.city.name ? this.city.name : '';
-        let freight = this.freight || '';
-        if(province && freight) {
+        let freight = this.freight || 0;
+        if(province) {
             let str = Lang[Lang.default].to + ' ' + province + ' ' + city;
             return (
                 <View style={styles.selectedBox}>
