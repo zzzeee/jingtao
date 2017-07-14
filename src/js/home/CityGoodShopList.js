@@ -508,10 +508,10 @@ export default class CityGoodShopList extends Component {
                                 this.sort = 4;
                             }
                         }else {
-                            this.sort = index + 1;
+                            this.sort = (index == 1) ? 5 : (index + 1);
                         }
                     }else {
-                        this.sort = index + 1;
+                        this.sort = (index == 1) ? 5 : (index + 1);
                     }
                     this.setState({
                         sortIndex: index,

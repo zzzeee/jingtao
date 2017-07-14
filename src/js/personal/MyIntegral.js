@@ -13,6 +13,7 @@ import {
     Image,
     Animated,
     FlatList,
+    TouchableOpacity,
 } from 'react-native';
 
 import Utils from '../public/utils';
@@ -170,9 +171,11 @@ export default class MyIntegral extends Component {
                         <Text style={styles.integralNumberText2}>{mIntegral}</Text>
                         <Text style={styles.topTxt}>{Lang[Lang.default].point}</Text>
                     </View>
-                    <View style={styles.footGroupView}>
+                    <TouchableOpacity style={styles.footGroupView} onPress={()=>{
+                        navigation.navigate('TabNav');
+                    }}>
                         <Image style={styles.footGroup} source={require('../../images/personal/group.png')} />
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.ruleBox}>
                     <Text style={styles.ruleTextLeft}>{Lang[Lang.default].integralDetailed}</Text>

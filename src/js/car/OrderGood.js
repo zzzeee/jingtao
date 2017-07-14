@@ -38,7 +38,10 @@ export default class OrderGood extends Component {
                     <View style={[styles.rowViewStyle, {justifyContent: 'space-between'}]}>
                         <View style={styles.rowViewStyle}>
                             <Text style={styles.goodPriceStyle}>{Lang[Lang.default].RMB + goodPrice}</Text>
-                            <Text style={[styles.goodAttrStyle, {paddingRight: 10}]}>{martPrice}</Text>
+                            <Text style={[styles.goodAttrStyle, {
+                                paddingRight: 10,
+                                textDecorationLine: 'line-through',
+                            }]}>{martPrice}</Text>
                             {isLimit ?
                                 <Text style={styles.timeLimit}>{Lang[Lang.default].timeLimit}</Text>
                                 : null

@@ -58,15 +58,19 @@ export default class Search extends Component {
             'text': Lang[Lang.default].comprehensive,
             'isRepeat': false,
             'press': null,
+            'value1': 1,
         }, {
             'text': Lang[Lang.default].price,
             'isRepeat': true,
             'press': null,
+            'value1': 2,
+            'value2': 5,
         }, {
             // 'text': Lang[Lang.default].newGood,
             'text': '同城日达',
             'isRepeat': false,
             'press': null,
+            'value1': 3,
         }, {
             'text': Lang[Lang.default].goodOrigin,
             'isRepeat': true,
@@ -415,6 +419,9 @@ export default class Search extends Component {
             require('../../images/more_down.png');
         return (
             <TouchableOpacity disabled={this.btnDisable} key={index} onPress={()=>{
+                console.log(item);
+                console.log(index);
+                console.log(this.state.sortIndex);
                 if(index == 3) {
                     this.searchLock = false;
                     this.setState({
@@ -434,10 +441,10 @@ export default class Search extends Component {
                                 this.sort = 2;
                             }
                         }else {
-                            this.sort = index + 1;
+                            this.sort = (index == 1) ? 5 : (index + 1);
                         }
                     }else {
-                        this.sort = index + 1;
+                        this.sort = (index == 1) ? 5 : (index + 1);
                     }
                     this.setState({
                         sortIndex: index,
