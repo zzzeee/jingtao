@@ -161,6 +161,7 @@ export default class CouponItem extends Component {
         let couponBg = null, height = null;
         let isReceive = (this.state.receive || this.isReceiveCoupon(id)) ? true : false;
         let overImg = null;
+        let theme = 1;
         if(type == 1) {
             height = 120;
             couponBg = sid > 0 ?
@@ -182,6 +183,7 @@ export default class CouponItem extends Component {
             if(canReceive && !clearOverImg) {
                 if(isReceive) {
                     if(type == 3) {
+                        theme = 2;
                         overImg = require('../../images/car/use_coupon.png');
                     }else {
                         couponBg = require('../../images/car/coupons_bg_out.png');
@@ -193,7 +195,7 @@ export default class CouponItem extends Component {
             if(isUse) overImg = require('../../images/personal/coupon_used.png');
         }
         if(overImg && type != 3) color = Color.gray;
-        let overImgStyle = type == 3 ? {
+        let overImgStyle = theme == 2 ? {
             width: 50, 
             height: 50,
             position: 'absolute',

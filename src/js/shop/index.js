@@ -268,7 +268,7 @@ export default class Shop extends Component {
                             <Text numberOfLines={1} style={styles.shopName}>{sName}</Text>
                             <Text numberOfLines={1} style={styles.shopArea}>{sArea}</Text>
                         </View>
-                        <View>
+                        <View style={styles.collectionBox}>
                             <TouchableOpacity onPress={this.collectionShop} style={styles.btnCollectionBox}>
                                 {isCollection ?
                                     <Image source={require('../../images/favorite_white.png')} style={styles.collectionIcon} /> :
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     flatListStyle: {
-        backgroundColor: Color.lightGrey,
+        backgroundColor: Color.floralWhite,
     },
     areaImgBg: {
         width: Size.width,
@@ -427,6 +427,11 @@ const styles = StyleSheet.create({
     shopArea: {
         fontSize: 12,
         color: '#FFF',
+    },
+    collectionBox: {
+        position: 'absolute',
+        right: 0,
+        bottom: 13,
     },
     btnCollectionBox: {
         borderWidth: 1,

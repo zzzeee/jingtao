@@ -145,7 +145,7 @@ var styles = StyleSheet.create({
     goodNameText: {
         paddingLeft: 10,
         paddingRight: 2,
-        fontSize: 11,
+        fontSize: 13,
     },
     gPriceBox: {
         flexDirection: 'row',

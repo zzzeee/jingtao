@@ -81,12 +81,16 @@ export default class CountDown extends Component {
         if(number) {
             let list = [];
             for(let n in number) {
-                if(!isNaN(Number(n))) {
-                    let num = Number(number[n]) || 0;
-                    num = isNaN(num) ? 0 : num;
-                    if(num > 0 || (num == 0 && list.length > 0) || number == this.state.seconds) {
-                        list.push(num);
-                    }
+                if(!isNaN(Number(number[n]))) {
+                    // 前缀不加0
+                    // let num = Number(number[n]) || 0;
+                    // num = isNaN(num) ? 0 : num;
+                    // if(num > 0 || (num == 0 && list.length > 0) || number == this.state.seconds) {
+                    //     list.push(num);
+                    // }
+
+                    // 前缀加0
+                    list.push(number[n]);
                 }
             }
 
@@ -102,6 +106,14 @@ export default class CountDown extends Component {
             }
         }
         return null;
+    };
+
+    //生成字符串
+    createString = (num) => {
+        if(num < 10) {
+            return '0' + num;
+        }
+        return String(num);
     };
 
     //倒计时
@@ -120,19 +132,18 @@ export default class CountDown extends Component {
             //相差的秒数
             let leave3 = leave2 % (60 * 1000);          //去除分钟后余出来的毫秒数
             let seconds = Math.round(leave3 / 1000);
-            let that = this;
             if(!days && !hours && !minutes && !seconds) {
                 this.setState({animate: false});
             }else {
                 this.setState({
                     animate: true,
-                    days: new String(days),
-                    hours: new String(hours),
-                    minutes: new String(minutes),
-                    seconds: new String(seconds),
+                    days: this.createString(days),
+                    hours: this.createString(hours),
+                    minutes: this.createString(minutes),
+                    seconds: this.createString(seconds),
                 });
-                that.timer = setTimeout(() => { 
-                    return that.calculationTime(etime);
+                this.timer = setTimeout(() => { 
+                    this.calculationTime(etime);
                 }, 900);
             }
         }else {
