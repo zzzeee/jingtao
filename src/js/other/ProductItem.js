@@ -50,7 +50,7 @@ export default class ProductItem extends Component {
         if(!product) return null;
         let gid = product.gID || 0;
         let type = product.num || 0;
-        let gimg = product.gThumbPic || '';
+        let gimg = product.gThumBPic || (product.gThumbPic ? product.gThumbPic : null);
         let name = product.gName || '';
         let isLimit = product.aStatus == 1 ? true : false;
         let gPrice = parseFloat(product.gPrices) || '';

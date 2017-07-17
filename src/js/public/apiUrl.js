@@ -5,7 +5,7 @@
  */
 
 var host = 'http://vpn.jingtaomart.com';
-host = 'http://api.jingtaomart.com';
+// host = 'http://api.jingtaomart.com';
 
 var urls = {
     //服务器地址
