@@ -482,7 +482,10 @@ export default class ProductScreen extends Component {
                         </TouchableOpacity>
                         <View style={styles.btnCarBox}>
                             <TouchableOpacity onPress={()=>{
-                                navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                                navigation.navigate('TabNav', {
+                                    PathKey: TABKEY.car,
+                                    goGoodDetails: true,
+                                });
                             }} style={[styles.productContactImg, {
                                 padding: 5,
                                 alignItems: 'center',
@@ -496,7 +499,10 @@ export default class ProductScreen extends Component {
                             </TouchableOpacity>
                             {(this.carNumber && this.carNumber > 0) ?
                                 <TouchableOpacity disabled={gdel} onPress={()=>{
-                                    navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                                    navigation.navigate('TabNav', {
+                                        PathKey: TABKEY.car,
+                                        goGoodDetails: true,
+                                    });
                                 }} style={styles.carNumberStyle}>
                                     <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
                                 </TouchableOpacity>
