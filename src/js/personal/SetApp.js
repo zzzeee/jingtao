@@ -13,6 +13,8 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
+
 import User from '../public/user';
 import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
@@ -56,7 +58,14 @@ export default class SetApp extends Component {
                             _User.delUserID(_User.keyMember)
                             .then(()=>{
                                 this.setState({deleteAlert: false,}, ()=>{
-                                    navigation.navigate('Login', {notBack: true, })
+                                    // navigation.navigate('Login', {notBack: true, })
+                                    let resetAction = NavigationActions.reset({
+                                        index: 0,
+                                        actions: [
+                                            NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
+                                        ]
+                                    });
+                                    navigation.dispatch(resetAction);
                                 });
                             });
                         }, '退出');
