@@ -135,8 +135,8 @@ export default class SwiperDIY extends Component {
     //定义触屏响应事件
     panResponderInit = PanResponder.create({
         // 要求成为响应者：
-        onStartShouldSetPanResponder: (evt, gestureState) => true,
-        onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+        onStartShouldSetPanResponder: (evt, gestureState) => false,
+        onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
         onMoveShouldSetPanResponder: (evt, gestureState) => true,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
         // 响应开始
@@ -243,7 +243,11 @@ export default class SwiperDIY extends Component {
                             outputRange: [0, -width],
                         })}];
                     }
-                    return (<Animated.View key={i} style={[styles.item, obj]}>{child}</Animated.View>);
+                    return (
+                        <Animated.View key={i} style={[styles.item, obj]}>
+                            {child}
+                        </Animated.View>
+                    );
                 })}
                 {showSpot ?
                     <View style={[styles.spotBox, spotBoxStyle]}>

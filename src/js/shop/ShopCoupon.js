@@ -90,7 +90,7 @@ export default class ShopCoupon extends Component {
         if(!coupons || coupons.length < 1 || !this.state.userCoupons) return null;
         return (
             <Image 
-                source={require('../../images/find/coupon_bg.png')} 
+                source={require('../../images/find/coupon_bg.jpg')} 
                 resizeMode="stretch" 
                 style={[styles.couponBox, style]}
             >

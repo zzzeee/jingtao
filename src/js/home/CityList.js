@@ -117,7 +117,7 @@ export default class CityList extends Component {
     renderItem = (obj, sectionID, rowID) => {
         if(!obj || !obj.proAdsAry || obj.proAdsAry.length == 0) return null;
         let banner = obj.bannerAds || [];
-        let { navigation } = this.props;
+        let { navigation, showFloatMenu } = this.props;
         return (
             <View style={styles.itemBox}>
                 {banner.length > 0 ?
@@ -134,7 +134,7 @@ export default class CityList extends Component {
                     </TouchableOpacity>
                     : null
                 }
-                <CityItem city={obj} showFloatMenu={this.props.showFloatMenu} navigation={this.props.navigation} />
+                <CityItem city={obj} showFloatMenu={showFloatMenu} navigation={navigation} />
             </View>
         );
     };

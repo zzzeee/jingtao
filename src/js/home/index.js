@@ -140,13 +140,16 @@ export default class HomeScreen extends Component {
                     </View>
                     {this.state.load_or_error ?
                         this.state.load_or_error :
-                        <CityList 
-                            isUpdate={this.state.updateData} 
-                            showFloatMenu={this.showFloatMenu} 
-                            pid={this.state.provinceID} 
-                            datas={this.state.datas} 
-                            navigation={navigation}
-                        />
+                        (this.state.datas ?
+                            <CityList 
+                                isUpdate={this.state.updateData} 
+                                showFloatMenu={this.showFloatMenu} 
+                                pid={this.state.provinceID} 
+                                datas={this.state.datas} 
+                                navigation={navigation}
+                            />
+                            : null
+                        )
                     }
                 </ScrollView>
                 <FloatMenu 

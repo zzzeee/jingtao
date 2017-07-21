@@ -210,14 +210,18 @@ export default class Shop extends Component {
                     navigation={navigation} 
                     recommends={proRecom}
                 />
-                <View>
-                    <ShopCoupon
-                        navigation={navigation}
-                        coupons={mCoupon}
-                        mToken={this.mToken}
-                        shopID={this.shopID}
-                    />
-                </View>
+                {(mCoupon && mCoupon.length > 0) ?
+                    <View>
+                        <ShopCoupon
+                            navigation={navigation}
+                            coupons={mCoupon}
+                            mToken={this.mToken}
+                            shopID={this.shopID}
+                        />
+                    </View>
+                    : null
+                }
+                
                 <View style={styles.goodlistTop}>
                     <View style={styles.goodTopLine}></View>
                     <View>

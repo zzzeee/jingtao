@@ -162,7 +162,7 @@ const language = {
         goodOrigin: '产地',
         stock: '库存',
         howMuch: '满%s元',
-        usePeriod: '使用期限',
+        usePeriod: '日期',  //使用期限
         productDetails: '商品详情',
         origin: '原产地',
         sevenDays: '七天包退',

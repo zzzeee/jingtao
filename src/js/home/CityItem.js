@@ -11,7 +11,7 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView,
+    FlatList,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -34,7 +34,7 @@ export default class CityItem extends Component {
         this.state = {
             datas: null,
             productNumber: null,
-            dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            dataSource: null,
         };
         this.nav = this.props.navigation;
     }
@@ -57,7 +57,7 @@ export default class CityItem extends Component {
             this.setState({
                 datas: city,
                 productNumber: list.length,
-                dataSource: this.state.dataSource.cloneWithRows(list),
+                dataSource: list,
             });
         }
     };
@@ -108,15 +108,18 @@ export default class CityItem extends Component {
                     <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
                     <Image source={{uri: img}} style={styles.cityImage} />
                 </View>
-                <ListView
-                    horizontal={true}
-                    initialListSize={2}
-                    enableEmptySections={true} 
-                    contentContainerStyle={styles.listViewStyle}
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderItem.bind(this)}
-                    showsHorizontalScrollIndicator={false}
-                />
+                {(this.state.dataSource && this.state.dataSource.length > 0) ?
+                    <FlatList
+                        horizontal={true}
+                        contentContainerStyle={styles.listViewStyle}
+                        keyExtractor={(item, index)=>{return item.gID ? item.gID : index}}
+                        enableEmptySections={true}
+                        data={this.state.dataSource}
+                        renderItem={this._renderItem}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                    : null
+                }
                 <View style={styles.cityItemFootBox}>
                     <View style={styles.noLeftBorder}>
                         <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
@@ -171,12 +174,11 @@ export default class CityItem extends Component {
         );
     }
 
-    _renderItem = (obj, sessonid, rowid, num) => {
+    _renderItem = ({item, index}) => {
         let margin_left = this.state.productNumber > 1 ? 15 : ((Size.width - PX.productWidth1) / 2);
         return (
             <ProductItem 
-                product={obj} 
-                key={rowid} 
+                product={item}
                 navigation={this.props.navigation}
                 boxStyle={{
                     marginLeft: margin_left, 

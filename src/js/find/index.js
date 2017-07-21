@@ -25,6 +25,7 @@ import Lang, {str_replace, TABKEY} from '../public/language';
 import ProductItem from '../other/ProductItem';
 import CountDown from './CountDown';
 import CouponItem from '../other/CouponItem';
+import SwiperDIY from '../other/SwiperDIY';
 
 var _User = new User();
 
@@ -64,7 +65,7 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(uCoupons);
-        console.log(xsqg);
+        // console.log(xsqg);
         // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
@@ -194,7 +195,8 @@ export default class FindScreen extends Component {
                 sPerNum: this.pageNumber,
             }, (result) => {
                 if(result && result.sTatus && result.shopAry.length) {
-                    let MDYP = that.state.MDYP.concat(result.shopAry);
+                    let old_mdyp = that.state.MDYP || [];
+                    let MDYP = old_mdyp.concat(result.shopAry);
                     console.log(MDYP);
                     that.pageOffest++;
                     that.setState({ MDYP }, ()=>{
@@ -235,34 +237,30 @@ export default class FindScreen extends Component {
         if(this.state.coupons.length > 0) {
             let that = this;
             return (
-                <Image source={require('../../images/find/coupon_bg.png')} resizeMode="stretch" style={styles.couponBox}>
-                    <Swiper
-                        width={Size.width * 0.8}
-                        height={160}
-                        style={styles.wrapper} 
-                        horizontal={true}
-                        showsPagination={true}
-                        paginationStyle={styles.paginationStyle}
-                        dot={(<View 
-                            style={{
-                                backgroundColor:'rgba(255, 255, 255, .3)',
-                                width: 8,
-                                height: 8,
-                                borderRadius: 2,
-                                margin: 5,
-                            }}
-                        />)}
-                        activeDot={(<View 
-                            style={{
-                                backgroundColor:'rgba(255, 255, 255, .8)',
-                                width: 8,
-                                height: 8,
-                                borderRadius: 2,
-                                margin: 5,
-                            }}
-                        />)}
-                        autoplay={true}
-                        showsButtons={false}>
+                <Image source={require('../../images/find/coupon_bg.jpg')} resizeMode="stretch" style={styles.couponBox}>
+                    <SwiperDIY 
+                        open3D={false}
+                        autoPlay={false}
+                        style={{
+                            width: Size.width * 0.8,
+                            height: 160,
+                        }}
+                        spotBoxStyle={styles.paginationStyle}
+                        spotStyle={{
+                            backgroundColor:'rgba(255, 255, 255, .3)',
+                            width: 8,
+                            height: 8,
+                            borderRadius: 2,
+                            margin: 5,
+                        }}
+                        spotActiveStyle={{
+                            backgroundColor:'rgba(255, 255, 255, .8)',
+                            width: 8,
+                            height: 8,
+                            borderRadius: 2,
+                            margin: 5,
+                        }}
+                    >
                         {this.state.coupons.map(function(item, index) {
                             return (
                                 <CouponItem 
@@ -278,7 +276,7 @@ export default class FindScreen extends Component {
                                 />
                             );
                         })}
-                    </Swiper>
+                    </SwiperDIY>
                 </Image>
             );
         }
@@ -335,7 +333,7 @@ export default class FindScreen extends Component {
     };
 
     render() {
-        let { MDYP, isRefreshing, } = this.state;
+        let { MDYP, isRefreshing, coupons, } = this.state;
         // if(!MDYP) return null;
         return (
             <View style={styles.flex}>
@@ -350,8 +348,8 @@ export default class FindScreen extends Component {
                 <View style={styles.bodyStyle}>
                     <FlatList
                         ref={(_ref)=>this.ref_flatList=_ref} 
-                        removeClippedSubviews={false}
                         data={MDYP}
+                        initialNumToRender={1}
                         keyExtractor={(item, index) => ('mdyp_' + index)}
                         renderItem={this.mdyp_renderItem}
                         ListHeaderComponent={this.topPage}
@@ -364,7 +362,7 @@ export default class FindScreen extends Component {
                             }
                         }}
                         // onEndReachedThreshold={20}
-                        getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
+                        // getItemLayout={(data, index)=>({length: PX.shopItemHeight, offset: PX.shopItemHeight * index, index})}
                         refreshing={isRefreshing}
                         onRefresh={()=>{
                             this.setState({isRefreshing: true});
@@ -422,22 +420,31 @@ export default class FindScreen extends Component {
         let plist = item.proAry || [];
         let img = item.sLogo || '';
         if(name && plist.length > 0) {
-            let p1 = null, p2 = null, p3 = null;
+            // let p1 = null, p2 = null, p3 = null;
             let gid1 = 0, gid2 = 0, gid3 = 0;
+            let p1 = null;
+            let p2 = null;
+            let p3 = null;
             if(plist[0]) {
                 let _img = plist[0].gThumbPic || null;
                 gid1 = plist[0].gID || 0;
-                p1 = <Image source={{uri: _img}} style={styles.shopProductBig} />;
+                if(_img) {
+                    p1 = <Image source={{uri: _img}} style={styles.shopProductBig} />;
+                }
             }
             if(plist[1]) {
                 let _img = plist[1].gThumbPic || null;
                 gid2 = plist[1].gID || 0;
-                p2 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                if(_img) {
+                    p2 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                }
             }
             if(plist[2]) {
                 let _img = plist[2].gThumbPic || null;
                 gid3 = plist[2].gID || 0;
-                p3 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                if(_img) {
+                    p3 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                }
             }
 
             return (
@@ -561,7 +568,7 @@ var styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0, 
-        bottom: 0,
+        top: 120,
         height: 40,
         justifyContent: 'flex-end',
         alignItems: 'center',
