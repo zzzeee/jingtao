@@ -22,7 +22,7 @@ export default class OrderGood extends Component {
         if(!good) return null;
         let goodImgUrl = good.gPicture || null;
         if(!goodImgUrl) goodImgUrl = good.gThumbPic || null;
-        let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.png');
+        let goodImg = goodImgUrl ? {uri: goodImgUrl} : require('../../images/empty.jpg');
         let goodName = good.gName || null;
         let goodAttr = good.mcAttr || null;
         let goodPrice = parseFloat(good.gPrice) || 0;

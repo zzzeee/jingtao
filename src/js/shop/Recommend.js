@@ -35,17 +35,17 @@ export default class Recommend extends Component {
         let p1 = null, p2 = null, p3 = null;
         let gid1 = gid2 = gid3 = 0;
         //第一张
-        let _img1 = recommends[0].gThumBPic ? {uri: recommends[0].gThumBPic} : require('../../images/empty.png');
+        let _img1 = recommends[0].gThumBPic ? {uri: recommends[0].gThumBPic} : require('../../images/empty.jpg');
         gid1 = recommends[0].gID || 0;
         p1 = <Image source={_img1} style={styles.bigImg} />;
         //第二张
         if(!recommends[1]) recommends[1] = recommends[0];
-        let _img2 = recommends[1].gThumBPic ? {uri: recommends[1].gThumBPic} : require('../../images/empty.png');
+        let _img2 = recommends[1].gThumBPic ? {uri: recommends[1].gThumBPic} : require('../../images/empty.jpg');
         gid2 = recommends[1].gID || 0;
         p2 = <Image source={_img2} style={styles.smallImg} />;
         //第三张
         if(!recommends[2]) recommends[2] = recommends[1];
-        let _img3 = recommends[2].gThumBPic ? {uri: recommends[2].gThumBPic} : require('../../images/empty.png');
+        let _img3 = recommends[2].gThumBPic ? {uri: recommends[2].gThumBPic} : require('../../images/empty.jpg');
         gid3 = recommends[2].gID || 0;
         p3 = <Image source={_img3} style={styles.smallImg} />;
 

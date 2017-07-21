@@ -64,7 +64,7 @@ export default class FindScreen extends Component {
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
         // console.log(uCoupons);
-        // console.log(xsqg);
+        console.log(xsqg);
         // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
@@ -125,7 +125,7 @@ export default class FindScreen extends Component {
             let end = xsqg.pbEndTime || null;
             let proList = xsqg.activityAry || [];
             let coupons = datas.couponAry || [];
-            let bannerImg = banner.pufaImg ? {uri: banner.pufaImg} : require('../../images/empty.png');
+            let bannerImg = banner.pufaImg ? {uri: banner.pufaImg} : require('../../images/empty.jpg');
             start = this.checkTimeString(start);
             end = this.checkTimeString(end);
             obj = {

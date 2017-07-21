@@ -121,7 +121,7 @@ export default class Welcome extends Component {
                 <View style={styles.welcomeImgBox}>
                     <Animated.Image style={[styles.welcomeImg, {
                         top: logoTop,
-                    }]} source={require('../images/logoTitle.png')} />
+                    }]} source={require('../images/logoTitle.jpg')} />
                 </View>
                 <View style={styles.lineBox}>
                     <Animated.View style={[styles.lineStyle, {

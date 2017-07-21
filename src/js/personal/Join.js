@@ -98,7 +98,7 @@ export default class Join extends Component {
                     navigation={navigation}
                 />
                 <ScrollView contentContainerStyle={styles.container}>
-                    <Image style={styles.bannerImg} source={require('../../images/personal/join_banner2.png')} />
+                    <Image style={styles.bannerImg} source={require('../../images/personal/join_banner.jpg')} />
                     <View style={styles.titleBox}>
                         <Text style={styles.titleStyle}>{Lang[Lang.default].nowJoin}</Text>
                     </View>

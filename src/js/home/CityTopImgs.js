@@ -44,7 +44,7 @@ export default class CityTopImgs extends Component {
     render() {
         let { cityImgs, width, height, navigation } = this.props;
         if(!cityImgs) return null;
-        let emptyImg = require('../../images/empty.png');
+        let emptyImg = require('../../images/empty.jpg');
         let imgStyle = {
             width: width,
             height: height,

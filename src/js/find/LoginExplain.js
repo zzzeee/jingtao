@@ -32,19 +32,19 @@ export default class LoginExplain extends Component {
                     <Text style={styles.titleStyle}>未注册用户, 请按以下步骤登录帐号。</Text>
                     <Text style={styles.defaultFont}>{"1 从“首页”底部导航栏处进入“个人中心”。"}</Text>
                     <View style={styles.imgBox}>
-                        <Image style={styles.imgStyle1} source={require('../../images/find/explain1.png')} />
+                        <Image style={styles.imgStyle1} source={require('../../images/find/explain1.jpg')} />
                     </View>
                     <Text style={styles.defaultFont}>{"2 在“个人中心”, 点击“登录”按钮。"}</Text>
                     <View style={styles.imgBox}>
-                        <Image style={styles.imgStyle2} source={require('../../images/find/explain2.png')} />
+                        <Image style={styles.imgStyle2} source={require('../../images/find/explain2.jpg')} />
                     </View>
                     <Text style={styles.defaultFont}>{"3 在“登录”页面, 点击“忘记密码”。"}</Text>
                     <View style={styles.imgBox}>
-                        <Image style={styles.imgStyle2} source={require('../../images/find/explain3.png')} />
+                        <Image style={styles.imgStyle2} source={require('../../images/find/explain3.jpg')} />
                     </View>
                     <Text style={styles.defaultFont}>{"4 在“忘记密码”页面中, 根据页面提示要求进入操作, 重新设置密码。"}</Text>
                     <View style={styles.imgBox}>
-                        <Image style={styles.imgStyle2} source={require('../../images/find/explain4.png')} />
+                        <Image style={styles.imgStyle2} source={require('../../images/find/explain4.jpg')} />
                     </View>
                     <Text style={styles.defaultFont}>{"5 最后, 使用新密码登录即可。"}</Text>
                 </ScrollView>

@@ -207,7 +207,7 @@ export default class ClassScreen extends Component {
                     let id = item.cID || 0;
                     let name = item.cName || '';
                     let imgurl = item.cdImg || null;
-                    let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
+                    let img = imgurl ? {uri: imgurl} : require('../../images/empty.jpg');
                     return (
                         <TouchableOpacity key={i + '-' + index} onPress={()=>{
                             if(navigation && id) {
@@ -233,7 +233,7 @@ export default class ClassScreen extends Component {
         let id = obj.cID || 0;
         let name = obj.cName || '';
         let imgurl = obj.cdImg || null;
-        let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
+        let img = imgurl ? {uri: imgurl} : require('../../images/empty.jpg');
         return (
             <View style={styles.classifyItem}>
                 <Image source={img} style={styles.classifyImg} />

@@ -298,7 +298,7 @@ export default class Collection extends Component {
         let sImg = item.sLogo || null;
         let gPrice = item.gDiscountPrice || '';
         let name = gName ? gName : (sName || '');
-        let img = gImg ? {uri: gImg} : (sImg ? {uri: sImg} : require('../../images/empty.png'));
+        let img = gImg ? {uri: gImg} : (sImg ? {uri: sImg} : require('../../images/empty.jpg'));
         return (
             <SwiperBtn key={index} 
                 style={styles.itemBoxStyle} 

@@ -235,8 +235,8 @@ export default class Shop extends Component {
         let { shopInfo, isCollection, } = this.state;
         let sid = shopInfo.sId || 0;
         let sLogo = shopInfo.sLogo || null;
-        let logo = sLogo ? {uri: sLogo} : require('../../images/empty.png');
-        let areaImg = shopInfo.regionImg ? {uri: shopInfo.regionImg} : require('../../images/empty.png');
+        let logo = sLogo ? {uri: sLogo} : require('../../images/empty.jpg');
+        let areaImg = shopInfo.regionImg ? {uri: shopInfo.regionImg} : require('../../images/empty.jpg');
         let sName = shopInfo.sShopName || null;
         let sArea = shopInfo.sAttribution || null;
         return (

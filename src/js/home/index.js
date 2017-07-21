@@ -71,7 +71,7 @@ export default class HomeScreen extends Component {
             <View style={styles.flex}>
                 <View style={styles.headView}>
                     <Text style={{width: 40}}>{null}</Text>
-                    <Image source={require("../../images/logoTitle.png")} style={{
+                    <Image source={require("../../images/logoTitle.jpg")} style={{
                         width: 100,
                         height: 22.5,
                     }} />

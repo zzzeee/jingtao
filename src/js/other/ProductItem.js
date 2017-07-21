@@ -63,7 +63,7 @@ export default class ProductItem extends Component {
             if(aimg) gimg = aimg;
         }
         if(gimg && gimg.indexOf('http') !== 0) gimg = Urls.host + gimg;
-        let img = gimg ? {uri: gimg} : require('../../images/empty.png');
+        let img = gimg ? {uri: gimg} : require('../../images/empty.jpg');
         return (
             <TouchableOpacity activeOpacity={1} onPress={()=>{
                 if(gid > 0 && navigation) {

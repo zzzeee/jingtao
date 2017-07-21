@@ -345,7 +345,7 @@ export default class OrderDetail extends Component {
                 <View style={styles.sessionBox}>
                     <View style={styles.grayBox}>
                         <Image 
-                            source={require('../../../images/car/payok_bg.png')} 
+                            source={require('../../../images/car/payok_bg.jpg')} 
                             resizeMode="stretch" 
                             style={styles.topBoxC1Img}
                         >

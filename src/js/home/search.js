@@ -471,7 +471,7 @@ export default class Search extends Component {
         let martPrice = item.gPrices || null;
         let headImg = item.gThumBPic || null;
         let isActivity = item.aStatus == 1 ? true : false;
-        headImg = headImg ? {uri: headImg} : require('../../images/empty.png');
+        headImg = headImg ? {uri: headImg} : require('../../images/empty.jpg');
         return (
             <TouchableOpacity style={styles.btnProductItem} onPress={()=>{
                 if(navigation && gid > 0) {

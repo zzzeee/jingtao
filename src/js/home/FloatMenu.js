@@ -122,7 +122,7 @@ export default class FloatMenu extends Component {
             let shareInfo = [{
                 to: 'shareToSession',
                 name: Lang[Lang.default].wxFriends,
-                icon: require('../../images/empty.png'),
+                icon: require('../../images/empty.jpg'),
                 obj: {
                     type: 'news',
                     title: name,
@@ -132,7 +132,7 @@ export default class FloatMenu extends Component {
             }, {
                 to: 'shareToTimeline',
                 name: Lang[Lang.default].circleOfFriends,
-                icon: require('../../images/empty.png'),
+                icon: require('../../images/empty.jpg'),
                 obj: {
                     type: 'news',
                     title: name,

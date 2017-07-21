@@ -272,7 +272,7 @@ export default class ProductAttr extends Component {
     render() {
         let { gid, isShow, attrs, chlidAtrrs, hideModal, type, productImg } = this.props;
         if(!gid || !isShow) return null;
-        let img = productImg ? {uri: productImg} : require('../../images/empty.png');
+        let img = productImg ? {uri: productImg} : require('../../images/empty.jpg');
         this.stock = this.getAttrStock();
         this.money = this.getAttrPrice();
         if(!this.stock || this.stock < 0) {

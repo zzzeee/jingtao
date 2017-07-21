@@ -87,7 +87,7 @@ const HomeTab = StackNavigator({
                 let head = {
                     title: (
                         <View style={styles.headerTitle}>
-                            <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
+                            <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.jpg")} />
                         </View>
                     ),
                     left: (<Text></Text>),
@@ -127,7 +127,7 @@ const FindTab = StackNavigator({
             header: ({ state, setParams }) => ({
                 title: (
                     <View style={styles.headerTitle}>
-                        <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.png")} />
+                        <BtnIcon width={100} height={PX.headHeight} src={require("../images/logoTitle.jpg")} />
                     </View>
                 ),
                 left: (<Text></Text>),

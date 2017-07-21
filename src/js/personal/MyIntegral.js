@@ -174,7 +174,7 @@ export default class MyIntegral extends Component {
                     <TouchableOpacity style={styles.footGroupView} onPress={()=>{
                         navigation.navigate('TabNav');
                     }}>
-                        <Image style={styles.footGroup} source={require('../../images/personal/group.png')} />
+                        <Image style={styles.footGroup} source={require('../../images/personal/group.jpg')} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.ruleBox}>
@@ -192,7 +192,7 @@ export default class MyIntegral extends Component {
         let useTime = item.iAddTime || null;
         let number = parseInt(item.payPoints) || 0;
         let headImg = item.sLogo || null;
-        let img = headImg ? {uri: headImg} : require('../../images/empty.png');
+        let img = headImg ? {uri: headImg} : require('../../images/empty.jpg');
         let isAdd = item.iPayType == 1 ? true : false;
         let useType = item.iType || 0;
         let numberColor = Color.gainsboro;

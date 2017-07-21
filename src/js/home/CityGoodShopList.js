@@ -584,7 +584,7 @@ export default class CityGoodShopList extends Component {
                     height: 64,
                     marginBottom: 5,
                 }}>
-                    <Image source={require('../../images/home/listBanner.png')} style={{
+                    <Image source={require('../../images/home/listBanner.jpg')} style={{
                         width: width,
                         height: 64,
                     }} />
@@ -640,7 +640,7 @@ export default class CityGoodShopList extends Component {
     // 商品列表的行内容(不多于3行)
     _renderItem2 = (obj, sectionID, rowID) => {
         let imgurl = obj.gThumBPic || null;
-        let img = imgurl ? {uri: imgurl} : require('../../images/empty.png');
+        let img = imgurl ? {uri: imgurl} : require('../../images/empty.jpg');
         let name = obj.gName || '';
         let sname = obj.sShopName || '';
         let stock = obj.stock || 0;
@@ -741,7 +741,7 @@ export default class CityGoodShopList extends Component {
                     {list.map(function(item, index) {
                         let gid = item.gID || 0;
                         let gimg = item.gThumBPic || null;
-                        let img = gimg ? {uri: gimg} : require('../../images/empty.png');
+                        let img = gimg ? {uri: gimg} : require('../../images/empty.jpg');
                         let gname = item.gName || null;
                         let gstock = 99;
                         let gprice = item.gDiscountPrice || null;
@@ -823,7 +823,7 @@ class ModalContent extends Component {
                 <View style={styles.modalBody}>
                     <View style={[styles.modalMain, styles.shadowStyle]}>
                         <View style={styles.modalTopView}>
-                            <Image style={styles.overNameImg} source={require('../../images/home/citybg.png')}>
+                            <Image style={styles.overNameImg} source={require('../../images/home/citybg.jpg')}>
                                 <TouchableOpacity onPress={this.props.hideModal} style={{
                                     marginTop: 8,
                                     marginLeft: 7,

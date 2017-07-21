@@ -119,7 +119,7 @@ export default class OrderNotify extends Component {
         return (
             <View style={styles.sessionBox}>
                 <View style={styles.grayBox}>
-                    <Image source={require('../../images/car/payok_bg.png')} resizeMode="stretch" style={styles.topBoxC1Img}>
+                    <Image source={require('../../images/car/payok_bg.jpg')} resizeMode="stretch" style={styles.topBoxC1Img}>
                         <View style={styles.topBoxC1ImgLeft}>
                             <Text style={styles.topBoxC1Text1}>{text1}</Text>
                             <Text style={styles.topBoxC1Text2}>{text2}</Text>

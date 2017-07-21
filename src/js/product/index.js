@@ -482,7 +482,10 @@ export default class ProductScreen extends Component {
                         </TouchableOpacity>
                         <View style={styles.btnCarBox}>
                             <TouchableOpacity onPress={()=>{
-                                navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                                navigation.navigate('TabNav', {
+                                    PathKey: TABKEY.car,
+                                    goGoodDetails: true,
+                                });
                             }} style={[styles.productContactImg, {
                                 padding: 5,
                                 alignItems: 'center',
@@ -496,7 +499,10 @@ export default class ProductScreen extends Component {
                             </TouchableOpacity>
                             {(this.carNumber && this.carNumber > 0) ?
                                 <TouchableOpacity disabled={gdel} onPress={()=>{
-                                    navigation.navigate('TabNav', {PathKey: TABKEY.car});
+                                    navigation.navigate('TabNav', {
+                                        PathKey: TABKEY.car,
+                                        goGoodDetails: true,
+                                    });
                                 }} style={styles.carNumberStyle}>
                                     <Text  style={styles.carNumberTextStyle}>{this.carNumber > 99 ? '99+' : this.carNumber}</Text>
                                 </TouchableOpacity>
@@ -655,7 +661,7 @@ export default class ProductScreen extends Component {
         let shopId = good.sId || null;
         let shopName = good.sName || null;
         let shopHead = good.sLogo || null;
-        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.png');
+        shopHead = shopHead ? {uri: shopHead} : require('../../images/empty.jpg');
         let isGive = parseInt(good.gIntegral) || 0;
         isGive = isGive > 0 ? true : false;
         let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;

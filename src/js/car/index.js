@@ -422,7 +422,7 @@ export default class CarsScreen extends Component {
     //失效商品
     invalidProduct = (item, index) => {
         let img = item.gPicture || null;
-        let goodImg = img ? {uri: img} : require('../../images/empty.png');
+        let goodImg = img ? {uri: img} : require('../../images/empty.jpg');
         let goodName = item.gName || '';
         let goodAttr = item.mcAttr || '';
         let goodPrice = item.gPrice || null;
