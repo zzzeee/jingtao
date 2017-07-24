@@ -18,7 +18,7 @@ import Lang from '../public/language';
 export default class CountDown extends Component {
     // 默认参数
     static defaultProps = {
-        startTime: new Date().getTime(),
+        startTime: Date.now(),
     };
     // 参数类型
     static propTypes = {
@@ -39,7 +39,7 @@ export default class CountDown extends Component {
     }
 
     componentDidMount() {
-        let timer = new Date().getTime();
+        let timer = Date.now();
         let {startTime, endTime} = this.props;
         if(timer >= startTime && timer <= endTime) {
             this.calculationTime(endTime);

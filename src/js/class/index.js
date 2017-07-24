@@ -188,19 +188,21 @@ export default class ClassScreen extends Component {
                     <Text style={[styles.sessionName, {
                         borderLeftColor: selectId == i ? Color.mainColor : Color.floralWhite,
                     }]}>{title}</Text>
-                    <View style={styles.rowRightBox}>
-                        <Text style={styles.smallText} onPress={()=>{
-                            let cids = [];
-                            for(let c of child) {
-                                cids.push(c.cID);
-                            }
-                            navigation.navigate('ProductList', {
-                                cId: cids.join(','),
-                                cName: title,
-                            });
-                        }}>{Lang[Lang.default].viewAll}</Text>
+                    <TouchableOpacity style={[styles.rowRightBox, {
+                        padding: 5,
+                    }]} onPress={()=>{
+                        let cids = [];
+                        for(let c of child) {
+                            cids.push(c.cID);
+                        }
+                        navigation.navigate('ProductList', {
+                            cId: cids.join(','),
+                            cName: title,
+                        });
+                    }}>
+                        <Text style={styles.smallText}>{Lang[Lang.default].viewAll}</Text>
                         <Image source={require('../../images/list_more.png')} style={styles.smallIcon} />
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.sessionItemBox}>
                 {child.map((item, index) => {

@@ -786,7 +786,7 @@ export default class ProductScreen extends Component {
                     </View>
                     {isLimit ?
                         <View style={styles.CountDownBox}>
-                            <CountDown endTime={parseInt(endTime)} />
+                            <CountDown endTime={new Date(endTime).getTime()} />
                         </View>
                         : null
                     }

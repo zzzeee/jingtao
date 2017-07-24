@@ -208,6 +208,7 @@ export default class ShopSearch extends Component {
                                 onChange={this.setSearchtext}
                                 length={20}
                                 style={styles.inputStyle}
+                                focus={true}
                             />
                             <Image style={styles.inputBeforeImg} source={require('../../images/home/search_white.png')} />
                             {this.state.searchtext ?
