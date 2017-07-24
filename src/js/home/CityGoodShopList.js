@@ -825,19 +825,18 @@ class ModalContent extends Component {
                         <View style={styles.modalTopView}>
                             <Image style={styles.overNameImg} source={require('../../images/home/citybg.jpg')}>
                                 <TouchableOpacity onPress={this.props.hideModal} style={{
-                                    marginTop: 8,
                                     marginLeft: 7,
                                 }}>
-                                <Image style={styles.closeImg} source={require('../../images/close.png')} />
+                                    <Image style={styles.closeImg} source={require('../../images/close.png')} />
                                 </TouchableOpacity>
-                                <View style={styles.circleImgBox}>
-                                    <Image 
-                                        resizeMode="stretch"
-                                        style={styles.topSwitchImg}
-                                        source={require('../../images/home/lahuan.png')} 
-                                    />
-                                </View>
                             </Image>
+                        </View>
+                        <View style={styles.circleImgBox}>
+                            <Image
+                                resizeMode="stretch"
+                                style={styles.topSwitchImg}
+                                source={require('../../images/home/lahuan.png')} 
+                            />
                         </View>
                         <View style={{alignItems: 'center'}}>
                             <Text style={styles.cityNameStyle}>{name}</Text>
@@ -1020,16 +1019,19 @@ var styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginTop: PX.headHeight + 70 - 16 - endTop,
         paddingBottom: 15,
-        // marginBottom: PX.headHeight + 70 - 16 - endTop,
+        overflow: 'hidden',
+        backfaceVisibility: 'hidden',
     },
     overNameImg: {
         width: Size.width * 0.853,
-        height: 100,
+        height: 92,
         justifyContent: 'space-between',
+        marginTop: 8,
     },
     closeImg: {
         width: 26,
         height: 26,
+        borderRadius: 10,
     },
     circleImgBox: {
         width: 10,

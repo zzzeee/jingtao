@@ -99,7 +99,7 @@ heilongjiang: 'M464.838,96.639l6.787-1.19l2.854,5.241l4.285,3.095l2.856-1.188h2.
                 beijing: 2,
                 ningxia: 20,
                 neimongol: 19,
-                guangxi: 6,
+                guangxi: 7,
                 xinjiang: 29,
                 xizang: 28,
                 guangdong: 6,
