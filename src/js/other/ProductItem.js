@@ -12,7 +12,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-
+import { CachedImage } from "react-native-img-cache";
 import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
 import { PX, Color, pixel } from '../public/globalStyle';
@@ -80,7 +80,7 @@ export default class ProductItem extends Component {
             }}>
                 <View style={[styles.productBox, {width: width}, boxStyle]}>
                     <View style={styles.gImageBox}>
-                        <Image source={img} style={{
+                        <CachedImage source={img} style={{
                             width: width,
                             height: height,
                         }} />

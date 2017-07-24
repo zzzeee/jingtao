@@ -134,7 +134,7 @@ export default class CityList extends Component {
                     </TouchableOpacity>
                     : null
                 }
-                <CityItem city={obj} showFloatMenu={showFloatMenu} navigation={navigation} />
+                    <CityItem city={obj} showFloatMenu={showFloatMenu} navigation={navigation} />
             </View>
         );
     };

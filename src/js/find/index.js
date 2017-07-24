@@ -14,7 +14,7 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
-
+import { CachedImage } from "react-native-img-cache";
 import Swiper from 'react-native-swiper';
 import User from '../public/user';
 import AppHead from '../public/AppHead';
@@ -429,21 +429,21 @@ export default class FindScreen extends Component {
                 let _img = plist[0].gThumbPic || null;
                 gid1 = plist[0].gID || 0;
                 if(_img) {
-                    p1 = <Image source={{uri: _img}} style={styles.shopProductBig} />;
+                    p1 = <CachedImage source={{uri: _img}} style={styles.shopProductBig} />;
                 }
             }
             if(plist[1]) {
                 let _img = plist[1].gThumbPic || null;
                 gid2 = plist[1].gID || 0;
                 if(_img) {
-                    p2 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                    p2 = <CachedImage source={{uri: _img}} style={styles.shopProductSmall} />;
                 }
             }
             if(plist[2]) {
                 let _img = plist[2].gThumbPic || null;
                 gid3 = plist[2].gID || 0;
                 if(_img) {
-                    p3 = <Image source={{uri: _img}} style={styles.shopProductSmall} />;
+                    p3 = <CachedImage source={{uri: _img}} style={styles.shopProductSmall} />;
                 }
             }
 
