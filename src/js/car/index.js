@@ -341,7 +341,7 @@ export default class CarsScreen extends Component {
     carsBox = () => {
         let that = this;
         let { navigation } = this.props;
-        let { carDatas, ctrlSelect, changeKEY1, changeKEY2, invalidList, editing } = this.state;
+        let { carDatas, goodList, ctrlSelect, changeKEY1, changeKEY2, invalidList, editing } = this.state;
         let cars = (carDatas && carDatas.length) ?
             <View style={{backgroundColor: Color.lightGrey}}>
                 {carDatas.map((item, index) => {
@@ -401,13 +401,16 @@ export default class CarsScreen extends Component {
                 {cars}
                 {editing ?
                     null :
-                    <View style={styles.goodlistTop}>
-                        <View style={styles.goodTopLine}></View>
-                        <View>
-                            <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                    ((goodList && goodList.length > 0) ?
+                        <View style={styles.goodlistTop}>
+                            <View style={styles.goodTopLine}></View>
+                            <View>
+                                <Text style={styles.goodlistTopText}>{Lang[Lang.default].recommendGoods}</Text>
+                            </View>
+                            <View style={styles.goodTopLine}></View>
                         </View>
-                        <View style={styles.goodTopLine}></View>
-                    </View>
+                        : null
+                    )
                 }
             </View>
         );
