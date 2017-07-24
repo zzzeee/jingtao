@@ -951,7 +951,6 @@ var styles = StyleSheet.create({
         position: 'absolute',
         right: Size.width * 0.128 - 10,
         paddingBottom: 15,
-        // top: -44,
     },
     topSwitchImg: {
         width: 10,
@@ -1031,7 +1030,6 @@ var styles = StyleSheet.create({
     closeImg: {
         width: 26,
         height: 26,
-        borderRadius: 10,
     },
     circleImgBox: {
         width: 10,
