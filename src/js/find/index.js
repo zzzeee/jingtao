@@ -65,9 +65,9 @@ export default class FindScreen extends Component {
         let uCoupons = await this.getUserCoupons();
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
-        console.log(uCoupons);
-        console.log(xsqg);
-        console.log(mdyp);
+        // console.log(uCoupons);
+        // console.log(xsqg);
+        // console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
                 fetchError: true,
@@ -76,7 +76,6 @@ export default class FindScreen extends Component {
         }else {
             this.setUserCoupons(uCoupons);
             let _xsqg_ = this.setXSQGlist(xsqg);
-            console.log(_xsqg_);
             let _mdyp_ = this.setMDYPlist(mdyp);
             this.setState(Object.assign({}, _xsqg_, _mdyp_));
         }

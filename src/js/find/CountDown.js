@@ -37,20 +37,24 @@ export default class CountDown extends Component {
             seconds: null,
         };
 
-        this.timer = null;
+        this.timer = [];
     }
 
     componentDidMount() {
         let {startTime, endTime, nowTime} = this.props;
         if(nowTime >= startTime && nowTime <= endTime) {
-            this.calculationTime(endTime);
+            this.calculationTime(endTime, nowTime, 950);
         }
     }
 
     componentWillUnmount() {
         // 如果存在this.timer，则使用clearTimeout清空。
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
+        // this.timer && clearTimeout(this.timer);
+        let timers = this.timer;
+        for(let t of timers) {
+            clearTimeout(t);
+        }
     }
 
     render() {
@@ -117,9 +121,13 @@ export default class CountDown extends Component {
         return String(num);
     };
 
-    //倒计时
-    calculationTime = (etime) => {
-        let ntime = this.props.nowTime;
+    /**
+     * 倒计时
+     * @param etime number 结束时间戳
+     * @param ntime number (服务器)当前时间
+     * @param t     number 刷新频率
+     */
+    calculationTime = (etime, ntime, t) => {
         if(etime > ntime) {
             let ctime = etime - ntime;  //时间差
             //相差的天数
@@ -143,9 +151,10 @@ export default class CountDown extends Component {
                     minutes: this.createString(minutes),
                     seconds: this.createString(seconds),
                 });
-                this.timer = setTimeout(() => { 
-                    this.calculationTime(etime);
-                }, 900);
+                let _timer = setTimeout(() => { 
+                    this.calculationTime(etime, (ntime + t), t);
+                }, t);
+                this.timer.push(_timer);
             }
         }else {
             this.setState({animate: false});
