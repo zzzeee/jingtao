@@ -35,6 +35,7 @@ export default class FindScreen extends Component {
         this.state = {
             startTime: null,
             endTime: null,
+            nowTime: Date.now(),
             fetchError: null,
             datas: null,
             coupons: [],
@@ -64,9 +65,9 @@ export default class FindScreen extends Component {
         let uCoupons = await this.getUserCoupons();
         let xsqg = await this.getXSQGDatas();
         let mdyp = await this.getMDYPDatas();
-        // console.log(uCoupons);
-        // console.log(xsqg);
-        // console.log(mdyp);
+        console.log(uCoupons);
+        console.log(xsqg);
+        console.log(mdyp);
         if(!xsqg && !mdyp) {
             this.setState({
                 fetchError: true,
@@ -75,6 +76,7 @@ export default class FindScreen extends Component {
         }else {
             this.setUserCoupons(uCoupons);
             let _xsqg_ = this.setXSQGlist(xsqg);
+            console.log(_xsqg_);
             let _mdyp_ = this.setMDYPlist(mdyp);
             this.setState(Object.assign({}, _xsqg_, _mdyp_));
         }
@@ -119,7 +121,8 @@ export default class FindScreen extends Component {
     //设置限时抢购列表
     setXSQGlist = (datas) => {
         let obj = {};
-        if(datas && datas.sTatus) {
+        if(datas && datas.sTatus == 1) {
+            let nowTime = datas.nowTime || null;
             let xsqg = datas.proAry || {};
             let banner = datas.pufaAry || {};
             let start = xsqg.pbStartTime || null;
@@ -129,7 +132,9 @@ export default class FindScreen extends Component {
             let bannerImg = banner.pufaImg ? {uri: banner.pufaImg} : require('../../images/empty.jpg');
             start = this.checkTimeString(start);
             end = this.checkTimeString(end);
+            nowTime = this.checkTimeString(nowTime);
             obj = {
+                nowTime: new Date(nowTime).getTime(),
                 fetchError: false,
                 isRefreshing: false,
                 startTime: new Date(start).getTime(),
@@ -209,12 +214,13 @@ export default class FindScreen extends Component {
 
     // 限时抢购的头部
     getPanicBuying = () => {
+        let { nowTime, startTime, endTime, } = this.state;
         return (
             <View style={styles.panicBuyingHead}>
                 <Image source={require('../../images/find/xsqg.png')} resizeMode="stretch" style={styles.xsqgImgStyle} />
                 <View style={styles.countDownBox}>
                 {this.beOverdue() ?
-                    <CountDown startTime={this.state.startTime} endTime={this.state.endTime} />
+                    <CountDown startTime={startTime} endTime={endTime} nowTime={nowTime} />
                     : null
                 }
                 </View>
@@ -224,8 +230,8 @@ export default class FindScreen extends Component {
 
     // 判断活动是否在有效期内
     beOverdue = () => {
-        let timer = new Date().getTime();
-        if(!this.state.startTime || !this.state.endTime || timer > this.state.endTime || timer < this.state.startTime) {
+        let { nowTime, startTime, endTime, } = this.state;
+        if(!startTime || !endTime || nowTime > endTime || nowTime < startTime) {
             return false;
         }else {
             return true;
@@ -334,6 +340,7 @@ export default class FindScreen extends Component {
 
     render() {
         let { MDYP, isRefreshing, coupons, } = this.state;
+        // console.log(this.state);
         // if(!MDYP) return null;
         return (
             <View style={styles.flex}>

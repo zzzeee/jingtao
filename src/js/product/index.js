@@ -667,10 +667,13 @@ export default class ProductScreen extends Component {
         let isExchange = (good.gIsIntegral && good.gIsIntegral !== '0') ? true : false;
         let isLimit = good.aStatus == 1 ? true : false;
         let endTime = good.aEndtime || null;
+        let nowTime = good.nowTime || null;
         let coupons = (good.mCoupon && good.mCoupon.length) ? good.mCoupon : null;
         let productArea = good.pAttribution || '';
         let price_arr = [];
         let img_arr = [];
+        endTime = new Date(this.checkTimeString(endTime)).getTime();
+        nowTime = new Date(this.checkTimeString(nowTime)).getTime();
         if(price) {
             price_arr = price.split('.');
         }
@@ -786,7 +789,7 @@ export default class ProductScreen extends Component {
                     </View>
                     {isLimit ?
                         <View style={styles.CountDownBox}>
-                            <CountDown endTime={new Date(endTime).getTime()} />
+                            <CountDown endTime={endTime} nowTime={nowTime} startTime={nowTime} />
                         </View>
                         : null
                     }

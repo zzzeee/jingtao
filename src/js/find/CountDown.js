@@ -19,11 +19,13 @@ export default class CountDown extends Component {
     // 默认参数
     static defaultProps = {
         startTime: Date.now(),
+        nowTime: Date.now(),
     };
     // 参数类型
     static propTypes = {
         startTime: PropTypes.number.isRequired,
         endTime: PropTypes.number.isRequired,
+        nowTime: PropTypes.number.isRequired,
     };
     constructor(props) {
         super(props);
@@ -39,9 +41,8 @@ export default class CountDown extends Component {
     }
 
     componentDidMount() {
-        let timer = Date.now();
-        let {startTime, endTime} = this.props;
-        if(timer >= startTime && timer <= endTime) {
+        let {startTime, endTime, nowTime} = this.props;
+        if(nowTime >= startTime && nowTime <= endTime) {
             this.calculationTime(endTime);
         }
     }
@@ -118,7 +119,7 @@ export default class CountDown extends Component {
 
     //倒计时
     calculationTime = (etime) => {
-        let ntime = new Date().getTime();
+        let ntime = this.props.nowTime;
         if(etime > ntime) {
             let ctime = etime - ntime;  //时间差
             //相差的天数
