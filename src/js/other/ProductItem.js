@@ -125,8 +125,8 @@ export default class ProductItem extends Component {
 
 var styles = StyleSheet.create({
     productBox: {
-        // borderWidth : pixel,
-        // borderColor : Color.lavender,
+        borderWidth : pixel,
+        borderColor : Color.lavender,
         backgroundColor: '#fff',
         borderRadius: 2,
         shadowOpacity: 0.1,

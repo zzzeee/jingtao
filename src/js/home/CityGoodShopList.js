@@ -568,21 +568,22 @@ export default class CityGoodShopList extends Component {
 
     // 商品列表的行内容(多于3行)
     _renderItem = (obj, sectionID, rowID, num) => {
-        let width = (Size.width - 5) / 2;
-        let _height = width + 65 + 5;
+        let marginNumber = 4;
+        let width = (Size.width - marginNumber) / 2;
+        let _height = width + 65 + marginNumber;
         let ad = null;
         let _marginTop = 0;
         let _marginRight = 0;
         let end = null;
-        if(rowID % 2 === 0) _marginRight = 5;
-        if(rowID > 0 && rowID % 2 === 0) _marginTop = -64 - 5;
+        if(rowID % 2 === 0) _marginRight = marginNumber;
+        if(rowID > 0 && rowID % 2 === 0) _marginTop = -64 - marginNumber;
         if(rowID == 1) {
-            _height += 64 + 5;
+            _height += 64 + marginNumber;
             ad = (
                 <View style={{
                     width: width,
                     height: 64,
-                    marginBottom: 5,
+                    marginBottom: marginNumber,
                 }}>
                     <Image source={require('../../images/home/listBanner.jpg')} style={{
                         width: width,
@@ -611,7 +612,7 @@ export default class CityGoodShopList extends Component {
             );
             _height += end_height;
         }else if (rowID == (num - 1) && num % 2) {
-            _marginTop = -width - 64 - 5;
+            _marginTop = -width - 64 - marginNumber;
         }
 
         return (
