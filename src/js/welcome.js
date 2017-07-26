@@ -16,12 +16,17 @@ import {
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
+import DeviceInfo from 'react-native-device-info';
+
+import Urls from './public/apiUrl';
+import Utils from './public/utils';
 
 var imgHeight = 45; //图片高度
 var lineMax = 210;  //中间线的展开长度
 var imgMax = 12;    //图片向上移动的距离
 var txtMax = 13;    //文字向下移动的距离
 var txtDelay = 210; //文字动画间隔
+
 export default class Welcome extends Component {
     constructor(props) {
         super(props);
@@ -40,14 +45,33 @@ export default class Welcome extends Component {
             txtOpc5: new Animated.Value(0),
         };
         this.timer = null;
+        this.isUpdate = false;
+        this.versionInfo = null;
     }
 
     componentDidMount() {
+        this.getVersionInfo();
         this.startAnimated();
     }
 
     componentWillUnmount() {
         this.timer && clearTimeout(this.timer);
+        
+    }
+
+    getVersionInfo = () => {
+        Utils.fetch(Urls.getVersion, 'get', {}, (result)=>{
+            if(result && result.info && result.sTatus == 1) {
+                let version1 = result.info.versionCode || null;
+                let version2 = DeviceInfo.getVersion() || null;
+                if(version1 && version2) {
+                    if(version1 != version2) {
+                        this.isUpdate = true;
+                        this.versionInfo = result.info;
+                    }
+                }
+            }
+        })
     }
 
     //跳转至首页
@@ -56,7 +80,13 @@ export default class Welcome extends Component {
         let resetAction = NavigationActions.reset({
             index: 0,
             actions: [
-                NavigationActions.navigate({ routeName: 'TabNav' }),
+                NavigationActions.navigate({ 
+                    routeName: 'TabNav',
+                    params: {
+                        isUpdate: this.isUpdate,
+                        versionInfo: this.versionInfo,
+                    }
+                }),
             ]
         });
         navigation.dispatch(resetAction);

@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
+import DeviceInfo from 'react-native-device-info';
 
 import User from '../public/user';
 import Lang, {str_replace} from '../public/language';
@@ -35,16 +36,17 @@ export default class SetApp extends Component {
     showAlertMoudle = (msg, func, rText = null) => {
         this.alertObject = {
             text: msg,
-            leftText: Lang[Lang.default].cancel,
-            rightText: rText || Lang[Lang.default].determine,
-            leftClick: ()=>this.setState({deleteAlert: false,}),
-            rightClick: func,
+            rightText: Lang[Lang.default].cancel,
+            leftText: rText || Lang[Lang.default].determine,
+            rightClick: ()=>this.setState({deleteAlert: false,}),
+            leftClick: func,
         };
         this.setState({deleteAlert: true,});
     };
 
     render() {
         let { navigation } = this.props;
+        let version = DeviceInfo.getVersion() || '';
         return (
             <View style={styles.container}>
                 <AppHead
@@ -52,6 +54,12 @@ export default class SetApp extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
+                <View style={{backgroundColor: '#fff'}}>
+                    <TouchableOpacity style={styles.rowMain}>
+                        <Text>版本信息</Text>
+                        <Text>{'v ' + version}</Text>
+                    </TouchableOpacity>
+                </View>
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity onPress={()=>{
                         this.showAlertMoudle('是否注销当前帐号', ()=>{

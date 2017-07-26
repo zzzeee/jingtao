@@ -9,11 +9,13 @@ import {
   StyleSheet,
   Text,
   View,
+  Linking,
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
 import Lang, {str_replace, TABKEY} from './public/language';
 import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
+import AlertMoudle from './other/AlertMoudle';
 
 import TabMenu from './tabMenu';
 import Home from './home/';
@@ -27,6 +29,8 @@ export default class TabView extends Component {
         super(props);
         this.state = {
             selectIndex: 0,
+            initIndex: 0,
+            deleteAlert: false,
         };
 
         this.Menus = [{
@@ -55,6 +59,14 @@ export default class TabView extends Component {
                 icon: require('../images/navs/personal.png'),
                 selIcon: require('../images/navs/personalSelect.png'),
             }];
+        this.updateUrl = null;
+        this.alertObject = {
+            text: '',
+            rightText: Lang[Lang.default].cancel,
+            leftText: '打开浏览器更新',
+            rightClick: ()=>this.setState({deleteAlert: false,}),
+            leftClick: this.linkUpdate_www,
+        };
     }
 
     componentWillMount() {
@@ -64,12 +76,20 @@ export default class TabView extends Component {
     componentDidMount() {
     }
 
+    //打开浏览器
+    linkUpdate_www = () => {
+        if(this.updateUrl) {
+            Linking.openURL(this.updateUrl)
+            .catch(err => console.error('跳转失败:', err));
+        }
+    };
+
     //初始化数据
     initDatas = () => {
         let { navigation } = this.props;
         if(navigation && navigation.state && navigation.state.params) {
             let params = navigation.state.params;
-            let { PathKey, } = params;
+            let { PathKey, isUpdate, versionInfo, } = params;
             let index = 0, menus = this.Menus;
             if(PathKey) {
                 for(let i in menus) {
@@ -78,7 +98,14 @@ export default class TabView extends Component {
                     }
                 }
             }
-            this.setState({selectIndex: parseInt(index), });
+            if(versionInfo) {
+                this.alertObject.text = versionInfo.versionTitle || null;
+                this.updateUrl = versionInfo.versionUrl || null;
+            }
+            this.setState({
+                initIndex: parseInt(index),
+                deleteAlert: isUpdate ? true : false,
+            });
         }
     };
 
@@ -89,7 +116,7 @@ export default class TabView extends Component {
                 renderTabBar={() => <TabMenu Menus={this.Menus} />}
                 locked={true}
                 style={styles.flex}
-                initialPage={parseInt(this.state.selectIndex)}
+                initialPage={parseInt(this.state.initIndex)}
                 tabBarPosition='overlayBottom'
                 onChangeTab={(obj) => {
                     this.setState({
@@ -99,6 +126,10 @@ export default class TabView extends Component {
             >
                 <View style={styles.flex} tabLabel='Tab1'>
                     <Home navigation={navigation} />
+                    {this.state.deleteAlert ?
+                        <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                        : null
+                    }
                 </View>
                 <View style={styles.flex} tabLabel='Tab2'>
                     <Find navigation={navigation} />

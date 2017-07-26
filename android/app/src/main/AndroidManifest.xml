@@ -11,6 +11,8 @@
     <!-- react-native-fetch-blob -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- eact-native-device-info -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
 
     <uses-sdk
         android:minSdkVersion="16"

@@ -104,6 +104,8 @@ var urls = {
     gotoPuFa: 'https://ecentre.spdbccc.com.cn/creditcard/indexActivity.htm?data=P1520716',
     //浦发注册接口
     pufaRegister: host + '/api/MemberNController/memberPudongDevelopmentUser',
+    //获取版本信息
+    getVersion: host + '/api/Version/getNewestAndroidVersion',
 };
 
 export default urls;
