@@ -10,7 +10,7 @@ import {
     Text,
     View,
     Image,
-    ListView,
+    FlatList,
     TouchableOpacity,
 } from 'react-native';
 
@@ -38,11 +38,11 @@ export default class CityList extends Component {
         super(props);
         this.state = {
             datas: null,
-            dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+            dataSource: null,
         };
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.initList(this.props.datas);
     }
 
@@ -65,7 +65,7 @@ export default class CityList extends Component {
             let list = datas.cityProduct || [];
             this.setState({
                 datas: datas,
-                dataSource: this.state.dataSource.cloneWithRows(list),
+                dataSource: list,
             });
         }
     };
@@ -90,20 +90,21 @@ export default class CityList extends Component {
     };
 
     render() {
-        if(!this.state.datas) return null;
+        if(!this.state.dataSource) return null;
+        let { dataSource, datas } = this.state;
         return (
-            <ListView
+            <FlatList
                 initialListSize={2}
                 style={styles.listViewStyle}
                 enableEmptySections={true}
-                dataSource={this.state.dataSource}
-                renderRow={this.renderItem.bind(this)}
-                renderHeader ={(props)=>(
-                    <HeadBox datas={this.state.datas} navigation={this.props.navigation} />
+                data={dataSource}
+                keyExtractor={(item, index)=>index}
+                renderItem={this._renderItem}
+                ListHeaderComponent={()=>(
+                    <HeadBox datas={datas} navigation={this.props.navigation} />
                 )}
-                renderFooter={()=>{
-                    let list = this.state.dataSource || null;
-                    if(list && list._cachedRowCount) {
+                ListFooterComponent={()=>{
+                    if(dataSource && dataSource.length > 0) {
                         return <EndView />;
                     }else {
                         return <View />;
@@ -114,9 +115,9 @@ export default class CityList extends Component {
     }
 
     // 列表的行内容
-    renderItem = (obj, sectionID, rowID) => {
-        if(!obj || !obj.proAdsAry || obj.proAdsAry.length == 0) return null;
-        let banner = obj.bannerAds || [];
+    _renderItem = ({ item, index }) => {
+        if(!item || !item.proAdsAry || item.proAdsAry.length == 0) return <View />;
+        let banner = item.bannerAds || [];
         let { navigation, showFloatMenu } = this.props;
         return (
             <View style={styles.itemBox}>
@@ -134,7 +135,7 @@ export default class CityList extends Component {
                     </TouchableOpacity>
                     : null
                 }
-                    <CityItem city={obj} showFloatMenu={showFloatMenu} navigation={navigation} />
+                    <CityItem city={item} showFloatMenu={showFloatMenu} navigation={navigation} />
             </View>
         );
     };
