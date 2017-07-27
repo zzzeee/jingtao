@@ -43,7 +43,6 @@ export default class Search extends Component {
             deleteAlert: false,
             sortIndex: 0,
             showArea: false,
-            showFootView: false,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -168,7 +167,6 @@ export default class Search extends Component {
                     this.setState({
                         log: result,
                         sdatas: [],
-                        load_or_error: this.getLoadView(),
                     }, this.getProductList);
                 });
             }
@@ -215,11 +213,12 @@ export default class Search extends Component {
                         });
                     }
                 }
-            }, null, {
-                catchFunc: (err) => {
-                    console.log(err);
-                    this.setState({load_or_error: this.getErrorView(),});
-                },
+            }, (view) => {
+                this.setState({load_or_error: view});
+            }, {
+                loadType: 2,
+                hideLoad: this.page == 1 ? false : true,
+                bgStyle: {backgroundColor: 'transparent',},
             });
         }
     };
@@ -236,7 +235,6 @@ export default class Search extends Component {
             sdatas: [],
             sortIndex: 0,
             searchtext: str,
-            load_or_error: this.getLoadView(),
         }, this.getProductList);
     };
 
@@ -369,16 +367,16 @@ export default class Search extends Component {
     };
 
     productList = () => {
+        let { sdatas } = this.state;
         return (
             <FlatList
                 ref={(_ref)=>this.ref_flatList=_ref} 
-                data={this.state.sdatas}
+                data={sdatas}
                 keyExtractor={(item, index) => (index)}
                 enableEmptySections={true}
                 renderItem={this._renderItem}
-                onScroll={this._onScroll}
                 ListFooterComponent={()=>{
-                    if(this.state.showFootView) {
+                    if(sdatas && sdatas.length > 3) {
                         return <EndView />;
                     }else {
                         return <View />;
@@ -392,16 +390,6 @@ export default class Search extends Component {
                 }}
             />
         );
-    };
-
-    _onScroll = (e) => {
-        let value = 20;
-        let offsetY = e.nativeEvent.contentOffset.y || 0;
-        if(offsetY > value && !this.state.showFootView) {
-            this.setState({ showFootView: true, });
-        }else if(offsetY < value && this.state.showFootView) {
-            this.setState({ showFootView: false, });
-        }
     };
 
     listHead = () => {
@@ -419,9 +407,6 @@ export default class Search extends Component {
             require('../../images/more_down.png');
         return (
             <TouchableOpacity disabled={this.btnDisable} key={index} onPress={()=>{
-                console.log(item);
-                console.log(index);
-                console.log(this.state.sortIndex);
                 if(index == 3) {
                     this.searchLock = false;
                     this.setState({

@@ -69,7 +69,7 @@ export default class ProductItem extends Component {
                 if(gid > 0 && navigation) {
                     navigation.navigate('Product', {gid: gid});
                 }else {
-                    let type = product.adType || 0;
+                    let type = product.adType || -1;
                     let id = product.adUrl || null;
                     if(navigation && id && type == 1) {
                         navigation.navigate('Product', {gid: id});
@@ -79,7 +79,10 @@ export default class ProductItem extends Component {
                 }
             }}>
                 <View style={[styles.productBox, {width: width}, boxStyle]}>
-                    <View style={styles.gImageBox}>
+                    <View style={[styles.gImageBox, {
+                        width: width,
+                        height: height,
+                    }]}>
                         <CachedImage source={img} style={{
                             width: width,
                             height: height,
@@ -137,6 +140,7 @@ var styles = StyleSheet.create({
     gImageBox: {
         borderBottomColor : Color.lavender,
         borderBottomWidth : pixel,
+        backgroundColor: Color.floralWhite,
     },
     goodNameView: {
         height: 30,

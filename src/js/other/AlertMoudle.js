@@ -113,7 +113,7 @@ var styles = StyleSheet.create({
         padding: 15,
     },
     alertText: {
-        fontSize: 16,
+        fontSize: 13,
         color: Color.lightBack,
         lineHeight: 24,
     },
@@ -130,7 +130,7 @@ var styles = StyleSheet.create({
         borderBottomLeftRadius: 5,
     },
     leftBottonText: {
-        fontSize: 16,
+        fontSize: 15,
     },
     lineStyle: {
         height: 50,
@@ -145,6 +145,6 @@ var styles = StyleSheet.create({
         borderBottomRightRadius: 5,
     },
     rightBottonText: {
-        fontSize: 16,
+        fontSize: 15,
     },
 });

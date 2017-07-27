@@ -81,14 +81,16 @@ export default class CityTopImgs extends Component {
                     showsButtons={false}
                 >
                     {cityImgs.map(function(item, index) {
-                        let gid = item.region_id || 0;
                         let gimg = item.griImg || item.adImg;
                         let img = gimg ? {uri: gimg} : emptyImg;
                         let adUrl = item.adUrl || null;
+                        let type = item.adType || -1;
                         return (
                             <TouchableOpacity activeOpacity={1} key={index} onPress={()=>{
-                                if(adUrl) {
-
+                                if(navigation && adUrl && type == 1) {
+                                    navigation.navigate('Product', {gid: adUrl});
+                                }else if(navigation && adUrl && type == 0) {
+                                    navigation.navigate('Shop', {shopID: adUrl});
                                 }
                             }}>
                                 <Image style={imgStyle} source={img} />

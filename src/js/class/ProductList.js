@@ -35,7 +35,7 @@ export default class Search extends Component {
             load_or_error: null,
             sortIndex: 0,
             showArea: false,
-            showFootView: false,
+            isRefreshing: true,
         };
         this.cID = null;
         this.cName = null;
@@ -135,6 +135,7 @@ export default class Search extends Component {
                         this.setState({
                             load_or_error: this.getNoResult(),
                             showArea: false,
+                            isRefreshing: false,
                         });
                     }else {
                         let datas = (_sdata && !isClear) ? _sdata.concat(list) : list;
@@ -148,6 +149,7 @@ export default class Search extends Component {
                             sdatas: datas,
                             load_or_error: null,
                             showArea: false,
+                            isRefreshing: false,
                         });
                     }
                 }
@@ -156,6 +158,7 @@ export default class Search extends Component {
                     console.log(err);
                     this.setState({
                         showArea: false,
+                        isRefreshing: false,
                         load_or_error: this.getErrorView(),
                     });
                 },
@@ -173,8 +176,9 @@ export default class Search extends Component {
                     navigation={navigation}
                     onPress={()=>this.ref_flatList.scrollToOffset({offset: 0, animated: true})}
                 />
-                {this.state.sdatas ? this.listHead() : null}
-                {this.pageContent()}
+                <View style={styles.flex}>
+                    {this.pageContent()}
+                </View>
                 <Areas
                     visiable={this.state.showArea}
                     areas={this.state.areas}
@@ -207,55 +211,48 @@ export default class Search extends Component {
     };
 
     pageContent = () => {
-        if(this.state.load_or_error) {
+        let { load_or_error, sdatas, isRefreshing } = this.state;
+        if(load_or_error) {
             return (
                 <View style={styles.container2}>
-                    {this.state.load_or_error}
+                    {load_or_error}
                 </View>
             );
-        }else if(this.state.sdatas) {
-            return this.productList();
-        }
-    };
-
-    productList = () => {
-        return (
-            <FlatList
-                ref={(_ref)=>this.ref_flatList=_ref} 
-                data={this.state.sdatas}
-                numColumns={2}
-                onScroll={this._onScroll}
-                keyExtractor={(item, index) => (index)}
-                enableEmptySections={true}
-                renderItem={this._renderItem}
-                ListFooterComponent={()=>{
-                    if(this.state.showFootView) {
-                        return <EndView />;
-                    }else {
-                        return <View />;
-                    }
-                }}
-                onEndReached={()=>{
-                    if(!this.loadMoreLock) {
-                        console.log('正在加载更多 ..');
-                        this.getProductList();
-                    }
-                }}
-            />
-        );
-    };
-
-    _onScroll = (e) => {
-        let value = 20;
-        let offsetY = e.nativeEvent.contentOffset.y || 0;
-        if(offsetY > value && !this.state.showFootView) {
-            this.setState({ showFootView: true, });
-        }else if(offsetY < value && this.state.showFootView) {
-            this.setState({ showFootView: false, });
+        }else {
+            return (
+                <FlatList
+                    ref={(_ref)=>this.ref_flatList=_ref} 
+                    data={sdatas}
+                    numColumns={2}
+                    onScroll={this._onScroll}
+                    keyExtractor={(item, index) => (index)}
+                    enableEmptySections={true}
+                    ListHeaderComponent={this.listHead}
+                    renderItem={this._renderItem}
+                    refreshing={isRefreshing}
+                    ListFooterComponent={()=>{
+                        if(sdatas && sdatas.length >= 4) {
+                            return <EndView />;
+                        }else {
+                            return <View />;
+                        }
+                    }}
+                    onEndReached={()=>{
+                        if(!this.loadMoreLock) {
+                            console.log('正在加载更多 ..');
+                            this.getProductList();
+                        }
+                    }}
+                    onRefresh={()=>{
+                        this.setState({isRefreshing: true});
+                    }}
+                />
+            );
         }
     };
 
     listHead = () => {
+        if(!this.state.sdatas) return null;
         return (
             <View style={styles.topBtnRow}>
                 {this.btnSortList.map(this.rendSortItem)}
@@ -363,7 +360,7 @@ const styles = StyleSheet.create({
         height: PX.rowHeight2,
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: Color.floralWhite,
+        borderBottomColor: Color.lavender,
         justifyContent: 'center',
         alignItems: 'center',
     },

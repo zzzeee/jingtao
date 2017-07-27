@@ -45,7 +45,7 @@ export default class SetApp extends Component {
     };
 
     render() {
-        let { navigation } = this.props;
+        let { navigation, login } = this.props;
         let version = DeviceInfo.getVersion() || '';
         return (
             <View style={styles.container}>
@@ -56,12 +56,13 @@ export default class SetApp extends Component {
                 />
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity style={styles.rowMain}>
-                        <Text>版本信息</Text>
-                        <Text>{'v ' + version}</Text>
+                        <Text style={styles.rowText}>版本信息</Text>
+                        <Text style={styles.rowText}>{'v' + version}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity onPress={()=>{
+                        if(!login) return;
                         this.showAlertMoudle('是否注销当前帐号', ()=>{
                             _User.delUserID(_User.keyMember)
                             .then(()=>{
