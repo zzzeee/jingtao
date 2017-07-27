@@ -50,7 +50,9 @@ export default class AlertMoudle extends Component {
         let { 
             visiable, 
             text, 
-            leftText, 
+            textView,
+            leftText,
+            contentStyle,
             leftClick,
             leftColor,
             leftBgColor,
@@ -69,8 +71,11 @@ export default class AlertMoudle extends Component {
             >
                 <View style={styles.modalHtml}>
                     <View style={styles.modalBody}>
-                        <View style={styles.alertTextView}>
-                            <Text style={styles.alertText}>{text}</Text>
+                        <View style={[styles.alertTextView, contentStyle]}>
+                            {textView ?
+                                textView :
+                                <Text style={styles.alertText}>{text}</Text>
+                            }
                         </View>
                         <View style={styles.bottonsBox}>
                             <TouchableOpacity style={[styles.leftBottonStyle, {
@@ -101,10 +106,10 @@ var styles = StyleSheet.create({
     },
     modalBody: {
         width: Size.width * 0.8,
-        height: 180,
+        minHeight: 180,
     },
     alertTextView: {
-        height: 130,
+        minHeight: 130,
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',

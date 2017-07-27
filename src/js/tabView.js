@@ -10,6 +10,7 @@ import {
   Text,
   View,
   Linking,
+  ScrollView,
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
@@ -31,6 +32,7 @@ export default class TabView extends Component {
             selectIndex: 0,
             initIndex: 0,
             deleteAlert: false,
+            updateType: null,
         };
 
         this.Menus = [{
@@ -62,10 +64,12 @@ export default class TabView extends Component {
         this.updateUrl = null;
         this.alertObject = {
             text: '',
-            rightText: Lang[Lang.default].cancel,
-            leftText: '打开浏览器更新',
+            textView: null,
+            rightText: '稍后再说',
+            leftText: '立即下载',
             rightClick: ()=>this.setState({deleteAlert: false,}),
             leftClick: this.linkUpdate_www,
+            contentStyle: styles.updateBox,
         };
     }
 
@@ -98,25 +102,43 @@ export default class TabView extends Component {
                     }
                 }
             }
+            let type = 0;
             if(versionInfo) {
                 this.alertObject.text = versionInfo.versionTitle || null;
                 this.updateUrl = versionInfo.versionUrl || null;
+                type = versionInfo.versionType || 0;
+                let texts = versionInfo.versionInfo || [];
+                if(texts && texts.length > 0) {
+                    this.alertObject.textView = (
+                        <ScrollView>
+                            <Text numberOfLines={2} style={styles.updateTitle}>{this.alertObject.text}</Text>
+                            {texts.map((item, index)=>{
+                                return <Text key={index} style={styles.updateText}>{item}</Text>
+                            })}
+                        </ScrollView>
+                    )
+                }
             }
             this.setState({
                 initIndex: parseInt(index),
                 deleteAlert: isUpdate ? true : false,
+                updateType: type,
             });
         }
     };
 
     render() {
         const { navigation } = this.props;
+        let { updateType, initIndex, selectIndex, deleteAlert } = this.state;
+        if(updateType == 9) {
+            return <AlertMoudle visiable={deleteAlert} {...this.alertObject} />;
+        }
         return (
             <ScrollableTabView
                 renderTabBar={() => <TabMenu Menus={this.Menus} />}
                 locked={true}
                 style={styles.flex}
-                initialPage={parseInt(this.state.initIndex)}
+                initialPage={parseInt(initIndex)}
                 tabBarPosition='overlayBottom'
                 onChangeTab={(obj) => {
                     this.setState({
@@ -126,8 +148,8 @@ export default class TabView extends Component {
             >
                 <View style={styles.flex} tabLabel='Tab1'>
                     <Home navigation={navigation} />
-                    {this.state.deleteAlert ?
-                        <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                    {deleteAlert ?
+                        <AlertMoudle visiable={deleteAlert} {...this.alertObject} />
                         : null
                     }
                 </View>
@@ -138,7 +160,7 @@ export default class TabView extends Component {
                     <Class navigation={navigation} />
                 </View>
                 <View style={styles.flex} tabLabel='Tab4'>
-                    <Car navigation={navigation} selectIndex={this.state.selectIndex} />
+                    <Car navigation={navigation} selectIndex={selectIndex} />
                 </View>
                 <View style={styles.flex} tabLabel='Tab4'>
                     <Personal navigation={navigation} />
@@ -152,7 +174,26 @@ var styles = StyleSheet.create({
     flex : {
         flex : 1,
     },
-    contentBox : {
-        flex : 1,
+    updateBox : {
+        alignItems: 'flex-start',
+        backgroundColor: Color.floralWhite,
+    },
+    updateTitle: {
+        color: Color.mainColor,
+        fontSize: 14,
+        paddingBottom: 15,
+        lineHeight: 22,
+        fontWeight: 'bold',
+        textShadowColor: '#ccc',
+        textShadowOffset: {
+            width: 1,
+            height: 1.6,
+        },
+        textShadowRadius: 2,
+    },
+    updateText: {
+        color: Color.lightBack,
+        fontSize: 12,
+        lineHeight: 20,
     },
 });
