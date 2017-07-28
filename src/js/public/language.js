@@ -192,7 +192,7 @@ const language = {
         insufficientStock: '购买数量超出库存啦!',
         successfullyJoinCar: '加入购物车成功',
         yourCarIsEmpty: '您的购物车还是空的哟！',
-        yourNotShopping: '您没有飞过商品哟！',
+        yourNotShopping: '您没有购买过商品哟！',
         yourNotDFKgood: '您没有待付款的订单哟！',
         yourNotDFHgood: '您没有待发货的订单哟！',
         yourNotDSHgood: '您没有待收货的订单哟！',

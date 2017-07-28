@@ -189,12 +189,14 @@ export default class Login extends Component {
         let bgcolor = this.checkFormat() ? Color.mainColor : Color.gray;
         let disabled = this.checkFormat() ? false : true;
         let canBack = true;
-        if(navigation.state.params && navigation.state.params.notBack) canBack = false;
+        let _params = navigation.state.params || null;
+        if(_params && _params.notBack) canBack = false;
         return (
             <View style={styles.container}>
                 <AppHead
                     title={Lang[Lang.default].passwordLogin}
                     goBack={canBack}
+                    leftPress={(_params && _params.leftPress) ? _params.leftPress : null}
                     navigation={navigation}
                     right={(<Text style={styles.forgetPasswordText} onPress={()=>{navigation.navigate('FrogetPass')}}>
                         {Lang[Lang.default].forgetPassword}

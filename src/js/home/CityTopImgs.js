@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import { CachedImage } from "react-native-img-cache";
 import PropTypes from 'prop-types';
 import Swiper from 'react-native-swiper';
 import { Size, Color, pixel, PX } from '../public/globalStyle';
@@ -50,7 +51,7 @@ export default class CityTopImgs extends Component {
             height: height,
         };
         if(cityImgs.length < 1) {
-            return <Image style={imgStyle} source={emptyImg} />;
+            return <CachedImage style={imgStyle} source={emptyImg} />;
         }else {
             return (
                 <Swiper
@@ -93,7 +94,7 @@ export default class CityTopImgs extends Component {
                                     navigation.navigate('Shop', {shopID: adUrl});
                                 }
                             }}>
-                                <Image style={imgStyle} source={img} />
+                                <CachedImage style={imgStyle} source={img} />
                             </TouchableOpacity>
                         );
                     })}

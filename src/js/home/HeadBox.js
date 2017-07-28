@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import { CachedImage } from "react-native-img-cache";
 import PropTypes from 'prop-types';
 import Util from '../public/utils';
 import urls from '../public/apiUrl';
@@ -110,8 +111,8 @@ export default class HeadBox extends Component {
                 <View style={styles.cityHead}>
                     <Text style={{color: Color.lightBack,}}>{name}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 0)}>
-                    <Image source={{uri: cimg}} style={styles.cityImage} />
+                <TouchableOpacity style={styles.cityImage} onPress={()=>this.linkList(obj.region_id, name, 0)}>
+                    <CachedImage source={{uri: cimg}} style={styles.cityImage} />
                 </TouchableOpacity>
                 <View style={styles.cityfoot}>
                     <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 0)} style={{

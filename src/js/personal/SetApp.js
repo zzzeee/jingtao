@@ -13,11 +13,11 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { NavigationActions } from 'react-navigation';
+// import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 
 import User from '../public/user';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import AlertMoudle from '../other/AlertMoudle';
@@ -45,8 +45,10 @@ export default class SetApp extends Component {
     };
 
     render() {
-        let { navigation, login } = this.props;
+        let { navigation, } = this.props;
         let version = DeviceInfo.getVersion() || '';
+        let params = (navigation && navigation.state.params) ? navigation.state.params : {};
+        let login = params.login ? true : false;
         return (
             <View style={styles.container}>
                 <AppHead
@@ -62,19 +64,24 @@ export default class SetApp extends Component {
                 </View>
                 <View style={{backgroundColor: '#fff'}}>
                     <TouchableOpacity onPress={()=>{
+                        console.log(this.props);
                         if(!login) return;
                         this.showAlertMoudle('是否注销当前帐号', ()=>{
                             _User.delUserID(_User.keyMember)
                             .then(()=>{
                                 this.setState({deleteAlert: false,}, ()=>{
-                                    // navigation.navigate('Login', {notBack: true, })
-                                    let resetAction = NavigationActions.reset({
-                                        index: 0,
-                                        actions: [
-                                            NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
-                                        ]
-                                    });
-                                    navigation.dispatch(resetAction);
+                                    navigation.navigate('Login', {
+                                        leftPress: () => navigation.navigate('TabNav', {
+                                            PathKey: TABKEY.personal,
+                                        }),
+                                    })
+                                    // let resetAction = NavigationActions.reset({
+                                    //     index: 0,
+                                    //     actions: [
+                                    //         NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
+                                    //     ]
+                                    // });
+                                    // navigation.dispatch(resetAction);
                                 });
                             });
                         }, '退出');

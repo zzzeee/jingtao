@@ -14,6 +14,7 @@ import {
     FlatList,
 } from 'react-native';
 
+import { CachedImage } from "react-native-img-cache";
 import PropTypes from 'prop-types';
 import { Size, Color, pixel, PX } from '../public/globalStyle';
 import lang from '../public/language';
@@ -106,7 +107,7 @@ export default class CityItem extends Component {
                 </View>
                 <View style={styles.cityTitleRow}>
                     <Text style={styles.cityTitleText} numberOfLines={3}>{info}</Text>
-                    <Image source={{uri: img}} style={styles.cityImage} />
+                    <CachedImage source={{uri: img}} style={styles.cityImage} />
                 </View>
                 {(this.state.dataSource && this.state.dataSource.length > 0) ?
                     <FlatList

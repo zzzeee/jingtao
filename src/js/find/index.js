@@ -324,7 +324,7 @@ export default class FindScreen extends Component {
                         <TouchableOpacity style={styles.bannerImgBox} onPress={()=>{
                             this.props.navigation.navigate('Banner');
                         }}>
-                            <Image source={banner} style={styles.bannerImgStyle} />
+                            <CachedImage source={banner} style={styles.bannerImgStyle} />
                         </TouchableOpacity>
                         : null
                     }
@@ -603,6 +603,8 @@ var styles = StyleSheet.create({
     },
     bannerImgBox: {
         marginTop: PX.marginTB,
+        width: Size.width,
+        height: Size.width * 0.45,
     },
     bannerImgStyle: {
         width: Size.width,

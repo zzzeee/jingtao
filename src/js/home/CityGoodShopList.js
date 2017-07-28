@@ -18,6 +18,7 @@ import {
     PanResponder,
 } from 'react-native';
 
+import { CachedImage } from "react-native-img-cache";
 import Swiper from 'react-native-swiper';
 import Util from '../public/utils';
 import Urls from '../public/apiUrl';
@@ -655,7 +656,7 @@ export default class CityGoodShopList extends Component {
                 backgroundColor: '#fff',
             }]}>
                 <View style={styles.goodLeftView}>
-                    <Image style={styles.goodImgStyle} source={img} />
+                    <CachedImage style={styles.goodImgStyle} source={img} />
                 </View>
                 <View style={styles.goodRightView}>
                     <View>

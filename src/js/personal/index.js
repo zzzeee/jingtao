@@ -217,9 +217,10 @@ export default class PersonalScreen extends Component {
                     textStyle={{color: '#fff'}}
                     title={Lang[Lang.default].persional} 
                     left={<BtnIcon 
-                        width={PX.headIconSize} 
-                        login={islogin}
-                        press={()=>navigation.navigate('SetApp')} 
+                        width={PX.headIconSize}
+                        press={()=>navigation.navigate('SetApp', {
+                            login: islogin,
+                        })} 
                         src={require("../../images/personal/config_white.png")} 
                     />}
                     // right={(<BtnIcon width={PX.headIconSize} src={require("../../images/personal/msg.png")} />)}
