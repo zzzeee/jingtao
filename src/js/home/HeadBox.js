@@ -130,6 +130,7 @@ export default class HeadBox extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 1)} style={{
                         flexDirection: 'row',
+                        alignItems: 'center',
                     }}>
                         <Image source={img_mark} style={{
                             width: 18,

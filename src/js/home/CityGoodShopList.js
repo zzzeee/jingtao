@@ -465,7 +465,7 @@ export default class CityGoodShopList extends Component {
                         float={true}
                     />
                 </View>
-                <View style={styles.flex}>
+                <View style={styles.bodyStyle}>
                     {this.state.load_or_error ?
                         this.state.load_or_error : body
                     }
@@ -580,11 +580,12 @@ export default class CityGoodShopList extends Component {
                 showLimit={true}
                 goodNameViewStyle={{height: 30}}
                 goodPriceStyle={{height: 35}}
-                width={(Size.width - 15) / 2}
+                width={(Size.width - 20) / 2}
                 navigation={this.props.navigation}
                 boxStyle={{
                     marginLeft: 5,
-                    marginBottom: 5,
+                    marginRight: 5,
+                    marginBottom: 8,
                 }} 
             />
         );
@@ -892,6 +893,10 @@ class ModalContent extends Component {
 var styles = StyleSheet.create({
     flex : {
         flex : 1,
+    },
+    bodyStyle: {
+        flex: 1,
+        overflow: 'hidden',
     },
     centerStyle: {
         flex: 1,

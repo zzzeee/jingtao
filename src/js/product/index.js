@@ -1000,11 +1000,12 @@ export default class ProductScreen extends Component {
                 product={item} 
                 key={index}
                 showDiscount={true}
-                width={(Size.width - 15) / 2}
+                width={(Size.width - 20) / 2}
                 navigation={this.props.navigation}
                 boxStyle={{
                     marginLeft: 5,
-                    marginBottom: 5,
+                    marginRight: 5,
+                    marginBottom: 8,
                 }} 
             />
         );
