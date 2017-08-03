@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     btnItemText: {
         color: '#fff',
         fontSize: 14,
+        backgroundColor: 'transparent',
     },
     couponRow: {
         justifyContent: 'center',

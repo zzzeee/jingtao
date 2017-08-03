@@ -315,6 +315,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 10,
+        backgroundColor: 'transparent',
     },
     headBox: {
         height: PX.userHeadImgSize,
@@ -332,6 +333,7 @@ var styles = StyleSheet.create({
         paddingLeft: 10,
         color: '#fff',
         fontSize: 14,
+        backgroundColor: 'transparent',
     },
     integralBg: {
         width: 130,
@@ -354,6 +356,7 @@ var styles = StyleSheet.create({
         color: '#fff',
         fontSize: 12,
         paddingRight: 4,
+        backgroundColor: 'transparent',
     },
     smallIcon: {
         width: 16,

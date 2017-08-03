@@ -102,19 +102,22 @@
             $(document).ready(function () {
                 // 给APP传值
                 var appMessage = function(id){
-                    var u = navigator.userAgent, app = navigator.appVersion;
-                    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
-                    var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-                    
-                    if (isIOS) {
-                        window.location.href = "iOS:receiveFromWeb:" + id;
-                    } else if (isAndroid) {
-                        //android终端或者uc浏览器
-                        //android.toastMessage(id);
-                        if(window.postMessage) {
-                            window.postMessage(JSON.stringify({id: id}));
-                        }
+                    if(window.postMessage) {
+                        window.postMessage(JSON.stringify({id: id}));
                     }
+                    // var u = navigator.userAgent, app = navigator.appVersion;
+                    // var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+                    // var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+                    
+                    // if (isIOS) {
+                    //     window.location.href = "iOS:receiveFromWeb:" + id;
+                    // } else if (isAndroid) {
+                    //     //android终端或者uc浏览器
+                    //     //android.toastMessage(id);
+                    //     if(window.postMessage) {
+                    //         window.postMessage(JSON.stringify({id: id}));
+                    //     }
+                    // }
                 };
                 var map_height = Math.round(($('body').width() - 30) * 0.792) || 0;
                 var map_isok = map_height < 10 ? false : true; 

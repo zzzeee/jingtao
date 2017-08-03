@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     ruleTitle: {
         fontSize: 16,
         color: '#fff',
+        backgroundColor: 'transparent',
     },
     roleIcon: {
         width: 20,
@@ -303,6 +304,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 19,
         color: '#333',
+        backgroundColor: 'transparent',
     },
     redFont: {
         fontSize: 14,
@@ -340,6 +342,7 @@ const styles = StyleSheet.create({
         paddingBottom: 38,
         fontSize: 16,
         color: Color.lightBack,
+        backgroundColor: 'transparent',
     },
     rowStyle: {
         flexDirection: 'row',
@@ -358,20 +361,24 @@ const styles = StyleSheet.create({
     txtStyle1: {
         fontSize: 13,
         color: '#333',
+        backgroundColor: 'transparent',
     },
     txtStyle2: {
         fontSize: 13,
         color: '#e60012',
+        backgroundColor: 'transparent',
     },
     txtStyle3: {
         fontSize: 13,
         color: '#fff',
+        backgroundColor: 'transparent',
     },
     txtStyle4: {
         fontSize: 12,
         color: '#808080',
         paddingTop: 22,
         paddingBottom: 16,
+        backgroundColor: 'transparent',
     },
     inputRow: {
         height: 50,
@@ -389,6 +396,7 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         flex: 1,
+        height: 50,
         borderWidth: 0,
         fontSize: 13,
         color: Color.lightBack,

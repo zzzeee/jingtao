@@ -32,7 +32,8 @@ import AlertMoudle from '../other/AlertMoudle';
 import Areas from './Areas';
 import Coupons from './Coupons';
 import { EndView } from '../other/publicEment';
-import SwiperDIY from '../other/SwiperDIY';
+// import SwiperDIY from '../other/SwiperDIY';
+import Swiper from 'react-native-swiper';
 
 var isCanShare = false;
 var _User = new User();
@@ -574,7 +575,7 @@ export default class ProductScreen extends Component {
                     data={goodList}
                     numColumns={2}
                     onScroll={this._onScroll}
-                    // removeClippedSubviews={false}
+                    removeClippedSubviews={false}
                     contentContainerStyle={styles.whiteBg}
                     keyExtractor={(item, index) => (index)}
                     enableEmptySections={true}
@@ -692,33 +693,38 @@ export default class ProductScreen extends Component {
                                 </Image> 
                             </View> :
                             <View style={styles.wrapperBox}>
-                                <SwiperDIY 
-                                    open3D={false}
-                                    autoPlay={false}
-                                    style={{
-                                        width: Size.width,
-                                        height: Size.width,
-                                    }}
-                                    spotBoxStyle={styles.paginationStyle}
-                                    spotStyle={{
-                                        backgroundColor:'rgba(0, 0, 0, .3)',
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: 3,
-                                        margin: 5,
-                                    }}
-                                    spotActiveStyle={{
-                                        backgroundColor:'rgba(229, 86, 69, 1)',
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: 3,
-                                        margin: 5,
-                                    }}
+                                <Swiper
+                                    width={Size.width}
+                                    height={Size.width}
+                                    style={styles.wrapper}
+                                    horizontal={true}
+                                    showsPagination={true}
+                                    paginationStyle={styles.paginationStyle}
+                                    dot={(<View 
+                                        style={{
+                                            backgroundColor:'rgba(0, 0, 0, .3)',
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            margin: 5,
+                                        }}
+                                    />)}
+                                    activeDot={(<View 
+                                        style={{
+                                            backgroundColor:'rgba(229, 86, 69, 1)',
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            margin: 5,
+                                        }}
+                                    />)}
+                                    autoplay={false}
+                                    showsButtons={false}
                                 >
                                     {img_arr.map((item, index)=>{
                                         return <Image key={index} source={{uri: item}} style={styles.productImg} />;
                                     })}
-                                </SwiperDIY>
+                                </Swiper>
                             </View>
                         }
                         <View style={styles.areaStockView}>

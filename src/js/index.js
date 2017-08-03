@@ -12,7 +12,6 @@ import {
     View,
 } from 'react-native';
 
-import SplashScreen from 'react-native-splash-screen';
 import { StackNavigator } from 'react-navigation';
 import { Color, PX } from './public/globalStyle';
 import JPushModule from 'jpush-react-native';
@@ -110,14 +109,15 @@ class MyNavScren extends Component {
          *   getStateForAction: function getStateForAction(action, inputState),
          * }
          */
-        let isShowStatu = NavScreen.name == 'Shop' ? false : true;
-        isShowStatu = true;
+
         return (
             <View style={styles.flex}>
-                <StatusBar hidden={!isShowStatu} backgroundColor={Color.mainColor} barStyle="light-content" />
-                <View style={[styles.container, {
-                    marginTop: (isShowStatu && Platform.OS === 'ios') ? PX.statusHeight : 0,
-                }]}>
+                <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
+                <View style={{
+                    height: (Platform.OS === 'ios') ? PX.statusHeight : 0,
+                    backgroundColor: Color.mainColor,
+                }} />
+                <View style={styles.container}>
                     <NavScreen navigation={navigation} />
                 </View>
             </View>

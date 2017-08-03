@@ -747,14 +747,16 @@ var styles = StyleSheet.create({
         backgroundColor: Color.lightGrey,
     },
     topBoxC1Img: {
+        width: Size.width,
         height: 120,
         flexDirection : 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingLeft: 20,
     },
     topBoxC1ImgLeft: {
+        paddingLeft: 20,
         maxWidth: Size.width - 20 - 20 - 115,
+        backgroundColor: 'transparent',
     },
     topBoxC1Text1: {
         fontSize: 20,

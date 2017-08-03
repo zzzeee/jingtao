@@ -57,7 +57,7 @@ export default class SwiperBtn extends Component {
         // 要求成为响应者：
         onStartShouldSetPanResponder: (evt, gestureState) => false,
         onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
-        onMoveShouldSetPanResponder: (evt, gestureState) => false,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
         // 响应开始
         onPanResponderGrant: (evt, gestureState) => {

@@ -80,7 +80,7 @@ export default class MyOrder extends Component {
                         }
                     }}
                 />
-                <View style={styles.flex}>
+                <View style={styles.container}>
                     <ScrollableTabView
                         renderTabBar={() => <DefaultTabBar />}
                         ref={(_ref)=>this.scrollTabView=_ref}
@@ -152,10 +152,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container: {
-        backgroundColor: Color.lightGrey,
+        flex: 1,
+        borderTopWidth: pixel,
+        borderTopColor: Color.lavender,
     },
     tabBarStyle: {
         height: PX.rowHeight2,
+        backgroundColor: 'transparent',
     },
     tabBarItemStyle: {
         paddingBottom: 0,
