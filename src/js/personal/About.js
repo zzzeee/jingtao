@@ -10,20 +10,60 @@ import {
     View,
     Text,
     Image,
+    TouchableOpacity,
+    Linking,
 } from 'react-native';
 
 import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
+import AlertMoudle from '../other/AlertMoudle';
 
 export default class About extends Component {
-    rows = [
-        '联系方式',
-        '联系客服QQ：1604693830',
-        '400热线：400-023-7333',
-        '商家合作联系',
-        '联系QQ：1161172824',
-    ];
+    constructor(props) {
+        super(props);
+        this.state = {
+            deleteAlert: false,
+        };
+
+        this.alertObject = {};
+        this.rows = [{
+            title: '联系方式',
+        }, {
+            title: '联系客服QQ: ',
+            value: '1604693830',
+        }, {
+            title: '400热线: ',
+            value: '400-023-7333',
+            type: 'tel',
+            style: {
+                borderBottomWidth: 0,
+            },
+        }, {
+            title: '商家合作联系',
+            boxStyle: {
+                marginTop: PX.marginTB,
+            }
+        }, {
+            title: '联系合作QQ: ',
+            value: '1161172824',
+            style: {
+                borderBottomWidth: 0,
+            },
+        }];
+    }
+
+    //显示删除提示框
+    showAlertMoudle = (msg, func, rText = null) => {
+        this.alertObject = {
+            text: msg,
+            rightText: Lang[Lang.default].cancel,
+            leftText: rText || Lang[Lang.default].determine,
+            rightClick: ()=>this.setState({deleteAlert: false,}),
+            leftClick: func,
+        };
+        this.setState({deleteAlert: true,});
+    };
 
     render() {
         let { navigation } = this.props;
@@ -37,20 +77,46 @@ export default class About extends Component {
                 <View style={styles.flex}>
                     {this.rows.map(this.rendRow)}
                 </View>
+                {this.state.deleteAlert ?
+                    <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
+                    : null
+                }
             </View>
         );
     }
 
+    callPhone = (type, value) => {
+        Linking.openURL(type + ': ' + value)
+        .catch(err => console.error(err));
+    };
+
     rendRow = (item, index) => {
+        let boxStyle = item.boxStyle || {};
+        let style = item.style || {};
+        let title = item.title || null;
+        let value = item.value || null;
+        let type = item.type || null;
         return (
-            <View key={index} style={{
-                backgroundColor: '#fff',
-                marginTop: index == 3 ? PX.marginTB : 0,
+            <TouchableOpacity key={index} style={[].concat(boxStyle, styles.boxStyle)} onPress={()=>{
+                if(type == 'tel') {
+                    this.showAlertMoudle(
+                        title + value,
+                        ()=>this.callPhone(type, value),
+                        Lang[Lang.default].call
+                    )
+                }
             }}>
-                <View style={styles.rowMain}>
-                    <Text style={styles.rowText}>{item}</Text>
+                <View style={[].concat(style, styles.rowMain)}>
+                    <Text style={styles.rowText}>{title}</Text>
+                    {value ?
+                        <Text selectable={true} style={{
+                            fontSize: 14,
+                            color: (type == 'tel') ? Color.royalBlue : Color.lightBack,
+                        }}>{value}</Text>
+                        : null
+                    }
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 }
@@ -61,17 +127,21 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: Color.floralWhite,
+    },
+    boxStyle: {
+        backgroundColor: '#fff',
     },
     rowMain: {
-        marginLeft: PX.marginLR,
+        marginLeft: PX.marginTB,
         height: PX.rowHeight1,
-        borderBottomWidth: 1,
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderBottomWidth: pixel,
         borderBottomColor: Color.lavender,
-        justifyContent: 'center',
     },
     rowText: {
-        fontSize: 14,
+        fontSize: 13,
         color: Color.lightBack,
     },
 });

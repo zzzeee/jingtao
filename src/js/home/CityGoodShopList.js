@@ -383,6 +383,7 @@ export default class CityGoodShopList extends Component {
                 }
             </View>
         );
+        let isSimple = true;
         let body = (
             <View style={styles.flex}>
                 <View>
@@ -396,7 +397,9 @@ export default class CityGoodShopList extends Component {
                             if(this.index == 0) {
                                 //商品列表
                                 if(this.state.dataSource._cachedRowCount > 3) {
-                                    return this._renderItem(obj, sectionID, rowID, this.state.totalNum);
+                                    return isSimple ?
+                                        this._renderItem_simple(obj, sectionID, rowID, this.state.totalNum)
+                                        : this._renderItem(obj, sectionID, rowID, this.state.totalNum);
                                 }else {
                                     return this._renderItem2(obj, sectionID, rowID);
                                 }
@@ -409,7 +412,7 @@ export default class CityGoodShopList extends Component {
                         renderHeader={()=>this.pageTop(this.state.isFloat ? null : btnBox)}
                         renderFooter={()=>{
                             let list = this.state.dataSource || null;
-                            if(this.index == 1 && list && list._cachedRowCount > 1) {
+                            if((this.index == 1 || isSimple) && list && list._cachedRowCount > 1) {
                                 return <EndView style={{width: Size.width, }} />;
                             }else {
                                 return <View />;
@@ -438,11 +441,7 @@ export default class CityGoodShopList extends Component {
         );
         return (
             <View style={styles.flex}>
-                <ModalContent cityInfo={this.state.cityInfo} visiable={this.state.visiable} hideModal={()=>{
-                    this.lineSwitchPlay(startTop);
-                    this.setState({visiable: false});
-                }} />
-                <View>
+                <View style={{height: PX.headHeight, }}>
                     <AppHead
                         center={
                             <TouchableOpacity onPress={()=>{
@@ -463,6 +462,7 @@ export default class CityGoodShopList extends Component {
                         }
                         goBack={true}
                         navigation={navigation}
+                        float={true}
                     />
                 </View>
                 <View style={styles.flex}>
@@ -483,6 +483,10 @@ export default class CityGoodShopList extends Component {
                         </TouchableOpacity>
                     </Animated.View>
                 </View>
+                <ModalContent cityInfo={this.state.cityInfo} visiable={this.state.visiable} hideModal={()=>{
+                    this.lineSwitchPlay(startTop);
+                    this.setState({visiable: false});
+                }} />
             </View>
         );
     }
@@ -564,6 +568,25 @@ export default class CityGoodShopList extends Component {
                 </View>
                 {btnBox}
             </View>
+        );
+    };
+
+    // 商品列表的行内容(多于3行, 规格排列)
+    _renderItem_simple = (obj, sectionID, rowID, num) => {
+        return (
+            <ProductItem 
+                product={obj} 
+                key={rowID}
+                showLimit={true}
+                goodNameViewStyle={{height: 30}}
+                goodPriceStyle={{height: 35}}
+                width={(Size.width - 15) / 2}
+                navigation={this.props.navigation}
+                boxStyle={{
+                    marginLeft: 5,
+                    marginBottom: 5,
+                }} 
+            />
         );
     };
 

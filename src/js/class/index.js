@@ -96,6 +96,7 @@ export default class ClassScreen extends Component {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollStyle2}
                 onScroll={this.onScroll_List}
+                scrollEventThrottle={5}
             >
                 {this.state.datas && this.state.datas.map(this.renderScrollRight)}
             </ScrollView>
@@ -136,6 +137,7 @@ export default class ClassScreen extends Component {
                                 ref={(_ref)=>this.ref_scrollview=_ref}
                                 showsVerticalScrollIndicator={false}
                                 contentContainerStyle={styles.scrollStyle}
+                                scrollEventThrottle={5}
                             >
                                 {this.state.datas && this.state.datas.map(this.renderScrollRow)}
                             </ScrollView>

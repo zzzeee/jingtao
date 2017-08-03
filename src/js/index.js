@@ -394,7 +394,8 @@ const AppNavigator = StackNavigator({
 }, {
     initialRouteName: 'Welcome',
     headerMode: 'none',
-    mode: Platform.OS === 'ios' ? 'modal' : 'card',
+    // mode: Platform.OS === 'ios' ? 'modal' : 'card',
+    mode: 'card',
 });
 
 const styles = StyleSheet.create({

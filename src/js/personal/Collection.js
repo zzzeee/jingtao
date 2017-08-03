@@ -43,6 +43,7 @@ export default class Collection extends Component {
             load_or_error: null,
             visiable: false,
             deleteAlert: false,
+            isRefreshing: true,
         };
         this.page = 1;
         this.number = 10;
@@ -117,12 +118,15 @@ export default class Collection extends Component {
 
     //获取收藏列表
     getCollectionList = () => {
-        let totalNum = this.state.totalNum || 0;
+        let { totalNum, datas, datas2, isRefreshing, } = this.state;
+        if(!totalNum) totalNum = 0;
         if(totalNum && this.index == 0 && ((this.page - 1) * this.number) >= totalNum) {
             console.log('无更多商品可以加载。');
+            isRefreshing && this.setState({isRefreshing: false,});
             return;
         }else if(totalNum && this.index == 1 && ((this.page2 - 1) * this.number2) >= totalNum) {
             console.log('无更多店铺可以加载。');
+            isRefreshing && this.setState({isRefreshing: false,});
             return;
         }else if(this.mToken && !this.loadMoreLock) {
             let that = this;
@@ -132,11 +136,12 @@ export default class Collection extends Component {
                 mToken: this.mToken,
                 fPage: this.index ? this.page2 : this.page,
                 fPerNum: this.index ? this.number2 : this.number,
-            }, function(result) {
+            }, (result) => {
                 console.log(result);
                 let obj = {
                     load_or_error: null,
                     btnDisable: false,
+                    isRefreshing: false,
                 };
                 if(result && result.sTatus && result.fAry) {
                     let ret = result.fAry || [];
@@ -145,21 +150,24 @@ export default class Collection extends Component {
                     obj.totalNum = num;
                     if(that.index == 0) {
                         that.page++;
-                        let _datas = that.state.datas ? that.state.datas.concat(ret) : ret;
+                        let _datas = datas ? datas.concat(ret) : ret;
                         obj.dataSource = _datas;
                         obj.datas = _datas;
                         obj.dataNum = num;
                     }else if(that.index == 1) {
                         that.page2++;
-                        let _datas = that.state.datas2 ? that.state.datas2.concat(ret) : ret;
+                        let _datas = datas2 ? datas2.concat(ret) : ret;
                         obj.dataSource = _datas;
                         obj.datas2 = _datas;
                         obj.data2Num = num;
                     }
                 }
                 that.setState(obj);
-            }, function(view) {
-                that.setState({load_or_error: view});
+            }, (view) => {
+                that.setState({
+                    load_or_error: view,
+                    isRefreshing: false,
+                });
             }, {
                 loadType: 2,
                 // hideLoad: true,
@@ -252,7 +260,7 @@ export default class Collection extends Component {
                                 this.changeList(0);
                             }} style={styles.flex}>
                                 <View style={[styles.topBtnView, {
-                                    borderRightWidth: 1,
+                                    borderRightWidth: pixel,
                                     borderRightColor: Color.lavender,
                                 }]}>
                                     <Text style={styles.defaultFont}>{Lang[Lang.default].product}</Text>
@@ -277,6 +285,10 @@ export default class Collection extends Component {
                             renderItem={this._renderItem}
                             onEndReached={this.getCollectionList}
                             contentContainerStyle={styles.flatListStyle}
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={()=>{
+                                this.setState({isRefreshing: true}, this.getCollectionList);
+                            }}
                         />
                     }
                 </View>
@@ -318,6 +330,14 @@ export default class Collection extends Component {
                         navigation.navigate('Shop', {shopID: sid});
                     }
                 }}
+                style={{
+                    width: Size.width - 20,
+                    marginLeft: 10,
+                    borderRadius: 5,
+                    marginBottom: PX.marginTB,
+                }}
+                btnStyle={{borderRadius: 5,}}
+                itemStyle={{borderRadius: 5,}}
             >
                 <TouchableOpacity activeOpacity={1} style={styles.itemStyle}>
                     <View style={styles.itemLeftStyle}>
@@ -348,7 +368,7 @@ var styles = StyleSheet.create({
     },
     container: {
         flex : 1,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: Color.floralWhite,
     },
     centerStyle: {
         flex: 1,
@@ -361,7 +381,7 @@ var styles = StyleSheet.create({
     },
     fontStyle1: {
         fontSize: 16,
-        color: Color.lightBack,
+        color: Color.mainColor,
     },
     rowStyle: {
         flexDirection: 'row',
@@ -373,7 +393,7 @@ var styles = StyleSheet.create({
     btnTopLineBox: {
         width: Size.width,
         height: 3,
-        backgroundColor: Color.floralWhite,
+        backgroundColor: Color.lightGrey,
     },
     btnTopLine: {
         width: Size.width / 2,
@@ -387,7 +407,7 @@ var styles = StyleSheet.create({
         height: PX.rowHeight2,
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 1,
+        borderBottomWidth: pixel,
         borderBottomColor: Color.lavender,
         backgroundColor: '#f8f8f8',
     },
@@ -401,13 +421,14 @@ var styles = StyleSheet.create({
         marginBottom: PX.marginTB,
     },
     itemStyle: {
-        width: Size.width,
-        backgroundColor: '#fff',
+        width: Size.width - 20,
         paddingTop: 16,
         paddingBottom: 16,
         paddingLeft: 15,
         paddingRight: 20,
         flexDirection: 'row',
+        borderRadius: 5,
+        backgroundColor: '#fff',
     },
     itemLeftStyle: {
         marginRight: 12,

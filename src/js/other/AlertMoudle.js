@@ -118,7 +118,7 @@ var styles = StyleSheet.create({
         padding: 15,
     },
     alertText: {
-        fontSize: 13,
+        fontSize: 14,
         color: Color.lightBack,
         lineHeight: 24,
     },

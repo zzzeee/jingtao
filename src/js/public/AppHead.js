@@ -79,6 +79,8 @@ var styles = StyleSheet.create({
         shadowRadius: 0.5,
         shadowOffset: {"height": 0.5},
         elevation: 4,
+		borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
 	},
 	sideBox : {
 		height: PX.headHeight,

@@ -117,6 +117,7 @@ export default class HeadBox extends Component {
                 <View style={styles.cityfoot}>
                     <TouchableOpacity onPress={()=>this.linkList(obj.region_id, name, 0)} style={{
                         flexDirection: 'row',
+                        alignItems: 'center',
                     }}>
                         <Image source={img_enter} style={{
                             width: 18,

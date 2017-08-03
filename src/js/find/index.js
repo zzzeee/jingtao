@@ -656,8 +656,8 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
     },
     shopProductBig: {
-        width: bigImageHeight,
-        height: bigImageHeight,
+        width: bigImageHeight - 1,
+        height: bigImageHeight - 1,
     },
     shopProductSmall: {
         width: Size.width - 35 - bigImageHeight,
@@ -670,11 +670,6 @@ var styles = StyleSheet.create({
         height: bigImageHeight,
         borderWidth: pixel,
         borderColor: Color.lavender,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 0.5,
-        shadowOffset: {"height": 0.5},
-        elevation: 3,
         marginRight: 5,
     },
     shopProductBoxSmall: {
@@ -682,10 +677,5 @@ var styles = StyleSheet.create({
         height: bigImageHeight / 2 - 3,
         borderWidth: pixel,
         borderColor: Color.lavender,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 0.5,
-        shadowOffset: {"height": 0.5},
-        elevation: 3,
     },
 });

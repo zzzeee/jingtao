@@ -23,6 +23,7 @@ export default class MyOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            initIndex: 0,
             selIndex: 0,
         };
         
@@ -57,8 +58,10 @@ export default class MyOrder extends Component {
             let params = navigation.state.params;
             let { mToken, index } = params;
             this.mToken = mToken || null;
+            let _index = index ? index : 0;
             this.setState({
-                selIndex: index ? index : 0,
+                initIndex: _index,
+                selIndex: _index,
             });
         }
     };
@@ -84,7 +87,7 @@ export default class MyOrder extends Component {
                         style={styles.tabBarStyle}
                         tabStyle={styles.tabBarItemStyle}
                         // 默认打开第几个（0为第一个）
-                        initialPage={this.state.selIndex}
+                        initialPage={this.state.initIndex}
                         //"top", "bottom", "overlayTop", "overlayBottom"
                         tabBarPosition='top'
                         // 选中的下划线颜色

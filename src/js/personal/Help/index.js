@@ -32,7 +32,9 @@ export default class Help extends Component {
                         <Text style={styles.rowText}>{Lang[Lang.default].privacyProtection}</Text>
                         <Image source={require('../../../images/list_more.png')} style={styles.rowRightIcon} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>navigation.navigate('Transaction')} style={styles.rowMain}>
+                    <TouchableOpacity onPress={()=>navigation.navigate('Transaction')} style={[styles.rowMain, {
+                        borderBottomWidth: 0,
+                    }]}>
                         <Text style={styles.rowText}>{Lang[Lang.default].transactionTerms}</Text>
                         <Image source={require('../../../images/list_more.png')} style={styles.rowRightIcon} />
                     </TouchableOpacity>
@@ -48,14 +50,14 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: Color.floralWhite,
     },
     rowMain: {
         width: Size.width - PX.marginLR,
         marginLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         height: PX.rowHeight1,
-        borderBottomWidth: 1,
+        borderBottomWidth: pixel,
         borderBottomColor: Color.lavender,
         flexDirection : 'row',
         justifyContent: 'space-between',

@@ -80,6 +80,8 @@ export default class CarsScreen extends Component {
         let obj = {
             editing: false,
             isRefreshing: false,
+            isSelect: false,
+            ctrlSelect: false,
         };
         this.userinfo = await _User.getUserInfo();
         if(this.userinfo) {
@@ -493,10 +495,10 @@ export default class CarsScreen extends Component {
                 key={index}
                 ref={'ProductItem' + index}
                 showDiscount={true}
-                width={(Size.width - 5) / 2}
+                width={(Size.width - 15) / 2}
                 navigation={this.props.navigation}
                 boxStyle={{
-                    marginRight: 5,
+                    marginLeft: 5,
                     marginBottom: 5,
                 }} 
             />
@@ -776,7 +778,7 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: '#fff',
         // paddingLeft: PX.marginLR,
-        borderTopWidth: 1,
+        borderTopWidth: pixel,
         borderTopColor: Color.lavender,
     },
     carFooterRightLeft: {

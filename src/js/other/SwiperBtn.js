@@ -154,7 +154,15 @@ export default class SwiperBtn extends Component {
 
     // 基本函数
     render() {
-        const { style, itemHeight, children, btns, btnParam } = this.props;
+        const { 
+            style, 
+            itemHeight, 
+            children, 
+            btns, 
+            btnParam,
+            itemStyle,
+            btnStyle,
+        } = this.props;
         let that = this;
         let btnText = btns.map((btn, i) => {
             let size = btn.fontSize || 14;
@@ -166,7 +174,7 @@ export default class SwiperBtn extends Component {
                     style={[styles.btnsTouch, {
                         height: itemHeight,
                         backgroundColor: bgColor,
-                    }]}
+                    }, btnStyle]}
                     onPress={()=>{
                         btnParam.callback = ()=>{
                             that.isOpen = false;
@@ -190,7 +198,7 @@ export default class SwiperBtn extends Component {
                 </View>
                 <Animated.View
                     {...this.panResponderInit.panHandlers}
-                    style={[styles.item, {height: itemHeight, transform: [{translateX: this.position}]}]}
+                    style={[styles.item, {height: itemHeight, transform: [{translateX: this.position}]}, itemStyle]}
                 >
                     {children}
                 </Animated.View>

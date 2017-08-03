@@ -994,10 +994,10 @@ export default class ProductScreen extends Component {
                 product={item} 
                 key={index}
                 showDiscount={true}
-                width={(Size.width - 5) / 2}
+                width={(Size.width - 15) / 2}
                 navigation={this.props.navigation}
                 boxStyle={{
-                    marginRight: 5,
+                    marginLeft: 5,
                     marginBottom: 5,
                 }} 
             />
@@ -1328,6 +1328,7 @@ var styles = StyleSheet.create({
         fontSize: 9,
         color: Color.red,
         paddingBottom: 1,
+        backgroundColor: 'transparent',
     },
     productContactImg: {
         flexDirection: 'column',

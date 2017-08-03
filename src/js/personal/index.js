@@ -95,6 +95,7 @@ export default class PersonalScreen extends Component {
                     contentContainerStyle={styles.scrollStyle}
                     ref={(_ref)=>this.ref_scrollview=_ref}  
                     onScroll={this._onScroll}
+                    scrollEventThrottle={10}
                 >
                     <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                         {islogin ?
@@ -104,10 +105,12 @@ export default class PersonalScreen extends Component {
                                     <Text style={styles.userNameText}>{name}</Text>
                                 </View>
                                 <TouchableOpacity onPress={()=>this.linkPage(true, 'MyIntegral')}>
-                                    <Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>
+                                    {/*<Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>*/}
+                                    <View style={styles.integralBg2}>
                                         <Text style={styles.integralText}>{str_replace(Lang[Lang.default].jingtaoIntegral, integral)}</Text>
                                         <Image source={require('../../images/more_white.png')} style={styles.smallIcon} />
-                                    </Image>
+                                    </View>
+                                    {/*</Image>*/}
                                 </TouchableOpacity>
                             </View> :
                             <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
@@ -120,7 +123,7 @@ export default class PersonalScreen extends Component {
                             </View>
                         }
                     </Image>
-                    <View style={styles.btnsListBox}>
+                    <View style={{backgroundColor: '#fff'}}>
                         <TouchableOpacity style={styles.orderRow} onPress={()=>this.linkPage(true, 'MyOrder')}>
                             <Text style={styles.darkText}>{Lang[Lang.default].myOrder}</Text>
                             <View style={styles.lightTextBox}>
@@ -213,6 +216,7 @@ export default class PersonalScreen extends Component {
                     style={{
                         elevation: this.state.opacityVal._value == 1 ? 4 : 0,
                         backgroundColor: 'transparent',
+                        borderBottomWidth: 0,
                     }}
                     textStyle={{color: '#fff'}}
                     title={Lang[Lang.default].persional} 
@@ -285,6 +289,7 @@ var styles = StyleSheet.create({
 	},
     scrollStyle: {
         backgroundColor: Color.lightGrey,
+        paddingBottom: PX.marginTB,
     },
     userBgImg: {
         justifyContent: "flex-end",
@@ -335,6 +340,16 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    integralBg2: {
+        minWidth: 130,
+        height: 28,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: 14,
+        borderBottomLeftRadius: 14,
+        backgroundColor: '#FDA93E',
+    },
     integralText: {
         color: '#fff',
         fontSize: 12,
@@ -350,7 +365,8 @@ var styles = StyleSheet.create({
     },
     btnsListBox: {
         backgroundColor: '#fff',
-        marginBottom: PX.marginTB,
+        marginTop: PX.marginTB,
+        marginBottom: -pixel,
     },
     orderRow: {
         height: 49,
@@ -389,6 +405,7 @@ var styles = StyleSheet.create({
         fontSize: 9,
         color: Color.red,
         paddingBottom: 1,
+        backgroundColor: 'transparent',
     },
     darkText: {
         color: Color.lightBack,

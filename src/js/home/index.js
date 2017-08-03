@@ -97,8 +97,8 @@ export default class HomeScreen extends Component {
                         flexDirection: 'row',
                     }}>
                         <Image source={require("../../images/logo.png")} style={{
-                            width: PX.headIconSize,
-                            height: PX.headIconSize,
+                            width: 28,
+                            height: 23,
                         }} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.titleTextBox} onPress={this.scrollStart}>
@@ -124,6 +124,7 @@ export default class HomeScreen extends Component {
                 <ScrollView 
                     ref={(_ref)=>this.ref_scrollview=_ref} 
                     onScroll={this._onScroll}
+                    scrollEventThrottle={20}
                     contentContainerStyle={styles.scrollStyle}
                 >
                     <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
@@ -313,11 +314,11 @@ var styles = StyleSheet.create({
         backgroundColor: '#fff',
         height: PX.headHeight,
         borderBottomColor: Color.lavender,
-        borderBottomWidth: 1,
+        borderBottomWidth: pixel,
     },
     hideHead: {
         borderBottomColor: Color.lavender,
-        borderBottomWidth: 1,
+        borderBottomWidth: pixel,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

@@ -50,45 +50,47 @@ export default class SetApp extends Component {
         let params = (navigation && navigation.state.params) ? navigation.state.params : {};
         let login = params.login ? true : false;
         return (
-            <View style={styles.container}>
+            <View style={styles.flex}>
                 <AppHead
                     title={'设置'}
                     goBack={true}
                     navigation={navigation}
                 />
-                <View style={{backgroundColor: '#fff'}}>
-                    <TouchableOpacity style={styles.rowMain}>
-                        <Text style={styles.rowText}>版本信息</Text>
-                        <Text style={styles.rowText}>{'v' + version}</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{backgroundColor: '#fff'}}>
-                    <TouchableOpacity onPress={()=>{
-                        console.log(this.props);
-                        if(!login) return;
-                        this.showAlertMoudle('是否注销当前帐号', ()=>{
-                            _User.delUserID(_User.keyMember)
-                            .then(()=>{
-                                this.setState({deleteAlert: false,}, ()=>{
-                                    navigation.navigate('Login', {
-                                        leftPress: () => navigation.navigate('TabNav', {
-                                            PathKey: TABKEY.personal,
-                                        }),
-                                    })
-                                    // let resetAction = NavigationActions.reset({
-                                    //     index: 0,
-                                    //     actions: [
-                                    //         NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
-                                    //     ]
-                                    // });
-                                    // navigation.dispatch(resetAction);
+                <View style={styles.container}>
+                    <View style={styles.aboveBox}>
+                        <Image source={require('../../images/logo2.png')} style={{
+                            width: 60,
+                            height: 60,
+                        }} />
+                        <Text style={styles.fontSize1}>境淘土特产</Text>
+                        <Text style={styles.fontSize2}>{'版本号 ' + version}</Text>
+                    </View>
+                    <View style={styles.belowBox}>
+                        <TouchableOpacity onPress={()=>{
+                            if(!login) return;
+                            this.showAlertMoudle('是否注销当前帐号', ()=>{
+                                _User.delUserID(_User.keyMember)
+                                .then(()=>{
+                                    this.setState({deleteAlert: false,}, ()=>{
+                                        navigation.navigate('Login', {
+                                            leftPress: () => navigation.navigate('TabNav', {
+                                                PathKey: TABKEY.personal,
+                                            }),
+                                        });
+                                        // let resetAction = NavigationActions.reset({
+                                        //     index: 0,
+                                        //     actions: [
+                                        //         NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
+                                        //     ]
+                                        // });
+                                        // navigation.dispatch(resetAction);
+                                    });
                                 });
-                            });
-                        }, '退出');
-                    }} style={styles.rowMain}>
-                        <Text style={styles.rowText}>帐号注销</Text>
-                        <Image source={require('../../images/list_more.png')} style={styles.rowRightIcon} />
-                    </TouchableOpacity>
+                            }, '退出');
+                        }} style={styles.btnLogOut}>
+                            <Text style={styles.fontSize3}>帐号注销</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 {this.state.deleteAlert ?
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
@@ -105,25 +107,46 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
-    },
-    rowMain: {
-        width: Size.width - PX.marginLR,
-        marginLeft: PX.marginLR,
-        paddingRight: PX.marginLR,
-        height: PX.rowHeight1,
-        borderBottomWidth: 1,
-        borderBottomColor: Color.lavender,
-        flexDirection : 'row',
+        backgroundColor: Color.floralWhite,
         justifyContent: 'space-between',
+    },
+    aboveBox: {
+        marginTop: 20,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    rowText: {
-        fontSize: 14,
-        color: Color.lightBack,
+    belowBox: {
+        marginBottom: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    rowRightIcon: {
-        width: 26,
-        height: 26,
+    btnLogOut: {
+        borderWidth: 1,
+        borderColor: Color.mainColor,
+        borderRadius: 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        width: Size.width - 30,
+        height: 30,
+        marginLeft: 15,
+    },
+    fontSize1: {
+        fontSize: 16,
+        color: Color.lightBack,
+        fontWeight: 'bold',
+        paddingTop: 5,
+        backgroundColor: 'transparent',
+    },
+    fontSize2: {
+        fontSize: 12,
+        color: Color.lightBack,
+        paddingTop: 3,
+        backgroundColor: 'transparent',
+    },
+    fontSize3: {
+        fontSize: 14,
+        color: Color.mainColor,
+        backgroundColor: 'transparent',
     },
 });

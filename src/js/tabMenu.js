@@ -53,7 +53,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#fff',
         height: PX.tabHeight,
         borderTopWidth: pixel,
-        borderTopColor: Color.floralWhite,
+        borderTopColor: Color.lavender,
     },
     tabItem : {
         flex : 1,
