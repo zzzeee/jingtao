@@ -1289,7 +1289,7 @@ var styles = StyleSheet.create({
         borderWidth: 1,
         fontSize: 11,
         borderRadius: 8,
-        paddingTop: 5,
+        paddingTop: 6,
         paddingBottom: 5,
         paddingLeft: 15,
         paddingRight: 15,

@@ -17,7 +17,7 @@ import {
 
 var WeChat=require('react-native-wechat');
 import Toast from 'react-native-root-toast';
-import Alipay from 'react-native-yunpeng-alipay'
+import Alipay from 'react-native-yunpeng-alipay';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';

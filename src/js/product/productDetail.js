@@ -11,6 +11,7 @@ import {
     Text,
     Image,
     WebView,
+    ActivityIndicator,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -52,21 +53,26 @@ export default class ProductDetail extends Component {
 
     render() {
         if(!this.props.productID || this.props.productID <= 0) return null;
-        let webHeight = this.state.webViewHeight;
+        let webHeight = parseInt(this.state.webViewHeight) || 0;
         let webStyle = {
             width: Size.width,
             height: webHeight,
         };
         let webBoxStyle = {
             width: Size.width,
-            height: webHeight ? webHeight + 50 : 0,
+            height: webHeight + 50,
         };
         return (
             <View style={webBoxStyle}>
-                <View style={styles.upArrowBox}>
-                    <Image style={styles.upArrowImg} source={require('../../images/product/up_arrow.png')} />
-                    <Text style={styles.upArrowText}>{Lang[Lang.default].upArrowTxt}</Text>
-                </View>
+                {webHeight > 0 ?
+                    <View style={styles.upArrowBox}>
+                        <Image style={styles.upArrowImg} source={require('../../images/product/up_arrow.png')} />
+                        <Text style={styles.upArrowText}>{Lang[Lang.default].upArrowTxt}</Text>
+                    </View> :
+                    <View style={styles.upArrowBox}>
+                        <ActivityIndicator animating={true} color={Color.mainColor} size="small" />
+                    </View>
+                }
                 <View style={webStyle}>
                     <WebView
                         javaScriptEnabled={true}
@@ -79,9 +85,9 @@ export default class ProductDetail extends Component {
                             let width = parseInt(arr[0]) || 0;
                             let height = parseInt(arr[1]) || 0;
                             let _height = Size.width * height / width || 0;
-                            if(_height < 999999 && _height > 0 && _height != webHeight) {
+                            if(_height < 9999 && _height > 0 && _height != webHeight) {
                                 console.log('更新webview高度为：' + _height);
-                                this.setState({webViewHeight: _height})
+                                this.setState({webViewHeight: _height});
                             }
                         }}
                     />

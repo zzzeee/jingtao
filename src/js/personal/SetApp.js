@@ -88,7 +88,7 @@ export default class SetApp extends Component {
                                 });
                             }, '退出');
                         }} style={styles.btnLogOut}>
-                            <Text style={styles.fontSize3}>帐号注销</Text>
+                            <Text style={styles.fontSize3}>退出登录</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         width: Size.width - 30,
-        height: 30,
+        height: PX.rowHeight2,
         marginLeft: 15,
     },
     fontSize1: {

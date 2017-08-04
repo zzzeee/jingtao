@@ -395,11 +395,12 @@ export default class ProductAttr extends Component {
                                 selects[index] = _index;
                                 // console.log('已选套餐:', selects);
                                 that.setState({selects});
-                            }}>
+                            }} style={[styles.cAttrItem, {
+                                borderColor: borderColor,
+                                backgroundColor: bgColor,
+                            }]}>
                                 <Text numberOfLines={1} style={[styles.cAttrName, {
                                     color: color,
-                                    borderColor: borderColor,
-                                    backgroundColor: bgColor,
                                 }]}>{_item}</Text>
                             </TouchableOpacity>
                         );
@@ -474,17 +475,20 @@ var styles = StyleSheet.create({
         flexDirection : 'row',
 		flexWrap: 'wrap',
     },
+    cAttrItem: {
+        borderRadius: 4,
+        borderWidth: 1,
+        marginTop: 6,
+        marginBottom: 6,
+        marginRight: 10,
+    },
     cAttrName: {
         fontSize: 12,
         paddingTop: 3,
         paddingBottom: 3,
         paddingLeft: 10,
         paddingRight: 10,
-        borderRadius: 3,
-        borderWidth: 1,
-        marginTop: 6,
-        marginBottom: 6,
-        marginRight: 10,
+        backgroundColor: 'transparent',
     },
     shopNumberBox: {
         height: 60,

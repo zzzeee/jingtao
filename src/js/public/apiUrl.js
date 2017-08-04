@@ -105,7 +105,7 @@ var urls = {
     //浦发注册接口
     pufaRegister: host + '/api/MemberNController/memberPudongDevelopmentUser',
     //获取版本信息
-    getVersion: host + '/api/Version/getNewestAndroidVersion',
+    getVersion: host + '/api/Version/getNewestAPPVersion',
 };
 
 export default urls;

@@ -865,7 +865,9 @@ class ModalContent extends Component {
                             />
                         </View>
                         <View style={{alignItems: 'center'}}>
-                            <Text style={styles.cityNameStyle}>{name}</Text>
+                            <View style={styles.nameBorder}>
+                                <Text style={styles.cityNameStyle}>{name}</Text>
+                            </View>
                             <Text style={styles.cityPingYingStyle}>{pingying}</Text>
                         </View>
                         <View style={styles.pTextBox}>
@@ -1068,15 +1070,16 @@ var styles = StyleSheet.create({
         right: Size.width * 0.128 - (((Size.width * (1 - 0.853))) / 2) - 0.14,
         top: -54,
     },
+    nameBorder: {
+        borderBottomColor: Color.lightBack,
+        borderBottomWidth: 1,
+        padding: 3,
+    },
     cityNameStyle: {
         paddingLeft: 12,
         paddingRight: 12,
-        paddingTop: 4,
-        paddingBottom: 4,
         fontSize: 14,
         color: Color.lightBack,
-        borderBottomColor: Color.lightBack,
-        borderBottomWidth: 1,
     },
     cityPingYingStyle: {
         fontSize: 10,
