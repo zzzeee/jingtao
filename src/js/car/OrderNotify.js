@@ -149,6 +149,7 @@ var styles = StyleSheet.create({
     },
     topBoxC1Img: {
         height: 120,
+        width: Size.width,
         flexDirection : 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -156,6 +157,7 @@ var styles = StyleSheet.create({
     },
     topBoxC1ImgLeft: {
         maxWidth: Size.width - 20 - 20 - 115,
+        backgroundColor: 'transparent',
     },
     topBoxC1Text1: {
         fontSize: 20,

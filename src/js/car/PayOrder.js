@@ -142,7 +142,6 @@ export default class PayOrder extends Component {
     //获取微信支付信息
     get_weixin_payinfo = () => {
         let { mToken, orderNumber, } = this.props;
-        console.log(this.props);
         if(mToken && orderNumber) {
             Utils.fetch(Urls.getWeiXinInfo, 'post', {
                 orderNum: orderNumber,
@@ -158,7 +157,6 @@ export default class PayOrder extends Component {
 
     //微信支付
     weixin_pay = (datas) => {
-        console.log(datas);
         let { mToken, orderNumber, hidePayBox, } = this.props;
         let partnerId = datas.partnerid || null;
         let prepayId = datas.prepayid || null;
@@ -219,8 +217,17 @@ export default class PayOrder extends Component {
                     Alipay.pay(responseText).then(function(data){
                         console.log(data);
                         if(data.indexOf('"msg":"Success"') >= 0) {
-                            //支付成功
+                            //ANDROID 支付成功
                             hidePayBox(that.paySuccess);
+                        }else if (data && data[0]) {
+                            //IOS 返回
+                            if(data[0].resultStatus == '9000') {
+                                hidePayBox(that.paySuccess);
+                            }else {
+                                hidePayBox(callback);
+                            }
+                        }else {
+                            hidePayBox(callback);
                         }
                     }, (err)=> {
                         //支付失败，包括取消的
