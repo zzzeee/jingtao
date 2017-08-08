@@ -13,6 +13,7 @@
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.0",
+    "react-native-code-push": "^2.1.0-beta",
     "react-native-device-info": "^0.10.2",
     "react-native-fetch-blob": "^0.10.6",
     "react-native-img-cache": "^1.4.0",

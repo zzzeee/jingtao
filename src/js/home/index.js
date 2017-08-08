@@ -139,6 +139,9 @@ export default class HomeScreen extends Component {
                             // onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
+                    <View>
+                        <Text>我这里添加了 react native code push</Text>
+                    </View>
                     {this.state.load_or_error ?
                         this.state.load_or_error :
                         (this.state.datas ?

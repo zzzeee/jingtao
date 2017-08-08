@@ -51,6 +51,9 @@ import ShopSearch from './shop/ShopSearch';
 import Banner from './find/PufaBanner';
 import LoginExplain from './find/LoginExplain';
 
+import codePush from "react-native-code-push";
+const CODE_PUSH_PRODUCTION_KEY = 'pyrYNQJzHze3E2EpPprZXRERXie6aa4328de-d86e-43a8-b194-f622183a9805';
+
 //显示格式
 class MyNavScren extends Component {
     constructor(props) {
@@ -79,6 +82,8 @@ class MyNavScren extends Component {
             console.log("addGetRegistrationIdListener: ");
             console.log("Device register succeed, registrationId " + registrationId);
         });
+
+        this.codePushUpdate();
     }
 
     componentWillUnmount() {
@@ -86,6 +91,46 @@ class MyNavScren extends Component {
         JPushModule.removeReceiveNotificationListener();
         JPushModule.removeReceiveOpenNotificationListener();
         JPushModule.removeGetRegistrationIdListener();
+    }
+
+    //远程服务检测更新
+    codePushUpdate = () =>{
+        codePush.sync({
+            installMode: codePush.InstallMode.IMMEDIATE,
+            updateDialog: true
+        }, (status) => {
+            switch (status) {
+                case codePush.SyncStatus.CHECKING_FOR_UPDATE:
+                    console.log('codePush.SyncStatus.CHECKING_FOR_UPDATE');
+                    break;
+                case codePush.SyncStatus.AWAITING_USER_ACTION:
+                    console.log('codePush.SyncStatus.AWAITING_USER_ACTION');
+                    break;
+                case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+                    console.log('codePush.SyncStatus.DOWNLOADING_PACKAGE');
+                    break; 
+                case codePush.SyncStatus.INSTALLING_UPDATE:
+                    console.log('codePush.SyncStatus.INSTALLING_UPDATE');
+                    break;
+                case codePush.SyncStatus.UP_TO_DATE:
+                    console.log('codePush.SyncStatus.UP_TO_DATE');
+                    break;
+                case codePush.SyncStatus.UPDATE_IGNORED:
+                    console.log('codePush.SyncStatus.UPDATE_IGNORED');
+                    break;
+                case codePush.SyncStatus.UPDATE_INSTALLED:
+                    console.log('codePush.SyncStatus.UPDATE_INSTALLED');
+                    break;
+                case codePush.SyncStatus.SYNC_IN_PROGRESS:
+                    console.log('codePush.SyncStatus.SYNC_IN_PROGRESS');
+                    break;
+                case codePush.SyncStatus.UNKNOWN_ERROR:
+                    console.log('codePush.SyncStatus.UNKNOWN_ERROR');
+                    break;
+                }
+        }, ({ receivedBytes, totalBytes, }) => {
+            console.log('receivedBytes / totalBytes: ------------    ' + receivedBytes+'/'+totalBytes);
+        });
     }
 
     render() {
@@ -392,7 +437,7 @@ const AppNavigator = StackNavigator({
         screen: LoginExplainScreen,
     },
 }, {
-    initialRouteName: 'Welcome',
+    initialRouteName: 'Welcome',    // Welcome 、TabNav
     headerMode: 'none',
     // mode: Platform.OS === 'ios' ? 'modal' : 'card',
     mode: 'card',

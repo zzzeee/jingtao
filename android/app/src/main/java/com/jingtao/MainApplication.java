@@ -3,6 +3,7 @@ package com.jingtao;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.microsoft.codepush.react.CodePush;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.cboy.rn.splashscreen.SplashScreenReactPackage;
@@ -24,6 +25,12 @@ public class MainApplication extends Application implements ReactApplication {
   private boolean SHUTDOWN_LOG = false;
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+
+    @Override
+    protected String getJSBundleFile() {
+      return CodePush.getJSBundleFile();
+    }
+
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -31,8 +38,10 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
+      //new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new CodePush("89N6jdH_nh81YzvDiSQfO8gziNQ4aa4328de-d86e-43a8-b194-f622183a9805", MainApplication.this, BuildConfig.DEBUG),
             new RNDeviceInfo(),
             new RNFetchBlobPackage(),
             new SplashScreenReactPackage(),

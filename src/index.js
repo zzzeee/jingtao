@@ -4,7 +4,10 @@
  * @date   2017.06.02
  */
 
-import { AppRegistry } from 'react-native';
+import React, { Component } from 'react';
+import { 
+    AppRegistry,
+} from 'react-native';
 import { WeiXin } from './js/datas/protect';
 import App from './js/';
 // import App from './NavigatorDemo/App';
