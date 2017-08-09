@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 
 import { StackNavigator } from 'react-navigation';
-import { Color, PX } from './public/globalStyle';
-import JPushModule from 'jpush-react-native';
 
 import Welcome from './welcome';
 // import TabNavScreen from './tabNav';
@@ -51,125 +49,9 @@ import ShopSearch from './shop/ShopSearch';
 import Banner from './find/PufaBanner';
 import LoginExplain from './find/LoginExplain';
 
-import codePush from "react-native-code-push";
-const CODE_PUSH_PRODUCTION_KEY = 'pyrYNQJzHze3E2EpPprZXRERXie6aa4328de-d86e-43a8-b194-f622183a9805';
-
-//显示格式
-class MyNavScren extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-    }
-
-    componentDidMount() {
-        JPushModule.notifyJSDidLoad();
-        JPushModule.addReceiveCustomMsgListener((map) => {
-            console.log("addReceiveCustomMsgListener: ");
-            console.log(map);
-        });
-        JPushModule.addReceiveNotificationListener((map) => {
-            //收到通知
-            console.log("收到通知 addReceiveNotificationListener: ");
-            console.log(map);
-        });
-        JPushModule.addReceiveOpenNotificationListener((map) => {
-            //打开通知
-            console.log("打开通知 addReceiveOpenNotificationListener: ");
-            console.log(map);
-        });
-        JPushModule.addGetRegistrationIdListener((registrationId) => {
-            console.log("addGetRegistrationIdListener: ");
-            console.log("Device register succeed, registrationId " + registrationId);
-        });
-
-        this.codePushUpdate();
-    }
-
-    componentWillUnmount() {
-        JPushModule.removeReceiveCustomMsgListener();
-        JPushModule.removeReceiveNotificationListener();
-        JPushModule.removeReceiveOpenNotificationListener();
-        JPushModule.removeGetRegistrationIdListener();
-    }
-
-    //远程服务检测更新
-    codePushUpdate = () =>{
-        codePush.sync({
-            installMode: codePush.InstallMode.IMMEDIATE,
-            updateDialog: true
-        }, (status) => {
-            switch (status) {
-                case codePush.SyncStatus.CHECKING_FOR_UPDATE:
-                    console.log('codePush.SyncStatus.CHECKING_FOR_UPDATE');
-                    break;
-                case codePush.SyncStatus.AWAITING_USER_ACTION:
-                    console.log('codePush.SyncStatus.AWAITING_USER_ACTION');
-                    break;
-                case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-                    console.log('codePush.SyncStatus.DOWNLOADING_PACKAGE');
-                    break; 
-                case codePush.SyncStatus.INSTALLING_UPDATE:
-                    console.log('codePush.SyncStatus.INSTALLING_UPDATE');
-                    break;
-                case codePush.SyncStatus.UP_TO_DATE:
-                    console.log('codePush.SyncStatus.UP_TO_DATE');
-                    break;
-                case codePush.SyncStatus.UPDATE_IGNORED:
-                    console.log('codePush.SyncStatus.UPDATE_IGNORED');
-                    break;
-                case codePush.SyncStatus.UPDATE_INSTALLED:
-                    console.log('codePush.SyncStatus.UPDATE_INSTALLED');
-                    break;
-                case codePush.SyncStatus.SYNC_IN_PROGRESS:
-                    console.log('codePush.SyncStatus.SYNC_IN_PROGRESS');
-                    break;
-                case codePush.SyncStatus.UNKNOWN_ERROR:
-                    console.log('codePush.SyncStatus.UNKNOWN_ERROR');
-                    break;
-                }
-        }, ({ receivedBytes, totalBytes, }) => {
-            console.log('receivedBytes / totalBytes: ------------    ' + receivedBytes+'/'+totalBytes);
-        });
-    }
-
-    render() {
-        let { navigation, NavScreen } = this.props;
-        // let { router, screen } = NavScreen;      //不可用
-        // let { router, screen } = Login;          //不可用
-        // let { router, screen } = TabNavScreen;   //可用
-        // console.log(TabNavScreen);
-        // console.log(router);
-        // console.log(screen);
-        // console.log(router2);
-        // console.log(screen2);
-        /**
-         * router = {
-         *   getActionForPathAndParams: function getActionForPathAndParams(path, params),
-         *   getComponentForRouteName: function getComponentForRouteName(routeName),
-         *   getComponentForState: function getComponentForState(state),
-         *   getPathAndParamsForState: function getPathAndParamsForState(state),
-         *   getScreenConfig: function (),
-         *   getScreenOptions: function (navigation, screenProps),
-         *   getStateForAction: function getStateForAction(action, inputState),
-         * }
-         */
-
-        return (
-            <View style={styles.flex}>
-                <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
-                <View style={{
-                    height: (Platform.OS === 'ios') ? PX.statusHeight : 0,
-                    backgroundColor: Color.mainColor,
-                }} />
-                <View style={styles.container}>
-                    <NavScreen navigation={navigation} />
-                </View>
-            </View>
-        );
-    }
-}
-
+const MyNavScren = ({ navigation, NavScreen }) => (
+    <NavScreen navigation={navigation} />
+);
 
 //欢迎页
 const WelcomeScreen = ({ navigation }) => (
