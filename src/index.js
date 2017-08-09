@@ -18,8 +18,12 @@ import App from './js/';
 // import App from './NavigatorDemo/App';
 var WeChat=require('react-native-wechat');
 import JPushModule from 'jpush-react-native';
-import codePush from "react-native-code-push";
+import CodePush from "react-native-code-push";
 import { Color, PX } from './js/public/globalStyle';
+import {
+    Code_Push_Production_KEY,
+    Code_Push_Staging_KEY,
+} from './js/datas/protect';
 
 if(!__DEV__){
     global.console = {
@@ -51,7 +55,30 @@ class JingtaoApp extends Component {
             console.log("addGetRegistrationIdListener: ");
             console.log("Device register succeed, registrationId " + registrationId);
         });
-        codePush.sync();
+        // CodePush.sync();
+
+        //访问慢,不稳定
+        CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
+            if(!update){
+                Alert.alert("提示","已是最新版本--",[
+                    {text:"Ok", onPress:()=>{
+                        console.log("点了OK");
+                    }}
+                ]);
+            }
+            else{
+                CodePush.sync({
+                    deploymentKey: Code_Push_Production_KEY,
+                    updateDialog: {
+                        optionalIgnoreButtonLabel: '稍后',
+                        optionalInstallButtonLabel: '后台更新',
+                        optionalUpdateMessage: '有新版本了，是否更新？',
+                        title: '更新提示'
+                    },
+                    installMode: CodePush.InstallMode.IMMEDIATE
+                });
+            }
+        });
     }
 
     componentWillUnmount() {
