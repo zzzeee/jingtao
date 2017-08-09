@@ -9,6 +9,7 @@
 三. 安装插件
   npm install 
   react-native link 插件名(慎用 react-native link)
+  注： react-native-yunpeng-alipay 不能直接react-native link, 不然会报错
 
 四. 允许HTTP访问
   Xcode -> 项目名(jingtao) -> Info -> Custom IOS Target Properties

@@ -88,3 +88,5 @@ __tests__
 yarn.lock
 .watchmanconfig
 .gitattributes
+
+bundles

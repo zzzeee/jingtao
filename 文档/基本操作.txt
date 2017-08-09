@@ -3,9 +3,11 @@ adb devices
 // 设备连接服务
 adb reverse tcp:8081 tcp:8081
 // 打包命令
-gradlew assembleRelease
+Window: gradlew assembleRelease
+Mac: ./gradlew assembleRelease
 // 清除缓存
-gradlew clean
+Window: gradlew clean
+Mac: ./gradlew clean
 
 //初始化指定版本
 react-native init 项目名称 --version 0.**.*

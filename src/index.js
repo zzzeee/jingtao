@@ -12,6 +12,8 @@ import {
     StyleSheet,
     Text,
     View,
+    Image,
+    Alert,
 } from 'react-native';
 import { WeiXin } from './js/datas/protect';
 import App from './js/';
@@ -19,7 +21,7 @@ import App from './js/';
 var WeChat=require('react-native-wechat');
 import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";
-import { Color, PX } from './js/public/globalStyle';
+import { Size, Color, PX } from './js/public/globalStyle';
 import {
     Code_Push_Production_KEY,
     Code_Push_Staging_KEY,
@@ -59,14 +61,10 @@ class JingtaoApp extends Component {
 
         //访问慢,不稳定
         CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
+            console.log(update);
             if(!update){
-                Alert.alert("提示","已是最新版本--",[
-                    {text:"Ok", onPress:()=>{
-                        console.log("点了OK");
-                    }}
-                ]);
-            }
-            else{
+                alert("提示: 已是最新版本--");
+            }else {
                 CodePush.sync({
                     deploymentKey: Code_Push_Production_KEY,
                     updateDialog: {
