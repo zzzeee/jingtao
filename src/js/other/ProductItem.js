@@ -80,12 +80,12 @@ export default class ProductItem extends Component {
             }}>
                 <View style={[styles.productBox, {width: width}, boxStyle]}>
                     <View style={[styles.gImageBox, {
-                        width: width,
-                        height: height,
+                        width: width - 1,
+                        height: height - 1,
                     }]}>
                         <CachedImage source={img} style={{
-                            width: width,
-                            height: height,
+                            width: width - 1,
+                            height: height - 1,
                         }} />
                     </View>
                     <View style={[styles.goodNameView, goodNameViewStyle]}>
@@ -136,6 +136,7 @@ var styles = StyleSheet.create({
         shadowRadius: 3,
         shadowOffset: {'height': 0.5,},
         elevation: 3,
+        margin: 1,
     },
     gImageBox: {
         borderBottomColor : Color.lavender,

@@ -57,26 +57,32 @@ class JingtaoApp extends Component {
             console.log("addGetRegistrationIdListener: ");
             console.log("Device register succeed, registrationId " + registrationId);
         });
-        // CodePush.sync();
+
+        // 直接更新
+        CodePush.sync();
 
         //访问慢,不稳定
-        CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
-            console.log(update);
-            if(!update){
-                alert("提示: 已是最新版本--");
-            }else {
-                CodePush.sync({
-                    deploymentKey: Code_Push_Production_KEY,
-                    updateDialog: {
-                        optionalIgnoreButtonLabel: '稍后',
-                        optionalInstallButtonLabel: '后台更新',
-                        optionalUpdateMessage: '有新版本了，是否更新？',
-                        title: '更新提示'
-                    },
-                    installMode: CodePush.InstallMode.IMMEDIATE
-                });
-            }
-        });
+        // CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
+        //     console.log(update);
+        //     if(!update){
+        //         alert("提示: 已是最新版本!!!");
+        //     }else {
+        //         CodePush.sync({
+        //             deploymentKey: Code_Push_Production_KEY,
+        //             installMode: CodePush.InstallMode.IMMEDIATE,//启动模式三种：ON_NEXT_RESUME、ON_NEXT_RESTART、IMMEDIATE
+        //             updateDialog: {
+        //                 appendReleaseDescription:true,//是否显示更新description，默认为false
+        //                 descriptionPrefix:"更新内容：",//更新说明的前缀。 默认是” Description:
+        //                 mandatoryContinueButtonLabel:"立即更新",//强制更新的按钮文字，默认为continue
+        //                 mandatoryUpdateMessage: "必须强制更新", //- 强制更新时，更新通知. Defaults to “An update is available that must be installed.”.
+        //                 optionalIgnoreButtonLabel: '稍后',     //非强制更新时，取消按钮文字,默认是ignore
+        //                 optionalInstallButtonLabel: '后台更新',//非强制更新时，确认文字. Defaults to “Install”
+        //                 optionalUpdateMessage: '有新版本了，是否更新？',//非强制更新时，更新通知. Defaults to “An update is available. Would you like to install it?”.
+        //                 title: '更新提示'//要显示的更新通知的标题. Defaults to “Update available”.
+        //             },
+        //         });
+        //     }
+        // });
     }
 
     componentWillUnmount() {

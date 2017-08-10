@@ -155,7 +155,9 @@ export default class CityItem extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.leftBorder}>
-                        <TouchableOpacity onPress={()=>this.linkList(id, name, 0)} style={{
+                        <TouchableOpacity onPress={()=>{
+                            // alert('即将添加，敬请期待!');
+                        }} style={{
                             padding: 5,
                             flexDirection: 'row',
                             alignItems: 'center',
@@ -185,7 +187,6 @@ export default class CityItem extends Component {
                     marginLeft: margin_left, 
                     marginTop: 15,
                     marginBottom: 15,
-                    marginRight: 0
                 }} 
             />
         );
@@ -213,6 +214,12 @@ var styles = StyleSheet.create({
         fontSize: 20,
         color: Color.lightBack,
         paddingTop: 12,
+        textShadowColor: '#ddd',
+        textShadowOffset: {
+            width: 3,
+            height: 2,
+        },
+        textShadowRadius: 2,
     },
     cityTitleRow: {
         height: 60,
