@@ -69,7 +69,7 @@ export default class MyIntegral extends Component {
                 if(result && result.sTatus == 1 && result.integralAry) {
                     let info = result.integralAry || {};
                     let mIntegral = parseInt(info.mIntegral) || 0;
-                    let mUserIntegral = info.mUserIntegral || null;
+                    let mUserIntegral = info.mUserIntegral || 0;
                     let datas = info.integralAry || [];
                     this.setState({ mIntegral, mUserIntegral, datas });
                 }
@@ -190,7 +190,7 @@ export default class MyIntegral extends Component {
         let name = item.sShopName || null;
         let used = item.iDescribe || null;
         let useTime = item.iAddTime || null;
-        let number = parseInt(item.payPoints) || 0;
+        let number = item.payPoints || '';
         let headImg = item.sLogo || null;
         let img = headImg ? {uri: headImg} : require('../../images/empty.jpg');
         let isAdd = item.iPayType == 1 ? true : false;
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
-        marginLeft: PX.marginLR,
+        paddingLeft: PX.marginLR,
         paddingRight: PX.marginLR,
         borderBottomWidth: pixel,
         borderBottomColor: Color.lavender,

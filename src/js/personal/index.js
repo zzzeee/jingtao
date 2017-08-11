@@ -89,6 +89,7 @@ export default class PersonalScreen extends Component {
         }
         let couponOverdue = (mCouponNum && mCouponNum > 0) ? 
             str_replace(Lang[Lang.default].couponBeOverdue, mCouponNum) : '';
+        let uHead = (userInfo && userInfo.mPicture) ? {uri: userInfo.mPicture} : require('../../images/personal/defaultHeadImg.png');
         return (
             <View style={styles.flex}>
                 <ScrollView 
@@ -100,10 +101,17 @@ export default class PersonalScreen extends Component {
                     <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                         {islogin ?
                             <View style={styles.headMainBox}>
-                                <View style={styles.headBox}>
-                                    <Image source={require('../../images/personal/defaultHeadImg.png')} style={styles.userHeadImg} />
+                                <TouchableOpacity style={styles.headBox} onPress={()=>{
+                                    if(this.mToken && this.state.userInfo) {
+                                        navigation.navigate('EditUser', {
+                                            mToken: this.mToken,
+                                            userInfo: this.state.userInfo,
+                                        });
+                                    }
+                                }}>
+                                    <Image source={uHead} style={styles.userHeadImg} />
                                     <Text style={styles.userNameText}>{name}</Text>
-                                </View>
+                                </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>this.linkPage(true, 'MyIntegral')}>
                                     {/*<Image source={require('../../images/personal/integralbg.png')} style={styles.integralBg}>*/}
                                     <View style={styles.integralBg2}>
@@ -327,7 +335,9 @@ var styles = StyleSheet.create({
     userHeadImg: {
         width: PX.userHeadImgSize,
         height: PX.userHeadImgSize,
-        // borderRadius: PX.userHeadImgSize / 2,
+        borderRadius: PX.userHeadImgSize / 2,
+        borderWidth: pixel,
+        borderColor: Color.lavender,
     },
     userNameText: {
         paddingLeft: 10,

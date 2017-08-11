@@ -106,6 +106,8 @@ var urls = {
     pufaRegister: host + '/api/MemberNController/memberPudongDevelopmentUser',
     //获取版本信息
     getVersion: host + '/api/Version/getNewestAPPVersion',
+    //更新会员资料
+    updateUserInfo: host + '/api/MemberNController/memberInfoUpdateByMID',
 };
 
 export default urls;

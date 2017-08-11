@@ -279,6 +279,9 @@ const language = {
         expressName: '物流公司',
         notExpressData: '没有相关物流信息!',
         call: '呼叫',
+        photograph: '拍照',
+        selectAlbum: '选择相册',
+        userInfo: '个人资料',
     },
 };
 
