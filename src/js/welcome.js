@@ -44,7 +44,6 @@ export default class Welcome extends Component {
             txtOpc4: new Animated.Value(0),
             txtOpc5: new Animated.Value(0),
         };
-        this.timer = null;
         this.isUpdate = false;
         this.versionInfo = null;
     }
@@ -54,18 +53,27 @@ export default class Welcome extends Component {
         this.startAnimated();
     }
 
-    componentWillUnmount() {
-        this.timer && clearTimeout(this.timer);
-        
-    }
-
     getVersionInfo = () => {
-        Utils.fetch(Urls.getVersion, 'get', {}, (result)=>{
-            if(result && result.info && result.sTatus == 1) {
-                let version1 = result.info.versionCode || null;
+        Utils.fetch(Urls.getVersion, 'get', {
+            type: 0,
+            code: DeviceInfo.getBuildNumber() || 0,
+        }, (result)=>{
+            console.log(result);
+            if(result && result.sTatus == 1 && result.info && result.info.length) {
+                let version1 = result.info[0].versionName || null;
                 let version2 = DeviceInfo.getVersion() || null;
-                if(version1 && version2) {
-                    if(version1 != version2) {
+                if(version1 && version2 && version1 != version2) {
+                    let vs1 = version1.split('.') || [];
+                    let vs2 = version2.split('.') || [];
+                    let vs1_0 = vs1[0] || 0,
+                        vs1_1 = vs1[1] || 0,
+                        vs1_2 = vs1[2] || 0,
+                        vs2_0 = vs2[0] || 0,
+                        vs2_1 = vs2[1] || 0,
+                        vs2_2 = vs2[2] || 0;
+                    if(vs1_0 > vs2_0 || 
+                    ((vs1_0 == vs2_0) && (vs1_1 > vs2_1)) || 
+                    ((vs1_0 == vs2_0) && (vs1_1 == vs2_1) && (vs1_2 > vs2_2))) {
                         this.isUpdate = true;
                         this.versionInfo = result.info;
                     }

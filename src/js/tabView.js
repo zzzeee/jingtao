@@ -103,21 +103,32 @@ export default class TabView extends Component {
                 }
             }
             let type = 0;
-            if(versionInfo) {
-                this.alertObject.text = versionInfo.versionTitle || null;
-                this.updateUrl = versionInfo.versionUrl || null;
-                type = versionInfo.versionType || 0;
-                let texts = versionInfo.versionInfo || [];
-                if(texts && texts.length > 0) {
-                    this.alertObject.textView = (
-                        <ScrollView>
-                            <Text numberOfLines={2} style={styles.updateTitle}>{this.alertObject.text}</Text>
-                            {texts.map((item, index)=>{
-                                return <Text key={index} style={styles.updateText}>{item}</Text>
-                            })}
-                        </ScrollView>
-                    )
-                }
+            if(versionInfo && versionInfo.length > 0) {
+                this.alertObject.textView = (
+                    <ScrollView contentContainerStyle={styles.scollStyle}>
+                        {versionInfo.map((item, index)=>{
+                            let contents = item.versionInfo || [];
+                            let title = item.versionTitle || null;
+                            let code = item.versionName || null;
+                            let _type = item.versionType || null;
+                            if(item.versionUrl && !this.updateUrl) this.updateUrl = item.versionUrl;
+                            if(_type && type != 9) type = _type;
+                            return (
+                                <View key={index} style={{
+                                    marginBottom: (index + 1 == versionInfo.length) ? 0 : 20,
+                                }}>
+                                    <Text numberOfLines={2} style={styles.updateTitle}>{title}</Text>
+                                    <Text numberOfLines={2} style={styles.versionCode}>
+                                        {_type == 9 ? `${code} (强制更新)` : code}
+                                    </Text>
+                                    {contents.map((item2, index2) => {
+                                        return <Text key={index2} style={styles.updateText}>{item2}</Text>;
+                                    })}
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                );
             }
             this.setState({
                 initIndex: parseInt(index),
@@ -131,6 +142,8 @@ export default class TabView extends Component {
         const { navigation } = this.props;
         let { updateType, initIndex, selectIndex, deleteAlert } = this.state;
         if(updateType == 9) {
+            this.alertObject.rightColor = Color.gray;
+            this.alertObject.rightClick = null;
             return <AlertMoudle visiable={deleteAlert} {...this.alertObject} />;
         }
         return (
@@ -174,15 +187,19 @@ var styles = StyleSheet.create({
     flex : {
         flex : 1,
     },
+    scollStyle: {
+        width: Size.width * 0.8 - 30,
+    },
     updateBox : {
         alignItems: 'flex-start',
         backgroundColor: Color.floralWhite,
+        maxHeight: Size.height * 0.4,
     },
     updateTitle: {
         color: Color.mainColor,
         fontSize: 14,
-        paddingBottom: 15,
         lineHeight: 22,
+        paddingBottom: 2,
         fontWeight: 'bold',
         textShadowColor: '#ccc',
         textShadowOffset: {
@@ -190,6 +207,11 @@ var styles = StyleSheet.create({
             height: 1.6,
         },
         textShadowRadius: 2,
+    },
+    versionCode: {
+        paddingBottom: 10,
+        fontSize: 12,
+        color: Color.gray,
     },
     updateText: {
         color: Color.lightBack,

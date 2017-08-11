@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: Size.width - 30,
         height: PX.rowHeight2,
-        marginLeft: 15,
     },
     fontSize1: {
         fontSize: 16,
