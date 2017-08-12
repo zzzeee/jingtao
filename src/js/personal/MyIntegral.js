@@ -223,11 +223,11 @@ export default class MyIntegral extends Component {
                     </View>
                     <View style={[styles.rowBetweenStyle, {alignItems: 'center'}]}>
                         <View>
-                        <Text style={[styles.usedStyle, {
-                            color: color,
-                            borderColor: bdColor,
-                            backgroundColor: bgColor,
-                        }]}>{used}</Text>
+                            <Text style={[styles.usedStyle, {
+                                color: color,
+                                borderColor: bdColor,
+                                backgroundColor: bgColor,
+                            }]}>{used}</Text>
                         </View>
                         <Text style={[styles.numberStyle, {
                             color: numberColor,
@@ -399,10 +399,10 @@ const styles = StyleSheet.create({
     usedStyle: {
         color: '#fff',
         fontSize: 12,
-        paddingTop: 4,
-        paddingBottom: 4,
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingTop: 3,
+        paddingBottom: 2,
+        paddingLeft: 8,
+        paddingRight: 8,
         borderRadius: 3,
         borderWidth: 1,
     },

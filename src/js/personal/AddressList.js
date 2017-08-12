@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginLeft: PX.marginLR,
         marginBottom: PX.marginTB,
-        marginTop: 87,
+        marginTop: 50,
     },
     addAddressImg: {
         width: 20,

@@ -27,6 +27,7 @@ import PickerAndroidIOS from '../other/PickerAndroidIOS';
 import { Size, PX, pixel, Color, FontSize } from '../public/globalStyle';
 import Lang, { str_replace, TABKEY } from '../public/language';
 import AppHead from '../public/AppHead';
+import ErrorAlert from '../other/ErrorAlert';
 
 var maxImageSizeM = 1;  // 单位M
 var maxImageSize = 1024 * 1024 * maxImageSizeM;	// 1M
@@ -55,12 +56,16 @@ export default class EditUser extends Component {
             userBirthday: null,
             userHeadImg: null,
             userSex: 0,
+            showAlert: false,
         };
 
         this.userInfo = null;
         this.userNewName = null;
         this.userNewMail = null;
         this.userHeadData = null;
+        this.type = 1;
+        this.alertMsg = '';
+        this.btnLock = false;
     }
 
     componentWillMount() {
@@ -75,7 +80,7 @@ export default class EditUser extends Component {
             let { mToken, userInfo } = params;
             this.mToken = mToken || null;
             this.userInfo = userInfo || null;
-            let userSex = this.userInfo.mSex || 0;
+            let userSex = parseInt(this.userInfo.mSex) || 0;
             let userHeadImg = this.userInfo.mPicture || null;
             let userBirthday = this.userInfo.mBirthday || null;
             this.userNewName = this.userInfo.mNickName || null;
@@ -87,6 +92,17 @@ export default class EditUser extends Component {
                 userBirthday
             });
         }
+    };
+
+    //显示提示框
+    showAutoModal = (msg) => {
+        this.alertMsg = msg;
+        this.setState({showAlert: true, });
+    };
+
+    //隐藏提示框
+    hideAutoModal = () => {
+        this.setState({ showAlert: false });
     };
 
     render() {
@@ -104,7 +120,7 @@ export default class EditUser extends Component {
             name: '女',
             value: 2,
         },];
-        let { userSex, userHeadImg, userBirthday } = this.state;
+        let { userSex, userHeadImg, userBirthday, showAlert } = this.state;
         return (
             <View style={styles.flex}>
                 <AppHead
@@ -112,15 +128,13 @@ export default class EditUser extends Component {
                     goBack={true}
                     navigation={this.props.navigation}
                 />
-                <ScrollView contentContainerStyle={styles.bodyBox}>
-                    <TouchableOpacity onPress={this.selectLocalImage}>
-                        <View style={styles.headView}>
+                <ScrollView>
+                    <TouchableOpacity style={styles.headView} onPress={this.selectLocalImage}>
                             <Image
                                 source={userHeadImg}
                                 style={styles.headImage}
                             />
                             <Text>点击更改</Text>
-                        </View>
                     </TouchableOpacity>
                     <View style={styles.inputView}>
                         <Text style={styles.inputText}>昵称</Text>
@@ -157,17 +171,17 @@ export default class EditUser extends Component {
                             />
                         </View>
                     </View>
-                    <View style={styles.inputView}>
+                    <TouchableOpacity style={styles.inputView}>
                         <Text style={styles.inputText}>手机</Text>
                         <View style={[styles.inlineRight, {
-                            flexDirection: 'row',
                             alignItems: 'center',
+                            flexDirection: 'row',
                             justifyContent: 'flex-end',
                         }]}>
                             <Text style={styles.mobileText}>{mobile}</Text>
                             <Image source={require('../../images/list_more.png')} style={styles.rowRightIcon} />
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.inputView}>
                         <Text style={styles.inputText}>出生日期</Text>
                         <View style={styles.inlineRight}>
@@ -207,26 +221,51 @@ export default class EditUser extends Component {
                         <Text style={styles.btnSaveText}>{Lang[Lang.default].save}</Text>
                     </TouchableOpacity>
                 </ScrollView>
+                {showAlert ?
+                    <ErrorAlert 
+                        type={this.type}
+                        visiable={showAlert} 
+                        message={this.alertMsg} 
+                        hideModal={this.hideAutoModal} 
+                    />
+                    : null
+                }
             </View>
         );
     }
 
     //更新会员资料
     updateUserInfo = () => {
-        let name = Utils.trim(this.userNewName) || null;
-        if (!name) {
-            alert('昵称不能为空');
+        if(this.btnLock) {
+            console.log('请稍等,正在验证中...');
+            return;
+        }else {
+            this.btnLock = true;
         }
+        let name = Utils.trim(this.userNewName) || null;
         let uName = this.userInfo.mNickName || null;
         let uMail = this.userInfo.mEmail || null;
         let uBirthday = this.userInfo.mBirthday || null;
-        let uSex = this.userInfo.mSex || 0;
+        let uSex = parseInt(this.userInfo.mSex) || 0;
         //判断是否修改信息
         if (!this.userHeadData && uName == name && 
             uSex == this.state.userSex &&
             uMail == this.userNewMail && this.state.userBirthday == uBirthday) {
-            alert('资料未修改，无需提交。');
-            return false;
+            this.showAutoModal('资料未修改，无需提交。');
+            this.btnLock = false;
+            return;
+        }else if(!name) {
+            this.showAutoModal('昵称不能为空!');
+            this.btnLock = false;
+            return;
+        }else if(uMail && !this.userNewMail) {
+            this.showAutoModal('请输入邮箱!');
+            this.btnLock = false;
+            return;
+        }else if(uSex && this.state.userSex == 0) {
+            this.showAutoModal('请选择性别!');
+            this.btnLock = false;
+            return;
         }
         let obj = {
             mToken: this.mToken,
@@ -240,11 +279,14 @@ export default class EditUser extends Component {
         Utils.fetch(Urls.updateUserInfo, 'post', obj, (result)=> {
             console.log(result);
             if (result && result.sTatus == 1) {
+                this.showAutoModal('修改成功!');
                 this.props.navigation.navigate('TabNav', {
                     PathKey: TABKEY.personal,
                 });
-            }else if(result.sMessage) {
-                alert(result.sMessage);
+            }else {
+                this.btnLock = false;
+                let msg = result.sMessage || null;
+                this.showAutoModal(result.sMessage);
             }
         });
     }
@@ -266,22 +308,20 @@ export default class EditUser extends Component {
             } else if (!response.data) {
                 return false;
             } else if (response.width > maxPX || response.height > maxPX) {
-                alert('你上传的图片像素过大(最大' + maxPX + '*' + maxPX + ')', );
+                this.showAutoModal(`你上传的图片像素过大(最大 ${maxPX}*${maxPX})`);
                 return false;
             } else if (response.type != 'image/jpeg' &&
                 response.type != 'image/png' &&
                 response.type != 'image/gif' &&
                 response.type != 'image/bmp') {
-                alert('你上传的图片类型(' + response.type + ')不可用');
+                this.showAutoModal(`你上传的图片类型(${response.type})不可用`);
                 return false;
             } else {
                 this.userHeadData = response.data;
-                let source = { uri: response.uri };
+                let userHeadImg = { uri: response.uri };
                 // You can also display the image using data:
-                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-                this.setState({
-                    userHeadImg: source,
-                });
+                // let userHeadImg = { uri: 'data:image/jpeg;base64,' + response.data };
+                this.setState({ userHeadImg, });
             }
         });
     };
@@ -290,33 +330,36 @@ export default class EditUser extends Component {
 const styles = StyleSheet.create({
     flex: {
         flex: 1,
-        backgroundColor: '#fff',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: Color.floralWhite,
     },
     headView: {
-        height: 80,
+        height: 100,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 20,
-        paddingRight: 6,
-        paddingLeft: 6,
-    },
-    bodyBox: {
         padding: 15,
+        backgroundColor: '#fff',
     },
     headImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
         borderWidth: 1,
         borderColor: '#ccc',
     },
     inputView: {
-        height: 36,
+        height: PX.rowHeight1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginBottom: 10,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+        backgroundColor: '#fff',
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.lavender,
     },
     inputText: {
         color: '#444',
@@ -324,12 +367,7 @@ const styles = StyleSheet.create({
     },
     inlineRight: {
         flex: 3.5,
-    },
-    inlineRight2: {
-        flex: 3.5,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        justifyContent: 'center',
     },
     btnAddUser: {
         height: 32,
@@ -351,8 +389,10 @@ const styles = StyleSheet.create({
         backgroundColor: Color.mainColor,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 30,
+        marginTop: 50,
         marginBottom: 10,
+        marginLeft: PX.marginLR,
+        marginRight: PX.marginLR,
     },
     btnSaveText: {
         fontSize: 14,
