@@ -136,7 +136,7 @@ export default class MyIntegral extends Component {
         let { navigation } = this.props;
         let { mIntegral, mUserIntegral, datas } = this.state;
         return (
-            <View style={styles.container}>
+            <View>
                 <View style={styles.topBox}>
                     <Image
                         style={styles.integral_top_bg1}
@@ -171,11 +171,13 @@ export default class MyIntegral extends Component {
                         <Text style={styles.integralNumberText2}>{mIntegral}</Text>
                         <Text style={styles.topTxt}>{Lang[Lang.default].point}</Text>
                     </View>
-                    <TouchableOpacity style={styles.footGroupView} onPress={()=>{
-                        navigation.navigate('TabNav');
-                    }}>
-                        <Image style={styles.footGroup} source={require('../../images/personal/group.jpg')} />
-                    </TouchableOpacity>
+                    <View style={styles.footGroupView}>
+                        <TouchableOpacity onPress={()=>{
+                            navigation.navigate('TabNav');
+                        }}>
+                            <Image style={styles.footGroup} source={require('../../images/personal/group.jpg')} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.ruleBox}>
                     <Text style={styles.ruleTextLeft}>{Lang[Lang.default].integralDetailed}</Text>
@@ -283,6 +285,7 @@ const styles = StyleSheet.create({
     integralNumberText1: {
         color: Color.mainColor,
         fontSize: FontSize.integralNumber,
+        backgroundColor: 'transparent',
     },
     integral_bg2: {
         position: 'absolute',
@@ -374,7 +377,7 @@ const styles = StyleSheet.create({
         height: 60,
         marginTop: PX.marginTB,
         borderRadius: 30,
-        borderWidth: 1,
+        borderWidth: pixel,
         borderColor: Color.lavender,
     },
     rowRightStyle: {

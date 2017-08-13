@@ -243,7 +243,6 @@ export default class OrderComponent extends Component {
                                 <FlatList
                                     ref={get_list_ref}
                                     data={orders}
-                                    contentContainerStyle={styles.flatListStyle}
                                     keyExtractor={(item, index)=>(index)}
                                     renderItem={this._renderItem}
                                     onEndReached={()=>this.loadOrderList(true)}
@@ -324,8 +323,5 @@ export default class OrderComponent extends Component {
 var styles = StyleSheet.create({
     flex: {
         flex: 1,
-    },
-    flatListStyle: {
-        backgroundColor: Color.lightGrey,
     },
 });

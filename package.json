@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "bundle-ios": "node node_modules/react-native/local-cli/cli.js bundle --entry-file index.ios.js --platform ios --dev false --bundle-output ./ios/bundle/index.ios.jsbundle --assets-dest ./ios/bundle",
+    "code-push-bundle-android": "react-native bundle --platform android --entry-file index.android.js --bundle-output ./bundles/index.android.bundle --assets-dest ./bundles --dev false",
+    "code-push-bundle-ios": "react-native bundle --platform ios --entry-file index.ios.js --bundle-output ./bundles/index.ios.bundle --assets-dest ./bundles --dev false",
     "configureJPush": "node node_modules/jpush-react-native/JPushConfiguration.js",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"

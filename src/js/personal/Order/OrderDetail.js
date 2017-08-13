@@ -808,6 +808,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         borderTopWidth: pixel,
         borderTopColor: Color.lavender,
+        backgroundColor: '#fff',
     },
     custemIcon: {
         width: 32,
