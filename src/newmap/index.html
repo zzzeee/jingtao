@@ -2,10 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
+        <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport"/>
         <title>MapModule</title>
         <style>
             body{
                 background: #CED0D4;
+                max-width: 600px;
                 margin:0;
                 padding:0;
             }
@@ -63,8 +65,9 @@
         </style>
 
         <script src="js/jquery-2.1.1.min.js"></script>
+        <script src="js/hammer.min.js"></script>
         <script src="js/snap.svg-min.js"></script>
-        <script src="./js/chinaMapConfig.js"></script>
+        <script src="./js/chinaMapConfig.js?2"></script>
     </head>
     <body>
         <div id="showTestDatas"></div>
@@ -97,23 +100,38 @@
             </div>
         </div>
         <script src="js/jquery.svg-drag.0.0.1.min.js"></script>
-        <script src="js/jquery.svg_autofit.1.0.3.js"></script>
+        <script src="js/jquery.svg_autofit.1.0.4.js"></script>
         <script type="text/javascript">
+            function getQueryString(name){
+                 var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+                 var r = window.location.search.substr(1).match(reg);
+                 if(r!=null)return  unescape(r[2]); return null;
+            }
+            platform = getQueryString("f");
+            platform = (platform)?platform:'embed';
+            // console.info(platform);
+
+            var autoScaleSheng = autoFit = function(){};
             $(document).ready(function () {
+
+
                 // 给APP传值
                 var appMessage = function(id){
                     if(window.postMessage) {
                         window.postMessage(JSON.stringify({id: id}));
                     }
-                    // var u = navigator.userAgent, app = navigator.appVersion;
-                    // var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
-                    // var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-                    
-                    // if (isIOS) {
-                    //     window.location.href = "iOS:receiveFromWeb:" + id;
-                    // } else if (isAndroid) {
-                    //     //android终端或者uc浏览器
-                    //     //android.toastMessage(id);
+                    // if(platform == 'embed'){
+                    //     var u = navigator.userAgent, app = navigator.appVersion;
+                    //     var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+                    //     var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+                        
+                    //     if (isIOS) {
+                    //         window.location.href = "iOS:receiveFromWeb:" + id;
+                    //     } else if (isAndroid) {
+                    //         //android终端或者uc浏览器
+                    //         android.toastMessage(id);
+                    //     }
+                    // }else if(platform == 'reactNative'){                        
                     //     if(window.postMessage) {
                     //         window.postMessage(JSON.stringify({id: id}));
                     //     }
@@ -147,7 +165,7 @@
                     , minScale: minScale
                     , maxScale: maxScale
                     , scaleDuration: 500
-                            // ,debugMode:true
+                    ,debugMode:false
                     , onLoad: function (e) {
                         e.autoFit();
                     }
@@ -178,11 +196,12 @@
                     $('#select_map').val(select_map);
                     setFitStatusToFalse();
                     $('#select_map').css({'color': '#4a4a4a'});
-
-                    var p = getPercentFromScale(status.mapScale);
-                    drag_bar.setPosition(p);
                 });
 
+                mapCtrl.on('onScale', function (e, scale) {
+                    var p = getPercentFromScale(scale);
+                    drag_bar.setPosition(p);
+                });
 
                 //自动放大缩小
                 $("#fitting").on('click', function () {
@@ -225,12 +244,12 @@
                     $(this).blur();
                 });
 
-                function autoScaleSheng(name) {
+                autoScaleSheng = function(name) {
                     var status = mapCtrl.autoScale(name);
                     p = getPercentFromScale(status.mapScale);
                     drag_bar.setPosition(p);
                 }
-                function autoFit() {
+                autoFit =function() {
                     var status = mapCtrl.autoFit();
                     p = getPercentFromScale(status.mapScale);
                     drag_bar.setPosition(p);

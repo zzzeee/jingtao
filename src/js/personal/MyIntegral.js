@@ -222,11 +222,12 @@ export default class MyIntegral extends Component {
                         <Text style={styles.useTimeText}>{useTime}</Text>
                     </View>
                     <View style={[styles.rowBetweenStyle, {alignItems: 'center'}]}>
-                        <View>
+                        <View style={[styles.usedBox, {
+                            borderColor: bdColor,
+                            backgroundColor: bgColor,
+                        }]}>
                             <Text style={[styles.usedStyle, {
                                 color: color,
-                                borderColor: bdColor,
-                                backgroundColor: bgColor,
                             }]}>{used}</Text>
                         </View>
                         <Text style={[styles.numberStyle, {
@@ -396,15 +397,19 @@ const styles = StyleSheet.create({
         color: Color.gray,
         marginTop: 17,
     },
+    usedBox: {
+        minWidth: 50,
+        height: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        borderWidth: 1,
+    },
     usedStyle: {
         color: '#fff',
-        fontSize: 12,
-        paddingTop: 3,
-        paddingBottom: 2,
+        fontSize: 11,
         paddingLeft: 8,
         paddingRight: 8,
-        borderRadius: 3,
-        borderWidth: 1,
     },
     numberStyle: {
         fontSize: 25,

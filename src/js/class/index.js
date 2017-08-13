@@ -13,7 +13,7 @@ import {
     ScrollView,
     Image,
     TouchableOpacity,
-    Button,
+    Platform,
 } from 'react-native';
 
 import AppHead from '../public/AppHead';
@@ -266,8 +266,8 @@ export default class ClassScreen extends Component {
     onScroll_List = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
         let hList = this.minHeightList;
-        let canScrollHeight = hList[hList.length - 1] - bodyHeight;
-
+        let canScrollHeight = hList[hList.length - 1];
+        if(Platform.OS !== 'ios') canScrollHeight -= bodyHeight;
         if(offsetY >= canScrollHeight) {
             this.isScrollEnd = true;
         }else {
@@ -281,7 +281,7 @@ export default class ClassScreen extends Component {
             }
         }else if(offsetY <= canScrollHeight) {
             for(let i in hList) {
-                if(hList[i] >= offsetY) {
+                if(hList[i] > offsetY) {
                     let sid = i - 1;
                     if(sid >= 0 && sid < (hList.length - 1)) {
                         let offset = (sid + 1) * scrollItemHeight;

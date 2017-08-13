@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     InteractionManager,
     Animated,
+    Platform,
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
@@ -54,6 +55,7 @@ export default class Welcome extends Component {
     }
 
     getVersionInfo = () => {
+        if(Platform.OS === 'ios') return;
         Utils.fetch(Urls.getVersion, 'get', {
             type: 0,
             code: DeviceInfo.getBuildNumber() || 0,

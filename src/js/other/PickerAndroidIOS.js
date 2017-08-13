@@ -7,14 +7,22 @@ import {
     PickerIOS,
     Modal,
     Platform,
-    TouchableHighlight,
+    TouchableOpacity,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Size, PX, pixel, Color, } from '../public/globalStyle';
 
 export default class PickerAndroidIOS extends Component {
-
+    // 参数类型
+    static propTypes = {
+        options: PropTypes.array,
+        initValue: PropTypes.number,
+        onValueChange: PropTypes.func,
+        selectVal: PropTypes.string,
+        selectLab: PropTypes.string,
+    };
     //构造
     constructor(props) {
         super(props);
@@ -22,34 +30,39 @@ export default class PickerAndroidIOS extends Component {
             //...props,
             modalVisible: false,
             selectValIOS: null,
+            showLabel: null,
         };
     }
 
     render() {
-        let { options, initValue, selectLab, selectVal, onValueChange } = this.props;
-        let _initValue = initValue ? 
+        let { selectValIOS, showLabel } = this.state;
+        let { options, initValue, onValueChange, selectVal, selectLab } = this.props;
+        let _initValue = (initValue || initValue === 0) ? 
             initValue : 
             (options && options[0] && options[0][selectVal] ? options[0][selectVal] : null);
-
+        let btnText = showLabel ? showLabel : 
+            (_initValue !== null && options && options[0]) ?
+                (options[_initValue][selectLab] ? options[_initValue][selectLab] : null)
+                : null;
         return (
             <View style={styles.PickerBox}>
                 {Platform.OS === 'ios' ?
-                    <TouchableHighlight underlayColor='transparent' style={[styles.btnBox, {
+                    <TouchableOpacity style={[styles.btnBox, {
                         backgroundColor: 'transparent',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                     }]} onPress={()=>{ this.setState({ modalVisible: true })}}>
                             <Text numberOfLines={1} style={[styles.btnText, {
-                                color: '#555',
-                            }]}>{_initValue}</Text>
-                            <Icon name="caret-down" size={18} color='#555' />
-                    </TouchableHighlight> :
+                                color: Color.lightBack,
+                            }]}>{btnText}</Text>
+                            <Icon name="caret-down" size={20} color={Color.lightBack} />
+                    </TouchableOpacity> :
                     <Picker
                         selectedValue={_initValue}
-                        onValueChange={(value) => onValueChange(value)}
+                        onValueChange={onValueChange}
                         style={styles.pickerStyle}
                     >
-                        {options.map((obj, i) => this.readOptionAndroid(obj, i, selectLab, selectVal))}
+                        {options.map(this.readOptionItem)}
                     </Picker>
                 }
                 {Platform.OS === 'ios' ?
@@ -61,27 +74,30 @@ export default class PickerAndroidIOS extends Component {
                     >
                         <View style={styles.modalBody}>
                             <View style={styles.pickerContralBox}>
-                                <TouchableHighlight underlayColor='transparent' 
+                                <TouchableOpacity
                                     style={[styles.btnBox, styles.btnModal]} 
                                     onPress={()=>{ this.setState({ modalVisible: false })}}>
-                                    <Text numberOfLines={1} style={[styles.btnText, styles.btnModal]}>取消</Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight underlayColor='transparent' 
+                                    <Text numberOfLines={1} style={styles.btnText}>取消</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
                                     style={[styles.btnBox, styles.btnModal]} 
                                     onPress={()=>{
+                                        let _showLabel = (options[selectValIOS] && options[selectValIOS][selectLab]) ?
+                                            options[selectValIOS][selectLab] : null;
                                         this.setState({
                                             modalVisible: false,
-                                        }, onValueChange(this.state.selectValIOS));
+                                            showLabel: _showLabel,
+                                        }, ()=>onValueChange(selectValIOS));
                                     }}>
-                                    <Text numberOfLines={1} style={[styles.btnText, styles.btnModal]}>确定</Text>
-                                </TouchableHighlight>
+                                    <Text numberOfLines={1} style={styles.btnText}>确定</Text>
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.pickerBottomBox}>
                                 <PickerIOS
-                                    selectedValue={this.state.selectValIOS ? this.state.selectValIOS : _initValue}
-                                    onValueChange={(value) => this.setState({ selectValIOS: value })}
+                                    selectedValue={selectValIOS !== null ? selectValIOS : _initValue}
+                                    onValueChange={(value)=>this.setState({selectValIOS: value})}
                                 >
-                                    {options.map((obj, i) => this.readOptionIOS(obj, i, selectLab, selectVal))}
+                                    {options.map(this.readOptionItem)}
                                 </PickerIOS>
                             </View>
                         </View>
@@ -91,18 +107,13 @@ export default class PickerAndroidIOS extends Component {
         );
     }
 
-    // 加载所有子项 安卓
-    readOptionAndroid = (obj, i, lab, val) => {
-        let _lab = lab ? obj[lab] : obj;
-        let _val = val ? obj[val] : obj;
-        return <Picker.Item key={i} label={_lab} value={_val} />;
-    };
-
-    // 加载所有子项 苹果
-    readOptionIOS = (obj, i, lab, val) => {
-        let _lab = lab ? obj[lab] : obj;
-        let _val = val ? obj[val] : obj;
-        return <PickerIOS.Item key={i} label={_lab} value={_val} />;
+    // 加载所有子项
+    readOptionItem = (obj, i) => {
+        let { selectLab, selectVal, } = this.props;
+        let _lab = selectLab ? obj[selectLab] : obj;
+        let _val = selectVal ? obj[selectVal] : obj;
+        let PickerItem = Platform.OS === 'ios' ? PickerIOS.Item : Picker.Item;
+        return <PickerItem key={i} label={_lab} value={_val} />;
     };
 }
 
@@ -113,7 +124,7 @@ const styles = StyleSheet.create({
     PickerBox: {
         height: 34,
         borderRadius: 5,
-        borderWidth: 1,
+        borderWidth: pixel,
         borderColor: Color.lavender,
         //alignItems: 'center',
         justifyContent: 'center',
@@ -123,6 +134,7 @@ const styles = StyleSheet.create({
         width: Size.width,
     },
     modalBody: {
+        width: Size.width,
         height: 200,
         backgroundColor: '#aaa',
         borderTopWidth: 2,
@@ -153,8 +165,6 @@ const styles = StyleSheet.create({
     },
     pickerBottomBox: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     pickerStyle: {
         color: '#666',
@@ -172,5 +182,6 @@ const styles = StyleSheet.create({
 	},
 	btnText : {
 		color : '#fff',
+        fontSize: 12,
 	},
 });

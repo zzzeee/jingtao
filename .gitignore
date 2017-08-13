@@ -90,3 +90,4 @@ yarn.lock
 .gitattributes
 
 bundles
+ios/bundle

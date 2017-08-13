@@ -14,8 +14,10 @@ import {
     Button,
     Animated,
     TouchableOpacity,
+    RefreshControl,
 } from 'react-native';
 
+import { CachedImage } from "react-native-img-cache";
 import Utils from '../public/utils';
 import User from '../public/user';
 import Urls from '../public/apiUrl';
@@ -39,6 +41,7 @@ export default class PersonalScreen extends Component {
             userInfo: null,
             opacityVal: new Animated.Value(0),
             mCouponNum: 0,
+            isRefreshing: true,
         };
 
         this.mToken = null;
@@ -46,14 +49,18 @@ export default class PersonalScreen extends Component {
     }
 
     componentDidMount() {
+        this.initUser();
+    }
+
+    initUser = () => {
         _User.getUserID(_User.keyMember)
         .then((value) => {
             if(value) {
                 this.mToken = value;
-                this.initDatas();
             }
+            this.initDatas();
         });
-    }
+    };
 
     initDatas = () => {
         if(this.mToken) {
@@ -67,18 +74,23 @@ export default class PersonalScreen extends Component {
                         userInfo: result.mInfo || null,
                         orderNum: result.orderNum || null,
                         mCouponNum: result.mCouponNum || 0,
-                    })
+                        isRefreshing: false,
+                    });
+                    return;
                 }else if(result && result.sTatus == 4) {
                     this.mToken = null;
                     _User.delUserID(_User.keyMember);
                 }
+                this.setState({isRefreshing: false,});
             });
+        }else {
+            this.setState({isRefreshing: false,});
         }
     };
 
     render() {
         const { navigation } = this.props;
-        let { islogin, userInfo, orderNum, mCouponNum } = this.state;
+        let { islogin, userInfo, orderNum, mCouponNum, isRefreshing } = this.state;
         let name = '', integral = 0;
         let noPay = (orderNum && orderNum.noPay) ? (parseInt(orderNum.noPay) || 0) : 0;
         let noSend = (orderNum && orderNum.noSend) ? (parseInt(orderNum.noSend) || 0) : 0;
@@ -97,6 +109,13 @@ export default class PersonalScreen extends Component {
                     ref={(_ref)=>this.ref_scrollview=_ref}  
                     onScroll={this._onScroll}
                     scrollEventThrottle={10}
+                    refreshControl={<RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={this.initUser}
+                        title="释放立即刷新我..."
+                        tintColor={Color.lightBack}
+                        titleColor={Color.lightBack}
+                    />}
                 >
                     <Image source={require('../../images/personal/personalbg.png')} style={styles.userBgImg}>
                         {islogin ?
@@ -109,7 +128,7 @@ export default class PersonalScreen extends Component {
                                         });
                                     }
                                 }}>
-                                    <Image source={uHead} style={styles.userHeadImg} />
+                                    <CachedImage source={uHead} style={styles.userHeadImg} />
                                     <Text style={styles.userNameText}>{name}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>this.linkPage(true, 'MyIntegral')}>
@@ -242,6 +261,7 @@ export default class PersonalScreen extends Component {
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
+        console.log(offsetY);
         if(offsetY < showHeadBgHeight) {
             this.state.opacityVal.setValue(offsetY);
         }else {
@@ -296,7 +316,7 @@ var styles = StyleSheet.create({
         right: 0,
 	},
     scrollStyle: {
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
         paddingBottom: PX.marginTB,
     },
     userBgImg: {

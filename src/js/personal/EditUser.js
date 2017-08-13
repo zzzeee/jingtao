@@ -15,10 +15,12 @@ import {
     Switch,
     Image,
     Button,
+    Platform,
 } from 'react-native';
 
 import DatePicker from 'react-native-datepicker';
 import ImagePicker from 'react-native-image-picker';
+import { CachedImage } from "react-native-img-cache";
 
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
@@ -130,7 +132,7 @@ export default class EditUser extends Component {
                 />
                 <ScrollView>
                     <TouchableOpacity style={styles.headView} onPress={this.selectLocalImage}>
-                            <Image
+                            <CachedImage
                                 source={userHeadImg}
                                 style={styles.headImage}
                             />
@@ -310,7 +312,8 @@ export default class EditUser extends Component {
             } else if (response.width > maxPX || response.height > maxPX) {
                 this.showAutoModal(`你上传的图片像素过大(最大 ${maxPX}*${maxPX})`);
                 return false;
-            } else if (response.type != 'image/jpeg' &&
+            } else if ((Platform.OS !== 'ios') && 
+                response.type != 'image/jpeg' &&
                 response.type != 'image/png' &&
                 response.type != 'image/gif' &&
                 response.type != 'image/bmp') {
@@ -347,8 +350,8 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 35,
-        borderWidth: 1,
-        borderColor: '#ccc',
+        borderWidth: pixel,
+        borderColor: Color.lavender,
     },
     inputView: {
         height: PX.rowHeight1,

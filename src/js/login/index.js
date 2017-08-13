@@ -16,6 +16,8 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
+
 import User from '../public/user';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
@@ -167,7 +169,14 @@ export default class Login extends Component {
                                         back = 'TabNav';
                                         backObj.PathKey = TABKEY.personal;
                                     }
-                                    navigation.navigate(back, backObj);
+                                    // navigation.navigate(back, backObj);
+                                    let resetAction = NavigationActions.reset({
+                                        index: 0,
+                                        actions: [
+                                            NavigationActions.navigate({routeName: back, params: backObj}),
+                                        ]
+                                    });
+                                    navigation.dispatch(resetAction);
                                 }
                             });
                             _User.delUserID(_User.keyTourist);

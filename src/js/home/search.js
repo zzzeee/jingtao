@@ -43,6 +43,7 @@ export default class Search extends Component {
             deleteAlert: false,
             sortIndex: 0,
             showArea: false,
+            showInitLog: true,
         };
         this.page = 1;
         this.pageNumber = 10;
@@ -65,8 +66,7 @@ export default class Search extends Component {
             'value1': 2,
             'value2': 5,
         }, {
-            // 'text': Lang[Lang.default].newGood,
-            'text': '同城日达',
+            'text': '同城日达', // Lang[Lang.default].newGood
             'isRepeat': false,
             'press': null,
             'value1': 3,
@@ -156,19 +156,23 @@ export default class Search extends Component {
         if(!this.searchLock) {
             Keyboard.dismiss();
             if(txt) {
-                // if(txt == this.search_name) return;
-                this.page = 1;
-                this.isEnScroll = true;
-                this.btnDisable = false;
-                this.loadMoreLock = false;
-                this.search_name = txt;
-                _Search.saveDatas(txt).then((result)=>{
-                    let log = result || [];
-                    this.setState({
-                        log: result,
-                        sdatas: [],
-                    }, this.getProductList);
-                });
+                if(txt == this.search_name && this.state.showInitLog) {
+                    this.setState({showInitLog: false,});
+                }else {
+                    this.page = 1;
+                    this.isEnScroll = true;
+                    this.btnDisable = false;
+                    this.loadMoreLock = false;
+                    this.search_name = txt;
+                    _Search.saveDatas(txt).then((result)=>{
+                        let log = result || [];
+                        this.setState({
+                            log: result,
+                            sdatas: [],
+                            showInitLog: false,
+                        }, this.getProductList);
+                    });
+                }
             }
         }
     };
@@ -235,6 +239,7 @@ export default class Search extends Component {
             sdatas: [],
             sortIndex: 0,
             searchtext: str,
+            showInitLog: false,
         }, this.getProductList);
     };
 
@@ -256,6 +261,18 @@ export default class Search extends Component {
                                 onChange={this.setSearchtext}
                                 length={20}
                                 style={styles.inputStyle}
+                                onFocus={()=>{
+                                    this.setState({
+                                        showInitLog: true,
+                                        load_or_error: null,
+                                    });
+                                }}
+                                endEditing={()=>{
+                                    // this.setState({showInitLog: false,});
+                                }}
+                                submitEditing={()=>{
+                                    this.setState({showInitLog: false,});
+                                }}
                             />
                             <Image style={styles.inputBeforeImg} source={require('../../images/home/search_white.png')} />
                             {this.state.searchtext ?
@@ -267,7 +284,7 @@ export default class Search extends Component {
                         </View>
                     }
                 />
-                {this.state.sdatas ? this.listHead() : null}
+                {(this.state.sdatas && this.state.sdatas.length && !this.state.showInitLog) ? this.listHead() : null}
                 {this.pageContent()}
                 <Areas
                     visiable={this.state.showArea}
@@ -307,7 +324,7 @@ export default class Search extends Component {
                     {this.state.load_or_error}
                 </View>
             );
-        }else if(this.state.sdatas) {
+        }else if(this.state.sdatas && this.state.sdatas.length && !this.state.showInitLog) {
             return this.productList();
         }else {
             return (
@@ -615,6 +632,8 @@ const styles = StyleSheet.create({
     btnProductItem: {
         width: Size.width,
         flexDirection: 'row',
+        marginTop: 2,
+        marginBottom: 2,
     },
     itemLeft: {
         borderWidth: 1,
@@ -631,7 +650,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 10,
         borderBottomWidth: pixel,
-        borderBottomColor: Color.floralWhite,
+        borderBottomColor: Color.lavender,
         marginLeft: 10,
     },
     itemRightBottom: {

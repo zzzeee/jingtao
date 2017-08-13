@@ -42,7 +42,7 @@
   3. 添加 jsCodeLocation
     在AppDelegate.m 中注释掉原 jsCodeLocation 开头的这行
     添加下面这行内容
-    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"bundle/index.ios" withExtension:@"jsbundle"];
+    jsCodeLocation = [NSURL URLWithString:[[NSBundle mainBundle] pathForResource:@"index.ios.jsbundle" ofType:nil]];
 
   4. 选择设备运行(多运行几次)
   

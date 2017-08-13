@@ -17,6 +17,7 @@ import {
     Image,
     TouchableOpacity,
     PanResponder,
+    Platform,
 } from 'react-native';
 
 import CityList from './CityList';
@@ -67,6 +68,7 @@ export default class HomeScreen extends Component {
     render() {
         let { navigation } = this.props;
         let _scrollview = null;
+        let mapSource = (Platform.OS === 'ios') ? require('../../newmap/index.html') : {uri: Urls.homeMap};
         return (
             <View style={styles.flex}>
                 <View style={styles.headView}>
@@ -125,14 +127,12 @@ export default class HomeScreen extends Component {
                     ref={(_ref)=>this.ref_scrollview=_ref} 
                     onScroll={this._onScroll}
                     scrollEventThrottle={20}
-                    contentContainerStyle={styles.scrollStyle}
                 >
                     <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}
-                            source={{uri: Urls.homeMap}}
-                            // source={require('../../newmap/index.html')}
+                            source={mapSource}
                             style={styles.webViewSize}
                             onMessage={(e)=>this._onMessage(e)}
                             startInLoadingState ={true}
@@ -347,8 +347,5 @@ var styles = StyleSheet.create({
     },
     btnRight: {
         paddingRight: 15,
-    },
-    scrollStyle: {
-        backgroundColor: Color.lightGrey,
     },
 });

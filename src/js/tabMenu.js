@@ -17,13 +17,14 @@ import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
 
 export default class TabMenu extends Component {
 
-    renderTabOption(tab, i) {
-        let color = this.props.activeTab == i ? Color.mainColor : Color.gray;
-        let img = this.props.activeTab == i ? tab.selIcon : tab.icon;
+    renderTabOption = (tab, i) => {
+        let { activeTab, goToPage } = this.props;
+        let color = activeTab == i ? Color.mainColor : Color.lightBack;
+        let img = activeTab == i ? tab.selIcon : tab.icon;
         return (
             <TouchableOpacity 
                 key={i} 
-                onPress={()=>this.props.goToPage(i)} 
+                onPress={()=>goToPage(i)} 
                 style={styles.tabItem}
             >
                 <Image source={img} style={styles.tabImg} />

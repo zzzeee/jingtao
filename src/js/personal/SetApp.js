@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-// import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 
 import User from '../public/user';
@@ -72,18 +72,20 @@ export default class SetApp extends Component {
                                 _User.delUserID(_User.keyMember)
                                 .then(()=>{
                                     this.setState({deleteAlert: false,}, ()=>{
-                                        navigation.navigate('Login', {
-                                            leftPress: () => navigation.navigate('TabNav', {
-                                                PathKey: TABKEY.personal,
-                                            }),
-                                        });
-                                        // let resetAction = NavigationActions.reset({
-                                        //     index: 0,
-                                        //     actions: [
-                                        //         NavigationActions.navigate({routeName: 'Login', params: {notBack: true,}}),
-                                        //     ]
+                                        // navigation.navigate('Login', {
+                                        //     leftPress: () => navigation.navigate('TabNav', {
+                                        //         PathKey: TABKEY.personal,
+                                        //     }),
                                         // });
-                                        // navigation.dispatch(resetAction);
+                                        let resetAction = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate({routeName: 'TabNav', params: {
+                                                    PathKey: TABKEY.personal,
+                                                }}),
+                                            ]
+                                        });
+                                        navigation.dispatch(resetAction);
                                     });
                                 });
                             }, '退出');

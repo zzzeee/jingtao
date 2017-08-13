@@ -81,7 +81,7 @@ export default class CityGoodShopList extends Component {
             'isRepeat': true,
             'press': ()=>{},
         }, {
-            'text': Lang[Lang.default].newGood,
+            'text': '同城日达', // Lang[Lang.default].newGood,
             'isRepeat': false,
             'press': ()=>{},
         }, {
