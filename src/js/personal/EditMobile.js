@@ -23,7 +23,7 @@ import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
-import Lang, {str_replace} from '../public/language';
+import Lang, {str_replace, TABKEY} from '../public/language';
 import InputText from '../public/InputText';
 import SendCode from '../login/verificationCode';
 import ErrorAlert from '../other/ErrorAlert';
