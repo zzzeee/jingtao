@@ -67,12 +67,12 @@ export default class Welcome extends Component {
                 if(version1 && version2 && version1 != version2) {
                     let vs1 = version1.split('.') || [];
                     let vs2 = version2.split('.') || [];
-                    let vs1_0 = vs1[0] || 0,
-                        vs1_1 = vs1[1] || 0,
-                        vs1_2 = vs1[2] || 0,
-                        vs2_0 = vs2[0] || 0,
-                        vs2_1 = vs2[1] || 0,
-                        vs2_2 = vs2[2] || 0;
+                    let vs1_0 = parseInt(vs1[0]) || 0,
+                        vs1_1 = parseInt(vs1[1]) || 0,
+                        vs1_2 = parseInt(vs1[2]) || 0,
+                        vs2_0 = parseInt(vs2[0]) || 0,
+                        vs2_1 = parseInt(vs2[1]) || 0,
+                        vs2_2 = parseInt(vs2[2]) || 0;
                     if(vs1_0 > vs2_0 || 
                     ((vs1_0 == vs2_0) && (vs1_1 > vs2_1)) || 
                     ((vs1_0 == vs2_0) && (vs1_1 == vs2_1) && (vs1_2 > vs2_2))) {

@@ -29,5 +29,11 @@ export const WeiXin = {
   * Production 生产环境
   * Staging    调试环境
   */
- export const Code_Push_Production_KEY = 'pyrYNQJzHze3E2EpPprZXRERXie6aa4328de-d86e-43a8-b194-f622183a9805';
- export const Code_Push_Staging_KEY = '89N6jdH_nh81YzvDiSQfO8gziNQ4aa4328de-d86e-43a8-b194-f622183a9805';
+
+ // IOS
+ export const Code_Push_Production_IOS = 'ojICff1w21h9T3uhw7jdV5PbCwlAaa4328de-d86e-43a8-b194-f622183a9805';
+ export const Code_Push_Staging_IOS = 'pGyrtk7177Kf35NNc9Z2ieaCb6YVaa4328de-d86e-43a8-b194-f622183a9805';
+ 
+// ANDROID
+ export const Code_Push_Production_Android = 'pyrYNQJzHze3E2EpPprZXRERXie6aa4328de-d86e-43a8-b194-f622183a9805';
+ export const Code_Push_Staging_Android = '89N6jdH_nh81YzvDiSQfO8gziNQ4aa4328de-d86e-43a8-b194-f622183a9805';

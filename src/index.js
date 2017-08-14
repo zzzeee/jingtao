@@ -22,10 +22,12 @@ var WeChat = require('react-native-wechat');
 import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";
 import { Size, Color, PX } from './js/public/globalStyle';
-import {
-    Code_Push_Production_KEY,
-    Code_Push_Staging_KEY,
-} from './js/datas/protect';
+// import {
+//     Code_Push_Production_IOS,
+//     Code_Push_Staging_IOS,
+//     Code_Push_Production_Android,
+//     Code_Push_Staging_Android,
+// } from './js/datas/protect';
 
 if(!__DEV__){
     global.console = {
@@ -60,15 +62,15 @@ class JingtaoApp extends Component {
 
         // 直接更新
         if(!__DEV__) CodePush.sync();
-
-        //访问慢,不稳定
-        // CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
+        
+        // let codePushKey = Platform.OS === 'ios' ? Code_Push_Production_IOS : Code_Push_Production_Android;
+        // CodePush.checkForUpdate(codePushKey).then((update)=>{
         //     console.log(update);
         //     if(!update){
         //         alert("提示: 已是最新版本!!!");
         //     }else {
         //         CodePush.sync({
-        //             deploymentKey: Code_Push_Production_KEY,
+        //             deploymentKey: codePushKey,
         //             installMode: CodePush.InstallMode.IMMEDIATE,//启动模式三种：ON_NEXT_RESUME、ON_NEXT_RESTART、IMMEDIATE
         //             updateDialog: {
         //                 appendReleaseDescription:true,//是否显示更新description，默认为false
