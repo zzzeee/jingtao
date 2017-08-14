@@ -44,6 +44,7 @@ import HelpPrivacy from './personal/Help/privacy';
 import HelpTransaction from './personal/Help/transaction';
 import SetApp from './personal/SetApp';
 import EditUser from './personal/EditUser';
+import EditMobile from './personal/EditMobile';
 import ProductList from './class/ProductList';
 import Shop from './shop';
 import ShopSearch from './shop/ShopSearch';
@@ -179,6 +180,11 @@ const EditUserScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={EditUser} />
 );
 
+//个人中心 - 个人资料 - 手机修改
+const EditMobileScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={EditMobile} />
+);
+
 //购物车 - 提交订单
 const AddOrderScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={AddOrder} />
@@ -312,6 +318,9 @@ const AppNavigator = StackNavigator({
     EditUser: {
         screen: EditUserScreen,
     },
+    EditMobile: {
+        screen: EditMobileScreen,
+    },
     ProductList: {
         screen: ProductListScreen,
     },
@@ -328,7 +337,7 @@ const AppNavigator = StackNavigator({
         screen: LoginExplainScreen,
     },
 }, {
-    initialRouteName: 'Welcome',    // Welcome 、TabNav
+    initialRouteName: 'Welcome',    // Welcome,TabNav
     headerMode: 'none',
     // mode: Platform.OS === 'ios' ? 'modal' : 'card',
     mode: 'card',

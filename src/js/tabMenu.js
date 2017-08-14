@@ -19,7 +19,7 @@ export default class TabMenu extends Component {
 
     renderTabOption = (tab, i) => {
         let { activeTab, goToPage } = this.props;
-        let color = activeTab == i ? Color.mainColor : Color.lightBack;
+        let color = activeTab == i ? Color.mainColor : Color.gray;
         let img = activeTab == i ? tab.selIcon : tab.icon;
         return (
             <TouchableOpacity 

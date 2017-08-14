@@ -14,10 +14,12 @@ import {
     ScrollView,
     Animated,
     TouchableOpacity,
+    Modal,
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
 
+import { WeiXin } from '../datas/protect';
 import User from '../public/user';
 import Utils from '../public/utils';
 import Urls from '../public/apiUrl';
@@ -29,6 +31,7 @@ import ErrorAlert from '../other/ErrorAlert';
 import FrequentModel from './FrequentModel';
 
 var _User = new User();
+var WeChat = require('react-native-wechat');
 
 export default class Login extends Component {
     constructor(props) {
@@ -41,6 +44,7 @@ export default class Login extends Component {
             onFocusMobile: false,
             onFocusPassword: false,
             showFrequentModel: false,
+            load_or_error: null,
         };
         this.minPword = 6;
         this.type = 1;
@@ -100,7 +104,10 @@ export default class Login extends Component {
     //显示提示框
     showAutoModal = (msg) => {
         this.alertMsg = msg;
-        this.setState({showAlert: true, });
+        this.setState({
+            showAlert: true, 
+            load_or_error: null,
+        });
     };
 
     //隐藏提示框
@@ -313,6 +320,18 @@ export default class Login extends Component {
                         <Text style={styles.registerText}>{Lang[Lang.default].registeredClickThere}</Text>
                         <Image source={require('../../images/login/left.png')} style={styles.iconSize12} />
                     </TouchableOpacity>
+                    <View style={styles.footBox}>
+                        <View style={styles.lineBox}>
+                            <View style={styles.lineStyle} />
+                            <Text style={styles.txtStyle4}>使用以下帐号快速登录</Text>
+                            <View style={styles.lineStyle} />
+                        </View>
+                        <View style={styles.imageBox}>
+                            <TouchableOpacity onPress={this.WXLogin}>
+                                <Image source={require('../../images/car/weixin.png')} style={styles.otherLoginImage} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </ScrollView>
                 {this.state.showAlert ?
                     <ErrorAlert 
@@ -327,9 +346,147 @@ export default class Login extends Component {
                     <FrequentModel isShow={this.state.showFrequentModel} callBack={this.hideFrequentBox} />
                     : null
                 }
+                {this.state.load_or_error ?
+                    <Modal
+                        transparent={true}
+                        visible={true}
+                        onRequestClose={()=>{}}
+                    >
+                        <View style={styles.modalBody}>
+                            {this.state.load_or_error}
+                        </View>
+                    </Modal>
+                    : null
+                }
             </View>
         );
     }
+
+    //微信登录
+    WXLogin = () => {
+        let { navigation } = this.props;
+        let scope = 'snsapi_userinfo';
+        let state = 'jingtao_wx_login';
+        //判断微信是否安装
+        WeChat.isWXAppInstalled()
+        .then((isInstalled) => {
+            if (isInstalled) {
+                //发送授权请求
+                WeChat.sendAuthRequest(scope, state)
+                .then(result => {
+                    console.log(result);
+                    if(result && result.errCode === 0 && result.code) {
+                        Utils.fetch(Urls.getWXAccessToken, 'get', {
+                            appid: WeiXin.appid, 
+                            secret: WeiXin.appSecret,
+                            code: result.code,
+                            grant_type: 'authorization_code',
+                        }, (result2) => {
+                            console.log(result2);
+                            if(result2 && result2.access_token && result2.openid) {
+                                Utils.fetch(Urls.getWXUserInfo, 'get', {
+                                    access_token: result2.access_token,
+                                    openid: result2.openid,
+                                }, (result3)=>{
+                                    console.log(result3);
+                                    if(result3 && result3.unionid) {
+                                        let obj = {
+                                            mUnionID: result3.unionid || '',
+                                            mType: 'wechat',
+                                            mNickName: result3.nickname || '',
+                                            mPicture: result3.headimgurl || '',
+                                        };
+                                        console.log(obj);
+                                        Utils.fetch(Urls.weixinLoginApi, 'post', obj, (result4)=>{
+                                            console.log(result4);
+                                            if(result4) {
+                                                let err = result4.sTatus || null;
+                                                let msg = result4.sMessage || null;
+                                                let token = result4.mToken || null;
+                                                if(err == 1) {
+                                                    if(token) {
+                                                        this.setState({
+                                                            load_or_error: null,
+                                                        }, ()=>{
+                                                            _User.saveUserID(_User.keyMember, token)
+                                                            .then(() => {
+                                                                if(navigation) {
+                                                                    let resetAction = NavigationActions.reset({
+                                                                        index: 0,
+                                                                        actions: [
+                                                                            NavigationActions.navigate({
+                                                                                routeName: 'TabNav', 
+                                                                                params: {PathKey: TABKEY.personal},
+                                                                            }),
+                                                                        ]
+                                                                    });
+                                                                    navigation.dispatch(resetAction);
+                                                                }
+                                                            });
+                                                            _User.delUserID(_User.keyTourist);
+                                                        });
+                                                    }else {
+                                                        this.showAutoModal('服务器无token返回值');
+                                                    }
+                                                }else if(err == 6) {
+                                                    this.setState({
+                                                        load_or_error: null,
+                                                    }, ()=>{
+                                                        navigation.navigate('EditMobile', {
+                                                            weixinInfo: obj,
+                                                        });
+                                                    });
+                                                }else if(msg) {
+                                                    this.showAutoModal(msg);
+                                                }
+                                            }
+                                        }, (view, type)=>{
+                                            if(type == 'error') {
+                                                this.showAutoModal('存储微信信息出错');
+                                            }else {
+                                                this.setState({load_or_error: view,});
+                                            }
+                                        }, {
+                                            catchFunc: (err4)=>console.log(err4),
+                                            loadText: '开始登录',
+                                        });
+                                    }else {
+                                        this.showAutoModal('微信信息无效');
+                                    }
+                                }, (view, type) => {
+                                    if(type == 'error') {
+                                        this.showAutoModal('获取微信信息失败');
+                                    }else {
+                                        this.setState({load_or_error: view,});
+                                    }
+                                }, {
+                                    catchFunc: (err3)=>console.log(err3),
+                                    loadText: '正在获取微信信息',
+                                });
+                            }else {
+                                this.showAutoModal('请求微信数据无效');
+                            }
+                        }, (view, type) => {
+                            if(type == 'error') {
+                                this.showAutoModal('请求微信数据失败');
+                            }else {
+                                this.setState({load_or_error: view,});
+                            }
+                        }, {
+                            catchFunc: (err2)=>console.log(err2),
+                            loadText: '正在请求微信数据',
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.showAutoModal('登录授权发生错误:' + err);
+                })
+            } else {
+                this.showAutoModal('您还未安装微信!');
+            }
+        })
+    };
 }
 
 const styles = StyleSheet.create({
@@ -376,6 +533,12 @@ const styles = StyleSheet.create({
     txtStyle3: {
         fontSize: 13,
         color: Color.mainColor,
+    },
+    txtStyle4: {
+        fontSize: 10,
+        color: Color.gainsboro,
+        paddingLeft: 5,
+        paddingRight: 5,
     },
     inputRowStyle: {
         backgroundColor: '#fff',
@@ -431,5 +594,37 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Color.gainsboro,
         paddingRight: 5,
+    },
+    footBox: {
+        marginTop: 50,
+        paddingLeft: PX.marginLR,
+        paddingRight: PX.marginLR,
+    },
+    lineBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    lineStyle: {
+        flex: 1,
+        height: 0,
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.gainsboro,
+    },
+    imageBox: {
+        height: 80,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    otherLoginImage: {
+        width: 30,
+        height: 30,
+    },
+    modalBody: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, .5)',
     },
 });

@@ -21,7 +21,7 @@ import AppHead from '../public/AppHead';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
-import Lang, {str_replace, TABKEY} from '../public/language';
+import Lang, {ShareText, str_replace, TABKEY} from '../public/language';
 import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
@@ -34,8 +34,9 @@ import Coupons from './Coupons';
 import { EndView } from '../other/publicEment';
 // import SwiperDIY from '../other/SwiperDIY';
 import Swiper from 'react-native-swiper';
+import ShareMoudle from '../other/ShareMoudle';
 
-var isCanShare = false;
+var isCanShare = true;
 var _User = new User();
 var footHeight = 50;
 var moreHeight = 45;
@@ -61,6 +62,7 @@ export default class ProductScreen extends Component {
             collectionMsg: null,                //收藏结果
             deleteAlert: false,
             isRefreshing: true,
+            showShare: false,
         };
         this.goodid = 0;
         this.carNumber = 0;
@@ -418,8 +420,9 @@ export default class ProductScreen extends Component {
                     }} />
                 </TouchableOpacity>
                 {isCanShare ?
-                    <TouchableOpacity onPress={()=>this.toggleCollection(1, 0)} style={{
+                    <TouchableOpacity onPress={()=>this.setStartShare(true)} style={{
                         padding: 5,
+                        marginLeft: 5,
                     }}>
                         <Image source={require("../../images/product/share_orange.png")} style={{
                             width: PX.headIconSize,
@@ -430,6 +433,32 @@ export default class ProductScreen extends Component {
                 }
             </View>
         );
+        let goodId = good.gID || '';
+        let goodName = good.gName || '';
+        let goodImg = good.gThumbPic || '';
+        let shareInfo = [{
+                to: 'shareToSession',
+                name: Lang[Lang.default].wxFriends,
+                icon: require('../../images/product/wechat.png'),
+                obj: {
+                    type: 'news',
+                    title: goodName,
+                    description: ShareText,
+                    thumbImage: goodImg,
+                    webpageUrl: Urls.weixinShareUrl + goodId,
+                },
+            }, {
+                to: 'shareToTimeline',
+                name: Lang[Lang.default].circleOfFriends,
+                icon: require('../../images/product/moment.png'),
+                obj: {
+                    type: 'news',
+                    title: goodName,
+                    description: ShareText,
+                    thumbImage: goodImg,
+                    webpageUrl: Urls.weixinShareUrl + goodId,
+                },
+            },];
         return (
             <View style={styles.flex}>
                 <AppHead 
@@ -547,9 +576,18 @@ export default class ProductScreen extends Component {
                     <AlertMoudle visiable={this.state.deleteAlert} {...this.alertObject} />
                     : null
                 }
+                {this.state.showShare ?
+                    <ShareMoudle shares={shareInfo} visible={this.state.showShare} setStartShare={this.setStartShare} />
+                    : null
+                }
             </View>
         );
     }
+
+    //设置是否显示分享选项
+    setStartShare = (isShow) => {
+        this.setState({showShare: isShow});
+    };
 
     pageBody = () => {
         let { 

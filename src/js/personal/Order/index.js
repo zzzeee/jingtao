@@ -85,11 +85,12 @@ export default class MyOrder extends Component {
                         renderTabBar={() => <DefaultTabBar />}
                         ref={(_ref)=>this.scrollTabView=_ref}
                         style={styles.tabBarStyle}
-                        tabStyle={styles.tabBarItemStyle}
                         // 默认打开第几个（0为第一个）
                         initialPage={this.state.initIndex}
                         //"top", "bottom", "overlayTop", "overlayBottom"
                         tabBarPosition='top'
+                        // TAB背景色
+                        tabBarBackgroundColor={'#fff'}
                         // 选中的下划线颜色
                         tabBarUnderlineStyle={styles.tabUnderLine}
                         // 选中的文字颜色
@@ -97,11 +98,7 @@ export default class MyOrder extends Component {
                         // 未选中的文字颜色
                         tabBarInactiveTextColor={Color.lightBack}
                         tabBarTextStyle={styles.tabTextStyle}
-                        onChangeTab={(obj)=>{
-                            this.setState({
-                                selIndex: obj.i,
-                            });
-                        }}
+                        onChangeTab={(obj)=>this.setState({selIndex: obj.i,})}
                     >
                         {this.tabs.map((item, index)=>{
                             return (
@@ -159,11 +156,6 @@ const styles = StyleSheet.create({
     tabBarStyle: {
         height: PX.rowHeight2,
         backgroundColor: 'transparent',
-    },
-    tabBarItemStyle: {
-        paddingBottom: 0,
-        borderBottomWidth: pixel,
-        borderBottomColor: Color.lavender,
     },
     tabUnderLine: {
         height: 2,

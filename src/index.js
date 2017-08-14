@@ -18,7 +18,7 @@ import {
 import { WeiXin } from './js/datas/protect';
 import App from './js/';
 // import App from './NavigatorDemo/App';
-var WeChat=require('react-native-wechat');
+var WeChat = require('react-native-wechat');
 import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";
 import { Size, Color, PX } from './js/public/globalStyle';
@@ -59,7 +59,7 @@ class JingtaoApp extends Component {
         });
 
         // 直接更新
-        CodePush.sync();
+        if(!__DEV__) CodePush.sync();
 
         //访问慢,不稳定
         // CodePush.checkForUpdate(Code_Push_Production_KEY).then((update)=>{
@@ -119,5 +119,10 @@ const styles = StyleSheet.create({
 });
 
 //注册微信应用
-WeChat.registerApp(WeiXin.appid);
+if(__DEV__ && Platform.OS === 'android') {
+    WeChat.registerApp(WeiXin.appid2);
+}else {
+    WeChat.registerApp(WeiXin.appid);
+}
+
 AppRegistry.registerComponent('jingtao', () => JingtaoApp);

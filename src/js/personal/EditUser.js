@@ -173,7 +173,14 @@ export default class EditUser extends Component {
                             />
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.inputView}>
+                    <TouchableOpacity style={styles.inputView} onPress={()=>{
+                        if(this.mToken && this.userInfo) {
+                            this.props.navigation.navigate('EditMobile', {
+                                mToken: this.mToken,
+                                userInfo: this.userInfo,
+                            });
+                        }
+                    }}>
                         <Text style={styles.inputText}>手机</Text>
                         <View style={[styles.inlineRight, {
                             alignItems: 'center',

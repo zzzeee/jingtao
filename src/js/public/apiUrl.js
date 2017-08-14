@@ -97,7 +97,7 @@ var urls = {
     //获取支付宝支付信息
     getAlipayInfo: host + '/api/AplipayNController/getAlipayInfo',
     //获取微信支付信息
-    getWeiXinInfo: host + '/api/AplipayNController/getWeiXinPayInfo',
+    getWeiXinPayInfo: host + '/api/AplipayNController/getWeiXinPayInfo',
     //录入商家入驻信息
     updateSellerInfo: host + '/api/ApplyNController/applySettledMerchant',
     //浦发信用卡
@@ -108,6 +108,14 @@ var urls = {
     getVersion: host + '/api/Version/getNewestAPPVersion',
     //更新会员资料
     updateUserInfo: host + '/api/MemberNController/memberInfoUpdateByMID',
+    //获取微信AccessToken
+    getWXAccessToken: 'https://api.weixin.qq.com/sns/oauth2/access_token',
+    //获取微信个人信息
+    getWXUserInfo: 'https://api.weixin.qq.com/sns/userinfo',
+    //微信或QQ登陆接口
+    weixinLoginApi: host + '/api/WeChatNController/memberWeChartOrQqQuickLanding',
+    //分享链接
+    weixinShareUrl: 'http://www.hrbxinya.cn/product/detail.html?gID=',
 };
 
 export default urls;

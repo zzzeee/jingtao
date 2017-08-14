@@ -87,7 +87,7 @@ var Util = {
         var fetchOptions = {};
         var str_data = this.createJson(data) || '';
         if(load_error && !load_error_config.hideLoad) {
-            load_error && load_error(Loading({...load_error_config}));
+            load_error && load_error(Loading({...load_error_config}), 'load');
         }
 
         //判断请求方式
@@ -118,7 +118,7 @@ var Util = {
             .catch((error1) => {
                 console.log(error1)
                 if(load_error) {
-                    load_error(ErrorView(load_error_config, fetchFunc));
+                    load_error(ErrorView(load_error_config, fetchFunc), 'error');
                 }else if(load_error_config.catchFunc) {
                     load_error_config.catchFunc(error1);
                 }
@@ -126,7 +126,7 @@ var Util = {
         } catch(error2) {
             console.error(error2);
             load_error_config.errText2 = Lang[Lang.default].programError;
-            load_error && load_error(ErrorView(load_error_config, fetchFunc));
+            load_error && load_error(ErrorView(load_error_config, fetchFunc), 'error');
         }
     },
 
@@ -171,6 +171,16 @@ var Util = {
     //去除前后空格
     trim: function (str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
+    },
+
+    //替换多个字符串
+    replaces: function(str, ...args) {
+        if(str) {
+            for(let a of args) {
+                str = str.replace(/%s/, a);
+            }
+        }
+        return str;
     },
 
     // 格式“yyyy-MM-dd HH:MM:SS”
@@ -222,10 +232,10 @@ var styles = StyleSheet.create({
         flex : 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
     },
     modalBody : {
-        width : Size.width * 0.5,
+        width : Size.width * 0.7,
         flexDirection : 'row',
 		alignItems: 'center',
         justifyContent: 'center',

@@ -143,7 +143,7 @@ export default class PayOrder extends Component {
     get_weixin_payinfo = () => {
         let { mToken, orderNumber, } = this.props;
         if(mToken && orderNumber) {
-            Utils.fetch(Urls.getWeiXinInfo, 'post', {
+            Utils.fetch(Urls.getWeiXinPayInfo, 'post', {
                 orderNum: orderNumber,
                 mToken: mToken,
             }, (result)=>{

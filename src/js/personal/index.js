@@ -261,7 +261,6 @@ export default class PersonalScreen extends Component {
 
     _onScroll = (e) => {
         let offsetY = e.nativeEvent.contentOffset.y || 0;
-        console.log(offsetY);
         if(offsetY < showHeadBgHeight) {
             this.state.opacityVal.setValue(offsetY);
         }else {
@@ -293,7 +292,6 @@ export default class PersonalScreen extends Component {
                             <Image source={require('../../images/list_more.png')} style={styles.bigIcon} />
                         </View>
                     </View>
-                    
                 </View>
             </TouchableOpacity>
         );

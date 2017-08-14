@@ -7,6 +7,9 @@
 //微信开放者平台信息
 export const WeiXin = {
      appid: 'wxe2c2a29213e78cf7',
+     appid2: 'wx220dd5779654cdf7',
+     appSecret: '8e92a08e7725da14d0749c9e9ba0910d',
+     appSecret2: '3598cf5502a244f7b1e5e953cf79b5a6',
  };
 
  /**

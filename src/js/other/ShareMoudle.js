@@ -160,7 +160,7 @@ var styles = StyleSheet.create({
     shareImageStyle: {
         width: itemWidth - 1,
         height: itemWidth - 1,
-        borderRadius: (itemWidth - 1) / 2,
+        // borderRadius: (itemWidth - 1) / 2,
         borderWidth: pixel,
         borderColor: Color.lavender,
     },
