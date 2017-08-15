@@ -19,7 +19,7 @@ import { WeiXin } from './js/datas/protect';
 import App from './js/';
 // import App from './NavigatorDemo/App';
 var WeChat = require('react-native-wechat');
-import JPushModule from 'jpush-react-native';
+// import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";
 import { Size, Color, PX } from './js/public/globalStyle';
 // import {
@@ -40,25 +40,25 @@ if(!__DEV__){
 
 class JingtaoApp extends Component {
     componentDidMount() {
-        JPushModule.notifyJSDidLoad();
-        JPushModule.addReceiveCustomMsgListener((map) => {
-            console.log("addReceiveCustomMsgListener: ");
-            console.log(map);
-        });
-        JPushModule.addReceiveNotificationListener((map) => {
-            //收到通知
-            console.log("收到通知 addReceiveNotificationListener: ");
-            console.log(map);
-        });
-        JPushModule.addReceiveOpenNotificationListener((map) => {
-            //打开通知
-            console.log("打开通知 addReceiveOpenNotificationListener: ");
-            console.log(map);
-        });
-        JPushModule.addGetRegistrationIdListener((registrationId) => {
-            console.log("addGetRegistrationIdListener: ");
-            console.log("Device register succeed, registrationId " + registrationId);
-        });
+        // JPushModule.notifyJSDidLoad();
+        // JPushModule.addReceiveCustomMsgListener((map) => {
+        //     console.log("addReceiveCustomMsgListener: ");
+        //     console.log(map);
+        // });
+        // JPushModule.addReceiveNotificationListener((map) => {
+        //     //收到通知
+        //     console.log("收到通知 addReceiveNotificationListener: ");
+        //     console.log(map);
+        // });
+        // JPushModule.addReceiveOpenNotificationListener((map) => {
+        //     //打开通知
+        //     console.log("打开通知 addReceiveOpenNotificationListener: ");
+        //     console.log(map);
+        // });
+        // JPushModule.addGetRegistrationIdListener((registrationId) => {
+        //     console.log("addGetRegistrationIdListener: ");
+        //     console.log("Device register succeed, registrationId " + registrationId);
+        // });
 
         // 直接更新
         if(!__DEV__) CodePush.sync();
@@ -88,10 +88,10 @@ class JingtaoApp extends Component {
     }
 
     componentWillUnmount() {
-        JPushModule.removeReceiveCustomMsgListener();
-        JPushModule.removeReceiveNotificationListener();
-        JPushModule.removeReceiveOpenNotificationListener();
-        JPushModule.removeGetRegistrationIdListener();
+        // JPushModule.removeReceiveCustomMsgListener();
+        // JPushModule.removeReceiveNotificationListener();
+        // JPushModule.removeReceiveOpenNotificationListener();
+        // JPushModule.removeGetRegistrationIdListener();
     }
 
     render() {

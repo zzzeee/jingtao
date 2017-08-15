@@ -79,8 +79,6 @@ android/app/src/main/res/drawable-xhdpi
 android/app/src/main/res/drawable-xxhdpi
 android/app/src/main/res/drawable-xxxhdpi
 
-
-ios/
 __tests__
 .babelrc
 .buckconfig
@@ -91,3 +89,5 @@ yarn.lock
 
 bundles
 ios/bundle
+ios/jingtao-tvOS
+ios/jingtao-tvOSTests
