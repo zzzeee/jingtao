@@ -219,13 +219,9 @@ export default class PayOrder extends Component {
                         if(data.indexOf('"msg":"Success"') >= 0) {
                             //ANDROID 支付成功
                             hidePayBox(that.paySuccess);
-                        }else if (data && data[0]) {
+                        }else if (data && data[0] && data[0].resultStatus == '9000') {
                             //IOS 返回
-                            if(data[0].resultStatus == '9000') {
-                                hidePayBox(that.paySuccess);
-                            }else {
-                                hidePayBox(callback);
-                            }
+                            hidePayBox(that.paySuccess);
                         }else {
                             hidePayBox(callback);
                         }

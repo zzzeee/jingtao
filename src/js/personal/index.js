@@ -138,7 +138,12 @@ export default class PersonalScreen extends Component {
                                         });
                                     }
                                 }}>
-                                    <CachedImage source={uHead} style={styles.userHeadImg} />
+                                    <View style={[styles.userHeadImg, {
+                                        borderWidth: pixel,
+                                        borderColor: Color.lavender,
+                                    }]}>
+                                        <CachedImage source={uHead} style={styles.userHeadImg} />
+                                    </View>
                                     <Text style={styles.userNameText}>{name}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>this.linkPage(true, 'MyIntegral')}>
@@ -364,8 +369,8 @@ var styles = StyleSheet.create({
         width: PX.userHeadImgSize,
         height: PX.userHeadImgSize,
         borderRadius: PX.userHeadImgSize / 2,
-        borderWidth: pixel,
-        borderColor: Color.lavender,
+        // borderWidth: pixel,
+        // borderColor: Color.lavender,
     },
     userNameText: {
         paddingLeft: 10,
