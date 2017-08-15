@@ -21,7 +21,6 @@ import Utils from '../public/utils';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import InputText from '../public/InputText';
 import Areas from '../home/searchArea';
 import ProductItem from '../other/ProductItem';
 import { EndView } from '../other/publicEment';

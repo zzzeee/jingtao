@@ -16,6 +16,7 @@ import {
     Keyboard,
 } from 'react-native';
 
+var dismissKeyboard = require('dismissKeyboard');
 import BtnIcon from '../public/BtnIcon';
 import SearchData from '../public/search';
 import Urls from '../public/apiUrl';
@@ -216,6 +217,10 @@ export default class Search extends Component {
                             load_or_error: null,
                         });
                     }
+                }else {
+                    this.setState({
+                        load_or_error: this.getErrorView(),
+                    });
                 }
             }, (view) => {
                 this.setState({load_or_error: view});
@@ -235,6 +240,7 @@ export default class Search extends Component {
         this.isEnScroll = true;
         this.btnDisable = false;
         this.loadMoreLock = false;
+        this.searchLock = false;
         this.setState({
             sdatas: [],
             sortIndex: 0,
@@ -301,11 +307,11 @@ export default class Search extends Component {
     }
 
     getLoadView = () => {
-        return <Text>正在加载</Text>;
+        return <Text style={styles.noResultTxt}>正在加载</Text>;
     };
 
     getErrorView = () => {
-        return <Text>加载出错</Text>;
+        return <Text style={styles.noResultTxt}>返回的数据无效</Text>;
     };
 
     //无结果内容
@@ -328,7 +334,7 @@ export default class Search extends Component {
             return this.productList();
         }else {
             return (
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps={'always'}>
                     {this.initPage()}
                 </ScrollView>
             );
@@ -355,7 +361,7 @@ export default class Search extends Component {
                     <Text style={styles.sessionText}>{Lang[Lang.default].hotSearch}</Text>
                 </View>
                 <View style={styles.itemBox}>
-                    {this.state.hot.map(this.renderHotItem)}
+                    {this.state.hot.map(this.renderLogItem)}
                 </View>
             </View>
             : null;
@@ -369,15 +375,10 @@ export default class Search extends Component {
 
     renderLogItem = (item, index) => {
         return (
-            <TouchableOpacity key={index} onPress={()=>this.clickSearchItemText(item)}>
-                <Text style={styles.searchItemText}>{item}</Text>
-            </TouchableOpacity>
-        );
-    };
-
-    renderHotItem = (item, index) => {
-        return (
-            <TouchableOpacity key={index} onPress={()=>this.clickSearchItemText(item)}>
+            <TouchableOpacity key={index} onPress={()=>{
+                dismissKeyboard();
+                this.clickSearchItemText(item)
+            }}>
                 <Text style={styles.searchItemText}>{item}</Text>
             </TouchableOpacity>
         );

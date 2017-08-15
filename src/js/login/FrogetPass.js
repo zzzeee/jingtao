@@ -231,7 +231,7 @@ export default class FrogetPass extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
-                <ScrollView contentContainerStyle={styles.scrollStyle}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.scrollStyle}>
                     <View style={styles.inputRowStyle}>
                         <View style={styles.inputRowMain}>
                             <View style={styles.inputLeftStyle}>
