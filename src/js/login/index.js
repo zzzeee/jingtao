@@ -21,7 +21,7 @@ import { NavigationActions } from 'react-navigation';
 
 import { WeiXin } from '../datas/protect';
 import User from '../public/user';
-import Utils from '../public/utils';
+import Utils, { Loading } from '../public/utils';
 import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
@@ -371,117 +371,129 @@ export default class Login extends Component {
         WeChat.isWXAppInstalled()
         .then((isInstalled) => {
             if (isInstalled) {
-                //发送授权请求
-                WeChat.sendAuthRequest(scope, state)
-                .then(result => {
-                    console.log(result);
-                    if(result && result.errCode === 0 && result.code) {
-                        Utils.fetch(Urls.getWXAccessToken, 'get', {
-                            appid: WeiXin.appid, 
-                            secret: WeiXin.appSecret,
-                            code: result.code,
-                            grant_type: 'authorization_code',
-                        }, (result2) => {
-                            console.log(result2);
-                            if(result2 && result2.access_token && result2.openid) {
-                                Utils.fetch(Urls.getWXUserInfo, 'get', {
-                                    access_token: result2.access_token,
-                                    openid: result2.openid,
-                                }, (result3)=>{
-                                    console.log(result3);
-                                    if(result3 && result3.unionid) {
-                                        let obj = {
-                                            mUnionID: result3.unionid || '',
-                                            mType: 'wechat',
-                                            mNickName: result3.nickname || '',
-                                            mPicture: result3.headimgurl || '',
-                                        };
-                                        console.log(obj);
-                                        Utils.fetch(Urls.weixinLoginApi, 'post', obj, (result4)=>{
-                                            console.log(result4);
-                                            if(result4) {
-                                                let err = result4.sTatus || null;
-                                                let msg = result4.sMessage || null;
-                                                let token = result4.mToken || null;
-                                                if(err == 1) {
-                                                    if(token) {
+                this.setState({
+                    load_or_error: Loading({
+                        loadText: '正在启动微信',
+                    }),
+                }, () => {
+                    //发送授权请求
+                    WeChat.sendAuthRequest(scope, state)
+                    .then(result => {
+                        console.log(result);
+                        if(result && result.errCode === 0 && result.code) {
+                            Utils.fetch(Urls.getWXAccessToken, 'get', {
+                                appid: WeiXin.appid, 
+                                secret: WeiXin.appSecret,
+                                code: result.code,
+                                grant_type: 'authorization_code',
+                            }, (result2) => {
+                                console.log(result2);
+                                if(result2 && result2.access_token && result2.openid) {
+                                    Utils.fetch(Urls.getWXUserInfo, 'get', {
+                                        access_token: result2.access_token,
+                                        openid: result2.openid,
+                                    }, (result3)=>{
+                                        console.log(result3);
+                                        if(result3 && result3.unionid) {
+                                            let obj = {
+                                                mUnionID: result3.unionid || '',
+                                                mType: 'wechat',
+                                                mNickName: result3.nickname || '',
+                                                mPicture: result3.headimgurl || '',
+                                            };
+                                            console.log(obj);
+                                            Utils.fetch(Urls.weixinLoginApi, 'post', obj, (result4)=>{
+                                                console.log(result4);
+                                                if(result4) {
+                                                    let err = result4.sTatus || null;
+                                                    let msg = result4.sMessage || null;
+                                                    let token = result4.mToken || null;
+                                                    if(err == 1) {
+                                                        if(token) {
+                                                            this.setState({
+                                                                load_or_error: null,
+                                                            }, ()=>{
+                                                                _User.saveUserID(_User.keyMember, token)
+                                                                .then(() => {
+                                                                    if(navigation) {
+                                                                        let resetAction = NavigationActions.reset({
+                                                                            index: 0,
+                                                                            actions: [
+                                                                                NavigationActions.navigate({
+                                                                                    routeName: 'TabNav', 
+                                                                                    params: {PathKey: TABKEY.personal},
+                                                                                }),
+                                                                            ]
+                                                                        });
+                                                                        navigation.dispatch(resetAction);
+                                                                    }
+                                                                });
+                                                                _User.delUserID(_User.keyTourist);
+                                                            });
+                                                        }else {
+                                                            this.showAutoModal('服务器无token返回值');
+                                                        }
+                                                    }else if(err == 6) {
                                                         this.setState({
                                                             load_or_error: null,
                                                         }, ()=>{
-                                                            _User.saveUserID(_User.keyMember, token)
-                                                            .then(() => {
-                                                                if(navigation) {
-                                                                    let resetAction = NavigationActions.reset({
-                                                                        index: 0,
-                                                                        actions: [
-                                                                            NavigationActions.navigate({
-                                                                                routeName: 'TabNav', 
-                                                                                params: {PathKey: TABKEY.personal},
-                                                                            }),
-                                                                        ]
-                                                                    });
-                                                                    navigation.dispatch(resetAction);
-                                                                }
+                                                            navigation.navigate('EditMobile', {
+                                                                weixinInfo: obj,
                                                             });
-                                                            _User.delUserID(_User.keyTourist);
                                                         });
-                                                    }else {
-                                                        this.showAutoModal('服务器无token返回值');
+                                                    }else if(msg) {
+                                                        this.showAutoModal(msg);
                                                     }
-                                                }else if(err == 6) {
-                                                    this.setState({
-                                                        load_or_error: null,
-                                                    }, ()=>{
-                                                        navigation.navigate('EditMobile', {
-                                                            weixinInfo: obj,
-                                                        });
-                                                    });
-                                                }else if(msg) {
-                                                    this.showAutoModal(msg);
                                                 }
-                                            }
-                                        }, (view, type)=>{
-                                            if(type == 'error') {
-                                                this.showAutoModal('存储微信信息出错');
-                                            }else {
-                                                this.setState({load_or_error: view,});
-                                            }
-                                        }, {
-                                            catchFunc: (err4)=>console.log(err4),
-                                            loadText: '开始登录',
-                                        });
-                                    }else {
-                                        this.showAutoModal('微信信息无效');
-                                    }
-                                }, (view, type) => {
-                                    if(type == 'error') {
-                                        this.showAutoModal('获取微信信息失败');
-                                    }else {
-                                        this.setState({load_or_error: view,});
-                                    }
-                                }, {
-                                    catchFunc: (err3)=>console.log(err3),
-                                    loadText: '正在获取微信信息',
-                                });
-                            }else {
-                                this.showAutoModal('请求微信数据无效');
-                            }
-                        }, (view, type) => {
-                            if(type == 'error') {
-                                this.showAutoModal('请求微信数据失败');
-                            }else {
-                                this.setState({load_or_error: view,});
-                            }
-                        }, {
-                            catchFunc: (err2)=>console.log(err2),
-                            loadText: '正在请求微信数据',
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                    this.showAutoModal('登录授权发生错误:' + err);
-                })
+                                            }, (view, type)=>{
+                                                if(type == 'error') {
+                                                    this.showAutoModal('存储微信信息出错');
+                                                }else {
+                                                    this.setState({load_or_error: view,});
+                                                }
+                                            }, {
+                                                catchFunc: (err4)=>console.log(err4),
+                                                loadText: '开始登录',
+                                            });
+                                        }else {
+                                            this.showAutoModal('微信信息无效');
+                                        }
+                                    }, (view, type) => {
+                                        if(type == 'error') {
+                                            this.showAutoModal('获取微信信息失败');
+                                        }else {
+                                            this.setState({load_or_error: view,});
+                                        }
+                                    }, {
+                                        catchFunc: (err3)=>console.log(err3),
+                                        loadText: '正在获取微信信息',
+                                    });
+                                }else {
+                                    this.showAutoModal('请求微信数据无效');
+                                }
+                            }, (view, type) => {
+                                if(type == 'error') {
+                                    this.showAutoModal('请求微信数据失败');
+                                }else {
+                                    this.setState({load_or_error: view,});
+                                }
+                            }, {
+                                catchFunc: (err2)=>console.log(err2),
+                                loadText: '正在请求微信数据',
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        if(err == -2) {
+                            this.showAutoModal('您已取消微信登录');
+                        }else if(err == -4) {
+                            this.showAutoModal('您已拒绝微信授权');
+                        }else {
+                            this.showAutoModal('登录授权发生错误:' + err);
+                        }
+                    });
+                });
             } else {
                 this.showAutoModal('您还未安装微信!');
             }

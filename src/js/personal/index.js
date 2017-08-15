@@ -41,6 +41,7 @@ export default class PersonalScreen extends Component {
             userInfo: null,
             opacityVal: new Animated.Value(0),
             mCouponNum: 0,
+            orderNum: null,
             isRefreshing: true,
         };
 
@@ -76,12 +77,21 @@ export default class PersonalScreen extends Component {
                         mCouponNum: result.mCouponNum || 0,
                         isRefreshing: false,
                     });
-                    return;
                 }else if(result && result.sTatus == 4) {
-                    this.mToken = null;
-                    _User.delUserID(_User.keyMember);
+                    _User.delUserID(_User.keyMember)
+                    .then(()=>{
+                        this.mToken = null;
+                        this.setState({
+                            islogin: false,
+                            userInfo: null,
+                            mCouponNum: 0,
+                            orderNum: null,
+                            isRefreshing: false,
+                        });
+                    });
+                }else {
+                    this.setState({isRefreshing: false,});
                 }
-                this.setState({isRefreshing: false,});
             });
         }else {
             this.setState({isRefreshing: false,});

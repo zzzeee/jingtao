@@ -17,7 +17,7 @@ import Lang, {str_replace} from './language';
 import { Size, pixel, PX, Color, errorStyles } from './globalStyle';
 
 //加载中
-const Loading = ({ loadType, bgStyle, loadText, loadColor, loadStyle, load_textStyle }) => {
+export const Loading = ({ loadType, bgStyle, loadText, loadColor, loadStyle, load_textStyle }) => {
     let _loadType = loadType || 1;
     let txt = loadText || Lang[Lang.default].loading;
     let color = loadColor || (_loadType == 1 ? '#fff' : Color.mainColor);
@@ -241,7 +241,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth : pixel,
         borderColor : '#aaa',
-		backgroundColor : 'rgba(0, 0, 0, 0.8)',
+		backgroundColor : 'rgba(0, 0, 0, 0.6)',
         padding : 30,
 		borderRadius : 10,
 	},

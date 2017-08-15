@@ -132,7 +132,7 @@ export default class EditUser extends Component {
                 />
                 <ScrollView>
                     <TouchableOpacity style={styles.headView} onPress={this.selectLocalImage}>
-                            <CachedImage
+                            <Image
                                 source={userHeadImg}
                                 style={styles.headImage}
                             />
