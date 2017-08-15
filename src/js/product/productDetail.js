@@ -81,13 +81,15 @@ export default class ProductDetail extends Component {
                         style={webStyle}
                         onNavigationStateChange={(info)=>{
                             // console.log(info);
-                            let arr = info.title.split('*');
-                            let width = parseInt(arr[0]) || 0;
-                            let height = parseInt(arr[1]) || 0;
-                            let _height = Size.width * height / width || 0;
-                            if(_height < 9999 && _height > 0 && _height != webHeight) {
-                                console.log('更新webview高度为：' + _height);
-                                this.setState({webViewHeight: _height});
+                            if(info && info.title) {
+                                let arr = info.title.split('*');
+                                let width = parseInt(arr[0]) || 0;
+                                let height = parseInt(arr[1]) || 0;
+                                let _height = Size.width * height / width || 0;
+                                if(_height < 9999 && _height > 0 && _height != webHeight) {
+                                    console.log('更新webview高度为：' + _height);
+                                    this.setState({webViewHeight: _height});
+                                }
                             }
                         }}
                     />

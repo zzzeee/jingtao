@@ -714,7 +714,7 @@ export default class ProductScreen extends Component {
         endTime = new Date(this.checkTimeString(endTime)).getTime();
         nowTime = new Date(this.checkTimeString(nowTime)).getTime();
         if(price) {
-            price_arr = price.split('.');
+            price_arr = String(price).split('.');
         }
         for(let i in good.gImgs) {
             let _img = good.gImgs[i].gThumBPic || null;
