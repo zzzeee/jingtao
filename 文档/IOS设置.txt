@@ -9,7 +9,22 @@
 三. 安装插件
   npm install 
   react-native link 插件名(慎用 react-native link)
-  注： react-native-yunpeng-alipay 不能直接react-native link, 不然会报错
+  注： 
+    1. react-native-yunpeng-alipay 请手动link
+    参考地址：https://www.npmjs.com/package/react-native-yunpeng-alipay
+    2. react-native-wechat 手动link
+    参考地址： http://www.jianshu.com/p/3f424cccb888
+
+    ############################################################
+    # 经测试
+    # react-native-yunpeng-alipay link有时可以有时不可以
+    # react-native-wechat link没成功过，必须手动link
+    # 如果是手动link的话， 请选择 Add Files -> Options(右下角) -> Create groups
+    # 
+   ###########################################################
+    3. react-native-image-picker 需添加拍照和相册权限
+      项目名称 -> info -> Add Row : Privacy - Camera Usage Description (string : we need use camra)
+      项目名称 -> info -> Add Row : Privacy - Photo Library Usage Description (string : we need use Photo)
 
 四. 允许HTTP访问
   Xcode -> 项目名(jingtao) -> Info -> Custom IOS Target Properties
