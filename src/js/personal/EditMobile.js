@@ -263,7 +263,7 @@ export default class EditMobile extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
-                <ScrollView contentContainerStyle={styles.scrollStyle}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.scrollStyle}>
                     {oldMobile ?
                         <View style={styles.inputRowStyle}>
                             <View style={styles.inputRowMain}>

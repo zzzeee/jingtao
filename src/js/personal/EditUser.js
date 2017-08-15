@@ -16,13 +16,14 @@ import {
     Image,
     Button,
     Platform,
+    Modal,
 } from 'react-native';
 
 import DatePicker from 'react-native-datepicker';
 import ImagePicker from 'react-native-image-picker';
 import { CachedImage } from "react-native-img-cache";
 
-import Utils from '../public/utils';
+import Utils, {Loading} from '../public/utils';
 import Urls from '../public/apiUrl';
 import InputText from '../public/InputText';
 import PickerAndroidIOS from '../other/PickerAndroidIOS';
@@ -59,6 +60,7 @@ export default class EditUser extends Component {
             userHeadImg: null,
             userSex: 0,
             showAlert: false,
+            showLoad: false,
         };
 
         this.userInfo = null;
@@ -99,7 +101,10 @@ export default class EditUser extends Component {
     //显示提示框
     showAutoModal = (msg) => {
         this.alertMsg = msg;
-        this.setState({showAlert: true, });
+        this.setState({
+            showAlert: true, 
+            showLoad: false,
+        });
     };
 
     //隐藏提示框
@@ -122,7 +127,7 @@ export default class EditUser extends Component {
             name: '女',
             value: 2,
         },];
-        let { userSex, userHeadImg, userBirthday, showAlert } = this.state;
+        let { userSex, userHeadImg, userBirthday, showAlert, showLoad } = this.state;
         return (
             <View style={styles.flex}>
                 <AppHead
@@ -130,7 +135,7 @@ export default class EditUser extends Component {
                     goBack={true}
                     navigation={this.props.navigation}
                 />
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps={'handled'}>
                     <TouchableOpacity style={styles.headView} onPress={this.selectLocalImage}>
                             <Image
                                 source={userHeadImg}
@@ -239,6 +244,23 @@ export default class EditUser extends Component {
                     />
                     : null
                 }
+                {showLoad ?
+                    <Modal
+                        transparent={true}
+                        visible={showLoad}
+                        onRequestClose={()=>{}}
+                    >
+                        <View style={styles.modalBody}>
+                            {Loading({
+                                loadText: '请稍等..',
+                                loadStyle: {
+                                    width: Size.width * 0.5,
+                                },
+                            })}
+                        </View>
+                    </Modal>
+                    : null
+                }
             </View>
         );
     }
@@ -248,8 +270,6 @@ export default class EditUser extends Component {
         if(this.btnLock) {
             console.log('请稍等,正在验证中...');
             return;
-        }else {
-            this.btnLock = true;
         }
         let name = Utils.trim(this.userNewName) || null;
         let uName = this.userInfo.mNickName || null;
@@ -261,20 +281,19 @@ export default class EditUser extends Component {
             uSex == this.state.userSex &&
             uMail == this.userNewMail && this.state.userBirthday == uBirthday) {
             this.showAutoModal('资料未修改，无需提交。');
-            this.btnLock = false;
             return;
         }else if(!name) {
             this.showAutoModal('昵称不能为空!');
-            this.btnLock = false;
             return;
         }else if(uMail && !this.userNewMail) {
             this.showAutoModal('请输入邮箱!');
-            this.btnLock = false;
             return;
         }else if(uSex && this.state.userSex == 0) {
             this.showAutoModal('请选择性别!');
-            this.btnLock = false;
             return;
+        }else {
+            this.btnLock = true;
+            this.setState({showLoad: true,});
         }
         let obj = {
             mToken: this.mToken,
@@ -288,7 +307,7 @@ export default class EditUser extends Component {
         Utils.fetch(Urls.updateUserInfo, 'post', obj, (result)=> {
             console.log(result);
             if (result && result.sTatus == 1) {
-                this.showAutoModal('修改成功!');
+                this.showAutoModal('资料修改成功!');
                 this.props.navigation.navigate('TabNav', {
                     PathKey: TABKEY.personal,
                 });
@@ -407,5 +426,11 @@ const styles = StyleSheet.create({
     btnSaveText: {
         fontSize: 14,
         color: '#fff',
+    },
+    modalBody: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, .5)',
     },
 });

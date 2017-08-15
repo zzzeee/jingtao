@@ -143,7 +143,7 @@ export default class PufaBanner extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps={'handled'}>
                     <Image source={require('../../images/find/pufa_banner.jpg')} style={styles.topImg} />
                     <Image resizeMode="stretch" source={require('../../images/find/banner_bg.png')} style={styles.ruleImgBg}>
                         <View style={styles.ruleBox}>

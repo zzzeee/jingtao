@@ -252,7 +252,11 @@ export default class AddressAdd extends Component {
                     }}
                 />
                 <View style={styles.flex}>
-                    <ScrollView contentContainerStyle={styles.scrollStyle} ref={(_ref)=>scrollref = _ref}>
+                    <ScrollView 
+                        contentContainerStyle={styles.scrollStyle} 
+                        ref={(_ref)=>scrollref = _ref}
+                         keyboardShouldPersistTaps={'handled'}
+                    >
                         <View style={styles.rowBox}>
                             <View style={styles.rowContent}>
                                 <View style={styles.rowLeft}>

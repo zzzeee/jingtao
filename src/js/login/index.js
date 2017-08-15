@@ -218,7 +218,7 @@ export default class Login extends Component {
                         {Lang[Lang.default].forgetPassword}
                     </Text>)}
                 />
-                <ScrollView contentContainerStyle={styles.scrollStyle}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.scrollStyle}>
                     <View style={styles.inputRowStyle}>
                         <View style={styles.inputRowMain}>
                             <View style={styles.inputLeftStyle}>

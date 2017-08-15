@@ -128,7 +128,7 @@ export default class HomeScreen extends Component {
                     onScroll={this._onScroll}
                     scrollEventThrottle={20}
                 >
-                    <View style={[styles.webViewSize, {marginBottom: 10}]} {...this.webViewPanResponder.panHandlers}>
+                    <View style={styles.webViewSize} {...this.webViewPanResponder.panHandlers}>
                         <WebView
                             javaScriptEnabled={true}
                             scalesPageToFit={true}

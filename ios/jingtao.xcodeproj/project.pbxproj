@@ -41,6 +41,8 @@
 		2F3F77971F42C0D400960592 /* libAlipayModule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F3F77781F42C05200960592 /* libAlipayModule.a */; };
 		2F3F77A21F42C3FF00960592 /* libRCTWeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F3F779F1F42C3E000960592 /* libRCTWeChat.a */; };
 		2F3F77A41F42C40E00960592 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F3F77A31F42C40E00960592 /* libsqlite3.0.tbd */; };
+		2F7C18E11F4337A500546DB4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7C18DF1F4337A500546DB4 /* assets */; };
+		2F7C18E21F4337A500546DB4 /* index.ios.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 2F7C18E01F4337A500546DB4 /* index.ios.jsbundle */; };
 		2F935C821F41F19600D7C0F2 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F935C811F41F19600D7C0F2 /* CoreMotion.framework */; };
 		2F935C841F41F19C00D7C0F2 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F935C831F41F19C00D7C0F2 /* CoreTelephony.framework */; };
 		2F935C861F41F1AA00D7C0F2 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F935C851F41F1AA00D7C0F2 /* libc++.tbd */; };
@@ -342,6 +344,8 @@
 		2F3F77731F42C05200960592 /* AlipayModule.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AlipayModule.xcodeproj; path = "../node_modules/react-native-yunpeng-alipay/ios/AlipayModule.xcodeproj"; sourceTree = "<group>"; };
 		2F3F77981F42C3DF00960592 /* RCTWeChat.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWeChat.xcodeproj; path = "../node_modules/react-native-wechat/ios/RCTWeChat.xcodeproj"; sourceTree = "<group>"; };
 		2F3F77A31F42C40E00960592 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		2F7C18DF1F4337A500546DB4 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = bundle/assets; sourceTree = "<group>"; };
+		2F7C18E01F4337A500546DB4 /* index.ios.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = index.ios.jsbundle; path = bundle/index.ios.jsbundle; sourceTree = "<group>"; };
 		2F935C811F41F19600D7C0F2 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		2F935C831F41F19C00D7C0F2 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		2F935C851F41F1AA00D7C0F2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -532,6 +536,8 @@
 		13B07FAE1A68108700A75B9A /* jingtao */ = {
 			isa = PBXGroup;
 			children = (
+				2F7C18DF1F4337A500546DB4 /* assets */,
+				2F7C18E01F4337A500546DB4 /* index.ios.jsbundle */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -1154,6 +1160,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F7C18E11F4337A500546DB4 /* assets in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				FD2EB259B5444087B75CCA8E /* Entypo.ttf in Resources */,
@@ -1165,6 +1172,7 @@
 				299E12AA3DB7411AB4E61455 /* MaterialIcons.ttf in Resources */,
 				47BB28085662465F928B4FD2 /* Octicons.ttf in Resources */,
 				48B00966ABCB4DBA92B44C2E /* SimpleLineIcons.ttf in Resources */,
+				2F7C18E21F4337A500546DB4 /* index.ios.jsbundle in Resources */,
 				BB708F7548A84135B8E0F101 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1353,6 +1361,7 @@
 					"$(SRCROOT)/../node_modules/react-native-yunpeng-alipay/ios/AlipayModule/**",
 				);
 				INFOPLIST_FILE = jingtao/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1381,6 +1390,7 @@
 					"$(SRCROOT)/../node_modules/react-native-yunpeng-alipay/ios/AlipayModule/**",
 				);
 				INFOPLIST_FILE = jingtao/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

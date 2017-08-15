@@ -97,7 +97,7 @@ export default class Join extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
-                <ScrollView contentContainerStyle={styles.container}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
                     <Image style={styles.bannerImg} source={require('../../images/personal/join_banner.jpg')} />
                     <View style={styles.titleBox}>
                         <Text style={styles.titleStyle}>{Lang[Lang.default].nowJoin}</Text>
