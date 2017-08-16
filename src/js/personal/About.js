@@ -12,8 +12,10 @@ import {
     Image,
     TouchableOpacity,
     Linking,
+    Clipboard,
 } from 'react-native';
 
+import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
@@ -30,6 +32,7 @@ export default class About extends Component {
         this.rows = [{
             title: '联系方式',
         }, {
+            type: 'QQ',
             title: '联系客服QQ: ',
             value: '1604693830',
         }, {
@@ -45,6 +48,7 @@ export default class About extends Component {
                 marginTop: PX.marginTB,
             }
         }, {
+            type: 'QQ',
             title: '联系合作QQ: ',
             value: '1161172824',
             style: {
@@ -97,13 +101,20 @@ export default class About extends Component {
         let value = item.value || null;
         let type = item.type || null;
         return (
-            <TouchableOpacity key={index} style={[].concat(boxStyle, styles.boxStyle)} onPress={()=>{
+            <TouchableOpacity key={index} style={[].concat(boxStyle, styles.boxStyle)} onPress={async ()=>{
                 if(type == 'tel') {
                     this.showAlertMoudle(
                         title + value,
                         ()=>this.callPhone(type, value),
                         Lang[Lang.default].call
                     )
+                }else if(type == 'QQ') {
+                    Clipboard.setString(value);
+                    Toast.show(`QQ ${value} 已复制!`, {
+                        duration: Toast.durations.SHORT,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
                 }
             }}>
                 <View style={[].concat(style, styles.rowMain)}>

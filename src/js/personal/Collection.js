@@ -339,7 +339,7 @@ export default class Collection extends Component {
                 btnStyle={{borderRadius: 5,}}
                 itemStyle={{borderRadius: 5,}}
             >
-                <TouchableOpacity activeOpacity={1} style={styles.itemStyle}>
+                <TouchableOpacity activeOpacity={1} style={styles.itemStyle} onPressIn={()=>alert('wawa!!!')}>
                     <View style={styles.itemLeftStyle}>
                         <Image style={styles.collectionImg} source={img} />
                     </View>

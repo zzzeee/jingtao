@@ -109,12 +109,6 @@ export default class CityGoodShopList extends Component {
         }
     }
 
-    componentWillUnmount() {
-        // 如果存在this.timer，则使用clearTimeout清空。
-        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
-        this.timer && clearTimeout(this.timer);
-    }
-
     //播放动画
     playAnimated = () => {
         if(this.index !== null) {
@@ -207,7 +201,8 @@ export default class CityGoodShopList extends Component {
             }, function(view) {
                 that.setState({load_or_error: view});
             }, {
-                hideLoad: true,
+                loadType: 2,
+                hideLoad: this.page == 1 ? false : true,
                 catchFunc: (err)=>console.log(err),
             });
         }
@@ -247,7 +242,9 @@ export default class CityGoodShopList extends Component {
             }, function(view) {
                 that.setState({load_or_error: view});
             }, {
-                hideLoad: true,
+                loadType: 2,
+                hideLoad: this.page2 == 1 ? false : true,
+                catchFunc: (err)=>console.log(err),
             });
         }
     };
@@ -386,48 +383,48 @@ export default class CityGoodShopList extends Component {
         let isSimple = true;
         let body = (
             <View style={styles.flex}>
-                <View>
-                    <ListView
-                        ref={(ref)=>this.ref_listview=ref}
-                        dataSource={this.state.dataSource}
-                        onScroll={this._onScroll}
-                        contentContainerStyle={styles.listViewStyle}
-                        removeClippedSubviews={false}
-                        renderRow={(obj, sectionID, rowID) => {
-                            if(this.index == 0) {
-                                //商品列表
-                                if(this.state.dataSource._cachedRowCount > 3) {
-                                    return isSimple ?
-                                        this._renderItem_simple(obj, sectionID, rowID, this.state.totalNum)
-                                        : this._renderItem(obj, sectionID, rowID, this.state.totalNum);
-                                }else {
-                                    return this._renderItem2(obj, sectionID, rowID);
-                                }
+                <ListView
+                    ref={(ref)=>this.ref_listview=ref}
+                    dataSource={this.state.dataSource}
+                    onScroll={this._onScroll}
+                    contentContainerStyle={styles.listViewStyle}
+                    removeClippedSubviews={false}
+                    renderRow={(obj, sectionID, rowID) => {
+                        if(this.index == 0) {
+                            //商品列表
+                            if(this.state.dataSource._cachedRowCount > 3) {
+                                return isSimple ?
+                                    this._renderItem_simple(obj, sectionID, rowID, this.state.totalNum)
+                                    : this._renderItem(obj, sectionID, rowID, this.state.totalNum);
                             }else {
-                                //店铺列表
-                                return this._renderItem3(obj, sectionID, rowID);
+                                return this._renderItem2(obj, sectionID, rowID);
                             }
-                        }}
-                        enableEmptySections={true}  //允许空数据
-                        renderHeader={()=>this.pageTop(this.state.isFloat ? null : btnBox)}
-                        renderFooter={()=>{
-                            let list = this.state.dataSource || null;
-                            if((this.index == 1 || isSimple) && list && list._cachedRowCount > 1) {
-                                return <EndView style={{width: Size.width, }} />;
-                            }else {
-                                return <View />;
-                            }
-                        }}
-                        onEndReached={()=>{
-                            if(!this.loadMoreLock) {
-                                this.initDatas();
-                            }else {
-                                console.log('加载更多已被锁住。');
-                            }
-                        }}
-                        // onEndReachedThreshold={50}
-                    />
-                </View>
+                        }else {
+                            //店铺列表
+                            return this._renderItem3(obj, sectionID, rowID);
+                        }
+                    }}
+                    enableEmptySections={true}  //允许空数据
+                    renderHeader={()=>this.pageTop(this.state.isFloat ? <View style={{
+                        height: (this.state.showSort && this.index === 0) ? 3 + 44 +44 : 3 + 44,
+                    }} /> : btnBox)}
+                    renderFooter={()=>{
+                        let list = this.state.dataSource || null;
+                        if((this.index == 1 || isSimple) && list && list._cachedRowCount > 1) {
+                            return <EndView style={{width: Size.width, }} />;
+                        }else {
+                            return <View />;
+                        }
+                    }}
+                    onEndReached={()=>{
+                        if(!this.loadMoreLock) {
+                            this.initDatas();
+                        }else {
+                            console.log('加载更多已被锁住。');
+                        }
+                    }}
+                    // onEndReachedThreshold={50}
+                />
                 {this.isEmptyList() ?
                     <View style={styles.noContentBox}>
                         <Image source={require('../../images/home/noContent.png')} style={styles.noContentImg}>
@@ -987,6 +984,7 @@ var styles = StyleSheet.create({
     topSwitchImg: {
         width: 10,
         height: 70,
+        tintColor: Color.mainColor,
     },
     btnTopLineBox: {
         width: Size.width,

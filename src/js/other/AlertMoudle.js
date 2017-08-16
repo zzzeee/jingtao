@@ -60,6 +60,7 @@ export default class AlertMoudle extends Component {
             rightClick,
             rightColor,
             rightBgColor,
+            diyModalBody,
          } = this.props;
         return (
             <Modal
@@ -70,27 +71,30 @@ export default class AlertMoudle extends Component {
                 }}
             >
                 <View style={styles.modalHtml}>
-                    <View style={styles.modalBody}>
-                        <View style={[styles.alertTextView, contentStyle]}>
-                            {textView ?
-                                textView :
-                                <Text style={styles.alertText}>{text}</Text>
-                            }
+                    {diyModalBody ?
+                        diyModalBody :
+                        <View style={styles.modalBody}>
+                            <View style={[styles.alertTextView, contentStyle]}>
+                                {textView ?
+                                    textView :
+                                    <Text style={styles.alertText}>{text}</Text>
+                                }
+                            </View>
+                            <View style={styles.bottonsBox}>
+                                <TouchableOpacity style={[styles.leftBottonStyle, {
+                                    backgroundColor: leftBgColor,
+                                }]} onPress={leftClick} activeOpacity={1}>
+                                    <Text style={[styles.leftBottonText, {color: leftColor}]}>{leftText}</Text>
+                                </TouchableOpacity>
+                                <View style={styles.lineStyle} />
+                                <TouchableOpacity style={[styles.rightBottonStyle, {
+                                    backgroundColor: rightBgColor,
+                                }]} onPress={rightClick} activeOpacity={1}>
+                                    <Text style={[styles.rightBottonText, {color: rightColor}]}>{rightText}</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <View style={styles.bottonsBox}>
-                            <TouchableOpacity style={[styles.leftBottonStyle, {
-                                backgroundColor: leftBgColor,
-                            }]} onPress={leftClick} activeOpacity={1}>
-                                <Text style={[styles.leftBottonText, {color: leftColor}]}>{leftText}</Text>
-                            </TouchableOpacity>
-                            <View style={styles.lineStyle} />
-                            <TouchableOpacity style={[styles.rightBottonStyle, {
-                                backgroundColor: rightBgColor,
-                            }]} onPress={rightClick} activeOpacity={1}>
-                                <Text style={[styles.rightBottonText, {color: rightColor}]}>{rightText}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    }
                 </View>
             </Modal>
         );

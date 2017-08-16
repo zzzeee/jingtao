@@ -235,7 +235,7 @@ var styles = StyleSheet.create({
         // backgroundColor: Color.lightGrey,
     },
     modalBody : {
-        width : Size.width * 0.7,
+        width : Size.width * 0.6,
         flexDirection : 'row',
 		alignItems: 'center',
         justifyContent: 'center',

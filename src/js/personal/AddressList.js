@@ -211,13 +211,10 @@ export default class AddressList extends Component {
                                             alignItems: 'center',
                                         }}>
                                             <Image source={img} style={{
-                                                width: 20,
-                                                height: 20,
+                                                width: 18,
+                                                height: 18,
                                             }} />
-                                            <Text style={{
-                                                color: Color.lightBack,
-                                                fontSize: 14,
-                                            }}>{Lang[Lang.default].setDefault}</Text>
+                                            <Text style={styles.txtFont}>{Lang[Lang.default].setDefault}</Text>
                                         </TouchableOpacity>
                                     </View>
                                     <View style={styles.rowStyle}>
@@ -236,13 +233,10 @@ export default class AddressList extends Component {
                                             alignItems: 'center',
                                         }}>
                                             <Image source={require("../../images/edit.png")} style={{
-                                                width: 20,
-                                                height: 20,
+                                                width: 16,
+                                                height: 16,
                                             }} />
-                                            <Text style={{
-                                                color: Color.lightBack,
-                                                fontSize: 14,
-                                            }}>{Lang[Lang.default].edit}</Text>
+                                            <Text style={styles.txtFont}>{Lang[Lang.default].edit}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={()=>that.showAlertMoudle(said)} style={{
                                             padding: 5,
@@ -251,13 +245,10 @@ export default class AddressList extends Component {
                                             marginLeft: 20,
                                         }}>
                                             <Image source={require("../../images/delete.png")} style={{
-                                                width: 20,
-                                                height: 20,
+                                                width: 16,
+                                                height: 16,
                                             }} />
-                                            <Text style={{
-                                                color: Color.lightBack,
-                                                fontSize: 14,
-                                            }}>{Lang[Lang.default].delete}</Text>
+                                            <Text style={styles.txtFont}>{Lang[Lang.default].delete}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -291,6 +282,11 @@ const styles = StyleSheet.create({
         color: Color.lightBack,
         lineHeight: 19,
     },
+    txtFont: {
+        color: Color.lightBack,
+        fontSize: 12,
+        paddingLeft: 2,
+    },
     rowStyle: {
         flexDirection: 'row',
     },
@@ -312,7 +308,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     addressMiddleRow: {
-        height: 65,
+        minHeight: 50,
     },
     addressFootRow: {
         height: PX.rowHeight2,

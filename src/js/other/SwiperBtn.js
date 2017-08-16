@@ -55,8 +55,8 @@ export default class SwiperBtn extends Component {
     //定义触屏响应事件
     panResponderInit = PanResponder.create({
         // 要求成为响应者：
-        onStartShouldSetPanResponder: (evt, gestureState) => false,
-        onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
         onMoveShouldSetPanResponder: (evt, gestureState) => true,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
         // 响应开始
@@ -91,7 +91,7 @@ export default class SwiperBtn extends Component {
                 }
             }
         },
-        onPanResponderTerminationRequest: (evt, gestureState) => true,
+        onPanResponderTerminationRequest: (evt, gestureState) => false,
         // 响应结束
         onPanResponderRelease: (evt, {vx, dx}) => {
             let press = this.props.onPress || null;

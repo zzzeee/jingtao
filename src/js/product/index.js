@@ -14,6 +14,7 @@ import {
     FlatList,
     Animated,
     Linking,
+    Platform,
 } from 'react-native';
 
 import User from '../public/user';
@@ -185,11 +186,20 @@ export default class ProductScreen extends Component {
     };
 
     //联系客服/商家
-    sellTelphone = () => {
-        this.setState({deleteAlert: false,}, ()=>{
-            Linking.openURL('tel: ' + Lang.telephone)
-            .catch(err => console.error('调用电话失败！', err));
-        });
+    cancotShop = () => {
+        if(Platform.OS === 'ios') {
+            this.callPhone();
+        }else {
+            this.showAlertMoudle(Lang.telephone2, ()=>{
+                this.setState({deleteAlert: false,}, this.callPhone);
+            }, Lang[Lang.default].call);
+        }
+    };
+
+    //打电话
+    callPhone = () => {
+        Linking.openURL('tel: ' + Lang.telephone)
+        .catch(err => console.error('调用电话失败！', err));
     };
 
     //商品属性选择结果
@@ -492,13 +502,7 @@ export default class ProductScreen extends Component {
                 </Animated.View>
                 <View style={styles.footRow}>
                     <View style={styles.rowStyle}>
-                        <TouchableOpacity onPress={()=>{
-                            this.showAlertMoudle(
-                                Lang.telephone2,
-                                this.sellTelphone,
-                                Lang[Lang.default].call
-                            );
-                        }} style={[styles.productContactImg, {
+                        <TouchableOpacity onPress={this.cancotShop} style={[styles.productContactImg, {
                             marginLeft: 10,
                             padding: 5,
                             alignItems: 'center',
@@ -967,11 +971,11 @@ export default class ProductScreen extends Component {
 
     //运费信息
     getFreightInfo = () => {
-        let province = this.province && this.province.name ? this.province.name : null;
-        let city = this.city && this.city.name ? this.city.name : '';
+        let province = (this.province && this.province.name) ? this.province.name + '省' : '';
+        let city = (this.city && this.city.name) ? this.city.name + '市' : '';
         let freight = this.freight || 0;
         if(province) {
-            let str = Lang[Lang.default].to + ' ' + province + ' ' + city;
+            let str = Lang[Lang.default].to + ' ' + province + city;
             return (
                 <View style={styles.selectedBox}>
                     <Text style={styles.txtStyle7} numberOfLines={2}>{str}</Text>
