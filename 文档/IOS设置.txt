@@ -22,11 +22,22 @@
     # 如果是手动link的话， 请选择 Add Files -> Options(右下角) -> Create groups
     # 
    ###########################################################
-    3. react-native-yunpeng-alipay link成功后, 再在 Build Phases -> Link Binary With Libraries 添加4个文件
-      CoreMotion.framework
-      CoreTelephony.framework
-      libc++
-      libz
+    3. react-native-yunpeng-alipay link成功后, 
+      1. Build Phases -> Link Binary With Libraries 添加4个文件
+        CoreMotion.framework
+        CoreTelephony.framework
+        libc++
+        libz
+      2. info -> URL Types 添加
+        identifier: alipay, URL Schemes: alipay*** (eg: alipay2016122004454914)
+      3. AppDelegate.m文件添加如下内容
+        #import "AlipayModule.h"
+        - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+          sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+        {
+          [AlipayModule handleCallback:url];
+          return YES;
+        }
     4. 安装好 react-native-wechat 后, 不要link, 手动添加, 不要手贱。
     5. react-native-image-picker 需添加拍照和相册权限
       项目名称 -> info -> Add Row : Privacy - Camera Usage Description (string : we need use camra)
