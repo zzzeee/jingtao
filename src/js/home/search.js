@@ -16,7 +16,6 @@ import {
     Keyboard,
 } from 'react-native';
 
-var dismissKeyboard = require('dismissKeyboard');
 import BtnIcon from '../public/BtnIcon';
 import SearchData from '../public/search';
 import Urls from '../public/apiUrl';
@@ -30,6 +29,7 @@ import Areas from './searchArea';
 import { EndView } from '../other/publicEment';
 
 var _Search = new SearchData();
+var dismissKeyboard = require('dismissKeyboard');
 
 export default class Search extends Component {
     constructor(props) {
@@ -267,11 +267,14 @@ export default class Search extends Component {
                                 onChange={this.setSearchtext}
                                 length={20}
                                 style={styles.inputStyle}
+                                focus={true}
                                 onFocus={()=>{
-                                    this.setState({
-                                        showInitLog: true,
-                                        load_or_error: null,
-                                    });
+                                    if(!this.state.showInitLog) {
+                                        this.setState({
+                                            showInitLog: true,
+                                            load_or_error: null,
+                                        });
+                                    }
                                 }}
                                 endEditing={()=>{
                                     // this.setState({showInitLog: false,});

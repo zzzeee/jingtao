@@ -253,9 +253,6 @@ export default class EditUser extends Component {
                         <View style={styles.modalBody}>
                             {Loading({
                                 loadText: '请稍等..',
-                                loadStyle: {
-                                    width: Size.width * 0.5,
-                                },
                             })}
                         </View>
                     </Modal>

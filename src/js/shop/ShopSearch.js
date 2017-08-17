@@ -27,6 +27,7 @@ import InputText from '../public/InputText';
 import ProductItem from '../other/ProductItem';
 import AlertMoudle from '../other/AlertMoudle';
 import { EndView } from '../other/publicEment';
+var dismissKeyboard = require('dismissKeyboard');
 
 export default class ShopSearch extends Component {
     constructor(props) {
@@ -42,6 +43,7 @@ export default class ShopSearch extends Component {
             sortIndex: 0,
             showArea: false,
             showFootView: false,
+            showInitLog: true,
         };
         this.shopID = null;
         this.page = 1;
@@ -120,18 +122,22 @@ export default class ShopSearch extends Component {
         let txt = this.state.searchtext || null;
         if(!this.searchLock) {
             Keyboard.dismiss();
-            if(txt == this.search_name) return;
-            this.page = 1;
-            this.loadMoreLock = false;
-            this.search_name = txt;
-            this._Search.saveDatas(txt).then((result)=>{
-                let log = result || [];
-                this.setState({
-                    log: result,
-                    sdatas: [],
-                    load_or_error: this.getLoadView(),
-                }, this.getProductList);
-            });
+            if(txt == this.search_name && this.state.sdatas) {
+                this.setState({showInitLog: false,});
+            }else {
+                this.page = 1;
+                this.loadMoreLock = false;
+                this.search_name = txt;
+                this._Search.saveDatas(txt).then((result)=>{
+                    let log = result || [];
+                    this.setState({
+                        log: result,
+                        sdatas: [],
+                        showInitLog: false,
+                        load_or_error: this.getLoadView(),
+                    }, this.getProductList);
+                });
+            }
         }
     };
 
@@ -143,6 +149,7 @@ export default class ShopSearch extends Component {
         this.setState({
             sdatas: [],
             searchtext: str,
+            showInitLog: false,
             load_or_error: this.getLoadView(),
         }, this.getProductList);
     };
@@ -209,6 +216,20 @@ export default class ShopSearch extends Component {
                                 length={20}
                                 style={styles.inputStyle}
                                 focus={true}
+                                onFocus={()=>{
+                                    if(!this.state.showInitLog) {
+                                        this.setState({
+                                            showInitLog: true,
+                                            load_or_error: null,
+                                        });
+                                    }
+                                }}
+                                endEditing={()=>{
+                                    // this.setState({showInitLog: false,});
+                                }}
+                                submitEditing={()=>{
+                                    this.setState({showInitLog: false,});
+                                }}
                             />
                             <Image style={styles.inputBeforeImg} source={require('../../images/home/search_white.png')} />
                             {this.state.searchtext ?
@@ -253,11 +274,11 @@ export default class ShopSearch extends Component {
                     {this.state.load_or_error}
                 </View>
             );
-        }else if(this.state.sdatas) {
+        }else if(this.state.sdatas && !this.state.showInitLog) {
             return this.productList();
         }else {
             return (
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps={'always'}>
                     {this.initPage()}
                 </ScrollView>
             );
@@ -267,7 +288,7 @@ export default class ShopSearch extends Component {
     initPage = () => {
         return (
             <View>
-                {(this.state.log && this.state.log.length) ? 
+                {(this.state.log && this.state.log.length && this.state.showInitLog) ?
                     <View style={styles.sessionBox}>
                         <View style={styles.sessionTitle}>
                             <Text style={styles.sessionText}>{Lang[Lang.default].searchLog}</Text>
@@ -287,7 +308,10 @@ export default class ShopSearch extends Component {
 
     renderLogItem = (item, index) => {
         return (
-            <TouchableOpacity key={index} style={{margin: 10,}} onPress={()=>this.clickSearchItemText(item)}>
+            <TouchableOpacity key={index} style={{margin: 10,}} onPress={()=>{
+                dismissKeyboard();
+                this.clickSearchItemText(item);
+            }}>
                 <Text style={styles.searchItemText}>{item}</Text>
             </TouchableOpacity>
         );

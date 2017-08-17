@@ -50,15 +50,16 @@ export default class Welcome extends Component {
     }
 
     componentDidMount() {
-        this.getVersionInfo();
         this.startAnimated();
+        this.getVersionInfo();
+        this.appActivityLog();
     }
 
+    //获取版本信息
     getVersionInfo = () => {
-        if(Platform.OS === 'ios') return;
         Utils.fetch(Urls.getVersion, 'get', {
-            type: 0,
-            code: DeviceInfo.getBuildNumber() || 0,
+            type: Platform.OS === 'ios' ? 2 : 0,
+            code: parseInt(DeviceInfo.getBuildNumber()) || 0,
         }, (result)=>{
             console.log(result);
             if(result && result.sTatus == 1 && result.info && result.info.length) {
@@ -82,7 +83,44 @@ export default class Welcome extends Component {
                 }
             }
         })
-    }
+    };
+
+    //活动记录和数据统计
+    appActivityLog = () => {
+        let local = DeviceInfo.getDeviceLocale();
+        let city = DeviceInfo.getDeviceCountry();
+        let agent = DeviceInfo.getUserAgent();  //操作系统及版本
+        let name = DeviceInfo.getDeviceName();
+        let readable = DeviceInfo.getReadableVersion();
+        let version = DeviceInfo.getVersion();
+        let buildNumber = DeviceInfo.getBuildNumber();
+        let bundleId = DeviceInfo.getBundleId();
+        let sysVersion = DeviceInfo.getSystemVersion();
+        let sysName = DeviceInfo.getSystemName();
+        let deviceID = DeviceInfo.getDeviceId();
+        let model = DeviceInfo.getModel();  //型号
+        let brand = DeviceInfo.getBrand();  //品牌
+        let facturer = DeviceInfo.getManufacturer();    //制造商
+        let uniqueID = DeviceInfo.getUniqueID();        //独有ID
+        let obj = {
+            'local': local,
+            'city': city,
+            'userAgent': agent,
+            'name': name,
+            'readableVersion': readable,
+            'version': version,
+            'buildNumber': buildNumber,
+            'bundleId': bundleId,
+            'systemVersion': sysVersion,
+            'systemName': sysName,
+            'deviceID': deviceID,
+            'model': model,
+            'brand': brand,
+            'manufacturer': facturer,
+            'uniqueID': uniqueID,
+        }
+        console.log(obj);
+    };
 
     //跳转至首页
     gotoHome = () => {

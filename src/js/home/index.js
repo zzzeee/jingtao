@@ -244,8 +244,11 @@ export default class HomeScreen extends Component {
                     });
                 }
             }, (view)=>that.setState({load_or_error: view}), {
-                bgStyle: {padding: 20,},
                 // loadType: 2,
+                bgStyle: {
+                    marginTop: 10,
+                    marginBottom: 10,
+                },
             });
         }
     };

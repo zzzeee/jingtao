@@ -156,12 +156,18 @@ export default class PersonalScreen extends Component {
                                 </TouchableOpacity>
                             </View> :
                             <View style={[styles.headMainBox, {justifyContent: 'center',}]}>
-                                <Text style={[styles.bigBotton, {marginRight: 30,}]} onPress={()=>{
+                                <TouchableOpacity style={[styles.btnLoginBox, {
+                                    marginRight: 30,
+                                }]} onPress={()=>{
                                     navigation.navigate('Login');
-                                }}>{Lang[Lang.default].logo}</Text>
-                                <Text style={styles.bigBotton} onPress={()=>{
+                                }}>
+                                    <Text style={styles.bigBotton}>{Lang[Lang.default].logo}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.btnLoginBox} onPress={()=>{
                                     navigation.navigate('Register');
-                                }}>{Lang[Lang.default].register}</Text>
+                                }}>
+                                    <Text style={styles.bigBotton}>{Lang[Lang.default].register}</Text>
+                                </TouchableOpacity>
                             </View>
                         }
                     </Image>
@@ -343,19 +349,19 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-end',
     },
-    bigBotton: {
-        paddingLeft: 46,
-        paddingRight: 46,
-        paddingTop: 8,
-        paddingBottom: 7,
-        color: '#fff',
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#fff',
-        fontSize: 14,
+    btnLoginBox: {
+        width: 110,
+        height: 32,
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#fff',
         marginBottom: 10,
+    },
+    bigBotton: {
+        color: '#fff',
+        fontSize: 14,
         backgroundColor: 'transparent',
     },
     headBox: {

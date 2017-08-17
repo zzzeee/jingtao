@@ -328,7 +328,7 @@ export default class Login extends Component {
                         </View>
                         <View style={styles.imageBox}>
                             <TouchableOpacity onPress={this.WXLogin}>
-                                <Image source={require('../../images/car/weixin.png')} style={styles.otherLoginImage} />
+                                <Image source={require('../../images/login/weixin.png')} style={styles.otherLoginImage} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -630,8 +630,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     otherLoginImage: {
-        width: 30,
-        height: 30,
+        width: 28,
+        height: 28,
     },
     modalBody: {
         flex: 1,

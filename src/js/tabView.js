@@ -11,13 +11,14 @@ import {
   View,
   Linking,
   ScrollView,
+  Platform,
 } from 'react-native';
 
 import ScrollableTabView, {DefaultTabBar, } from 'react-native-scrollable-tab-view';
 import Lang, {str_replace, TABKEY} from './public/language';
 import { Color, Size, PX, pixel, FontSize } from './public/globalStyle';
 import AlertMoudle from './other/AlertMoudle';
-
+import Urls from './public/apiUrl';
 import TabMenu from './tabMenu';
 import Home from './home/';
 import Find from './find/';
@@ -144,7 +145,6 @@ export default class TabView extends Component {
         if(updateType == 9) {
             this.alertObject.rightColor = Color.gray;
             this.alertObject.rightClick = null;
-            return <AlertMoudle visiable={deleteAlert} {...this.alertObject} />;
         }
         return (
             <ScrollableTabView

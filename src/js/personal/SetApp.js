@@ -68,9 +68,8 @@ export default class SetApp extends Component {
 
     //打开浏览器
     linkUpdate_www = () => {
-        let url = (Platform.OS === 'ios') ? 'https://itunes.apple.com/us/app/境淘网/id1203113966?mt=8' : this.updateUrl;
-        if(url) {
-            Linking.openURL(url)
+        if(this.updateUrl) {
+            Linking.openURL(this.updateUrl)
             .catch(err => console.error('跳转失败:', err));
         }
     };
@@ -80,9 +79,6 @@ export default class SetApp extends Component {
         this.showAlertMoudle({
             diyModalBody: Loading({
                 loadText: '请稍等',
-                loadStyle: {
-                    width: Size.width * 0.5,
-                },
             }),
         }, ()=>{
             Utils.fetch(Urls.getVersion, 'get', {
@@ -181,10 +177,13 @@ export default class SetApp extends Component {
                             <Text style={styles.fontSize4}>境淘团队</Text>
                             <Image source={require('../../images/list_more.png')} style={styles.leftIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnRowStyle}>
-                            <Text numberOfLines={1} style={styles.fontSize4}>我要留言</Text>
-                            <Image source={require('../../images/list_more.png')} style={styles.leftIcon} />
-                        </TouchableOpacity>
+                        {login ?
+                            <TouchableOpacity style={styles.btnRowStyle}>
+                                <Text numberOfLines={1} style={styles.fontSize4}>我要留言</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.leftIcon} />
+                            </TouchableOpacity>
+                            : null
+                        }
                         {login ?
                             <TouchableOpacity onPress={()=>{
                                 this.showAlertMoudle({

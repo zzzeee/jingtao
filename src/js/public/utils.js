@@ -24,7 +24,7 @@ export const Loading = ({ loadType, bgStyle, loadText, loadColor, loadStyle, loa
     let loadEment = _loadType == 1 ?
         <View style={[styles.modalBody, loadStyle]}>
             <ActivityIndicator animating={true} color={color} size="small" />
-            <Text style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
+            <Text numberOfLines={1} style={[styles.modalText, {color: color}, load_textStyle]} >{txt}</Text>
         </View> :
         <ActivityIndicator animating={true} color={color} size="small" />;
 
@@ -235,20 +235,23 @@ var styles = StyleSheet.create({
         // backgroundColor: Color.lightGrey,
     },
     modalBody : {
-        width : Size.width * 0.6,
-        flexDirection : 'row',
+        height: 90,
+        minWidth: 100,
+        maxWidth: Size.width * 0.8,
+        // flexDirection : 'row',
 		alignItems: 'center',
         justifyContent: 'center',
         borderWidth : pixel,
         borderColor : '#aaa',
-		backgroundColor : 'rgba(0, 0, 0, 0.6)',
-        padding : 30,
-		borderRadius : 10,
+		backgroundColor : 'rgba(0, 0, 0, 0.7)',
+		borderRadius : 8,
+        // paddingVertical: 30,    //上下内边距
+        paddingHorizontal: 20,  //左右内边距
 	},
 	modalText : {
 		color : '#fff',
-        fontSize : 15,
-        paddingLeft: 20,
+        fontSize : 14,
+        paddingTop: 10,
 	},
 });
 

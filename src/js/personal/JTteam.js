@@ -30,11 +30,11 @@ export default class JTteam extends Component {
     }, {
         name: '汪颖恺',
         position: '项目经理',
-        details: '看似变态怪哥哥的外表, 却是倚杖老太的导盲犬, 技术团队的节奏带动者, 公司开路的灵魂勇士',
+        details: '看似变态怪哥哥的外表, 却是倚杖老太的导盲犬, 技术团队的节奏怂恿者, 公司开路的英勇烈士',
     }, {
         name: '詹敏',
         position: 'UI设计师',
-        details: '神秘的八次元少女, 拿着方方块块的积木, 没有堆砌不起来的世界。 本项目的主要UI设计者',
+        details: '来自国企的八次元少女, 拿着方方块块的积木, 没有堆砌不起来的世界。 本项目的主要UI设计者',
     }, {
         name: '吴迪',
         position: '标注切图大师',
@@ -54,7 +54,7 @@ export default class JTteam extends Component {
     }, {
         name: '齐福',
         position: 'PHP程序员',
-        details: '无缝对接APP后台, 完美呈现数据展示。每个前进的公司背后总有一个为其顶背的胖子',
+        details: '无缝对接APP后台, 完美呈现数据展示。再牛逼的console.log也打印不出我福的故事',
     }, {
         name: '邓铮',
         position: '网络运维',

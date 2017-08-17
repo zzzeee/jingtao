@@ -116,6 +116,8 @@ var urls = {
     weixinLoginApi: host + '/api/WeChatNController/memberWeChartOrQqQuickLanding',
     //分享链接
     weixinShareUrl: 'http://www.hrbxinya.cn/product/detail.html?gID=',
+    //ios更新地址
+    iosUpdateUrl: 'https://itunes.apple.com/us/app//u5883/u6dd8/u7f51/id1203113966?mt=8',
 };
 
 export default urls;

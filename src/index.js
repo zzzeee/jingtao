@@ -98,10 +98,13 @@ class JingtaoApp extends Component {
         return (
             <View style={styles.flex}>
                 <StatusBar backgroundColor={Color.mainColor} barStyle="light-content" />
-                <View style={{
-                    height: (Platform.OS === 'ios') ? PX.statusHeight : 0,
-                    backgroundColor: Color.mainColor,
-                }} />
+                {(Platform.OS === 'ios') ?
+                    <View style={{
+                        height: PX.statusHeight,
+                        backgroundColor: Color.mainColor,
+                    }} />
+                    : null
+                }
                 <View style={styles.container}>
                     <App />
                 </View>

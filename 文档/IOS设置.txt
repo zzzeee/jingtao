@@ -4,7 +4,7 @@
 二. 拷贝文件
   1. index.ios.js
   2. src目录
-  3. package.json(可只复制部分内容)
+  注. package.json(可只复制部分内容), 查看src/index.js是否有未安装的组件
 
 三. 安装插件
   npm install 
@@ -22,7 +22,13 @@
     # 如果是手动link的话， 请选择 Add Files -> Options(右下角) -> Create groups
     # 
    ###########################################################
-    3. react-native-image-picker 需添加拍照和相册权限
+    3. react-native-yunpeng-alipay link成功后, 再在 Build Phases -> Link Binary With Libraries 添加4个文件
+      CoreMotion.framework
+      CoreTelephony.framework
+      libc++
+      libz
+    4. 安装好 react-native-wechat 后, 不要link, 手动添加, 不要手贱。
+    5. react-native-image-picker 需添加拍照和相册权限
       项目名称 -> info -> Add Row : Privacy - Camera Usage Description (string : we need use camra)
       项目名称 -> info -> Add Row : Privacy - Photo Library Usage Description (string : we need use Photo)
 
