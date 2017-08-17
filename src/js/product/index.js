@@ -23,7 +23,6 @@ import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import { Size, PX, pixel, Color, errorStyles } from '../public/globalStyle';
 import Lang, {ShareText, str_replace, TABKEY} from '../public/language';
-import Goods from '../datas/goods.json';
 import ProductItem from '../other/ProductItem';
 import CountDown from '../find/CountDown';
 import ProductDetail from './productDetail';

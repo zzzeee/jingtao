@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 import { WeiXin } from './js/datas/protect';
 import App from './js/';
-// import App from './NavigatorDemo/App';
 var WeChat = require('react-native-wechat');
 import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";

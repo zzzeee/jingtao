@@ -21,7 +21,6 @@ import Urls from '../public/apiUrl';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import Lang, {str_replace} from '../public/language';
-import list from '../datas/detailedList.json';
 import { EndView } from '../other/publicEment';
 
 export default class MyIntegral extends Component {
