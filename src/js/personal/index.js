@@ -272,6 +272,7 @@ export default class PersonalScreen extends Component {
                         width={PX.headIconSize}
                         press={()=>navigation.navigate('SetApp', {
                             login: islogin,
+                            mToken: this.mToken,
                         })} 
                         src={require("../../images/personal/config_white.png")} 
                     />}

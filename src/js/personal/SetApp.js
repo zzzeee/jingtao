@@ -36,7 +36,6 @@ export default class SetApp extends Component {
         this.state = {
             showAlert: false,
             deleteAlert: false,
-            load_or_error: null,
             alertObject: {},
         };
         this.type = 2;
@@ -152,6 +151,7 @@ export default class SetApp extends Component {
         let version = DeviceInfo.getVersion() || '';
         let params = (navigation && navigation.state.params) ? navigation.state.params : {};
         let login = params.login ? true : false;
+        let token = params.mToken ? params.mToken : null;
         return (
             <View style={styles.container}>
                 <AppHead
@@ -178,7 +178,11 @@ export default class SetApp extends Component {
                             <Image source={require('../../images/list_more.png')} style={styles.leftIcon} />
                         </TouchableOpacity>
                         {login ?
-                            <TouchableOpacity style={styles.btnRowStyle}>
+                            <TouchableOpacity style={styles.btnRowStyle} onPress={()=>{
+                                navigation.navigate('SendMessage', {
+                                    mToken: token,
+                                });
+                            }}>
                                 <Text numberOfLines={1} style={styles.fontSize4}>我要留言</Text>
                                 <Image source={require('../../images/list_more.png')} style={styles.leftIcon} />
                             </TouchableOpacity>

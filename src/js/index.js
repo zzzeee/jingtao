@@ -44,6 +44,7 @@ import HelpPrivacy from './personal/Help/privacy';
 import HelpTransaction from './personal/Help/transaction';
 import SetApp from './personal/SetApp';
 import JTteam from './personal/JTteam';
+import SendMessage from './personal/SendMessage';
 import EditUser from './personal/EditUser';
 import EditMobile from './personal/EditMobile';
 import ProductList from './class/ProductList';
@@ -179,6 +180,11 @@ const SetAppScreen = ({ navigation }) => (
 //个人中心 - 设置 - 境淘团队
 const JTteamScreen = ({ navigation }) => (
     <MyNavScren navigation={navigation} NavScreen={JTteam} />
+);
+
+//个人中心 - 设置 - 留言
+const SendMessageScreen = ({ navigation }) => (
+    <MyNavScren navigation={navigation} NavScreen={SendMessage} />
 );
 
 //个人中心 - 个人资料
@@ -323,6 +329,9 @@ const AppNavigator = StackNavigator({
     },
     JTteam: {
         screen: JTteamScreen,
+    },
+    SendMessage: {
+        screen: SendMessageScreen,
     },
     EditUser: {
         screen: EditUserScreen,

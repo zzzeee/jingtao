@@ -20,9 +20,11 @@ import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 
 import User from './public/user';
+import DeviceLog from './public/deviceLog';
 import Urls from './public/apiUrl';
 import Utils from './public/utils';
 
+var _Device = new DeviceLog();
 var _User = new User();
 var imgHeight = 45; //图片高度
 var lineMax = 210;  //中间线的展开长度
@@ -90,7 +92,6 @@ export default class Welcome extends Component {
 
     //活动记录和数据统计
     appActivityLog = () => {
-        if(Platform.OS !== 'android') return;
         let dArea = DeviceInfo.getDeviceLocale();   //设备地区
         let dCity = DeviceInfo.getDeviceCountry();  //设备城市
         let userAgent = DeviceInfo.getUserAgent();  //操作系统及版本
@@ -105,12 +106,11 @@ export default class Welcome extends Component {
         let model = DeviceInfo.getModel();  //型号
         let brand = DeviceInfo.getBrand();  //品牌
         let manufacturer = DeviceInfo.getManufacturer();    //制造商
-        let uniqueID = DeviceInfo.getUniqueID();            //独有ID
         let isEmulator = DeviceInfo.isEmulator();           //是否为虚拟机
         let obj = {
-            'userAgent': userAgent.replace(/Android/ig, '安卓系统'),
-            'dName': dName,
-            'version': '1.7.8',
+            'userAgent': userAgent.replace(/Android/ig, '安卓系统').replace(/like/ig, '1ike'),
+            'deviceName': dName,
+            'version': version,
             'buildNumber': buildNumber,
             'bundleId': bundleId,
             'sysVersion': systemVersion,
@@ -119,15 +119,31 @@ export default class Welcome extends Component {
             'dModel': model,
             'dBrand': brand,
             'manufacturer': manufacturer,
-            'uniqueID': uniqueID,
             'isEmulator': isEmulator ? 2 : 1,
         };
-        
+        //IOS: APP在重装后,uniqueID会被刷新
         _User.getUserID(_User.keyMember)
         .then((token) => {
             if(token) obj.mToken = token;
-            // console.log(obj);
-            Utils.fetch(Urls.addDeviceLog, 'post', obj, null);
+            _Device.getDatas()
+            .then((result)=>{
+                console.log(result);
+                let unid = null, vers = null;
+                if(result) {
+                    unid = result.uniqueID || null;
+                    vers = result.version || null;
+                    if(unid && (Platform.OS === 'ios') && version == vers) return;
+                    if(unid && (unid == DeviceInfo.getUniqueID()) && (Platform.OS === 'android') && version == vers) return;
+                }
+                if((Platform.OS === 'ios') && unid) {
+                    obj.uniqueID = unid;
+                }else {
+                    obj.uniqueID = DeviceInfo.getUniqueID();
+                }
+                console.log(obj);
+                Utils.fetch(Urls.addDeviceLog, 'post', obj, null);
+                _Device.saveDatas(obj.uniqueID, obj.version);
+            });
         });
     };
 

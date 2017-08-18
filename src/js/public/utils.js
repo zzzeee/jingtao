@@ -106,7 +106,6 @@ var Util = {
         }
         
         let fetchFunc = () => this.fetch(url, type, data, callback, load_error, load_error_config);
-
         load_error_config.fetchFunc = fetchFunc;
         try {
             fetch(url, fetchOptions)
@@ -172,7 +171,11 @@ var Util = {
 
     //去除前后空格
     trim: function (str) {
-        return str.replace(/(^\s*)|(\s*$)/g, "");
+        let _str = str;
+        if(str) {
+            _str = str.replace(/(^\s*)|(\s*$)/g, "");
+        }
+        return _str;
     },
 
     //替换多个字符串

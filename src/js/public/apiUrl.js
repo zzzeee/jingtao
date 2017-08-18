@@ -120,6 +120,8 @@ var urls = {
     iosUpdateUrl: 'https://itunes.apple.com/us/app//u5883/u6dd8/u7f51/id1203113966?mt=8',
     //添加设备记录
     addDeviceLog: host + '/api/Version/addUserActivityLog',
+    //提交用户建议信息
+    updateUserMessage: host + '/api/ApplyNController/memberLeavingMessage',
 };
 
 export default urls;
