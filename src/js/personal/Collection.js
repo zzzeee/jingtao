@@ -23,6 +23,7 @@ import { Size, pixel, PX, Color, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 import SwiperBtn from '../other/SwiperBtn';
 import AlertMoudle from '../other/AlertMoudle';
+import { EndView } from '../other/publicEment';
 
 export default class Collection extends Component {
     //构造函数
@@ -284,6 +285,16 @@ export default class Collection extends Component {
                             enableEmptySections={true}
                             renderItem={this._renderItem}
                             onEndReached={this.getCollectionList}
+                            ListHeaderComponent={()=>(
+                                <Text style={styles.fontStyle2}>左滑可删除收藏</Text>
+                            )}
+                            ListFooterComponent={()=>{
+                                if(this.state.dataSource && this.state.dataSource.length > 4) {
+                                    return <EndView />;
+                                }else {
+                                    return <View />;
+                                }
+                            }}
                             contentContainerStyle={styles.flatListStyle}
                             refreshing={this.state.isRefreshing}
                             onRefresh={()=>{
@@ -382,6 +393,12 @@ var styles = StyleSheet.create({
     fontStyle1: {
         fontSize: 16,
         color: Color.mainColor,
+    },
+    fontStyle2: {
+        fontSize: 12,
+        color: Color.gainsboro,
+        paddingLeft: PX.marginLR,
+        paddingBottom: 10,
     },
     rowStyle: {
         flexDirection: 'row',

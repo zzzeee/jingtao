@@ -110,10 +110,12 @@ var Util = {
         load_error_config.fetchFunc = fetchFunc;
         try {
             fetch(url, fetchOptions)
-            .then((response) => response.json())
+            .then((response) => {
+                if(callback && response && response.status == '200') return response.json();
+            })
             .then((responseText) => {
                 // load_error && load_error(null);
-                callback(responseText);
+                callback && callback(responseText);
             })
             .catch((error1) => {
                 console.log(error1)

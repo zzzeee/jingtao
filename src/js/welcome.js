@@ -19,9 +19,11 @@ import {
 import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 
+import User from './public/user';
 import Urls from './public/apiUrl';
 import Utils from './public/utils';
 
+var _User = new User();
 var imgHeight = 45; //图片高度
 var lineMax = 210;  //中间线的展开长度
 var imgMax = 12;    //图片向上移动的距离
@@ -47,6 +49,7 @@ export default class Welcome extends Component {
         };
         this.isUpdate = false;
         this.versionInfo = null;
+        this.maxNumber = 20;
     }
 
     componentDidMount() {
@@ -87,39 +90,45 @@ export default class Welcome extends Component {
 
     //活动记录和数据统计
     appActivityLog = () => {
-        let local = DeviceInfo.getDeviceLocale();
-        let city = DeviceInfo.getDeviceCountry();
-        let agent = DeviceInfo.getUserAgent();  //操作系统及版本
-        let name = DeviceInfo.getDeviceName();
-        let readable = DeviceInfo.getReadableVersion();
-        let version = DeviceInfo.getVersion();
+        if(Platform.OS !== 'android') return;
+        let dArea = DeviceInfo.getDeviceLocale();   //设备地区
+        let dCity = DeviceInfo.getDeviceCountry();  //设备城市
+        let userAgent = DeviceInfo.getUserAgent();  //操作系统及版本
+        let dName = DeviceInfo.getDeviceName();     //设备名称
+        let readableVersion = DeviceInfo.getReadableVersion();
+        let version = DeviceInfo.getVersion();      //版本名称
         let buildNumber = DeviceInfo.getBuildNumber();
-        let bundleId = DeviceInfo.getBundleId();
-        let sysVersion = DeviceInfo.getSystemVersion();
-        let sysName = DeviceInfo.getSystemName();
+        let bundleId = DeviceInfo.getBundleId();    //包名
+        let systemVersion = DeviceInfo.getSystemVersion();
+        let systemName = DeviceInfo.getSystemName();
         let deviceID = DeviceInfo.getDeviceId();
         let model = DeviceInfo.getModel();  //型号
         let brand = DeviceInfo.getBrand();  //品牌
-        let facturer = DeviceInfo.getManufacturer();    //制造商
-        let uniqueID = DeviceInfo.getUniqueID();        //独有ID
+        let manufacturer = DeviceInfo.getManufacturer();    //制造商
+        let uniqueID = DeviceInfo.getUniqueID();            //独有ID
+        let isEmulator = DeviceInfo.isEmulator();           //是否为虚拟机
         let obj = {
-            'local': local,
-            'city': city,
-            'userAgent': agent,
-            'name': name,
-            'readableVersion': readable,
-            'version': version,
+            'userAgent': userAgent.replace(/Android/ig, '安卓系统'),
+            'dName': dName,
+            'version': '1.7.8',
             'buildNumber': buildNumber,
             'bundleId': bundleId,
-            'systemVersion': sysVersion,
-            'systemName': sysName,
+            'sysVersion': systemVersion,
+            'sysName': systemName,
             'deviceID': deviceID,
-            'model': model,
-            'brand': brand,
-            'manufacturer': facturer,
+            'dModel': model,
+            'dBrand': brand,
+            'manufacturer': manufacturer,
             'uniqueID': uniqueID,
-        }
-        console.log(obj);
+            'isEmulator': isEmulator ? 2 : 1,
+        };
+        
+        _User.getUserID(_User.keyMember)
+        .then((token) => {
+            if(token) obj.mToken = token;
+            // console.log(obj);
+            Utils.fetch(Urls.addDeviceLog, 'post', obj, null);
+        });
     };
 
     //跳转至首页

@@ -14,7 +14,7 @@ import {
     ScrollView,
 } from 'react-native';
 
-import Lang, {str_replace, Privacy} from '../public/language';
+import Lang, {str_replace} from '../public/language';
 import { Size, Color, PX, pixel, FontSize } from '../public/globalStyle';
 import AppHead from '../public/AppHead';
 
