@@ -104,11 +104,6 @@ const styles = StyleSheet.create({
     scrollStyle: {
         paddingBottom: 15,
     },
-    defaultFont: {
-        fontSize: 14,
-        color: Color.lightBack,
-        lineHeight: 18,
-    },
     itemStyle: {
         marginTop: 10,
         padding: 15,
@@ -119,7 +114,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     nameText: {
-        fontSize: 13,
+        fontSize: 14,
         color: Color.lightBack,
     },
     positionText: {
@@ -134,7 +129,7 @@ const styles = StyleSheet.create({
         borderTopWidth: pixel,
     },
     detailsText: {
-        fontSize: 12,
+        fontSize: 13,
         color: Color.lightBack,
         lineHeight: 20,
     },

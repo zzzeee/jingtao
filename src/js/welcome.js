@@ -128,18 +128,15 @@ export default class Welcome extends Component {
             _Device.getDatas()
             .then((result)=>{
                 console.log(result);
-                let unid = null, vers = null;
+                let unid = null, vers = null, nowUnid = null;
                 if(result) {
                     unid = result.uniqueID || null;
                     vers = result.version || null;
-                    if(unid && (Platform.OS === 'ios') && version == vers) return;
-                    if(unid && (unid == DeviceInfo.getUniqueID()) && (Platform.OS === 'android') && version == vers) return;
+                    if(unid && version == vers) return;
+                    nowUnid = DeviceInfo.getUniqueID();
+                    // if(unid && unid == nowUnid && version == vers) return;
                 }
-                if((Platform.OS === 'ios') && unid) {
-                    obj.uniqueID = unid;
-                }else {
-                    obj.uniqueID = DeviceInfo.getUniqueID();
-                }
+                obj.uniqueID = nowUnid;
                 console.log(obj);
                 Utils.fetch(Urls.addDeviceLog, 'post', obj, null);
                 _Device.saveDatas(obj.uniqueID, obj.version);

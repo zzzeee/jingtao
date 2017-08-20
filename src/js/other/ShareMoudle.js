@@ -30,8 +30,15 @@ export default class ShareMoudle extends Component {
         this.state = {
             visible: this.props.visible || false,
         };
-
+        this.timer = null;
         this.shareList = ['shareToTimeline', 'shareToSession'];
+    }
+
+    componentWillUnmount() {
+        // 请注意Un"m"ount的m是小写
+        // 如果存在this.timer，则使用clearTimeout清空。
+        // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
+        this.timer && clearTimeout(this.timer);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -65,6 +72,15 @@ export default class ShareMoudle extends Component {
         return _list;
     };
 
+    //显示提示
+    showToast = (msg) => {
+        this.timer = Toast.show(msg, {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.CENTER,
+            hideOnPress: true,
+        });
+    };
+
     render() {
         let that = this;
         return (
@@ -92,24 +108,22 @@ export default class ShareMoudle extends Component {
                                                         WeChat[item.to](item.obj)
                                                         .then((result) => {
                                                             console.log(result);
+                                                            if(result && result.errCode === 0) {
+                                                                that.showToast('分享成功');
+                                                            }
                                                         })
                                                         .catch((error) => {
-                                                            console.log(error);
+                                                            let err = error.code || 0;
+                                                            if(err == -2) {
+                                                                that.showToast('取消分享');
+                                                            }
                                                         });
                                                     } else {
-                                                        Toast.show(Lang[Lang.default].shareErrorAlert, {
-                                                            duration: Toast.durations.LONG,
-                                                            position: Toast.positions.CENTER,
-                                                            hideOnPress: true,
-                                                        });
+                                                        that.showToast(Lang[Lang.default].shareErrorAlert);
                                                     }
                                                 });
                                             }else {
-                                                Toast.show(Lang[Lang.default].missParam, {
-                                                    duration: Toast.durations.LONG,
-                                                    position: Toast.positions.CENTER,
-                                                    hideOnPress: true,
-                                                });
+                                                that.showToast(Lang[Lang.default].missParam);
                                             }
                                         }}>
                                             <Image source={icon} style={styles.shareImageStyle} />

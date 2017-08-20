@@ -240,8 +240,8 @@ var styles = StyleSheet.create({
         // backgroundColor: Color.lightGrey,
     },
     modalBody : {
-        height: 90,
-        minWidth: 100,
+        height: Size.width * 0.25,
+        minWidth: Size.width * 0.26,
         maxWidth: Size.width * 0.8,
         // flexDirection : 'row',
 		alignItems: 'center',

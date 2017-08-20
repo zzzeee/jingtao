@@ -84,16 +84,17 @@ export default class CityItem extends Component {
         let img_enter = require("../../images/home/enter.png");
         let img_mark = require("../../images/home/market.png");
         let img_share = require("../../images/home/share.png");
+        let shareObj = {
+            img: img,
+            cityId: id,
+        };
         return (
             <View>
                 <View style={styles.cityNameRow}>
                     <Text style={styles.cityNameText} numberOfLines={1}>{name}</Text>
                     <TouchableOpacity onPress={(e)=>{
                         if(this.props.showFloatMenu && e && e.nativeEvent && name) {
-                            this.props.showFloatMenu(e.nativeEvent, name, {
-                                img: img,
-                                cityId: id,
-                            });
+                            this.props.showFloatMenu(e.nativeEvent, name, shareObj);
                         }
                     }} style={{
                         padding: 5,
@@ -156,7 +157,7 @@ export default class CityItem extends Component {
                     </View>
                     <View style={styles.leftBorder}>
                         <TouchableOpacity onPress={()=>{
-                            // alert('即将添加，敬请期待!');
+                            this.props.setStartShare(true, name, shareObj);
                         }} style={{
                             padding: 5,
                             flexDirection: 'row',

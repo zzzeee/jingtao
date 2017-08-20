@@ -16,7 +16,7 @@ import {
 
 import PropTypes from 'prop-types';
 var WeChat=require('react-native-wechat');
-import ShareMoudle from '../other/ShareMoudle';
+import Urls from '../public/apiUrl';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, Color } from '../public/globalStyle';
 
@@ -49,9 +49,14 @@ export default class FloatMenu extends Component {
             'icon' : require('../../images/home/share.png'),
             'detail' : '',
             'press' : this.showStartShare,
-            }, 
+         * }, 
          */
         this.buttons = [{
+            'title' : Lang[Lang.default].shareCity,
+            'icon' : require('../../images/home/share.png'),
+            'detail' : '',
+            'press' : ()=>this.props.setStartShare(true),
+        }, {
             'title' : Lang[Lang.default].sellSpecialty,
             'icon' : require('../../images/home/partner.png'),
             'detail' : Lang[Lang.default].sellSpecialty_txt,
@@ -67,43 +72,6 @@ export default class FloatMenu extends Component {
         }];
     }
 
-    //显示分享选项
-    showStartShare = () => this.setStartShare(true);
-
-    //设置是否显示分享选项
-    setStartShare = (isShow) => {
-        if(!isShow) {
-            this.props.hideMenu();
-        }
-        this.setState({startShare: isShow});
-    };
-
-    //分享城市
-    shareCity = () => {
-        let name = this.props.cityName || '';
-        let img = this.props.shareObj.img || '';
-        if(WeChat && name) {
-            WeChat.isWXAppInstalled()
-            .then((isInstalled) => {
-                if (isInstalled) {
-                    WeChat.shareToSession({
-                        type: 'news',
-                        title: name,
-                        description: str_replace(Lang[Lang.default].shareText, name),
-                        thumbImage: img,
-                        webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html',
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-                } else {
-                    console.log(Lang[Lang.default].shareErrorAlert);
-                    alert(Lang[Lang.default].shareErrorAlert);
-                }
-            });
-        }
-    };
-
     //隐藏城市
     hideCity = () => {
         let id = this.props.shareObj.cityId || null;
@@ -114,41 +82,17 @@ export default class FloatMenu extends Component {
     };
 
     render() {
-        if(!this.props.nativeEvent || !this.props.cityName) {
+        let { visible, nativeEvent, cityName, btnSize, hideMenu } = this.props;
+        if(!visible || !nativeEvent || !cityName) {
             return null;
-        }else if(this.state.startShare) {
-            let name = this.props.cityName || '';
-            let img = this.props.shareObj.img || '';
-            let shareInfo = [{
-                to: 'shareToSession',
-                name: Lang[Lang.default].wxFriends,
-                icon: require('../../images/empty.jpg'),
-                obj: {
-                    type: 'news',
-                    title: name,
-                    thumbImage: img,
-                    webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html'
-                },
-            }, {
-                to: 'shareToTimeline',
-                name: Lang[Lang.default].circleOfFriends,
-                icon: require('../../images/empty.jpg'),
-                obj: {
-                    type: 'news',
-                    title: name,
-                    thumbImage: img,
-                    webpageUrl: 'http://ceshi.ub33.cn/newmap/index.html'
-                },
-            },];
-            return <ShareMoudle shares={shareInfo} visible={true} setStartShare={this.setStartShare} />;
         }
-        let localY = this.props.nativeEvent.locationY || 0;
-        let pageY = this.props.nativeEvent.pageY || 0;
-        let btnSize = this.props.btnSize || 0;
+        let localY = nativeEvent.locationY || 0;
+        let pageY = nativeEvent.pageY || 0;
+        let _btnSize = btnSize ? btnSize : 0;
         let menuH = this.buttons.length * itemH;
         let sHeight = Size.height - 80;
         let top = 0, arrowUp = false;
-        let offsetY = btnSize - localY;
+        let offsetY = _btnSize - localY;
         
         if(sHeight - pageY - offsetY > menuH) {
             top = pageY + offsetY;
@@ -160,14 +104,14 @@ export default class FloatMenu extends Component {
             <Modal
                 animationType={"fade"}
                 transparent={true}
-                visible={this.props.visible}
+                visible={visible}
                 onRequestClose={() => {}}
             >
                 <TouchableOpacity 
                     style={styles.btnBody} 
                     activeOpacity={1} 
-                    onPress={this.props.hideMenu}
-                    onLongPress={this.props.hideMenu}
+                    onPress={hideMenu}
+                    onLongPress={hideMenu}
                 >
                     <View style={[styles.shareBox, {top : top}]}>
                         {this.buttons.map((tab, i) => this.renderObject(tab, i))}

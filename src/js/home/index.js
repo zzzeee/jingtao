@@ -22,6 +22,7 @@ import {
 
 import CityList from './CityList';
 import FloatMenu from './FloatMenu';
+import ShareMoudle from '../other/ShareMoudle';
 import Urls from '../public/apiUrl';
 import Utils from '../public/utils';
 import Lang, {str_replace} from '../public/language';
@@ -42,6 +43,7 @@ export default class HomeScreen extends Component {
             hideCitys: [],
             load_or_error: null,
             webView_error: false,
+            startShare: false,
         };
 
         this.shareObj = {};
@@ -65,10 +67,77 @@ export default class HomeScreen extends Component {
         this.getProvinceDatas(31);
     }
 
+    // 显示遮罩层菜单
+    showFloatMenu = (event, name, obj) => {
+        this.shareObj = obj;
+        if(event && name) {
+            this.setState({
+                visible: true,
+                nativeEvent: event,
+                showCityName: name,
+            });
+        }
+    };
+
+    //隐藏遮罩层菜单
+    hideCityMenu = () => {
+        this.setState({
+            visible: false,
+            nativeEvent: null,
+            showCityName: null,
+        });
+    };
+
+    //设置是否显示分享选项
+    setStartShare = (isShow, _name = null, _shareObj = null) => {
+        let obj = {startShare: isShow};
+        if(_name) obj.showCityName = _name;
+        if(_shareObj) this.shareObj = _shareObj;
+        if(isShow) {
+            obj.visible = false;
+        }
+        this.setState(obj);
+    };
+
     render() {
         let { navigation } = this.props;
         let _scrollview = null;
         let mapSource = (Platform.OS === 'ios') ? require('../../newmap/index.html') : {uri: Urls.homeMap};
+        let {
+            heightValue,
+            provinceName,
+            load_or_error,
+            datas,
+            updateData,
+            provinceID,
+            visible,
+            nativeEvent,
+            showCityName,
+            startShare,
+        } = this.state;
+        let shareInfo = [{
+                to: 'shareToSession',
+                name: Lang[Lang.default].wxFriends,
+                icon: require('../../images/product/wechat.png'),
+                obj: {
+                    type: 'news',
+                    title: showCityName,
+                    description: showCityName + ' 一个我为之向往的地方, 那里有我喜欢的土特产。',
+                    thumbImage: this.shareObj.img || '',
+                    webpageUrl: Urls.basicUpdateUrl,
+                },
+            }, {
+                to: 'shareToTimeline',
+                name: Lang[Lang.default].circleOfFriends,
+                icon: require('../../images/product/moment.png'),
+                obj: {
+                    type: 'news',
+                    title: showCityName,
+                    description: showCityName + ' 一个我为之向往的地方, 那里有我喜欢的土特产。',
+                    thumbImage: this.shareObj.img || '',
+                    webpageUrl: Urls.basicUpdateUrl
+                },
+            },];
         return (
             <View style={styles.flex}>
                 <View style={styles.headView}>
@@ -88,8 +157,8 @@ export default class HomeScreen extends Component {
                     </TouchableOpacity>
                 </View>
                 <Animated.View style={[styles.hideHead, {
-                    height: this.state.heightValue,
-                    opacity: this.state.heightValue.interpolate({
+                    height: heightValue,
+                    opacity: heightValue.interpolate({
                         inputRange: [0, PX.headHeight],
                         outputRange: [0, 1]
                     }),
@@ -105,7 +174,7 @@ export default class HomeScreen extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.titleTextBox} onPress={this.scrollStart}>
                         <Text style={styles.headTitle1}>{str_replace(Lang[Lang.default].previewing, '')}</Text>
-                        <Text style={styles.headTitle2}>{this.state.provinceName + Lang[Lang.default].guan}</Text>
+                        <Text style={styles.headTitle2}>{provinceName + Lang[Lang.default].guan}</Text>
                         <TouchableOpacity onPress={this.scrollStart}>
                             <Image source={require("../../images/sanjiao.png")} style={{
                                 width: 16,
@@ -139,34 +208,39 @@ export default class HomeScreen extends Component {
                             // onNavigationStateChange={(navState) =>console.log(navState)}
                         />
                     </View>
-                    {this.state.load_or_error ?
-                        this.state.load_or_error :
-                        (this.state.datas ?
+                    {load_or_error ?
+                        load_or_error :
+                        (datas ?
                             <CityList 
-                                isUpdate={this.state.updateData} 
+                                isUpdate={updateData} 
                                 showFloatMenu={this.showFloatMenu} 
-                                pid={this.state.provinceID} 
-                                datas={this.state.datas} 
+                                pid={provinceID} 
+                                datas={datas} 
                                 navigation={navigation}
+                                setStartShare={this.setStartShare}
                             />
                             : null
                         )
                     }
                 </ScrollView>
-                <FloatMenu 
-                    visible={this.state.visible} 
-                    nativeEvent={this.state.nativeEvent} 
-                    cityName={this.state.showCityName}
-                    shareObj={this.shareObj}
-                    btnSize={20}
-                    addHideCity={this.addHideCity}
-                    navigation={navigation}
-                    hideMenu={()=>this.setState({
-                        visible: false,
-                        nativeEvent: null,
-                        showCityName: null,
-                    })}
-                />
+                {visible ?
+                    <FloatMenu 
+                        visible={visible} 
+                        nativeEvent={nativeEvent} 
+                        cityName={showCityName}
+                        shareObj={this.shareObj}
+                        btnSize={20}
+                        addHideCity={this.addHideCity}
+                        navigation={navigation}
+                        hideMenu={this.hideCityMenu}
+                        setStartShare={this.setStartShare}
+                    />
+                    : null
+                }
+                {startShare ?
+                    <ShareMoudle shares={shareInfo} visible={startShare} setStartShare={this.setStartShare} />
+                    : null
+                }
             </View>
         );
     }
@@ -195,18 +269,6 @@ export default class HomeScreen extends Component {
                 });
                 this.state.heightValue.setValue(0);
             }
-        }
-    };
-
-    // 显示遮罩层
-    showFloatMenu = (event, name, obj) => {
-        this.shareObj = obj;
-        if(event && name) {
-            this.setState({
-                visible: true,
-                nativeEvent: event,
-                showCityName: name,
-            });
         }
     };
 

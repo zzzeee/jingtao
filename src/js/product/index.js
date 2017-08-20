@@ -970,14 +970,31 @@ export default class ProductScreen extends Component {
 
     //运费信息
     getFreightInfo = () => {
-        let province = (this.province && this.province.name) ? this.province.name + '省' : '';
-        let city = (this.city && this.city.name) ? this.city.name + '市' : '';
+        let province = (this.province && this.province.name) ? this.province.name : null;
+        let city = (this.city && this.city.name) ? this.city.name : null;
         let freight = this.freight || 0;
         if(province) {
-            let str = Lang[Lang.default].to + ' ' + province + city;
+            let str = 
+            <Text style={styles.txtStyle7} numberOfLines={2}>
+                {Lang[Lang.default].to + ' '}
+                {province ?
+                    <Text>
+                        {province}
+                        <Text style={styles.txtStyle9}>省</Text>
+                    </Text>
+                    : null    
+                }
+                {city ?
+                    <Text>
+                        {city}
+                        <Text style={styles.txtStyle9}>市</Text>
+                    </Text>
+                    : null    
+                }
+            </Text>;
             return (
                 <View style={styles.selectedBox}>
-                    <Text style={styles.txtStyle7} numberOfLines={2}>{str}</Text>
+                    {str}
                     <Text style={[styles.txtStyle9, {paddingTop: 4}]}>{'' + freight}</Text>
                 </View>
             );
