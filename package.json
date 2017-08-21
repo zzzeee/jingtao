@@ -30,6 +30,7 @@
     "react-native-swiper": "^1.5.4",
     "react-native-vector-icons": "^4.0.1",
     "react-native-wechat": "^1.9.2",
+    "react-native-weibo": "^3.0.4",
     "react-native-yunpeng-alipay": "^1.1.4",
     "react-navigation": "^1.0.0-beta.11",
     "xmldom": "^0.1.27"

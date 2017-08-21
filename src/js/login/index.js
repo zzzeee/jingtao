@@ -34,6 +34,7 @@ import FrequentModel from './FrequentModel';
 var _User = new User();
 var WeChat = require('react-native-wechat');
 import * as QQAPI from 'react-native-qq';
+import * as WeiboAPI from 'react-native-weibo';
 
 export default class Login extends Component {
     constructor(props) {
@@ -335,6 +336,21 @@ export default class Login extends Component {
                             <TouchableOpacity style={styles.loginImageItem} onPress={this.QQLogin}>
                                 <Image source={require('../../images/login/qq.png')} style={styles.otherLoginImage} />
                             </TouchableOpacity>
+                            <TouchableOpacity style={styles.loginImageItem} onPress={()=>{
+                                let config = {
+                                    scope: 'all',
+                                    redirectURI: 'https://api.weibo.com/oauth2/default.html',
+                                };
+                                WeiboAPI.login(config)
+                                .then((result)=>{
+                                    console.log(result);
+                                })
+                                .catch((error)=>{
+                                    console.log(error);
+                                });
+                            }}>
+                                <Image source={require('../../images/login/weibo.png')} style={styles.otherLoginImage} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </ScrollView>
@@ -414,7 +430,8 @@ export default class Login extends Component {
         })
         .catch((err)=>{
             console.log(err);
-            if(err.code == 'EUNSPECIFIED') {
+            let code = err.code || null;
+            if(code == 'EUNSPECIFIED' || code == -1) {
                 this.showAutoModal('您还未安装QQ!');
             }
         });

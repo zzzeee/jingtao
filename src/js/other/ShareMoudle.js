@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
+import * as WeiboAPI from 'react-native-weibo';
 import * as QQAPI from 'react-native-qq';
 import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';
@@ -206,9 +207,21 @@ export default class ShareMoudle extends Component {
                                                 })
                                                 .catch((err)=>{
                                                     console.log(err);
-                                                    if(err.code == 'EUNSPECIFIED') {
+                                                    let code = err.code || null;
+                                                    if(code == 'EUNSPECIFIED' || code == -1) {
                                                         that.showToast('您还未安装QQ!');
                                                     }
+                                                });
+                                            }else if(_type == 'WeiBo') {
+                                                WeiboAPI.share({
+                                                    type: 'text', 
+                                                    text: 'weibo文字内容test!',
+                                                })
+                                                .then((result)=>{
+                                                    console.log(result);
+                                                })
+                                                .catch((error)=>{
+                                                    console.log(error);
                                                 });
                                             }
                                         }}>

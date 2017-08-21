@@ -256,7 +256,7 @@ var styles = StyleSheet.create({
 	modalText : {
 		color : '#fff',
         fontSize : 14,
-        paddingTop: 10,
+        paddingTop: 15,
 	},
 });
 
