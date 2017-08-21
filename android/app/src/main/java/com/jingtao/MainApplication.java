@@ -3,6 +3,7 @@ package com.jingtao;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cn.reactnative.modules.qq.QQPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new QQPackage(),
             new ImagePickerPackage(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new RNDeviceInfo(),

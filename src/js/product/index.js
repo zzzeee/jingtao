@@ -445,29 +445,12 @@ export default class ProductScreen extends Component {
         let goodId = good.gID || '';
         let goodName = good.gName || '';
         let goodImg = good.gThumbPic || '';
-        let shareInfo = [{
-                to: 'shareToSession',
-                name: Lang[Lang.default].wxFriends,
-                icon: require('../../images/product/wechat.png'),
-                obj: {
-                    type: 'news',
-                    title: goodName,
-                    description: ShareText,
-                    thumbImage: goodImg,
-                    webpageUrl: Urls.weixinShareUrl + goodId,
-                },
-            }, {
-                to: 'shareToTimeline',
-                name: Lang[Lang.default].circleOfFriends,
-                icon: require('../../images/product/moment.png'),
-                obj: {
-                    type: 'news',
-                    title: goodName,
-                    description: ShareText,
-                    thumbImage: goodImg,
-                    webpageUrl: Urls.weixinShareUrl + goodId,
-                },
-            },];
+        let shareInfo = {
+            title: goodName, 
+            details: ShareText, 
+            imgUrl: goodImg, 
+            clickUrl: Urls.weixinShareUrl + goodId,
+        };
         return (
             <View style={styles.flex}>
                 <AppHead 
@@ -580,7 +563,7 @@ export default class ProductScreen extends Component {
                     : null
                 }
                 {this.state.showShare ?
-                    <ShareMoudle shares={shareInfo} visible={this.state.showShare} setStartShare={this.setStartShare} />
+                    <ShareMoudle shareInfo={shareInfo} visible={this.state.showShare} setStartShare={this.setStartShare} />
                     : null
                 }
             </View>

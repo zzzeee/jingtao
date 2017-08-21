@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
         borderWidth: pixel,
         borderColor: Color.lavender,
         borderRadius: 5,
-        backgroundColor : '#fff'
+        backgroundColor : '#fff',
     },
 });

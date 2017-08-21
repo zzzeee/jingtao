@@ -82,7 +82,7 @@ const language = {
         integralDetailed: '积分明细',
         integralRule: '积分规则',
         shareText: '等老子有了钱，买光这个城市的土特产给你看。',
-        shareErrorAlert: '没有安装微信软件，请您安装微信之后再试',
+        shareErrorAlert: '您未安装微信软件',
         cancel: '取消',
         clear: '清空',
         circleOfFriends: '朋友圈',

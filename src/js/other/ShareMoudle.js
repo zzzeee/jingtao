@@ -16,6 +16,9 @@ import {
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
+import * as QQAPI from 'react-native-qq';
+import PropTypes from 'prop-types';
+import Urls from '../public/apiUrl';
 import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, Color } from '../public/globalStyle';
@@ -25,11 +28,20 @@ var rowItemNumber = 4;
 var itemWidth = (Size.width - ((rowItemNumber + 1) * itemMargin)) / rowItemNumber;
 
 export default class ShareMoudle extends Component {
+    // 默认参数
+    static defaultProps = {
+        visible: false,
+        shareInfo: {},
+    };
+    // 参数类型
+    static propTypes = {
+        visible: PropTypes.bool.isRequired,
+        shareInfo: PropTypes.object,
+        setStartShare: PropTypes.func,
+    };
+    //构造函数
     constructor(props) {
         super(props);
-        this.state = {
-            visible: this.props.visible || false,
-        };
         this.timer = null;
         this.shareList = ['shareToTimeline', 'shareToSession'];
     }
@@ -41,75 +53,128 @@ export default class ShareMoudle extends Component {
         this.timer && clearTimeout(this.timer);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(nextProps.visible) {
-            this.setState({visible: true});
-        }
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     if(nextProps.visible) {
+    //         this.setState({visible: true});
+    //     }
+    // }
 
+    //分享前隐藏分享模块
     hideModal = () => {
         this.props.setStartShare && this.props.setStartShare(false);
-        this.setState({visible: false});
+        // this.setState({visible: false});
     };
 
-    createShareList = (datas) => {
-        let slist = this.shareList;
-        let _list = [];
-        if(typeof(datas) == 'object' && datas.length > 0) {
-            for(let i in datas) {
-                if(typeof(datas[i]) == 'object' && datas[i].to) {
-                    let isok = false;
-                    for(let s of slist) {
-                        if(s == datas[i].to) {
-                            isok = true;
-                            break;
-                        }
-                    }
-                    isok && _list.push(datas[i]);
-                }
-            }
-        }
-        return _list;
+    //分享模块单元
+    createShareList = () => {
+        let {
+            title, details, imgUrl, clickUrl,
+            wx_py_title, wx_py_details, wx_py_imgUrl, wx_py_clickUrl,
+            wx_pyq_title, wx_pyq_details, wx_pyq_imgUrl, wx_pyq_clickUrl,
+            qq_py_title, qq_py_details, qq_py_imgUrl, qq_py_clickUrl,
+            qq_kj_title, qq_kj_details, qq_kj_imgUrl, qq_kj_clickUrl,
+        } = this.props.shareInfo ;
+        let _title = title || '境淘土特产';
+        let _details = details || '一个只买土特产的APP';
+        let _imgUrl = imgUrl || Urls.appJingTaoLogo;
+        let _clickUrl = clickUrl || Urls.basicUpdateUrl;
+        let shares = [{
+            type: 'wechat',
+            to: 'shareToSession',   //微信好友
+            name: Lang[Lang.default].wxFriends,
+            icon: require('../../images/share/wechat.png'),
+            obj: {
+                type: 'news',
+                title: wx_py_title || _title,
+                description: wx_py_details || _details,
+                thumbImage: wx_py_imgUrl || _imgUrl,
+                webpageUrl: wx_py_clickUrl || _clickUrl,
+            },
+        }, {
+            type: 'wechat',
+            to: 'shareToTimeline',  //微信朋友圈
+            name: Lang[Lang.default].circleOfFriends,
+            icon: require('../../images/share/moment.png'),
+            obj: {
+                type: 'news',
+                title: wx_pyq_title || _title,
+                description: wx_pyq_details || _details,
+                thumbImage: wx_pyq_imgUrl || _imgUrl,
+                webpageUrl: wx_pyq_clickUrl || _clickUrl,
+            },
+        }, {
+            type: 'QQ',
+            to: 'shareToQQ',  //QQ好友
+            name: 'QQ好友',
+            icon: require('../../images/share/qq.png'),
+            obj: {
+                type: 'news',
+                title: qq_py_title || _title,
+                description: qq_py_details || _details,
+                imageUrl: qq_py_imgUrl || _imgUrl,
+                webpageUrl: qq_py_clickUrl || _clickUrl,
+            },
+        }, {
+            type: 'QQ',
+            to: 'shareToQzone',  //QQ空间
+            name: 'QQ空间',
+            icon: require('../../images/share/qq_zone.png'),
+            obj: {
+                type: 'news',
+                title: qq_kj_title || _title,
+                description: qq_kj_details || _details,
+                imageUrl: qq_kj_imgUrl || _imgUrl,
+                webpageUrl: qq_kj_clickUrl || _clickUrl,
+            },
+        }, {
+            type: 'WeiBo',
+            name: '新浪微博',
+            icon: require('../../images/share/weibo.png'),
+        }];
+        return shares;
     };
 
     //显示提示
     showToast = (msg) => {
         this.timer = Toast.show(msg, {
-            duration: Toast.durations.LONG,
+            duration: Toast.durations.SHORT,
             position: Toast.positions.CENTER,
             hideOnPress: true,
         });
     };
 
     render() {
+        if(!this.props.visible) return null;
         let that = this;
         return (
             <Modal
                 animationType={"slide"}
                 transparent={true}
-                visible={this.state.visible}
+                visible={this.props.visible}
                 onRequestClose={() => {}}
             >
                 <View style={styles.bodyStyle}>
                     <TouchableOpacity style={styles.flex} onPress={this.hideModal} onLongPress={this.hideModal} />
                     <View style={styles.shareBox}>
                         <ScrollView contentContainerStyle={styles.scrollviewStyle} horizontal={true}>
-                            {this.createShareList(this.props.shares).map(function(item, index) {
+                            {this.createShareList().map(function(item, index) {
                                 let name = item.name || '';
                                 let icon = item.icon || {};
                                 return (
                                     <View key={index} style={styles.shareItemStyle}>
                                         <TouchableOpacity style={styles.shareImageBox} activeOpacity={1} onPress={()=>{
                                             that.hideModal();
-                                            if(typeof(item.obj) == 'object' && item.to && item.obj.type && item.obj.webpageUrl) {
+                                            let _type = item.type || null;
+                                            if(_type == 'wechat' && item.to && item.obj) {
                                                 WeChat.isWXAppInstalled()
                                                 .then((isInstalled) => {
                                                     if (isInstalled) {
                                                         WeChat[item.to](item.obj)
                                                         .then((result) => {
-                                                            console.log(result);
                                                             if(result && result.errCode === 0) {
                                                                 that.showToast('分享成功');
+                                                            }else if(result && result.message) {
+                                                                that.showToast(result.message);
                                                             }
                                                         })
                                                         .catch((error) => {
@@ -122,8 +187,29 @@ export default class ShareMoudle extends Component {
                                                         that.showToast(Lang[Lang.default].shareErrorAlert);
                                                     }
                                                 });
-                                            }else {
-                                                that.showToast(Lang[Lang.default].missParam);
+                                            }else if(_type == 'QQ' && item.to && item.obj) {
+                                                QQAPI.isQQInstalled()
+                                                .then((isInstalled)=>{
+                                                    if(isInstalled) {
+                                                        QQAPI[item.to](item.obj)
+                                                        .then((result)=>{
+                                                            if(result && result.errCode === 0) {
+                                                                that.showToast('分享成功');
+                                                            }else if(result && result.message) {
+                                                                that.showToast(result.message);
+                                                            }
+                                                        })
+                                                        .catch((error)=>{
+                                                            console.log(error);
+                                                        });
+                                                    }
+                                                })
+                                                .catch((err)=>{
+                                                    console.log(err);
+                                                    if(err.code == 'EUNSPECIFIED') {
+                                                        that.showToast('您还未安装QQ!');
+                                                    }
+                                                });
                                             }
                                         }}>
                                             <Image source={icon} style={styles.shareImageStyle} />

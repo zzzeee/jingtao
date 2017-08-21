@@ -112,6 +112,8 @@ var urls = {
     getWXAccessToken: 'https://api.weixin.qq.com/sns/oauth2/access_token',
     //获取微信个人信息
     getWXUserInfo: 'https://api.weixin.qq.com/sns/userinfo',
+    //获取QQ的个人信息
+    getQQuserInfo: 'https://graph.qq.com/user/get_user_info',
     //微信或QQ登陆接口
     weixinLoginApi: host + '/api/WeChatNController/memberWeChartOrQqQuickLanding',
     //分享链接
@@ -120,6 +122,8 @@ var urls = {
     iosUpdateUrl: 'https://itunes.apple.com/us/app//u5883/u6dd8/u7f51/id1203113966?mt=8',
     //基本更新地址
     basicUpdateUrl: 'http://vpn.jingtaomart.com/resource/static/api/down/download.html',
+    //线上LOGO图标
+    appJingTaoLogo: 'http://vpn.jingtaomart.com/resource/static/api/images/logo.png',
     //添加设备记录
     addDeviceLog: host + '/api/Version/addUserActivityLog',
     //提交用户建议信息

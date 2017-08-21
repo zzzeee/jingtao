@@ -120,7 +120,7 @@ export default class SendMessage extends Component {
                 Utils.fetch(Urls.updateUserMessage, 'post', {
                     'mToken': token,
                     'mMessage': _message,
-                    'mpContact': _mobile,
+                    'mContact': _mobile,
                 }, (result)=>{
                     if(result) {
                         let msg = result.sMessage || msg;
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     },
     inputMoreRow: {
         height: 140,
+        textAlignVertical: 'top',
     },
     inputTitle: {
         fontSize: 14,

@@ -69,6 +69,7 @@ export default class HomeScreen extends Component {
 
     // 显示遮罩层菜单
     showFloatMenu = (event, name, obj) => {
+        // console.log(obj);
         this.shareObj = obj;
         if(event && name) {
             this.setState({
@@ -81,6 +82,7 @@ export default class HomeScreen extends Component {
 
     //隐藏遮罩层菜单
     hideCityMenu = () => {
+        this.shareObj = {};
         this.setState({
             visible: false,
             nativeEvent: null,
@@ -91,10 +93,14 @@ export default class HomeScreen extends Component {
     //设置是否显示分享选项
     setStartShare = (isShow, _name = null, _shareObj = null) => {
         let obj = {startShare: isShow};
-        if(_name) obj.showCityName = _name;
-        if(_shareObj) this.shareObj = _shareObj;
         if(isShow) {
             obj.visible = false;
+            if(_name) obj.showCityName = _name;
+            if(_shareObj) this.shareObj = _shareObj;
+        }else {
+            this.shareObj = {};
+            obj.nativeEvent = null;
+            obj.showCityName = null;
         }
         this.setState(obj);
     };
@@ -115,29 +121,13 @@ export default class HomeScreen extends Component {
             showCityName,
             startShare,
         } = this.state;
-        let shareInfo = [{
-                to: 'shareToSession',
-                name: Lang[Lang.default].wxFriends,
-                icon: require('../../images/product/wechat.png'),
-                obj: {
-                    type: 'news',
-                    title: showCityName,
-                    description: showCityName + ' 一个我为之向往的地方, 那里有我喜欢的土特产。',
-                    thumbImage: this.shareObj.img || '',
-                    webpageUrl: Urls.basicUpdateUrl,
-                },
-            }, {
-                to: 'shareToTimeline',
-                name: Lang[Lang.default].circleOfFriends,
-                icon: require('../../images/product/moment.png'),
-                obj: {
-                    type: 'news',
-                    title: showCityName,
-                    description: showCityName + ' 一个我为之向往的地方, 那里有我喜欢的土特产。',
-                    thumbImage: this.shareObj.img || '',
-                    webpageUrl: Urls.basicUpdateUrl
-                },
-            },];
+        let shareImg = this.shareObj.img || null;
+        let shareInfo = {
+            title: showCityName, 
+            details: showCityName + ' 一个我为之向往的地方, 那里有我喜欢的土特产。', 
+            imgUrl: shareImg,
+        };
+        // console.log(shareInfo);
         return (
             <View style={styles.flex}>
                 <View style={styles.headView}>
@@ -238,7 +228,7 @@ export default class HomeScreen extends Component {
                     : null
                 }
                 {startShare ?
-                    <ShareMoudle shares={shareInfo} visible={startShare} setStartShare={this.setStartShare} />
+                    <ShareMoudle shareInfo={shareInfo} visible={startShare} setStartShare={this.setStartShare} />
                     : null
                 }
             </View>
