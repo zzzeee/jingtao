@@ -24,9 +24,10 @@ import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, Color } from '../public/globalStyle';
 
-var itemMargin = 30;
+var itemMargin = 20;
 var rowItemNumber = 4;
 var itemWidth = (Size.width - ((rowItemNumber + 1) * itemMargin)) / rowItemNumber;
+itemWidth = 50; //直接写成固定尺寸
 
 export default class ShareMoudle extends Component {
     // 默认参数
@@ -157,7 +158,11 @@ export default class ShareMoudle extends Component {
                 <View style={styles.bodyStyle}>
                     <TouchableOpacity style={styles.flex} onPress={this.hideModal} onLongPress={this.hideModal} />
                     <View style={styles.shareBox}>
-                        <ScrollView contentContainerStyle={styles.scrollviewStyle} horizontal={true}>
+                        <ScrollView 
+                            contentContainerStyle={styles.scrollviewStyle} 
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                        >
                             {this.createShareList().map(function(item, index) {
                                 let name = item.name || '';
                                 let icon = item.icon || {};

@@ -99,7 +99,8 @@ android {
         manifestPlaceholders = [
             JPUSH_APPKEY: "a610db20bc2a684176df27ed",
             APP_CHANNEL: "developer-default",
-            QQ_APPID: '1106197393'
+            QQ_APPID: '1106197393',
+            WB_APPID: '2521270922'
         ]
     }
     splits {
@@ -141,6 +142,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-weibo')
     compile project(':react-native-qq')
     compile project(':react-native-image-picker')
     compile project(':react-native-code-push')

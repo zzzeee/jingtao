@@ -1,7 +1,0 @@
-com.jingtao
-B1:39:D5:61:F4:14:66:B5:80:06:01:32:E8:EE:BD:E2:3E:61:8A:2C
-
-http://lbs.amap.com/dev/key/app
-
-http://www.jianshu.com/p/d7efb05ea207
-http://www.opendigg.com/p/react-native-smart-amap-location
