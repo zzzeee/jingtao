@@ -336,19 +336,7 @@ export default class Login extends Component {
                             <TouchableOpacity style={styles.loginImageItem} onPress={this.QQLogin}>
                                 <Image source={require('../../images/login/qq.png')} style={styles.otherLoginImage} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.loginImageItem} onPress={()=>{
-                                let config = {
-                                    scope: 'all',
-                                    redirectURI: 'https://api.weibo.com/oauth2/default.html',
-                                };
-                                WeiboAPI.login(config)
-                                .then((result)=>{
-                                    console.log(result);
-                                })
-                                .catch((error)=>{
-                                    console.log(error);
-                                });
-                            }}>
+                            <TouchableOpacity style={styles.loginImageItem} onPress={this.WBLogin}>
                                 <Image source={require('../../images/login/weibo.png')} style={styles.otherLoginImage} />
                             </TouchableOpacity>
                         </View>
@@ -394,7 +382,7 @@ export default class Login extends Component {
                 let oauth_key = result.oauth_consumer_key || null;
                 let openid = result.openid || null;
                 if(access_token && oauth_key && openid) {
-                    Utils.fetch(Urls.getQQuserInfo, 'post', {
+                    Utils.fetch(Urls.getQQuserInfo, 'get', {
                         access_token: access_token,
                         oauth_consumer_key: oauth_key,
                         openid: openid,
@@ -525,6 +513,29 @@ export default class Login extends Component {
             }else {
                 this.showAutoModal('登录授权发生错误:' + err);
             }
+        });
+    };
+
+    //微博登录
+    WBLogin = () => {
+        let config = {
+            scope: 'all',
+            redirectURI: 'https://api.weibo.com/oauth2/default.html',
+        };
+        WeiboAPI.login(config)
+        .then((result)=>{
+            console.log(result);
+            if(result && result.accessToken && result.userID) {
+                Utils.fetch(Urls.getWBUserInfo, 'get', {
+                    access_token: result.accessToken,
+                    uid: result.userID,
+                }, (result)=>{
+                    console.log(result);
+                });
+            }
+        })
+        .catch((error)=>{
+            console.log(error);
         });
     };
 

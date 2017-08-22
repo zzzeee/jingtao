@@ -114,6 +114,8 @@ var urls = {
     getWXUserInfo: 'https://api.weixin.qq.com/sns/userinfo',
     //获取QQ的个人信息
     getQQuserInfo: 'https://graph.qq.com/user/get_user_info',
+    //获取微博的个人信息
+    getWBUserInfo: 'https://api.weibo.com/2/eps/user/info.json',
     //微信或QQ登陆接口
     weixinLoginApi: host + '/api/WeChatNController/memberWeChartOrQqQuickLanding',
     //分享链接

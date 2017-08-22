@@ -92,6 +92,7 @@ export default class Welcome extends Component {
 
     //活动记录和数据统计
     appActivityLog = () => {
+        if(__DEV__) return;
         let dArea = DeviceInfo.getDeviceLocale();   //设备地区
         let dCity = DeviceInfo.getDeviceCountry();  //设备城市
         let userAgent = DeviceInfo.getUserAgent();  //操作系统及版本

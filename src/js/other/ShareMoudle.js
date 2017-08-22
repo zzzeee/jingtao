@@ -24,10 +24,10 @@ import Toast from 'react-native-root-toast';
 import Lang, {str_replace} from '../public/language';
 import { Size, pixel, Color } from '../public/globalStyle';
 
-var itemMargin = 20;
+var itemMargin = 26;
 var rowItemNumber = 4;
 var itemWidth = (Size.width - ((rowItemNumber + 1) * itemMargin)) / rowItemNumber;
-itemWidth = 50; //直接写成固定尺寸
+itemWidth = 60; //直接写成固定尺寸
 
 export default class ShareMoudle extends Component {
     // 默认参数
@@ -218,16 +218,16 @@ export default class ShareMoudle extends Component {
                                                     }
                                                 });
                                             }else if(_type == 'WeiBo') {
-                                                WeiboAPI.share({
-                                                    type: 'text', 
-                                                    text: 'weibo文字内容test!',
-                                                })
-                                                .then((result)=>{
-                                                    console.log(result);
-                                                })
-                                                .catch((error)=>{
-                                                    console.log(error);
-                                                });
+                                                // WeiboAPI.share({
+                                                //     type: 'text', 
+                                                //     text: 'weibo文字内容test!',
+                                                // })
+                                                // .then((result)=>{
+                                                //     console.log(result);
+                                                // })
+                                                // .catch((error)=>{
+                                                //     console.log(error);
+                                                // });
                                             }
                                         }}>
                                             <Image source={icon} style={styles.shareImageStyle} />
