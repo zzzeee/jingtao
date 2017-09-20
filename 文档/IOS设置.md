@@ -41,30 +41,32 @@
 ```
 
 ## 单独安装react-native-wechat
-
 测试通过版本为: 1.9.9 [参考地址](http://www.jianshu.com/p/3f424cccb888)  
-千万不要用 react-native link react-native-wechat  
+1. npm install --save react-native-wechat   
+`千万不要用 react-native link react-native-wechat`
 
-1. Libraries 右键 -> Add Files to "jingtao" -> jingtao/node_modules/react-native-wechat/ios/RCTWeChat.xcodeproj  
+2. Libraries 右键 -> Add Files to "jingtao" -> jingtao/node_modules/react-native-wechat/ios/RCTWeChat.xcodeproj  
 `注: 选择期间注意一下 Options(右下角) -> Create groups`
 
-2. Build Phases -> Link Binary With Libraries 添加4个文件
+3. Libraries -> RCTWeChat.xcodeproj -> Products -> libWechat.a --添加至--> Link Binary With Libraries
+
+4. Build Phases -> Link Binary With Libraries 添加4个文件
 > + SystemConfiguration.framework
 > + CoreTelephony.framework (*添加alipay时已添加*)
 > + libsqlite3.0
 > + libc++  (*添加alipay时已添加*)
 > + libz    (*添加alipay时已添加*)
 
-3. info -> URL Types 添加
+5. info -> URL Types 添加
 > identifier: weixin  
 > URL Schemes: appid (eg: wxe2c2a29213e78cf7)
 
-4. info > Custom iOS Target Properties 添加
+6. info > Custom iOS Target Properties 添加
 > + LSApplicationQueriesSchemes (Array)
 > + item0: wechat
 > + item1: weixin
 
-5. AppDelegate.m文件添加如下内容
+7. AppDelegate.m文件添加如下内容
 ```
 #import <React/RCTLinkingManager.h>
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
@@ -85,13 +87,16 @@ return [RCTLinkingManager application:application openURL:url
 }
 ```
 
+## 安装QQ
+[Git地址](https://github.com/reactnativecn/react-native-qq)
+
 ## 配置其他项
-  1. 允许HTTP访问
+  1. 允许HTTP访问  
     Xcode -> 项目名(jingtao) -> Info -> Custom IOS Target Properties
     右键 App Transport Security Settings -> Add Row
     添加 Allow Arbitrary Loads(Boolean) : YES
-  2. 需添加拍照和相册权限
-    info -> Add Row : Privacy - Camera Usage Description (string : we need use camra)
+  2. 需添加拍照和相册权限  
+    info -> Add Row : Privacy - Camera Usage Description (string : we need use camera)  
     info -> Add Row : Privacy - Photo Library Usage Description (string : we need use Photo)
 
 ## 打包添加静态资源
