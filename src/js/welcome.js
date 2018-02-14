@@ -56,7 +56,7 @@ export default class Welcome extends Component {
 
     componentDidMount() {
         this.startAnimated();
-        this.getVersionInfo();
+        // this.getVersionInfo();
         this.appActivityLog();
     }
 

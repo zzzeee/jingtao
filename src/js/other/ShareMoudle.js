@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 var WeChat=require('react-native-wechat');
-import * as WeiboAPI from 'react-native-weibo';
+// import * as WeiboAPI from 'react-native-weibo';
 import * as QQAPI from 'react-native-qq';
 import PropTypes from 'prop-types';
 import Urls from '../public/apiUrl';

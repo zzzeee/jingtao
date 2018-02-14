@@ -34,7 +34,7 @@ import FrequentModel from './FrequentModel';
 var _User = new User();
 var WeChat = require('react-native-wechat');
 import * as QQAPI from 'react-native-qq';
-import * as WeiboAPI from 'react-native-weibo';
+// import * as WeiboAPI from 'react-native-weibo';
 
 export default class Login extends Component {
     constructor(props) {
@@ -336,9 +336,9 @@ export default class Login extends Component {
                             <TouchableOpacity style={styles.loginImageItem} onPress={this.QQLogin}>
                                 <Image source={require('../../images/login/qq.png')} style={styles.otherLoginImage} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.loginImageItem} onPress={this.WBLogin}>
+                            {/* <TouchableOpacity style={styles.loginImageItem} onPress={this.WBLogin}>
                                 <Image source={require('../../images/login/weibo.png')} style={styles.otherLoginImage} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                     </View>
                 </ScrollView>

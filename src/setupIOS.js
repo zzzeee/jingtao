@@ -18,7 +18,7 @@ import {
 import { WeiXin } from './js/datas/protect';
 import App from './js/';
 var WeChat = require('react-native-wechat');
-import CodePush from "react-native-code-push";
+// import CodePush from "react-native-code-push";
 import { Size, Color, PX } from './js/public/globalStyle';
 
 if(!__DEV__){
@@ -33,7 +33,7 @@ if(!__DEV__){
 class JingtaoApp extends Component {
     componentDidMount() {
         // 直接更新
-        if(!__DEV__) CodePush.sync();
+        // if(!__DEV__) CodePush.sync();
     }
 
     render() {
