@@ -97,8 +97,19 @@ export default class CtrlNumber extends Component {
                     vText={num + ''}
                     style={styles.btnCtrlNumberInput}
                     onChange={(number)=>this.setState({number})}
-                    endEditing={() => this.changeNumber(num)}
+                    endEditing={() => {
+                        if(this.props.handleScroll) {
+                            this.props.handleScroll();
+                        }
+                        this.changeNumber(num);
+                    }}
                     length={10}
+                    _ref_={ref => this.ctrlNumber = ref}
+                    onFocus={() => {
+                        if(this.props.scrollInputPosition) {
+                            this.props.scrollInputPosition(this.ctrlNumber);
+                        }
+                    }}
                 />
                 <TouchableOpacity 
                     style={[styles.btnCtrlNumber, {borderLeftWidth: 1}]}

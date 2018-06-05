@@ -52,7 +52,7 @@ export default class CityGoodShopList extends Component {
             data2Num: null,
             totalNum: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-            leftValue: new Animated.Value(0),
+            // leftValue: new Animated.Value(0),
             load_or_error: null,
             isFloat: false,
             visiable: false,
@@ -103,7 +103,7 @@ export default class CityGoodShopList extends Component {
         if(navigation && navigation.state && navigation.state.params && navigation.state.params.cid) {
             this.cid = navigation.state.params.cid;
             this.index = navigation.state.params.index || 0;
-            this.playAnimated();
+            // this.playAnimated();
             this.getCityInfo();
             this.initDatas();
         }
@@ -112,8 +112,7 @@ export default class CityGoodShopList extends Component {
     //播放动画
     playAnimated = () => {
         if(this.index !== null) {
-            let val = this.state.leftValue._value;
-            val = !!val;
+            let val = !!this.state.leftValue._value;
             if(val != !!this.index) {
                 Animated.timing(this.state.leftValue, {
                     toValue: val ? 0 : (Size.width / 2),
@@ -175,7 +174,7 @@ export default class CityGoodShopList extends Component {
                 pPage: this.page,
                 pPerNum: this.number,
             }, function(result) {
-                console.log(result);
+                // console.log(result);
                 if(result && result.sTatus && result.proAry && result.proAry.length) {
                     let ret = result.proAry || [];
                     let num = parseInt(result.proNum) || 0;
@@ -266,7 +265,7 @@ export default class CityGoodShopList extends Component {
         if(_index == 0 || _index == 1) {
             //重置部分属性
             this.index = _index;
-            this.playAnimated();
+            // this.playAnimated();
             this.loadMoreLock = false;
             //更换列表数据
             let _datas = this.index ? this.state.datas2 : this.state.datas;
@@ -348,10 +347,15 @@ export default class CityGoodShopList extends Component {
         let btnBox = (
             <View style={[styles.topBtnBox, _style]}>
                 <View style={styles.btnTopLineBox}>
-                    <Animated.View style={[styles.btnTopLine, {
+                    {/* <Animated.View style={[styles.btnTopLine, {
                         left: this.state.leftValue,
                     }]}>
-                    </Animated.View>
+                    </Animated.View> */}
+                    <View style={[
+                        styles.btnTopLine, {
+                            left: (Size.width / 2) * this.index,
+                        }
+                    ]} />
                 </View>
                 <View style={[styles.topBtnRow, {backgroundColor: '#f8f8f8'}]}>
                     <TouchableOpacity onPress={()=>{
@@ -743,7 +747,7 @@ export default class CityGoodShopList extends Component {
                     paginationStyle={styles.paginationStyle}
                     dot={(<View 
                         style={{
-                            backgroundColor:'rgba(0, 0, 0, .3)',
+                            backgroundColor: Color.translucent,
                             width: 6,
                             height: 6,
                             borderRadius: 3,

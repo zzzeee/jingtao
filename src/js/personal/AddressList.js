@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
     },
     defaultFont: {
         fontSize: 13,

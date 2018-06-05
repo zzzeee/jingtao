@@ -133,17 +133,32 @@ export default class AddressArea extends Component {
                             <TouchableOpacity onPress={()=>this.changeAreaBox(0)} style={[styles.btnTitle, {
                                 backgroundColor: this.state.selectIndex == 0 ? '#fff' : Color.floralWhite,
                             }]}>
-                                <Text style={styles.txtStyle2}>{Lang[Lang.default].selectProvince}</Text>
+                                <Text style={styles.txtStyle2}>
+                                    {province ?
+                                        province.name :
+                                        Lang[Lang.default].selectProvince
+                                    }
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={()=>this.changeAreaBox(1)} style={[styles.btnTitle, {
                                 backgroundColor: this.state.selectIndex == 1 ? '#fff' : Color.floralWhite,
                             }]}>
-                                <Text style={styles.txtStyle2}>{Lang[Lang.default].selectCity}</Text>
+                                <Text style={styles.txtStyle2}>
+                                    {city ?
+                                        city.name :
+                                        Lang[Lang.default].selectCity
+                                    }
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={()=>this.changeAreaBox(2)} style={[styles.btnTitle, {
                                 backgroundColor: this.state.selectIndex == 2 ? '#fff' : Color.floralWhite,
                             }]}>
-                                <Text style={styles.txtStyle2}>{Lang[Lang.default].selectRegion}</Text>
+                                <Text style={styles.txtStyle2}>
+                                    {region ?
+                                        region.name :
+                                        Lang[Lang.default].selectRegion
+                                    }
+                                </Text>
                             </TouchableOpacity>
                         </View>
                         <ScrollView>
@@ -170,7 +185,7 @@ var styles = StyleSheet.create({
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, .3)',
+        backgroundColor: Color.translucent,
     },
     modalBody: {
         height: Size.height * 0.65,

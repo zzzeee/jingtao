@@ -24,7 +24,7 @@ export default class HelpPrivacy extends Component {
         return (
             <View style={styles.flex}>
                 <AppHead
-                    title={Lang[Lang.default].contactUs}
+                    title={Lang[Lang.default].privacyProtection}
                     goBack={true}
                     navigation={this.props.navigation}
                 />
@@ -40,13 +40,10 @@ const styles = StyleSheet.create({
     flex: {
         flex: 1,
     },
-    container: {
-        flex: 1,
-        backgroundColor: Color.lightGrey,
-    },
     scrollStyle: {
         padding: 15,
         paddingTop: 20,
+        backgroundColor: Color.floralWhite,
     },
     defaultFont: {
         fontSize: 14,

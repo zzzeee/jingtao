@@ -9,7 +9,6 @@ import {
     StyleSheet,
     View,
     Text,
-    ScrollView,
     Image,
     FlatList,
     TouchableOpacity,
@@ -523,7 +522,7 @@ var styles = StyleSheet.create({
     },
     bodyStyle: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
     },
     defalutFont: {
         fontSize: 14,

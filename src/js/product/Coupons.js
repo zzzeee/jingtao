@@ -183,7 +183,7 @@ var styles = StyleSheet.create({
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, .3)',
+        backgroundColor: Color.translucent,
     },
     modalBody: {
         height: Size.height * 0.65,

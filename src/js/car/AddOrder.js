@@ -105,7 +105,7 @@ export default class AddOrder extends Component {
                 addressID: this.addressID,
             }, this.orderParam);
             this.orderParam.mToken = this.mToken;
-            console.log(obj);
+            // console.log(obj);
             Utils.fetch(Urls.buyNowAPI, 'post', obj, this.orderInfoCallBack, null, {
                 catchFunc: (err)=>console.log(err),
             });
@@ -114,7 +114,6 @@ export default class AddOrder extends Component {
 
     //处理订单数据
     orderInfoCallBack = (result) => {
-        console.log(result);
         if(result && result.sTatus == 1 && result.oOrder) {
             let that = this;
             let list = result.oOrder || [];
@@ -151,9 +150,9 @@ export default class AddOrder extends Component {
     };
 
     //显示提示框
-    showAutoModal = (msg) => {
+    showAutoModal = (msg, obj = {}) => {
         this.alertMsg = msg;
-        this.setState({showAlert: true, });
+        this.setState({showAlert: true, ...obj});
     };
 
     //隐藏提示框
@@ -163,7 +162,6 @@ export default class AddOrder extends Component {
 
     //选择优惠券
     selectCoupon = (coupon) => {
-        console.log(coupon);
         if(coupon && coupon.hMoney && coupon.hUseMoney) {
             let couMoney = parseFloat(coupon.hMoney) || 0;
             let useMoney = parseFloat(coupon.hUseMoney) || 0;
@@ -209,7 +207,12 @@ export default class AddOrder extends Component {
                     leftPress={()=>navigation.navigate('TabNav', {PathKey: TABKEY.car})}
                 />
                 <View style={styles.body}>
-                <ScrollView contentContainerStyle={styles.scrollviewStyle} ref={(_ref)=>this.ref_scroll=_ref}>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollviewStyle} 
+                    ref={(_ref)=>this.ref_scroll=_ref}
+                    onScroll={(e) => this.offsetY = e.nativeEvent.contentOffset.y}
+                    scrollEventThrottle={10}
+                >
                     <View style={styles.addressSession}>
                         {this.state.addressInfo ?
                             <Image style={styles.addressBgStyle} resizeMode="stretch" source={require('../../images/car/address_bg.png')}>
@@ -352,26 +355,35 @@ export default class AddOrder extends Component {
 
     //积分块
     getIntegralSession = () => {
-        let { inputIntegral, integral } = this.state;
-        let input = inputIntegral ? (inputIntegral + '') : '';
+        let { inputIntegral, integral, selectSwapIntegral } = this.state;
         let content1 = <Text style={styles.defaultFont}>{Lang[Lang.default].fullSwap}</Text>;
         let content2 = <Text style={styles.defaultFont}>{Lang[Lang.default].noUseSwap}</Text>;
-        let content3 = (
-            <View style={styles.rowViewStyle}>
-                <Text style={styles.defaultFont}>{Lang[Lang.default].diySwapIntegral + ': '}</Text>
-                <InputText
-                    style={styles.integralInput}
-                    keyType="numeric"
-                    vText={input}
-                    length={12}
-                    onChange={this._inputIntegral}
-                    disEdit={integral > 0 ? false : true}
-                />
-            </View>
-        );
+        let content3 = <Text style={styles.defaultFont}>{Lang[Lang.default].diySwapIntegral + ': '}</Text>;
         let integral1 = integral > this.actualTotal ? this.actualTotal : integral;
         let integral2 = 0;
         let integral3 = inputIntegral > this.actualTotal ? this.actualTotal : inputIntegral;
+        let isSelect3 = selectSwapIntegral == 2 ? true : false;
+        let right3 = (
+            <View style={[styles.rowViewStyle, {flex: 1}]}>
+                <InputText
+                    keyType="numeric"
+                    style={[styles.integralInput, {
+                        backgroundColor: isSelect3 ? '#fff' : Color.floralWhite,
+                    }]}
+                    keyType="numeric"
+                    vText={String(inputIntegral)}
+                    length={12}
+                    onChange={(val)=>this.setState({inputIntegral: parseInt(val) || 0, })}
+                    disEdit={isSelect3 ? false : true}
+                    _ref_={ref => this.inputtext3 = ref}
+                    endEditing={() => {
+                        this._reset();
+                        this._inputIntegral();
+                    }}
+                    onFocus={this._onFocus.bind(this, 'inputtext3')}
+                />
+            </View>
+        );
         return [{
             content: content1,
             integral: (integral1),
@@ -381,19 +393,50 @@ export default class AddOrder extends Component {
         }, {
             content: content3,
             integral: (integral3),
+            right: right3,
         }];
     };
 
+    _reset = () => {
+        if(this.ref_scroll) {
+            this.ref_scroll.scrollTo({y: this.real_offsety || 0, animated: true});
+        }
+    }
+        
+    _onFocus = (refName) => {
+        if(this[refName] && this.ref_scroll) {
+            setTimeout(()=> {
+                this.real_offsety = this.offsetY;
+                let scrollResponder = this.ref_scroll.getScrollResponder();
+                scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+                    ReactNative.findNodeHandle(this[refName]), 
+                    76, 
+                    true
+                );
+            }, 50);
+        }
+    }
+
     //用户输入了多少积分
-    _inputIntegral = (value) => {
+    _inputIntegral = () => {
         let integral = this.state.integral || 0;
-        let num = parseInt(value) || 0;
+        let num = parseInt(this.state.inputIntegral) || 0;
         let total = this.productTotal + this.freightTotal;
-        if(integral > 0 && num >= 0 && num <= integral) {
-            let useNum = num > total ? total : num;
-            this.setState({inputIntegral: parseInt(useNum), });
+        if(num === 0) return;
+        if(num < 0) {
+            this.showAutoModal('输入的积分不合法', {
+                inputIntegral: 0,
+            });
+        }else if(integral <= 0 || num > integral) {
+            this.showAutoModal('无可用积分', {
+                inputIntegral: integral,
+            });
+        }else if(num > total) {
+            this.showAutoModal('超过最大使用积分数量', {
+                inputIntegral: total,
+            });
         }else {
-            this.setState({inputIntegral: this.state.inputIntegral, });
+            this.setState({inputIntegral: num, });
         }
     };
 
@@ -403,12 +446,15 @@ export default class AddOrder extends Component {
             require('../../images/car/select.png') : 
             require('../../images/car/no_select.png');
         return (
-            <TouchableOpacity key={index} style={styles.integralSelectItem} onPress={()=>{
-                this.setState({selectSwapIntegral: index});
-            }}>
-                <Image source={img} style={styles.selectBeforeImage} />
-                {item.content}
-            </TouchableOpacity>
+            <View key={index} style={styles.rowViewStyle}>
+                <TouchableOpacity style={styles.integralSelectItem} onPress={()=>{
+                    this.setState({selectSwapIntegral: index});
+                }}>
+                    <Image source={img} style={styles.selectBeforeImage} />
+                    {item.content}
+                </TouchableOpacity>
+                {item.right ? item.right : null}
+            </View>
         );
     };
 
@@ -460,11 +506,13 @@ export default class AddOrder extends Component {
                 </View>
                 <View style={styles.buyerMessageBox}>
                     <Text style={styles.buyerMessageText}>{Lang[Lang.default].buyerMessage}</Text>
-                    <InputText
-                        style={{flex: 1, borderWidth: 0}} 
-                        pText={Lang[Lang.default].buyerMessagePlaceholder}
-                        onChange={(txt)=>this.messages[index]=txt}
-                    />
+                    <View style={[styles.rowViewStyle, {flex: 1}]}>
+                        <InputText
+                            style={{flex: 1, borderWidth: 0}} 
+                            pText={Lang[Lang.default].buyerMessagePlaceholder}
+                            onChange={(txt)=>this.messages[index]=txt}
+                        />
+                    </View>
                 </View>
                 <View style={styles.totalBox}>
                     <Text style={styles.totalNumber}>{str_replace(Lang[Lang.default].totalProductNumberL, totalNum)}</Text>
@@ -569,9 +617,9 @@ export default class AddOrder extends Component {
                 }
             }
             this.lockUpateOrder = true;
-            console.log(obj);
+            // console.log(obj);
             Utils.fetch(Urls.updateOrder, 'post', obj, (result) => {
-                console.log(result);
+                // console.log(result);
                 this.lockUpateOrder = false;
                 if(result) {
                     let ret = result.sTatus || 0;
@@ -798,15 +846,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingRight: 18,
     },
     selectBeforeImage: {
         width: 18,
         height: 18,
     },
     integralInput: {
-        width: 64,
-        height: 22,
+        flex: 1,
+        height: 30,
         padding: 0,
         paddingLeft: 5,
         borderRadius: 2,

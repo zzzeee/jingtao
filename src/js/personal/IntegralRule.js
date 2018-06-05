@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container: {
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
         paddingBottom: 10,
     },
     paragraph: {

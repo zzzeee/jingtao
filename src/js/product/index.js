@@ -110,7 +110,6 @@ export default class ProductScreen extends Component {
         if(this.goodid > 0) {
             let obj = Object.assign({gID: this.goodid}, this.userinfo);
             let info = await Utils.async_fetch(Urls.getProductInfo, 'post', obj);
-            console.log(info);
             if(info && info.sTatus && info.proInfo) {
                 if(info.proInfo.mCartNum && 
                 info.proInfo.mCartNum.length && 
@@ -367,7 +366,7 @@ export default class ProductScreen extends Component {
                 // obj = Object.assign(obj, this.userinfo);
                 obj.mToken = this.userinfo[_User.keyMember];
                 Utils.fetch(Urls.collection, 'post', obj, (result) => {
-                    console.log(result);
+                    // console.log(result);
                     if(result) {
                         let ret = result.sTatus || 0;
                         let msg = result.sMessage || null;
@@ -1059,7 +1058,7 @@ var styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
     },
     whiteBg: {
         backgroundColor: '#fff',

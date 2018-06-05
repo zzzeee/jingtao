@@ -74,7 +74,7 @@ export default class Join extends Component {
                 smPhone: this.mobile,
                 smBusiness: this.shop,
             }, (result) => {
-                console.log(result);
+                // console.log(result);
                 if(result) {
                     let ret = result.sTatus || 0;
                     let msg = result.sMessage || null;
@@ -97,7 +97,13 @@ export default class Join extends Component {
                     goBack={true}
                     navigation={navigation}
                 />
-                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+                <ScrollView 
+                    keyboardShouldPersistTaps={'handled'} 
+                    contentContainerStyle={styles.container}
+                    ref="scrollView"
+                    onScroll={(e) => this.offsetY = e.nativeEvent.contentOffset.y}
+                    scrollEventThrottle={10}
+                >
                     <Image style={styles.bannerImg} source={require('../../images/personal/join_banner.jpg')} />
                     <View style={styles.titleBox}>
                         <Text style={styles.titleStyle}>{Lang[Lang.default].nowJoin}</Text>
@@ -109,6 +115,9 @@ export default class Join extends Component {
                                 length={20}
                                 style={styles.inputStyle}
                                 onChange={this.setName}
+                                _ref_={ref => this.inputtext1 = ref}
+                                endEditing={this._reset}
+                                onFocus={this._onFocus.bind(this, 'inputtext1')}
                             />
                             <Image source={require('../../images/personal/contacts.png')} style={styles.inputBeforeImg} />
                         </View>
@@ -119,6 +128,9 @@ export default class Join extends Component {
                                 style={styles.inputStyle}
                                 keyType={"numeric"}
                                 onChange={this.setMobile}
+                                _ref_={ref => this.inputtext2 = ref}
+                                endEditing={this._reset}
+                                onFocus={this._onFocus.bind(this, 'inputtext2')}
                             />
                             <Image source={require('../../images/login/iphone_gary.png')} style={styles.inputBeforeImg} />
                         </View>
@@ -128,6 +140,9 @@ export default class Join extends Component {
                                 length={50}
                                 style={styles.inputStyle}
                                 onChange={this.setShop}
+                                _ref_={ref => this.inputtext3 = ref}
+                                endEditing={this._reset}
+                                onFocus={this._onFocus.bind(this, 'inputtext3')}
                             />
                             <Image source={require('../../images/personal/sell_good.png')} style={styles.inputBeforeImg} />
                         </View>
@@ -148,6 +163,24 @@ export default class Join extends Component {
             </View>
         );
     }
+
+    _reset = () => {
+        this.refs.scrollView.scrollTo({y: this.real_offsety || 0, animated: true});
+    }
+        
+    _onFocus = (refName) => {
+        if(this[refName]) {
+            setTimeout(()=> {
+                this.real_offsety = this.offsetY;
+                let scrollResponder = this.refs.scrollView.getScrollResponder();
+                scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+                    ReactNative.findNodeHandle(this[refName]), 
+                    76, 
+                    true
+                );
+            }, 50);
+        }
+    }
 }
 
 const styles = StyleSheet.create({
@@ -155,7 +188,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container: {
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
         paddingTop: 10,
     },
     bannerImg: {
@@ -204,7 +237,7 @@ const styles = StyleSheet.create({
     btnUpdate: {
         marginTop: 35,
         width: Size.width * 0.728,
-        height: 38,
+        height: PX.buttomHeight,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: Color.steelBlue,

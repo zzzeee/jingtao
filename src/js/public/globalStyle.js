@@ -34,6 +34,8 @@ export const PX = {
     iconSize26: 26,         //图标大小 26
     rowHeight1: 50,         //50的行高 适用于正文行
     rowHeight2: 44,         //44的行高 适用于列表行
+    buttomHeight: 44,       //按钮的高度
+    inputHeight: 38,        //输入框的高度
 };
 
 //APP字体大小
@@ -61,6 +63,7 @@ export const Color = {
     lightGrey:'#CED0D4',    //主背景色
     floralWhite:'#EFEFEF',  //浅背景色
     lavender:'#E7E7E7',     //描边
+    translucent: 'rgba(0, 0, 0, .4)',  //半透明
 };
 
 //网络出错的样式

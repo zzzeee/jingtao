@@ -78,9 +78,9 @@ export default class InputText extends Component {
 const styles = StyleSheet.create({
 	inputStyle : {
         color : Color.lightBack,
-        padding : 9,
+        padding : 10,
         fontSize : 14,
-        height : 34,
+        height : 38,
         textAlignVertical: 'center',
         borderWidth: pixel,
         borderColor: Color.lavender,

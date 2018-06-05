@@ -13,6 +13,8 @@ import {
     TouchableOpacity,
     Modal,
     ScrollView,
+    findNodeHandle,
+    // Keyboard,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -50,6 +52,7 @@ export default class ProductAttr extends Component {
         this.state = {
             selects: [],
             showReturnMsg: false,
+            // keyboardHeight: 0,
         };
 
         this.btnLock = false;
@@ -60,11 +63,33 @@ export default class ProductAttr extends Component {
         this.message = null;
     }
 
+    componentWillMount() {
+        // 监听键盘事件
+        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
+        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+    }
+
     componentWillUnmount() {
         // 如果存在this.timer，则使用clearTimeout清空。
         // 如果你使用多个timer，那么用多个变量，或者用个数组来保存引用，然后逐个clear
         this.timer && clearTimeout(this.timer);
+
+        // 取消键盘监听
+        // this.keyboardDidShowListener.remove();
+        // this.keyboardDidHideListener.remove();
     }
+
+    // _keyboardDidShow(e){
+    //     this.setState({
+    //         keyboardHeight: e.startCoordinates.height,
+    //     });
+    // }
+
+    // _keyboardDidHide(e){
+    //     this.setState({
+    //         keyboardHeight: 0
+    //     });
+    // }
 
     //数量检查
     checkFunc = (num) => {
@@ -132,7 +157,7 @@ export default class ProductAttr extends Component {
             datas.index.push(index);
             datas.names.push(name);
         }
-        console.log('属性选择：', datas);
+        // console.log('属性选择：', datas);
         return datas;
     };
 
@@ -213,9 +238,9 @@ export default class ProductAttr extends Component {
                 gNum: datas.number,
                 gPrice: that.money,
             }, userid);
-            console.log(obj);
+            // console.log(obj);
             Utils.fetch(Urls.addCarProduct, 'post', obj, function(result) {
-                console.log(result);
+                // console.log(result);
                 that.btnLock = false;
                 if(result) {
                     if(result.sTatus == 1 || result.sTatus == 5) {
@@ -304,7 +329,11 @@ export default class ProductAttr extends Component {
                                 <Image style={styles.rowCloseImg} source={require('../../images/close.png')} />
                             </TouchableOpacity>
                         </View>
-                        <ScrollView>
+                        <ScrollView
+                            ref={_ref => this.scrollView = _ref}
+                            onScroll={(e) => this.offsetY = e.nativeEvent.contentOffset.y}
+                            scrollEventThrottle={10}
+                        >
                             {attrs.map((item, index) => {
                                 let cAttr = chlidAtrrs[index] || [];
                                 return this.attrBox(item, index, cAttr);
@@ -318,6 +347,8 @@ export default class ProductAttr extends Component {
                                     callBack={this.addSuccessFunc}
                                     checkFunc={this.checkFunc}
                                     addFailFunc={this.addFailFunc}
+                                    handleScroll={this.handleScroll}
+                                    scrollInputPosition={this.scrollInputPosition}
                                 />
                             </View>
                         </ScrollView>
@@ -375,13 +406,33 @@ export default class ProductAttr extends Component {
         );
     }
 
+    handleScroll = () => {
+        if(this.scrollView) {
+            this.scrollView.scrollTo({y: this.real_offsety || 0, animated: true});
+        }
+    }
+
+    scrollInputPosition = (refName) => {
+        if(refName && this.scrollView) {
+            setTimeout(()=> {
+                this.real_offsety = this.offsetY;
+                let scrollResponder = this.scrollView.getScrollResponder();
+                scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+                    ReactNative.findNodeHandle(refName), 
+                    320, 
+                    true
+                );
+            }, 50);
+        }
+    }
+
     attrBox = (item, index, cAttr) => {
         let that = this;
         let title = item.name || null;
         let selects = this.state.selects;
         let select = selects[index] || 0;
         return (
-            <View key={index} style={styles.attrRow}>
+            <View key={index} style={styles.attrRow}>                  
                 <View style={styles.attrTitleBox}>
                     <Text style={styles.attrTitle}>{title}</Text>
                 </View>
@@ -418,11 +469,11 @@ var styles = StyleSheet.create({
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, .5)',
+        backgroundColor: Color.translucent,
     },
     modalBody: {
         width: Size.width,
-        height: Size.height * 0.6,
+        height: Size.height * 0.7,
         backgroundColor: '#fff',
     },
     priceStockRow: {
@@ -514,7 +565,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         left: 20,
-        bottom: PX.rowHeight1 + (Size.height * 0.6) - 90,
+        bottom: PX.rowHeight1 + (Size.height * 0.7) - 90,
     },
     productImg: {
         width: 110,

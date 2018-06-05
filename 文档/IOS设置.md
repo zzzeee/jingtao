@@ -118,15 +118,22 @@ return [RCTLinkingManager application:application openURL:url
 > 然后运行命令直接打包  
 > `npm run bundle-ios`
 
+注: 查看一下 `ios/bundle/assets/src/newmap/` 是否含有完整文件, 如果缺少可手动复制进去。
+
   2. **添加文件**
 > 右键 Xcode左边 jingtao下的jingtao -> Add Files to "jingtao"  
 > 选择 bundle目录, 并点击左下"Options" 选择 "Create folder references"
 
   3. **添加 jsCodeLocation**
-> 在AppDelegate.m 中注释掉原 jsCodeLocation 开头的这行  
-> 添加下面这行内容  
+> 在AppDelegate.m 中修改一行  
+> 原代码:  
+> `jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];`  
+> 新代码(只复制以下其中一行即可):  
 > `jsCodeLocation = [NSURL URLWithString:[[NSBundle mainBundle] pathForResource:@"index.ios.jsbundle" ofType:nil]];`
+> `jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"bundle/index.ios" withExtension:@"jsbundle"];`
 
   4. **选择设备运行**(多运行几次)
   
-  5. [参考地址](http://www.jianshu.com/p/ce71b4a8a246)
+  5. product -> Scheme -> edit Scheme 可设置调试版或正式版
+
+  6. [参考地址](http://www.jianshu.com/p/ce71b4a8a246)

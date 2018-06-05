@@ -98,13 +98,14 @@ export default class Areas extends Component {
 
     render() {
         let { isShow, hideAreasBox, getSelectArea, } = this.props;
+        const { selectIndex, province, city, datas, } = this.state;
         if(!isShow) return null;
         let that = this;
         let _datas = [];
-        if(this.state.selectIndex == 1 && this.state.province) {
-            _datas = this.state.datas[this.state.province.index].child || [];
+        if(selectIndex == 1 && province) {
+            _datas = datas[province.index].child || [];
         }else {
-            _datas = this.state.datas;
+            _datas = datas;
         }
         return (
             <Modal
@@ -127,14 +128,24 @@ export default class Areas extends Component {
                         </View>
                         <View style={styles.secondRow}>
                             <TouchableOpacity onPress={()=>this.changeAreaBox(0)} style={[styles.btnTitle, {
-                                backgroundColor: this.state.selectIndex > 0 ? Color.floralWhite : '#fff',
+                                backgroundColor: selectIndex > 0 ? Color.floralWhite : '#fff',
                             }]}>
-                                <Text style={styles.txtStyle2}>{Lang[Lang.default].selectProvince}</Text>
+                                <Text style={styles.txtStyle2}>
+                                    {province ?
+                                        province.name :
+                                        Lang[Lang.default].selectProvince
+                                    }
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={()=>this.changeAreaBox(1)} style={[styles.btnTitle, {
-                                backgroundColor: this.state.selectIndex > 0 ? '#fff' : Color.floralWhite,
+                                backgroundColor: selectIndex > 0 ? '#fff' : Color.floralWhite,
                             }]}>
-                                <Text style={styles.txtStyle2}>{Lang[Lang.default].selectCity}</Text>
+                                <Text style={styles.txtStyle2}>
+                                    {city ?
+                                        city.name :
+                                        Lang[Lang.default].selectCity
+                                    }
+                                </Text>
                             </TouchableOpacity>
                         </View>
                         <ScrollView>
@@ -164,7 +175,7 @@ var styles = StyleSheet.create({
     modalHtml: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, .3)',
+        backgroundColor: Color.translucent,
     },
     modalBody: {
         height: Size.height * 0.65,

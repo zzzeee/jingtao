@@ -31,6 +31,7 @@ export default class About extends Component {
         this.alertObject = {};
         this.rows = [{
             title: '联系方式',
+            disabled: true,
         }, {
             type: 'QQ',
             title: '联系客服QQ: ',
@@ -44,6 +45,7 @@ export default class About extends Component {
             },
         }, {
             title: '商家合作联系',
+            disabled: true,
             boxStyle: {
                 marginTop: PX.marginTB,
             }
@@ -101,22 +103,27 @@ export default class About extends Component {
         let value = item.value || null;
         let type = item.type || null;
         return (
-            <TouchableOpacity key={index} style={[].concat(boxStyle, styles.boxStyle)} onPress={async ()=>{
-                if(type == 'tel') {
-                    this.showAlertMoudle(
-                        title + value,
-                        ()=>this.callPhone(type, value),
-                        Lang[Lang.default].call
-                    )
-                }else if(type == 'QQ') {
-                    Clipboard.setString(value);
-                    Toast.show(`QQ ${value} 已复制!`, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    });
-                }
-            }}>
+            <TouchableOpacity 
+                key={index} 
+                disabled={item.disabled || false}
+                style={[].concat(boxStyle, styles.boxStyle)} 
+                onPress={async ()=>{
+                    if(type == 'tel') {
+                        this.showAlertMoudle(
+                            title + value,
+                            ()=>this.callPhone(type, value),
+                            Lang[Lang.default].call
+                        )
+                    }else if(type == 'QQ') {
+                        Clipboard.setString(value);
+                        Toast.show(`QQ ${value} 已复制!`, {
+                            duration: Toast.durations.SHORT,
+                            position: Toast.positions.CENTER,
+                            hideOnPress: true,
+                        });
+                    }
+                }}
+            >
                 <View style={[].concat(style, styles.rowMain)}>
                     <Text style={styles.rowText}>{title}</Text>
                     {value ?

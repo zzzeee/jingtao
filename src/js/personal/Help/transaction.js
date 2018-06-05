@@ -24,7 +24,7 @@ export default class HelpTransaction extends Component {
         return (
             <View style={styles.flex}>
                 <AppHead
-                    title={Lang[Lang.default].contactUs}
+                    title={Lang[Lang.default].transactionTerms}
                     goBack={true}
                     navigation={this.props.navigation}
                 />
@@ -39,10 +39,7 @@ export default class HelpTransaction extends Component {
 const styles = StyleSheet.create({
     flex: {
         flex: 1,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: Color.lightGrey,
+        backgroundColor: Color.floralWhite,
     },
     scrollStyle: {
         padding: 15,

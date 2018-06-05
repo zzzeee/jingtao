@@ -23,7 +23,7 @@ export default class Help extends Component {
         return (
             <View style={styles.container}>
                 <AppHead
-                    title={Lang[Lang.default].contactUs}
+                    title={Lang[Lang.default].helpNote}
                     goBack={true}
                     navigation={navigation}
                 />

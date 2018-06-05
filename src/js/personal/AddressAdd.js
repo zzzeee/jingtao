@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Color.lightGrey,
+        // backgroundColor: Color.lightGrey,
         justifyContent: 'space-between',
     },
     defaultFont: {

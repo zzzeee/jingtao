@@ -67,38 +67,53 @@ export default class PickerAndroidIOS extends Component {
                 }
                 {Platform.OS === 'ios' ?
                     <Modal
-                        animationType={"none"}
+                        animationType={"slide"}
                         transparent={true}
                         visible={this.state.modalVisible}
                         onRequestClose={() => { }}
                     >
-                        <View style={styles.modalBody}>
-                            <View style={styles.pickerContralBox}>
-                                <TouchableOpacity
-                                    style={[styles.btnBox, styles.btnModal]} 
-                                    onPress={()=>{ this.setState({ modalVisible: false })}}>
-                                    <Text numberOfLines={1} style={styles.btnText}>取消</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.btnBox, styles.btnModal]} 
-                                    onPress={()=>{
-                                        let _showLabel = (options[selectValIOS] && options[selectValIOS][selectLab]) ?
-                                            options[selectValIOS][selectLab] : null;
-                                        this.setState({
-                                            modalVisible: false,
-                                            showLabel: _showLabel,
-                                        }, ()=>onValueChange(selectValIOS));
-                                    }}>
-                                    <Text numberOfLines={1} style={styles.btnText}>确定</Text>
-                                </TouchableOpacity>
+                        <View style={{
+                            flex: 1,
+                            backgroundColor: Color.translucent,
+                        }}>
+                            <View style={styles.flex}>
+                                <TouchableOpacity 
+                                    style={styles.flex} 
+                                    activeOpacity={1} 
+                                    onPress={()=>{ this.setState({ modalVisible: false })}}
+                                />
                             </View>
-                            <View style={styles.pickerBottomBox}>
-                                <PickerIOS
-                                    selectedValue={selectValIOS !== null ? selectValIOS : _initValue}
-                                    onValueChange={(value)=>this.setState({selectValIOS: value})}
-                                >
-                                    {options.map(this.readOptionItem)}
-                                </PickerIOS>
+                            <View style={styles.modalBody}>
+                                <View style={styles.pickerContralBox}>
+                                    <TouchableOpacity
+                                        style={styles.btnModal} 
+                                        onPress={()=>{ this.setState({ modalVisible: false })}}>
+                                        <Text numberOfLines={1} style={styles.btnText}>取消</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.btnModal, {
+                                            borderLeftColor: '#fff',
+                                            borderLeftWidth: 1,
+                                        }]} 
+                                        onPress={()=>{
+                                            let _showLabel = (options[selectValIOS] && options[selectValIOS][selectLab]) ?
+                                                options[selectValIOS][selectLab] : null;
+                                            this.setState({
+                                                modalVisible: false,
+                                                showLabel: _showLabel,
+                                            }, ()=>onValueChange(selectValIOS));
+                                        }}>
+                                        <Text numberOfLines={1} style={styles.btnText}>确定</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.pickerBottomBox}>
+                                    <PickerIOS
+                                        selectedValue={selectValIOS !== null ? selectValIOS : _initValue}
+                                        onValueChange={(value)=>this.setState({selectValIOS: value})}
+                                    >
+                                        {options.map(this.readOptionItem)}
+                                    </PickerIOS>
+                                </View>
                             </View>
                         </View>
                     </Modal>
@@ -122,11 +137,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     PickerBox: {
-        height: 34,
+        height: PX.inputHeight,
         borderRadius: 5,
         borderWidth: pixel,
         borderColor: Color.lavender,
-        //alignItems: 'center',
         justifyContent: 'center',
     },
     pickerIOSStyle: {
@@ -135,31 +149,27 @@ const styles = StyleSheet.create({
     },
     modalBody: {
         width: Size.width,
-        height: 200,
-        backgroundColor: '#aaa',
-        borderTopWidth: 2,
-        borderColor: '#222',
+        height: 250,
+        backgroundColor: '#fff',
+        // borderTopWidth: 2,
+        // borderColor: '#222',
         position: 'absolute',
         bottom: 0,
         left: 0,
     },
     pickerContralBox: {
-        height: 30,
+        height: 42,
         paddingLeft: 10,
         paddingRight: 10,
-        backgroundColor: '#444',
+        backgroundColor: Color.floralWhite,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        borderBottomWidth: pixel,
+        borderBottomColor: Color.gray,
     },
     btnModal: {
-        minWidth: 60,
-        height: 26,
-        padding: 2,
-        backgroundColor: '#0088cc',
-        borderColor: '#222',
-        borderRadius: 3,
-        borderWidth: 1,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -181,7 +191,6 @@ const styles = StyleSheet.create({
 		padding : 5,
 	},
 	btnText : {
-		color : '#fff',
-        fontSize: 12,
+        fontSize: 16,
 	},
 });

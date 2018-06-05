@@ -178,24 +178,27 @@ export default class EditUser extends Component {
                             />
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.inputView} onPress={()=>{
-                        if(this.mToken && this.userInfo) {
-                            this.props.navigation.navigate('EditMobile', {
-                                mToken: this.mToken,
-                                userInfo: this.userInfo,
-                            });
-                        }
-                    }}>
+                    <View style={styles.inputView}>
                         <Text style={styles.inputText}>手机</Text>
-                        <View style={[styles.inlineRight, {
-                            alignItems: 'center',
-                            flexDirection: 'row',
-                            justifyContent: 'flex-end',
-                        }]}>
-                            <Text style={styles.mobileText}>{mobile}</Text>
-                            <Image source={require('../../images/list_more.png')} style={styles.rowRightIcon} />
+                        <View style={styles.inlineRight}>
+                            <TouchableOpacity style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'flex-end',
+                                alignItems: 'center',
+                            }} onPress={()=>{
+                                if(this.mToken && this.userInfo) {
+                                    this.props.navigation.navigate('EditMobile', {
+                                        mToken: this.mToken,
+                                        userInfo: this.userInfo,
+                                    });
+                                }
+                            }}>
+                                <Text style={styles.mobileText}>{mobile}</Text>
+                                <Image source={require('../../images/list_more.png')} style={styles.rowRightIcon} />
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
+                    </View>
                     <View style={styles.inputView}>
                         <Text style={styles.inputText}>出生日期</Text>
                         <View style={styles.inlineRight}>
@@ -410,7 +413,7 @@ const styles = StyleSheet.create({
         height: 26,
     },
     btnSaveStyle: {
-        height: PX.rowHeight2,
+        height: PX.buttomHeight,
         borderRadius: 5,
         backgroundColor: Color.mainColor,
         alignItems: 'center',

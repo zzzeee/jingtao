@@ -304,7 +304,7 @@ var styles = StyleSheet.create({
         textDecorationLine: 'underline',
     },
     btnLogin: {
-        height: 38,
+        height: PX.buttomHeight,
         flex: 1,
         marginTop: 15,
         justifyContent: 'center',

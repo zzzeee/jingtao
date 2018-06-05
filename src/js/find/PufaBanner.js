@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
         marginBottom: 60,
     },
     btnUpdateForm: {
-        height: 38,
+        height: PX.buttomHeight,
         borderRadius: 5,
         backgroundColor: Color.mainColor,
         alignItems: 'center',

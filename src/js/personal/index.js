@@ -138,10 +138,7 @@ export default class PersonalScreen extends Component {
                                         });
                                     }
                                 }}>
-                                    <View style={[styles.userHeadImg, {
-                                        borderWidth: pixel,
-                                        borderColor: Color.lavender,
-                                    }]}>
+                                    <View style={styles.userHeadImg}>
                                         <CachedImage source={uHead} style={styles.userHeadImg} />
                                     </View>
                                     <Text style={styles.userNameText}>{name}</Text>

@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
         paddingRight: PX.marginLR,
     },
     btnLoginBox: {
-        height: 38,
+        height: PX.buttomHeight,
         width: Size.width - (PX.marginLR * 2),
         marginLeft: PX.marginLR,
         justifyContent: 'center',
